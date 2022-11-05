@@ -18,6 +18,7 @@ model Event {
   updatedAt    DateTime  @updatedAt
   startDate    DateTime
   endDate      DateTime
+  booked       Boolean   @default(false)
   address      String
   participants User[]
   Payment      Payment[]
