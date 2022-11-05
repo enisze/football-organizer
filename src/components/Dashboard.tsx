@@ -11,12 +11,25 @@ export const Dashboard: FunctionComponent = () => {
     <>
       <List>
         {map(events, (event) => {
+          const transformDate = (date: Date) => {
+            const day = Intl.DateTimeFormat("de", { weekday: "long" }).format(
+              date
+            );
+            const time = date.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+            const dateString = date.toLocaleDateString();
+
+            return [day, dateString, time].join(" ");
+          };
+
           return (
             <ListItem>
               <div>
                 <div>{event.address}</div>
-                <div>{event.startDate.toDateString()}</div>
-                <div>{event.endDate.toDateString()}</div>
+                <div>{transformDate(event.startDate)}</div>
+                <div>{transformDate(event.endDate)}</div>
               </div>
             </ListItem>
           );

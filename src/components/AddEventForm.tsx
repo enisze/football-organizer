@@ -1,17 +1,28 @@
 import { Button, TextField } from "@mui/joy";
 import { Formik } from "formik";
 import { FunctionComponent } from "react";
+import { trpc } from "../utils/trpc";
 
 export const AddEventForm: FunctionComponent = () => {
+  const trpcContext = trpc.useContext();
+  const { mutateAsync: createEvent } = trpc.event.create.useMutation({
+    onSuccess: () => {
+      trpcContext.event.getAll.invalidate();
+    },
+  });
   return (
     <div>
       <Formik
         initialValues={{ address: "", startDate: "", endDate: "" }}
         onSubmit={(values, { setSubmitting }) => {
-          setTimeout(() => {
-            alert(JSON.stringify(values, null, 2));
-            setSubmitting(false);
-          }, 400);
+          const { address } = values;
+
+          const startDate = new Date(values.startDate);
+          const endDate = new Date(values.endDate);
+
+          createEvent({ address, startDate, endDate, booked: false });
+
+          setSubmitting(false);
         }}
       >
         {({
@@ -43,7 +54,7 @@ export const AddEventForm: FunctionComponent = () => {
               label="Start Datum"
               placeholder="Type in here…"
               variant="outlined"
-              type="date"
+              type="datetime-local"
               name="startDate"
               onChange={handleChange}
               onBlur={handleBlur}
@@ -55,7 +66,7 @@ export const AddEventForm: FunctionComponent = () => {
               label="End Datum"
               placeholder="Type in here…"
               variant="outlined"
-              type="date"
+              type="datetime-local"
               name="endDate"
               onChange={handleChange}
               onBlur={handleBlur}
