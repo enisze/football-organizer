@@ -104,7 +104,9 @@ async function authorize() {
   //   refresh_token: process.env.GMAIL_REFRESH_TOKEN,
   // };
 
-  getAccessToken(oAuth2Client, () => {});
+  getAccessToken(oAuth2Client, () => {
+    console.log("hi");
+  });
 
   if (oAuth2Client?.credentials) {
     await saveCredentials(oAuth2Client);
