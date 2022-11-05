@@ -1,28 +1,86 @@
 import NextAuth, { type NextAuthOptions } from "next-auth";
 // Prisma adapter for NextAuth, optional and can be removed
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 import { prisma } from "../../../server/db/client";
 
 export const authOptions: NextAuthOptions = {
-  // Include user.id on session
+  // figure one or more authentication providers
+  adapter: PrismaAdapter(prisma),
+  session: {
+    strategy: "jwt",
+    updateAge: 1000 * 60 * 60 * 24,
+    generateSessionToken: () => "testit",
+  },
+  providers: [
+    CredentialsProvider({
+      // The name to display on the sign in form (e.g. 'Sign in with...')
+      name: "Credentials",
+      // The credentials is used to generate a suitable form on the sign in page.
+      // You can specify whatever fields you are expecting to be submitted.
+      // e.g. domain, username, password, 2FA token, etc.
+      // You can pass any HTML attribute to the <input> tag through the object.
+      credentials: {
+        email: {
+          label: "Email",
+          type: "email",
+        },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials, req) {
+        if (
+          credentials?.password !== process.env.AUTH_KEY ||
+          !credentials?.email
+        )
+          return null;
+
+        try {
+          const user = await prisma.user.findFirst({
+            where: { email: credentials?.email, name: credentials.email },
+          });
+          console.log("exists", user);
+          if (user) {
+            return { id: user.id, email: user.email, name: user.email };
+          }
+        } catch (error) {
+          console.log(error);
+        }
+
+        try {
+          const createdUser = await prisma.user.create({
+            data: { email: credentials?.email, name: credentials.email },
+          });
+          console.log("created", createdUser);
+
+          return {
+            id: createdUser.id,
+            email: createdUser.email,
+            name: createdUser.name,
+          };
+        } catch (error) {
+          console.log(error);
+        }
+        return null;
+      },
+    }),
+  ],
+  secret: process.env.JWT_SECRET,
   callbacks: {
-    session({ session, user }) {
+    async signIn({ user, account, profile, email, credentials }) {
+      return true;
+    },
+
+    async session({ session, token, user }) {
+      console.log(session, user, token);
       if (session.user) {
-        session.user.id = user.id;
+        session.user.id = token.sub ?? "";
+        session.user.email = user.email;
       }
+
       return session;
     },
   },
-  // Configure one or more authentication providers
-  adapter: PrismaAdapter(prisma),
-  providers: [
-    // DiscordProvider({
-    //   clientId: env.DISCORD_CLIENT_ID,
-    //   clientSecret: env.DISCORD_CLIENT_SECRET,
-    // }),
-    // ...add more providers here
-  ],
 };
 
 export default NextAuth(authOptions);

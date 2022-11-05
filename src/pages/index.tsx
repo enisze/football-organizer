@@ -1,7 +1,7 @@
 import { type NextPage } from "next";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/react";
 
 import { trpc } from "../utils/trpc";
 
@@ -66,7 +66,16 @@ export default Home;
 const AuthShowcase: React.FC = () => {
   const { data: secretMessage } = trpc.auth.getSecretMessage.useQuery();
 
-  const { data: sessionData } = useSession();
+  const { data: sessionData, status } = useSession();
+
+  console.log(sessionData);
+  console.log(status);
+
+  const { mutateAsync: test2 } = trpc.example.test.useMutation();
+
+  const test = async () => {
+    await test2();
+  };
 
   return (
     <div className="flex flex-col items-center justify-center gap-2">
@@ -83,6 +92,13 @@ const AuthShowcase: React.FC = () => {
         onClick={sessionData ? () => signOut() : () => signIn()}
       >
         {sessionData ? "Sign out" : "Sign in"}
+      </button>
+
+      <button
+        className="rounded-md border border-black bg-violet-50 px-4 py-2 text-xl shadow-lg hover:bg-violet-100"
+        onClick={test}
+      >
+        test
       </button>
     </div>
   );
