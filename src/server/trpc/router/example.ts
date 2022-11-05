@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { router, publicProcedure } from "../trpc";
+import { publicProcedure, router } from "../trpc";
 
 export const exampleRouter = router({
   hello: publicProcedure
@@ -10,7 +10,9 @@ export const exampleRouter = router({
         greeting: `Hello ${input?.text ?? "world"}`,
       };
     }),
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.example.findMany();
+  test: publicProcedure.mutation(async ({ ctx }) => {
+    return await ctx.prisma.event.create({
+      data: { address: "test", endDate: new Date(), startDate: new Date() },
+    });
   }),
 });
