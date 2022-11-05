@@ -39,7 +39,6 @@ export const authOptions: NextAuthOptions = {
           const user = await prisma.user.findFirst({
             where: { email: credentials?.email, name: credentials.email },
           });
-          console.log("exists", user);
           if (user) {
             return { id: user.id, email: user.email, name: user.email };
           }
@@ -51,7 +50,6 @@ export const authOptions: NextAuthOptions = {
           const createdUser = await prisma.user.create({
             data: { email: credentials?.email, name: credentials.email },
           });
-          console.log("created", createdUser);
 
           return {
             id: createdUser.id,
@@ -73,10 +71,6 @@ export const authOptions: NextAuthOptions = {
 
     async session({ session, token, user }) {
       console.log(session, user, token);
-      if (session.user) {
-        session.user.id = token.sub ?? "";
-        session.user.email = user.email;
-      }
 
       return session;
     },
