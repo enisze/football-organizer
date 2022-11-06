@@ -58,7 +58,9 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         <Typography>Event</Typography>
 
         <Chip color={booked ? "success" : "danger"}>
-          {booked ? "Gebucht" : "Zu wenige Teilnehmer (nicht gebucht!)"}
+          {booked
+            ? "Findet statt (Gebucht!)"
+            : "Zu wenige Teilnehmer (nicht gebucht!)"}
         </Chip>
       </div>
       <Sheet variant="outlined" sx={{ p: 4 }}>
