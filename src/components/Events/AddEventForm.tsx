@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/joy";
 import { Formik } from "formik";
 import type { FunctionComponent } from "react";
-import { trpc } from "../utils/trpc";
+import { trpc } from "../../utils/trpc";
 
 export const AddEventForm: FunctionComponent = () => {
   const trpcContext = trpc.useContext();
@@ -16,11 +16,8 @@ export const AddEventForm: FunctionComponent = () => {
         initialValues={{ address: "", date: "", startTime: "", endTime: "" }}
         onSubmit={(values, { setSubmitting }) => {
           const { address, startTime, endTime } = values;
-
           const date = new Date(values.date);
-
           createEvent({ address, date, startTime, endTime, booked: false });
-
           setSubmitting(false);
         }}
       >

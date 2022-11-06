@@ -3,11 +3,14 @@ import { trpc } from "../utils/trpc";
 
 import { List, ListItem } from "@mui/joy";
 import { map } from "lodash";
+import { useIsAdmin } from "../hooks/useIsAdmin";
 import { AdminBoard } from "./AdminBoard";
-import { EventCard } from "./EventCard2";
+import { EventCard } from "./Events/EventCard";
 
 export const Dashboard: FunctionComponent = () => {
   const { data: events } = trpc.event.getAll.useQuery();
+
+  const isAdmin = useIsAdmin();
   return (
     <>
       <List>
@@ -20,7 +23,7 @@ export const Dashboard: FunctionComponent = () => {
         })}
       </List>
 
-      <AdminBoard />
+      {isAdmin && <AdminBoard />}
     </>
   );
 };
