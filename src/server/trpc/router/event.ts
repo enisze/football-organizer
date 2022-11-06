@@ -16,8 +16,9 @@ export const eventRouter = router({
       z
         .object({
           address: z.string(),
-          startDate: z.date(),
-          endDate: z.date(),
+          date: z.date(),
+          startTime: z.string(),
+          endTime: z.string(),
           booked: z.boolean(),
         })
         .nullish()
@@ -42,6 +43,15 @@ export const eventRouter = router({
     )
     .mutation(async ({ ctx: { prisma, session }, input }) => {
       if (!session.user.email) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      const event = await prisma.event.findUnique({
+        where: { id: input.eventId },
+        include: { participants: true },
+      });
+
+      if (event?.participants.length === 10)
+        throw new TRPCError({ code: "PRECONDITION_FAILED" });
+
       return await prisma.event.update({
         data: { participants: { connect: { email: session.user.email } } },
         where: { id: input.eventId },
@@ -64,5 +74,13 @@ export const eventRouter = router({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx: { prisma }, input }) => {
       return await prisma.event.delete({ where: { id: input.id } });
+    }),
+  book: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx: { prisma }, input }) => {
+      return await prisma.event.update({
+        data: { booked: true },
+        where: { id: input.id },
+      });
     }),
 });

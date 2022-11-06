@@ -1,6 +1,6 @@
 import { Button, TextField } from "@mui/joy";
 import { Formik } from "formik";
-import { FunctionComponent } from "react";
+import type { FunctionComponent } from "react";
 import { trpc } from "../utils/trpc";
 
 export const AddEventForm: FunctionComponent = () => {
@@ -13,14 +13,13 @@ export const AddEventForm: FunctionComponent = () => {
   return (
     <div>
       <Formik
-        initialValues={{ address: "", startDate: "", endDate: "" }}
+        initialValues={{ address: "", date: "", startTime: "", endTime: "" }}
         onSubmit={(values, { setSubmitting }) => {
-          const { address } = values;
+          const { address, startTime, endTime } = values;
 
-          const startDate = new Date(values.startDate);
-          const endDate = new Date(values.endDate);
+          const date = new Date(values.date);
 
-          createEvent({ address, startDate, endDate, booked: false });
+          createEvent({ address, date, startTime, endTime, booked: false });
 
           setSubmitting(false);
         }}
@@ -51,27 +50,35 @@ export const AddEventForm: FunctionComponent = () => {
             />
 
             <TextField
-              label="Start Datum"
+              label="Datum"
               placeholder="Type in here…"
               variant="outlined"
-              type="datetime-local"
-              name="startDate"
+              type="date"
+              name="date"
               onChange={handleChange}
               onBlur={handleBlur}
-              value={values.startDate}
-              helperText={errors.startDate && touched.startDate}
+              value={values.date}
             />
 
             <TextField
-              label="End Datum"
+              label="Startzeit"
               placeholder="Type in here…"
               variant="outlined"
-              type="datetime-local"
-              name="endDate"
+              type="time"
+              name="startTime"
               onChange={handleChange}
               onBlur={handleBlur}
-              value={values.endDate}
-              helperText={errors.endDate && touched.endDate}
+              value={values.startTime}
+            />
+            <TextField
+              label="Endzeit"
+              placeholder="Type in here…"
+              variant="outlined"
+              type="time"
+              name="endTime"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.endTime}
             />
             <Button
               color="primary"

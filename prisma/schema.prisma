@@ -16,8 +16,9 @@ model Event {
   id           String    @id @default(cuid())
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
-  startDate    DateTime
-  endDate      DateTime
+  date         DateTime 
+  startTime   String 
+  endTime     String
   booked       Boolean   @default(false)
   address      String
   participants User[]
