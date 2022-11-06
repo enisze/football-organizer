@@ -31,6 +31,38 @@ export const eventRouter = router({
   getAll: publicProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.event.findMany({
       take: 10,
+      include: { participants: true },
     });
   }),
+  join: protectedProcedure
+    .input(
+      z.object({
+        eventId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx: { prisma, session }, input }) => {
+      if (!session.user.email) throw new TRPCError({ code: "UNAUTHORIZED" });
+      return await prisma.event.update({
+        data: { participants: { connect: { email: session.user.email } } },
+        where: { id: input.eventId },
+      });
+    }),
+  leave: protectedProcedure
+    .input(
+      z.object({
+        eventId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx: { prisma, session }, input }) => {
+      if (!session.user.email) throw new TRPCError({ code: "UNAUTHORIZED" });
+      return await prisma.event.update({
+        data: { participants: { disconnect: { email: session.user.email } } },
+        where: { id: input.eventId },
+      });
+    }),
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx: { prisma }, input }) => {
+      return await prisma.event.delete({ where: { id: input.id } });
+    }),
 });

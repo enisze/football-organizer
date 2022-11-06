@@ -4,6 +4,7 @@ import { trpc } from "../utils/trpc";
 import { List, ListItem } from "@mui/joy";
 import { map } from "lodash";
 import { AdminBoard } from "./AdminBoard";
+import { EventCard } from "./EventCard2";
 
 export const Dashboard: FunctionComponent = () => {
   const { data: events } = trpc.event.getAll.useQuery();
@@ -11,6 +12,7 @@ export const Dashboard: FunctionComponent = () => {
     <>
       <List>
         {map(events, (event) => {
+          const { address, startDate, endDate, id, participants } = event;
           const transformDate = (date: Date) => {
             const day = Intl.DateTimeFormat("de", { weekday: "long" }).format(
               date
@@ -25,12 +27,14 @@ export const Dashboard: FunctionComponent = () => {
           };
 
           return (
-            <ListItem>
-              <div>
-                <div>{event.address}</div>
-                <div>{transformDate(event.startDate)}</div>
-                <div>{transformDate(event.endDate)}</div>
-              </div>
+            <ListItem key={id}>
+              <EventCard
+                address={address}
+                startDate={transformDate(startDate)}
+                endDate={transformDate(endDate)}
+                id={id}
+                participants={participants}
+              />
             </ListItem>
           );
         })}
