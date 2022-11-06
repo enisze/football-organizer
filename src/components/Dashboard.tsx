@@ -4,7 +4,7 @@ import { trpc } from "../utils/trpc";
 import { List, ListItem } from "@mui/joy";
 import { map } from "lodash";
 import { AdminBoard } from "./AdminBoard";
-import { EventCard } from "./EventCard2";
+import { EventCard } from "./EventCard";
 
 export const Dashboard: FunctionComponent = () => {
   const { data: events } = trpc.event.getAll.useQuery();
