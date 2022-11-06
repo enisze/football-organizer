@@ -23,8 +23,8 @@ export const authOptions: NextAuthOptions = {
       // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
         email: {
-          label: "Email",
-          type: "email",
+          label: "Name",
+          type: "string",
         },
         password: { label: "Password", type: "password" },
       },

@@ -1,5 +1,5 @@
 import { Link } from "@mui/joy";
-import { FunctionComponent } from "react";
+import type { FunctionComponent } from "react";
 import { trpc } from "../utils/trpc";
 import { AddEventForm } from "./Events/AddEventForm";
 
