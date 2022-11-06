@@ -1,3 +1,4 @@
+import { Link } from "@mui/joy";
 import { CssVarsProvider, StyledEngineProvider } from "@mui/joy/styles";
 import { type NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
@@ -36,6 +37,8 @@ const AuthShowcase: React.FC = () => {
 
   const { data: sessionData } = useSession();
 
+  const { data: link } = trpc.gmail.test.useQuery();
+
   return (
     <StyledEngineProvider injectFirst>
       <CssVarsProvider>
@@ -55,6 +58,8 @@ const AuthShowcase: React.FC = () => {
             {sessionData ? "Sign out" : "Sign in"}
           </button>
           {sessionData && <Dashboard />}
+          <Link href={link}>Authorize gmail</Link>
+          <div>{link}</div>
         </div>
       </CssVarsProvider>
     </StyledEngineProvider>
