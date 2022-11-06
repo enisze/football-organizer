@@ -7,6 +7,7 @@ import { useState } from "react";
 import { transformDate } from "../../helpers/transformDate";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { useIsUserParticipating } from "../../hooks/useIsUserParticipating";
+import { AddToCalendarButton } from "./Buttons/AddToCalendarButton";
 import { BookEventButton } from "./Buttons/BookEventButton";
 import { DeleteEventButton } from "./Buttons/DeleteEventButton";
 import { JoinOrLeaveEventButton } from "./Buttons/JoinOrLeaveEventButton";
@@ -70,6 +71,8 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         id={id}
         isUserParticipating={isUserParticipating}
       />
+
+      {isUserParticipating && <AddToCalendarButton event={event} />}
     </section>
   );
 };
