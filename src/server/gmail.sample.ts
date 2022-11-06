@@ -1,5 +1,4 @@
 import { config } from "dotenv";
-import { promises as fs } from "fs";
 import { OAuth2Client, OAuth2ClientOptions } from "google-auth-library";
 import { google } from "googleapis";
 import path from "path";
@@ -52,37 +51,6 @@ const token = {
   client_secret: process.env.GMAIL_CLIENT_SECRET,
   refresh_token: process.env.GMAIL_REFRESH_TOKEN,
 };
-
-/**
- * Reads previously authorized credentials from the save file.
- *
- * @return {Promise<OAuth2Client|null>}
- */
-async function loadSavedCredentialsIfExist() {
-  try {
-    return google.auth.fromJSON(token);
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
-}
-
-/**
- * Serializes credentials to a file comptible with GoogleAUth.fromJSON.
- *
- * @param {OAuth2Client} client
- * @return {Promise<void>}
- */
-async function saveCredentials(client: any) {
-  const payload = JSON.stringify({
-    type: "authorized_user",
-    client_id: credentials.clientId,
-    client_secret: credentials.clientSecret,
-    refresh_token: client.credentials.refresh_token,
-  });
-  await fs.writeFile(TOKEN_PATH, payload);
-}
-
 /**
  * Load or request or authorization to call APIs.
  *
@@ -108,9 +76,6 @@ async function authorize() {
     console.log("hi");
   });
 
-  if (oAuth2Client?.credentials) {
-    await saveCredentials(oAuth2Client);
-  }
   return oAuth2Client;
 }
 
