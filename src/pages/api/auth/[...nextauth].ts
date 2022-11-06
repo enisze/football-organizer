@@ -22,7 +22,7 @@ export const authOptions: NextAuthOptions = {
       // e.g. domain, username, password, 2FA token, etc.
       // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
-        email: {
+        name: {
           label: "Name",
           type: "string",
         },
@@ -32,7 +32,7 @@ export const authOptions: NextAuthOptions = {
         if (
           (credentials?.password !== process.env.AUTH_KEY &&
             credentials?.password !== process.env.ADMIN_AUTH_KEY) ||
-          !credentials?.email
+          !credentials?.name
         )
           return null;
 
@@ -44,7 +44,7 @@ export const authOptions: NextAuthOptions = {
 
         try {
           const user = await prisma.user.findFirst({
-            where: { email: credentials?.email, name: credentials.email },
+            where: { name: credentials.name },
           });
           if (user) {
             return {
@@ -60,12 +60,11 @@ export const authOptions: NextAuthOptions = {
 
         try {
           const createdUser = await prisma.user.create({
-            data: { email: credentials?.email, name: credentials.email },
+            data: { name: credentials.name },
           });
 
           return {
             id: createdUser.id,
-            email: createdUser.email,
             name: createdUser.name,
             role: role,
           };

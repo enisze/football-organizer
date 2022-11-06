@@ -42,7 +42,7 @@ export const eventRouter = router({
       })
     )
     .mutation(async ({ ctx: { prisma, session }, input }) => {
-      if (!session.user.email) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       const event = await prisma.event.findUnique({
         where: { id: input.eventId },
@@ -53,7 +53,7 @@ export const eventRouter = router({
         throw new TRPCError({ code: "PRECONDITION_FAILED" });
 
       return await prisma.event.update({
-        data: { participants: { connect: { email: session.user.email } } },
+        data: { participants: { connect: { id: session.user.id } } },
         where: { id: input.eventId },
       });
     }),
@@ -64,9 +64,9 @@ export const eventRouter = router({
       })
     )
     .mutation(async ({ ctx: { prisma, session }, input }) => {
-      if (!session.user.email) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
       return await prisma.event.update({
-        data: { participants: { disconnect: { email: session.user.email } } },
+        data: { participants: { disconnect: { id: session.user.id } } },
         where: { id: input.eventId },
       });
     }),

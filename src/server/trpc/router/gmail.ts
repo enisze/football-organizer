@@ -1,10 +1,12 @@
+import { TRPCError } from "@trpc/server";
 import type { OAuth2ClientOptions } from "google-auth-library";
 import { OAuth2Client } from "google-auth-library";
+import type { gmail_v1 } from "googleapis";
 import { google } from "googleapis";
 import { filter, find, map } from "lodash";
 import { z } from "zod";
 
-import { publicProcedure, router } from "../trpc";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 const credentials: OAuth2ClientOptions = {
   clientId: process.env.GMAIL_CLIENT_ID,
@@ -25,13 +27,21 @@ export const gmailRouter = router({
     });
     return authorizeUrl;
   }),
-  listLabels: publicProcedure
-    .input(z.object({ code: z.string() }))
-    .query(async ({ input }) => {
-      const { code } = input;
-      if (!code) return "no code";
 
-      // const { tokens } = await oAuth2Client.getToken(code);
+  getToken: publicProcedure
+    .input(z.object({ code: z.string() }))
+    .query(async ({ input: { code } }) => {
+      const { tokens } = await oAuth2Client.getToken(code);
+      return tokens;
+    }),
+  listLabels: protectedProcedure.query(
+    async ({
+      ctx: {
+        session: {
+          user: { name },
+        },
+      },
+    }) => {
       try {
         oAuth2Client.setCredentials({
           refresh_token: process.env.GMAIL_REFRESH_TOKEN,
@@ -50,7 +60,7 @@ export const gmailRouter = router({
           })
         );
 
-        const filteredRes = filter(result, (res) => {
+        const filteredByPaypal = filter(result, (res) => {
           const header = find(res.payload?.headers, (header) => {
             return header.name === "From";
           });
@@ -59,13 +69,24 @@ export const gmailRouter = router({
             res.labelIds?.includes("INBOX") &&
             header?.value?.includes("service@paypal.de")
           );
-        });
+        }) as gmail_v1.Schema$Message[];
 
-        return filteredRes;
+        if (!filteredByPaypal)
+          throw new TRPCError({ code: "NOT_FOUND", message: "No Paypal data" });
+
+        const filteredByUser = filter(filteredByPaypal, (res) => {
+          return res.snippet?.includes(name);
+        }) as gmail_v1.Schema$Message[];
+
+        return filteredByUser;
       } catch (error) {
         console.log("failed token");
         console.log(error);
-        return "failed";
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Probably new gmail token needed",
+        });
       }
-    }),
+    }
+  ),
 });
