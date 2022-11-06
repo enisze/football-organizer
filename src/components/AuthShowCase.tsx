@@ -1,4 +1,4 @@
-import { CssVarsProvider, Link, StyledEngineProvider } from "@mui/joy";
+import { CssVarsProvider, StyledEngineProvider } from "@mui/joy";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 import { Dashboard } from "./Dashboard";
@@ -7,8 +7,6 @@ export const AuthShowcase: React.FC = () => {
   const { data: secretMessage } = trpc.auth.getSecretMessage.useQuery();
 
   const { data: sessionData } = useSession();
-
-  const { data: link } = trpc.gmail.generateAuthLink.useQuery();
 
   return (
     <StyledEngineProvider injectFirst>
@@ -29,7 +27,6 @@ export const AuthShowcase: React.FC = () => {
             {sessionData ? "Sign out" : "Sign in"}
           </button>
           {sessionData && <Dashboard />}
-          <Link href={link}>Authorize gmail</Link>
         </div>
       </CssVarsProvider>
     </StyledEngineProvider>

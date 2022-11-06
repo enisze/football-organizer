@@ -30,10 +30,17 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials, req) {
         if (
-          credentials?.password !== process.env.AUTH_KEY ||
+          (credentials?.password !== process.env.AUTH_KEY &&
+            credentials?.password !== process.env.ADMIN_AUTH_KEY) ||
           !credentials?.email
         )
           return null;
+
+        let role = "user";
+
+        if (credentials.password === process.env.ADMIN_AUTH_KEY) {
+          role = "admin";
+        }
 
         try {
           const user = await prisma.user.findFirst({
@@ -44,7 +51,7 @@ export const authOptions: NextAuthOptions = {
               id: user.id,
               email: user.email,
               name: user.email,
-              role: "admin",
+              role: role,
             };
           }
         } catch (error) {
@@ -60,7 +67,7 @@ export const authOptions: NextAuthOptions = {
             id: createdUser.id,
             email: createdUser.email,
             name: createdUser.name,
-            role: "admin",
+            role: role,
           };
         } catch (error) {
           console.log(error);
