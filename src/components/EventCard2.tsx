@@ -53,7 +53,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
   };
 
   return (
-    <section className="flex cursor-pointer flex-col justify-center gap-2 rounded border-2 border-gray-500 p-6 shadow-xl duration-500 motion-safe:hover:scale-105">
+    <section className="flex flex-col justify-center gap-2 rounded border-2 border-gray-500 p-6 shadow-xl duration-500 motion-safe:hover:scale-105">
       <div className="flex items-center gap-x-2">
         <Typography>Event</Typography>
 
@@ -69,8 +69,9 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         </Typography>
       </Sheet>
       <Typography
-        variant="solid"
+        variant="soft"
         color={"info"}
+        sx={{ cursor: "pointer" }}
         onClick={() => setShowParticipants(!showParticipants)}
       >
         Teilnehmer {participants.length}/10:
