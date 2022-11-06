@@ -54,7 +54,6 @@ export const gmailRouter = router({
           const header = find(res.payload?.headers, (header) => {
             return header.name === "From";
           });
-          console.log(header);
 
           return (
             res.labelIds?.includes("INBOX") &&
