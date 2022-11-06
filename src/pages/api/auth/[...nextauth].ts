@@ -75,7 +75,6 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
     async jwt({ token, isNewUser, user, account, profile }) {
-      console.log(token);
       if (user) {
         token.id = user.id;
         token.role = user.role;
