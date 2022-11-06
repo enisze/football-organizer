@@ -40,7 +40,12 @@ export const authOptions: NextAuthOptions = {
             where: { email: credentials?.email, name: credentials.email },
           });
           if (user) {
-            return { id: user.id, email: user.email, name: user.email };
+            return {
+              id: user.id,
+              email: user.email,
+              name: user.email,
+              role: "admin",
+            };
           }
         } catch (error) {
           console.log(error);
@@ -55,6 +60,7 @@ export const authOptions: NextAuthOptions = {
             id: createdUser.id,
             email: createdUser.email,
             name: createdUser.name,
+            role: "admin",
           };
         } catch (error) {
           console.log(error);
@@ -68,8 +74,19 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile, email, credentials }) {
       return true;
     },
-
-    async session({ session, token, user }) {
+    async jwt({ token, isNewUser, user, account, profile }) {
+      console.log(token);
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token && session.user) {
+        session.user.id = token.id;
+        session.user.role = token.role;
+      }
       return session;
     },
   },

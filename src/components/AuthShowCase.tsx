@@ -8,7 +8,7 @@ export const AuthShowcase: React.FC = () => {
 
   const { data: sessionData } = useSession();
 
-  const { data: link } = trpc.gmail.test.useQuery();
+  const { data: link } = trpc.gmail.generateAuthLink.useQuery();
 
   return (
     <StyledEngineProvider injectFirst>
@@ -30,7 +30,6 @@ export const AuthShowcase: React.FC = () => {
           </button>
           {sessionData && <Dashboard />}
           <Link href={link}>Authorize gmail</Link>
-          <div>{link}</div>
         </div>
       </CssVarsProvider>
     </StyledEngineProvider>

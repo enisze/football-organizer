@@ -12,7 +12,7 @@ const credentials: OAuth2ClientOptions = {
 const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
 
 export const gmailRouter = router({
-  test: publicProcedure.query(() => {
+  generateAuthLink: publicProcedure.query(() => {
     const oAuth2Client = new OAuth2Client(credentials);
 
     const authorizeUrl = oAuth2Client.generateAuthUrl({
