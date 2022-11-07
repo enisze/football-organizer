@@ -11,7 +11,7 @@ export const useUserPaidEvent = (eventId: string) => {
 
   const trpcContext = trpc.useContext();
 
-  const { data } = trpc.gmail.listLabels.useQuery();
+  const { data } = trpc.gmail.paypalEmails.useQuery();
   const { data: allPayments } = trpc.payment.getAllForUser.useQuery();
   const { mutate: createPayment } = trpc.payment.create.useMutation({
     onSuccess: () => {
@@ -28,12 +28,15 @@ export const useUserPaidEvent = (eventId: string) => {
     //Already paid
     if (payment) return true;
 
+    console.log(data);
+
     //Payments from mail
     const paymentsAfterNovember = filter(data, (d) => {
       if (!d.internalDate) return false;
       const paymentDate = new Date(Number(d.internalDate));
       return isAfter(paymentDate, new Date("01.11.2022"));
     });
+    console.log(paymentsAfterNovember);
 
     if (!session?.user?.name) return false;
     if (!paymentsAfterNovember) return false;

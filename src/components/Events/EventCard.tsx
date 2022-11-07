@@ -38,9 +38,9 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
     { enabled: isAdmin }
   );
   return (
-    <section className="flex flex-col justify-center gap-2 rounded border-2 border-gray-500 p-6 shadow-xl duration-500 motion-safe:hover:scale-105">
+    <section className="flex flex-col justify-center gap-2 rounded border-2 border-gray-500 bg-[#373B44] p-6 text-white shadow-xl duration-500 motion-safe:hover:scale-105">
       <div className="flex items-center gap-x-2">
-        <Typography>{eventString}</Typography>
+        <Typography className="text-white">{eventString}</Typography>
 
         <Chip color={booked ? "success" : "danger"}>
           {booked
@@ -81,7 +81,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
               <div>{participant.name}</div>
               {payment && (
                 <>
-                  <div>{payment?.amount + " Euro"}</div>
+                  <div>{payment?.amount + " €"}</div>
                   <div>{payment?.paymentDate.toDateString()}</div>
                   <Chip color="success">Bezahlt</Chip>
                 </>
@@ -100,7 +100,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
                 </Typography>
                 <div key={payment.id} className="flex items-center gap-x-2">
                   <div>{payment?.user.name}</div>
-                  <div>{payment?.amount + " Euro"}</div>
+                  <div>{payment?.amount + " €"}</div>
                   <div>{payment?.paymentDate.toDateString()}</div>
                   <Chip color="success">Bezahlt</Chip>
                 </div>

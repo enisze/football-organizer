@@ -4,13 +4,6 @@ import { z } from "zod";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const eventRouter = router({
-  hello: publicProcedure
-    .input(z.object({ text: z.string().nullish() }).nullish())
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input?.text ?? "world"}`,
-      };
-    }),
   create: protectedProcedure
     .input(
       z
@@ -33,6 +26,14 @@ export const eventRouter = router({
     return await ctx.prisma.event.findMany({
       take: 10,
       include: { participants: true },
+    });
+  }),
+
+  getAllForUser: publicProcedure.query(async ({ ctx: { session, prisma } }) => {
+    if (!session) throw new TRPCError({ code: "UNAUTHORIZED" });
+    const { user } = session;
+    return await prisma.event.findMany({
+      where: { participants: { some: { id: user?.id } } },
     });
   }),
   join: protectedProcedure

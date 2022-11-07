@@ -1,24 +1,25 @@
 import { CssVarsProvider, StyledEngineProvider } from "@mui/joy";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { trpc } from "../utils/trpc";
+import { useGetUserBalance } from "../hooks/useGetUserBalance";
 import { Dashboard } from "./Dashboard";
 
 export const AuthShowcase: React.FC = () => {
-  const { data: secretMessage } = trpc.auth.getSecretMessage.useQuery();
-
   const { data: sessionData } = useSession();
+
+  const balance = useGetUserBalance();
 
   return (
     <StyledEngineProvider injectFirst>
       <CssVarsProvider>
         <div className="flex flex-col items-center justify-center gap-2">
           {sessionData && (
-            <p className="text-2xl text-blue-500">
-              Logged in as {sessionData?.user?.name}
-            </p>
-          )}
-          {secretMessage && (
-            <p className="text-2xl text-blue-500">{secretMessage}</p>
+            <>
+              <p className="text-2xl text-gray-500">
+                Eingeloggt als: {sessionData?.user?.name}
+              </p>
+
+              <p className="text-2xl text-gray-500">Kontostand: {balance} €</p>
+            </>
           )}
           <button
             className="rounded-md border border-black bg-violet-50 px-4 py-2 text-xl shadow-lg hover:bg-violet-100"
