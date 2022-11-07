@@ -12,10 +12,10 @@ export const useUserPaidEvent = (eventId: string) => {
   const trpcContext = trpc.useContext();
 
   const { data } = trpc.gmail.listLabels.useQuery();
-  const { data: allPayments } = trpc.payment.getAll.useQuery();
-  const { mutate: createPayment, status } = trpc.payment.create.useMutation({
+  const { data: allPayments } = trpc.payment.getAllForUser.useQuery();
+  const { mutate: createPayment } = trpc.payment.create.useMutation({
     onSuccess: () => {
-      trpcContext.payment.getAll.invalidate();
+      trpcContext.payment.getAllForUser.invalidate();
       trpcContext.payment.get.invalidate();
     },
   });

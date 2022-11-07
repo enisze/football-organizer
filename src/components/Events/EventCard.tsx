@@ -1,12 +1,13 @@
 import { Chip, Sheet, Typography } from "@mui/joy";
 import type { Event, User } from "@prisma/client";
 import { differenceInDays } from "date-fns";
-import { map } from "lodash";
+import { find, map } from "lodash";
 import type { FunctionComponent } from "react";
 import { useState } from "react";
 import { transformDate } from "../../helpers/transformDate";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { useIsUserParticipating } from "../../hooks/useIsUserParticipating";
+import { trpc } from "../../utils/trpc";
 import { PaymentArea } from "../PaymentArea";
 import { AddToCalendarButton } from "./Buttons/AddToCalendarButton";
 import { BookEventButton } from "./Buttons/BookEventButton";
@@ -32,6 +33,10 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
   const eventString = days > 0 ? `Event in ${days} Tagen` : "Vergangenes Event";
 
+  const { data: payments } = trpc.payment.getAllPaymentsForEvent.useQuery(
+    { eventId: event.id },
+    { enabled: isAdmin }
+  );
   return (
     <section className="flex flex-col justify-center gap-2 rounded border-2 border-gray-500 p-6 shadow-xl duration-500 motion-safe:hover:scale-105">
       <div className="flex items-center gap-x-2">
@@ -44,10 +49,17 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         </Chip>
       </div>
       <Sheet variant="outlined" sx={{ p: 4 }}>
-        <Typography className="text-lg text-gray-700">Ort und Zeit:</Typography>
-        <Typography className="text-lg text-gray-700">{address}</Typography>
-        <Typography className="text-sm text-gray-600">
-          {transformDate(date) + " " + [startTime, endTime].join("-")}
+        <Typography className="text-xl font-bold text-gray-700">
+          Ort und Zeit:
+        </Typography>
+        <Typography className="text-lg text-gray-700">
+          {"Wo: " + address}
+        </Typography>
+        <Typography className="text-lg text-gray-600">
+          {"Wann: " +
+            transformDate(date) +
+            " " +
+            [startTime, endTime].join("-")}
         </Typography>
       </Sheet>
       <Typography
@@ -60,7 +72,41 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
       </Typography>
       {showParticipants &&
         map(participants, (participant) => {
-          return <div key={participant.id}>{participant.name}</div>;
+          const payment = find(
+            payments,
+            (payment) => payment.userId === participant.id
+          );
+          return (
+            <div key={participant.id} className="flex items-center gap-x-2">
+              <div>{participant.name}</div>
+              {payment && (
+                <>
+                  <div>{payment?.amount + " Euro"}</div>
+                  <div>{payment?.paymentDate.toDateString()}</div>
+                  <Chip color="success">Bezahlt</Chip>
+                </>
+              )}
+              {isAdmin && !payment && <Chip color="danger">Nicht bezahlt</Chip>}
+            </div>
+          );
+        })}
+      {isAdmin &&
+        map(payments, (payment) => {
+          return (
+            !participants.includes(payment.user) && (
+              <>
+                <Typography variant="soft">
+                  Bezahlt aber nicht teilgenommen
+                </Typography>
+                <div key={payment.id} className="flex items-center gap-x-2">
+                  <div>{payment?.user.name}</div>
+                  <div>{payment?.amount + " Euro"}</div>
+                  <div>{payment?.paymentDate.toDateString()}</div>
+                  <Chip color="success">Bezahlt</Chip>
+                </div>
+              </>
+            )
+          );
         })}
       {isAdmin && <DeleteEventButton id={id} />}
 

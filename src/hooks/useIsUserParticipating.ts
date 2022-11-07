@@ -4,15 +4,15 @@ import { useSession } from "next-auth/react";
 
 export const useIsUserParticipating = (participants: User[]) => {
   const { data } = useSession();
-  if (!data?.user?.name) return false;
+  if (!data?.user?.id) return false;
   return reduce(
     participants,
     (acc: string[], participant) => {
-      if (participant.name) {
-        return [...acc, participant.name];
+      if (participant.id) {
+        return [...acc, participant.id];
       }
       return acc;
     },
     []
-  ).includes(data.user.name);
+  ).includes(data.user.id);
 };

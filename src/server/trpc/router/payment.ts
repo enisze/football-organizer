@@ -35,9 +35,23 @@ export const paymentRouter = router({
       });
     }),
 
-  getAll: protectedProcedure.query(async ({ ctx: { prisma, session } }) => {
-    return await prisma.payment.findMany({
-      where: { userId: session.user.id },
-    });
-  }),
+  getAllForUser: protectedProcedure.query(
+    async ({ ctx: { prisma, session } }) => {
+      return await prisma.payment.findMany({
+        where: { userId: session.user.id },
+      });
+    }
+  ),
+  getAllPaymentsForEvent: protectedProcedure
+    .input(
+      z.object({
+        eventId: z.string(),
+      })
+    )
+    .query(async ({ ctx: { prisma }, input }) => {
+      return await prisma.payment.findMany({
+        where: { eventId: input.eventId },
+        include: { user: true },
+      });
+    }),
 });

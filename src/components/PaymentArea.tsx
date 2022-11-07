@@ -1,4 +1,4 @@
-import { Link } from "@mui/joy";
+import { Chip, Link } from "@mui/joy";
 import { FunctionComponent } from "react";
 import { useUserPaidEvent } from "../hooks/useUserPaidEvent";
 import { trpc } from "../utils/trpc";
@@ -13,15 +13,18 @@ export const PaymentArea: FunctionComponent<{ eventId: string }> = ({
   const userPaid = useUserPaidEvent(eventId);
 
   return (
-    <>
+    <div className="flex justify-center">
       {!userPaid && (
-        <div className="flex justify-center">
-          <Link href={paypalLink}>Bezahlen per Paypal</Link>
-        </div>
+        <Link variant="solid" href={paypalLink}>
+          Bezahlen per Paypal
+        </Link>
       )}
       {userPaid && (
-        <div>{payment?.amount + " " + payment?.paymentDate.toDateString()}</div>
+        <div className="flex items-center gap-x-2">
+          {payment?.amount + "€  am " + payment?.paymentDate.toDateString()}
+          <Chip color="success">Bezahlt</Chip>
+        </div>
       )}
-    </>
+    </div>
   );
 };
