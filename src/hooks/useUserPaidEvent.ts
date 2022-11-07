@@ -26,9 +26,7 @@ export const useUserPaidEvent = (eventId: string) => {
     const payment = find(allPayments, (payment) => payment.eventId === eventId);
 
     //Already paid
-    if (payment) return true;
-
-    console.log(data);
+    // if (payment) return true;
 
     //Payments from mail
     const paymentsAfterNovember = filter(data, (d) => {
@@ -36,7 +34,6 @@ export const useUserPaidEvent = (eventId: string) => {
       const paymentDate = new Date(Number(d.internalDate));
       return isAfter(paymentDate, new Date("01.11.2022"));
     });
-    console.log(paymentsAfterNovember);
 
     if (!session?.user?.name) return false;
     if (!paymentsAfterNovember) return false;

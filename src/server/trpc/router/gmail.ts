@@ -74,10 +74,7 @@ export const gmailRouter = router({
         if (!filteredByPaypal)
           throw new TRPCError({ code: "NOT_FOUND", message: "No Paypal data" });
 
-        console.log(filteredByPaypal);
-
         const filteredByUser = filter(filteredByPaypal, (res) => {
-          console.log(name);
           return res.snippet?.includes(name);
         }) as gmail_v1.Schema$Message[];
 

@@ -29,7 +29,7 @@ model Payment {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  amount    Int
+  amount    Float
   paymentDate DateTime
   event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   String

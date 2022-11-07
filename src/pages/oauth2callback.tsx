@@ -6,8 +6,6 @@ const Oauth2Callback: FunctionComponent = () => {
 
   const { code } = router.query;
 
-  console.log(code);
-
   // const { data } = trpc.gmail.getToken.useQuery(
   //   { code: code as string },
   //   { enabled: Boolean(code) }

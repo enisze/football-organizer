@@ -94,7 +94,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         map(payments, (payment) => {
           return (
             !participants.includes(payment.user) && (
-              <>
+              <div key={payment.id}>
                 <Typography variant="soft">
                   Bezahlt aber nicht teilgenommen
                 </Typography>
@@ -104,7 +104,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
                   <div>{payment?.paymentDate.toDateString()}</div>
                   <Chip color="success">Bezahlt</Chip>
                 </div>
-              </>
+              </div>
             )
           );
         })}
