@@ -2,7 +2,7 @@ import { isAfter, isEqual } from "date-fns";
 import type { gmail_v1 } from "googleapis";
 import { filter, find } from "lodash";
 import { useSession } from "next-auth/react";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { getEuroAmount } from "../helpers/getEuroAmount";
 import { trpc } from "../utils/trpc";
 
@@ -19,6 +19,8 @@ export const useUserPaidEvent = (eventId: string) => {
       trpcContext.payment.get.invalidate();
     },
   });
+
+  const ref = useRef(false);
 
   const isPaid = useMemo(() => {
     const payment = find(allPayments, (payment) => payment.eventId === eventId);
@@ -63,11 +65,14 @@ export const useUserPaidEvent = (eventId: string) => {
     if (!paymentMissing.internalDate) return false;
 
     //Payment created
-    createPayment({
-      eventId,
-      amount,
-      paymentDate: new Date(Number(paymentMissing.internalDate)),
-    });
+    if (!ref.current) {
+      createPayment({
+        eventId,
+        amount,
+        paymentDate: new Date(Number(paymentMissing.internalDate)),
+      });
+      ref.current = true;
+    }
 
     return true;
   }, [allPayments, data, createPayment, eventId, session?.user?.name]);
