@@ -32,6 +32,7 @@
     "formik": "^2.2.9",
     "google-auth-library": "^8.6.0",
     "googleapis": "105",
+    "ioredis": "^5.2.4",
     "lodash": "^4.17.21",
     "next": "13.0.0",
     "next-auth": "^4.15.0",
