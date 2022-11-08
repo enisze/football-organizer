@@ -12,7 +12,8 @@ export const Dashboard: FunctionComponent = () => {
 
   const isAdmin = useIsAdmin();
   return (
-    <>
+    <div className="flex flex-col items-center justify-center">
+      {isAdmin && <AdminBoard />}
       <List>
         {map(events, (event) => {
           return (
@@ -22,8 +23,6 @@ export const Dashboard: FunctionComponent = () => {
           );
         })}
       </List>
-
-      {isAdmin && <AdminBoard />}
-    </>
+    </div>
   );
 };
