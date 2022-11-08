@@ -1,7 +1,10 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import axios from "axios";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
+
+const LATLONG_KEY = process.env.LATLONG_API_KEY;
 
 export const eventRouter = router({
   create: protectedProcedure
@@ -83,5 +86,21 @@ export const eventRouter = router({
         data: { booked: true },
         where: { id: input.id },
       });
+    }),
+  getLatLong: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx: { prisma }, input }) => {
+      const event = await prisma.event.findUnique({ where: { id: input.id } });
+
+      try {
+        const res = await axios.get(
+          "https://api.positionstack.com/v1/forward?access_key=ae82b24da76e7f55f0c76623f267cb71&query=Koeln"
+        );
+        console.log(res);
+      } catch (error) {
+        console.log(error);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+      }
+      return "done";
     }),
 });

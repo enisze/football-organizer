@@ -37,6 +37,8 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
     { eventId: event.id },
     { enabled: isAdmin }
   );
+
+  const a = trpc.event.getLatLong.useQuery({ id: event.id });
   return (
     <section className="flex w-[500px] flex-col justify-center gap-2 rounded border-2 border-gray-500 bg-gray-600 p-6 text-white shadow-xl duration-500 motion-safe:hover:scale-105">
       <div className="flex items-center gap-x-2">
