@@ -4,9 +4,10 @@ import { filter, find } from "lodash";
 import { useSession } from "next-auth/react";
 import { useMemo, useRef } from "react";
 import { getEuroAmount } from "../helpers/getEuroAmount";
+import { isDateInCertainRange } from "../helpers/isDateInCertainRange";
 import { trpc } from "../utils/trpc";
 
-export const useUserPaidEvent = (eventId: string) => {
+export const useUserPaidEvent = (eventId: string, bookingDate: Date) => {
   const { data: session } = useSession();
 
   const trpcContext = trpc.useContext();
@@ -58,7 +59,20 @@ export const useUserPaidEvent = (eventId: string) => {
       }
     ) as gmail_v1.Schema$Message[];
 
-    const paymentMissing = paymentsFromMailNotInDatabase[0];
+    const filteredPaymentsByEventDate = filter(
+      paymentsFromMailNotInDatabase,
+      (payment) => {
+        if (!payment.internalDate) return false;
+
+        const paymentDate = new Date(Number(payment.internalDate));
+        console.log(paymentDate);
+
+        console.log(isDateInCertainRange(paymentDate, bookingDate));
+        return isDateInCertainRange(paymentDate, bookingDate);
+      }
+    );
+
+    const paymentMissing = filteredPaymentsByEventDate[0];
     if (!paymentMissing?.snippet) return false;
 
     const amount = getEuroAmount(paymentMissing.snippet);
@@ -75,7 +89,14 @@ export const useUserPaidEvent = (eventId: string) => {
     }
 
     return true;
-  }, [allPayments, data, createPayment, eventId, session?.user?.name]);
+  }, [
+    allPayments,
+    data,
+    createPayment,
+    eventId,
+    session?.user?.name,
+    bookingDate,
+  ]);
 
   return isPaid;
 };
