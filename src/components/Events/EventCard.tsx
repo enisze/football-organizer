@@ -90,24 +90,27 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
             </div>
           );
         })}
-      {isAdmin &&
-        map(payments, (payment) => {
-          return (
-            !participants.includes(payment.user) && (
-              <div key={payment.id}>
-                <Typography variant="soft">
-                  Bezahlt aber nicht teilgenommen
-                </Typography>
-                <div key={payment.id} className="flex items-center gap-x-2">
-                  <div>{payment?.user.name}</div>
-                  <div>{payment?.amount + " €"}</div>
-                  <div>{payment?.paymentDate.toDateString()}</div>
-                  <Chip color="success">Bezahlt</Chip>
+      {isAdmin && (
+        <>
+          <Typography variant="soft">
+            Bezahlt aber nicht teilgenommen
+          </Typography>
+          {map(payments, (payment) => {
+            return (
+              !isUserParticipating && (
+                <div key={payment.id}>
+                  <div key={payment.id} className="flex items-center gap-x-2">
+                    <div>{payment?.user.name}</div>
+                    <div>{payment?.amount + " €"}</div>
+                    <div>{payment?.paymentDate.toDateString()}</div>
+                    <Chip color="success">Bezahlt</Chip>
+                  </div>
                 </div>
-              </div>
-            )
-          );
-        })}
+              )
+            );
+          })}
+        </>
+      )}
       {isAdmin && <DeleteEventButton id={id} />}
 
       {isAdmin && <BookEventButton id={id} />}
