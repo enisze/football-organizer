@@ -1,4 +1,4 @@
-import { Chip, Sheet, Typography } from "@mui/joy";
+import { Card, Chip, Sheet, Typography } from "@mui/joy";
 import type { Event, User } from "@prisma/client";
 import { differenceInDays } from "date-fns";
 import { find, map } from "lodash";
@@ -38,14 +38,14 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
     { enabled: isAdmin }
   );
 
-  const { data } = trpc.event.getLatLong.useQuery({
+  const { data } = trpc.map.getLatLong.useQuery({
     id: event.id,
     address: event.address,
   });
   console.log(data);
 
   return (
-    <section className="flex w-[500px] flex-col justify-center gap-2 rounded border-2 border-gray-500 bg-gray-600 p-6 text-white shadow-xl duration-500 motion-safe:hover:scale-105">
+    <Card className="flex w-[500px] flex-col justify-center gap-2 rounded border-2 border-gray-500 bg-gray-600 p-6 text-white shadow-xl duration-500 motion-safe:hover:scale-105">
       <div className="flex items-center gap-x-2">
         <Typography className="text-white">{eventString}</Typography>
 
@@ -128,6 +128,6 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
       {isUserParticipating && <AddToCalendarButton event={event} />}
       <PaymentArea eventId={event.id} />
-    </section>
+    </Card>
   );
 };

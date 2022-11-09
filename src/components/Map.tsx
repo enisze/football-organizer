@@ -30,5 +30,9 @@ export const OrganizerMap: FunctionComponent<PropsWithChildren> = ({
     setMap(initialMap);
   }, []);
 
-  return <div style={{ height: "100vh", width: "100%" }} ref={mapElement} />;
+  return (
+    <div style={{ height: "100vh", width: "100%" }} ref={mapElement}>
+      {children}
+    </div>
+  );
 };

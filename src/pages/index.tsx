@@ -2,10 +2,8 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { AuthShowcase } from "../components/AuthShowCase";
 import { OrganizerMap } from "../components/Map";
-import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
-  const { data } = trpc.auth.addToRedis.useQuery();
   return (
     <div>
       <div

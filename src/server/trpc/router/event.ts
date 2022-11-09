@@ -1,10 +1,9 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { getAddressAndCoordinatesRedisKeys } from "../../../helpers/getAddressAndCoordinatesRedisKeys";
+import { redis } from "../../redis/redis";
 
-import axios from "axios";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
-
-const LATLONG_KEY = process.env.LATLONG_API_KEY;
 
 export const eventRouter = router({
   create: protectedProcedure
@@ -77,6 +76,11 @@ export const eventRouter = router({
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx: { prisma }, input }) => {
+      const { addressKey, coordinatesKey } = getAddressAndCoordinatesRedisKeys(
+        input.id
+      );
+      await redis.del(addressKey);
+      await redis.del(coordinatesKey);
       return await prisma.event.delete({ where: { id: input.id } });
     }),
   book: protectedProcedure
@@ -86,21 +90,5 @@ export const eventRouter = router({
         data: { booked: true },
         where: { id: input.id },
       });
-    }),
-  getLatLong: protectedProcedure
-    .input(z.object({ id: z.string(), address: z.string() }))
-    .query(async ({ ctx: { prisma }, input }) => {
-      const event = await prisma.event.findUnique({ where: { id: input.id } });
-
-      try {
-        const res = await axios.post(
-          `http://api.positionstack.com/v1/forward?access_key=${process.env.LATLONG_API_KEY}&query=${input.address}`
-        );
-        console.log(res);
-        return res;
-      } catch (error) {
-        console.log(error);
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
-      }
     }),
 });
