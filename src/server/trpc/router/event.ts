@@ -88,19 +88,19 @@ export const eventRouter = router({
       });
     }),
   getLatLong: protectedProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ id: z.string(), address: z.string() }))
     .query(async ({ ctx: { prisma }, input }) => {
       const event = await prisma.event.findUnique({ where: { id: input.id } });
 
       try {
-        const res = await axios.get(
-          "https://api.positionstack.com/v1/forward?access_key=ae82b24da76e7f55f0c76623f267cb71&query=Koeln"
+        const res = await axios.post(
+          `http://api.positionstack.com/v1/forward?access_key=${process.env.LATLONG_API_KEY}&query=${input.address}`
         );
         console.log(res);
+        return res;
       } catch (error) {
         console.log(error);
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       }
-      return "done";
     }),
 });
