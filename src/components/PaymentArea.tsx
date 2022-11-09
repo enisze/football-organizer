@@ -8,7 +8,7 @@ const paypalLink =
 
 export const PaymentArea: FunctionComponent<{
   eventId: string;
-  bookingDate: Date;
+  bookingDate: Date | null;
 }> = ({ eventId, bookingDate }) => {
   const { data: payment } = trpc.payment.get.useQuery({ eventId });
   const userPaid = useUserPaidEvent(eventId, bookingDate);

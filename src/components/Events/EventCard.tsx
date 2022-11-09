@@ -120,7 +120,6 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
       />
 
       {isUserParticipating && <AddToCalendarButton event={event} />}
-      {/*TODO booking Date not event date */}
       <PaymentArea eventId={event.id} bookingDate={event.date} />
     </section>
   );

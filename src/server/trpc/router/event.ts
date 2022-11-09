@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { subDays } from "date-fns";
 import { z } from "zod";
 
 import { protectedProcedure, publicProcedure, router } from "../trpc";
@@ -80,7 +81,7 @@ export const eventRouter = router({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx: { prisma }, input }) => {
       return await prisma.event.update({
-        data: { booked: true },
+        data: { booked: true, bookingDate: subDays(new Date(), 1) },
         where: { id: input.id },
       });
     }),

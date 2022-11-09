@@ -54,4 +54,9 @@ export const paymentRouter = router({
         include: { user: true },
       });
     }),
+  deleteAllPayments: protectedProcedure.query(async ({ ctx: { prisma } }) => {
+    return await prisma.payment.deleteMany({
+      where: { amount: { gte: 0 } },
+    });
+  }),
 });

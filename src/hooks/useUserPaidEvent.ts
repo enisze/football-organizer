@@ -7,7 +7,9 @@ import { getEuroAmount } from "../helpers/getEuroAmount";
 import { isDateInCertainRange } from "../helpers/isDateInCertainRange";
 import { trpc } from "../utils/trpc";
 
-export const useUserPaidEvent = (eventId: string, bookingDate: Date) => {
+const AMOUNT_LIST = [4.5, 5, 10, 11];
+
+export const useUserPaidEvent = (eventId: string, bookingDate: Date | null) => {
   const { data: session } = useSession();
 
   const trpcContext = trpc.useContext();
@@ -25,6 +27,7 @@ export const useUserPaidEvent = (eventId: string, bookingDate: Date) => {
 
   const isPaid = useMemo(() => {
     const payment = find(allPayments, (payment) => payment.eventId === eventId);
+    if (!bookingDate) return false;
 
     //Already paid
     if (payment) return true;
@@ -59,24 +62,28 @@ export const useUserPaidEvent = (eventId: string, bookingDate: Date) => {
       }
     ) as gmail_v1.Schema$Message[];
 
-    const filteredPaymentsByEventDate = filter(
+    const filteredPaymentsByEventDateAndAmount = filter(
       paymentsFromMailNotInDatabase,
       (payment) => {
         if (!payment.internalDate) return false;
 
-        const paymentDate = new Date(Number(payment.internalDate));
-        console.log(paymentDate);
+        if (!payment.snippet) return false;
 
-        console.log(isDateInCertainRange(paymentDate, bookingDate));
-        return isDateInCertainRange(paymentDate, bookingDate);
+        const amount = getEuroAmount(payment.snippet);
+        const paymentDate = new Date(Number(payment.internalDate));
+
+        const dateInRange = isDateInCertainRange(paymentDate, bookingDate);
+        const amountInRange = AMOUNT_LIST.includes(amount);
+
+        return dateInRange && amountInRange;
       }
     );
 
-    const paymentMissing = filteredPaymentsByEventDate[0];
+    const paymentMissing = filteredPaymentsByEventDateAndAmount[0];
     if (!paymentMissing?.snippet) return false;
+    if (!paymentMissing.internalDate) return false;
 
     const amount = getEuroAmount(paymentMissing.snippet);
-    if (!paymentMissing.internalDate) return false;
 
     //Payment created
     if (!ref.current) {
