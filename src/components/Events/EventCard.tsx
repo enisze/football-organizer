@@ -1,7 +1,7 @@
 import { Card, Chip, Sheet, Typography } from "@mui/joy";
 import type { Event, User } from "@prisma/client";
 import { differenceInDays } from "date-fns";
-import { find, map } from "lodash";
+import { map } from "lodash";
 import type { FunctionComponent } from "react";
 import { useState } from "react";
 import { transformDate } from "../../helpers/transformDate";
@@ -34,10 +34,13 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
   const eventString = days > 0 ? `Event in ${days} Tagen` : "Vergangenes Event";
 
-  const { data: payments } = trpc.payment.getAllPaymentsForEvent.useQuery(
-    { eventId: event.id },
-    { enabled: isAdmin }
-  );
+  const { data: payment } = trpc.payment.get.useQuery({ eventId: id });
+
+  const { data: payments } =
+    trpc.payment.getAllPaymentsForEventFromNotParticipants.useQuery(
+      { eventId: event.id },
+      { enabled: isAdmin }
+    );
 
   const { data } = trpc.map.getLatLong.useQuery({
     id: event.id,
@@ -85,10 +88,6 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
       </Typography>
       {showParticipants &&
         map(participants, (participant) => {
-          const payment = find(
-            payments,
-            (payment) => payment.userId === participant.id
-          );
           return (
             <div key={participant.id} className="flex items-center gap-x-2">
               <div>{participant.name}</div>
@@ -109,18 +108,16 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
             Bezahlt aber nicht teilgenommen
           </Typography>
           {map(payments, (payment) => {
+            if (!payment || !payment?.user) return null;
             return (
-              !isUserParticipating &&
-              payment.eventId === event.id && (
-                <div key={payment.id}>
-                  <div key={payment.id} className="flex items-center gap-x-2">
-                    <div>{payment?.user.name}</div>
-                    <div>{payment?.amount + " €"}</div>
-                    <div>{payment?.paymentDate.toDateString()}</div>
-                    <Chip color="success">Bezahlt</Chip>
-                  </div>
+              <div key={payment.id}>
+                <div key={payment.id} className="flex items-center gap-x-2">
+                  <div>{payment?.user.name}</div>
+                  <div>{payment?.amount + " €"}</div>
+                  <div>{payment?.paymentDate.toDateString()}</div>
+                  <Chip color="success">Bezahlt</Chip>
                 </div>
-              )
+              </div>
             );
           })}
         </>

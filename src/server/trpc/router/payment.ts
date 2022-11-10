@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { map, reduce } from "lodash";
 import { z } from "zod";
 
 import { protectedProcedure, router } from "../trpc";
@@ -58,17 +59,38 @@ export const paymentRouter = router({
       });
     }
   ),
-  getAllPaymentsForEvent: protectedProcedure
+  getAllPaymentsForEventFromNotParticipants: protectedProcedure
     .input(
       z.object({
         eventId: z.string(),
       })
     )
     .query(async ({ ctx: { prisma }, input }) => {
-      return await prisma.payment.findMany({
-        where: { eventId: input.eventId },
-        include: { user: true },
+      const event = await prisma.event.findUnique({
+        where: { id: input.eventId },
+        include: { participants: true, Payment: true },
       });
+
+      const paymentsFromNotParticipants = await Promise.all(
+        map(event?.Payment, async (payment) => {
+          const participantIds = reduce(
+            event?.participants,
+            (acc: string[], user) => {
+              return [...acc, user.id];
+            },
+            []
+          );
+          if (!participantIds.includes(payment.userId)) {
+            const user = await prisma.user.findUnique({
+              where: { id: payment.userId },
+            });
+            return { ...payment, user };
+          }
+          return undefined;
+        }).filter((x) => Boolean(x))
+      );
+
+      return paymentsFromNotParticipants;
     }),
   deleteAllPayments: protectedProcedure.query(async ({ ctx: { prisma } }) => {
     return await prisma.payment.deleteMany({
