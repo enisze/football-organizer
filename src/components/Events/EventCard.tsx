@@ -11,9 +11,8 @@ import { trpc } from "../../utils/trpc";
 import { OrganizerMap } from "../OrganizerMap";
 import { PaymentArea } from "../PaymentArea";
 import { AddToCalendarButton } from "./Buttons/AddToCalendarButton";
-import { BookEventButton } from "./Buttons/BookEventButton";
-import { DeleteEventButton } from "./Buttons/DeleteEventButton";
 import { JoinOrLeaveEventButton } from "./Buttons/JoinOrLeaveEventButton";
+import { EventCardAdminArea } from "./EventCardAdminArea";
 
 type EventCardProps = {
   event: Event;
@@ -35,12 +34,6 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
   const eventString = days > 0 ? `Event in ${days} Tagen` : "Vergangenes Event";
 
   const { data: payment } = trpc.payment.get.useQuery({ eventId: id });
-
-  const { data: payments } =
-    trpc.payment.getAllPaymentsForEventFromNotParticipants.useQuery(
-      { eventId: event.id },
-      { enabled: isAdmin }
-    );
 
   const { data } = trpc.map.getLatLong.useQuery({
     id: event.id,
@@ -102,29 +95,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
             </div>
           );
         })}
-      {isAdmin && (
-        <>
-          <Typography variant="soft">
-            Bezahlt aber nicht teilgenommen
-          </Typography>
-          {map(payments, (payment) => {
-            if (!payment || !payment?.user) return null;
-            return (
-              <div key={payment.id}>
-                <div key={payment.id} className="flex items-center gap-x-2">
-                  <div>{payment?.user.name}</div>
-                  <div>{payment?.amount + " €"}</div>
-                  <div>{payment?.paymentDate.toDateString()}</div>
-                  <Chip color="success">Bezahlt</Chip>
-                </div>
-              </div>
-            );
-          })}
-        </>
-      )}
-      {isAdmin && <DeleteEventButton id={id} />}
-
-      {isAdmin && <BookEventButton id={id} />}
+      <EventCardAdminArea eventId={id} />
       <JoinOrLeaveEventButton
         id={id}
         isUserParticipating={isUserParticipating}
