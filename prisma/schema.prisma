@@ -32,6 +32,7 @@ model Payment {
   updatedAt DateTime @updatedAt
   amount    Float
   paymentDate DateTime
+  gmailMailId String
   event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)

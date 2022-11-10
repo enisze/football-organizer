@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { protectedProcedure, router } from "../trpc";
@@ -9,16 +10,31 @@ export const paymentRouter = router({
         eventId: z.string(),
         amount: z.number(),
         paymentDate: z.date(),
+        gmailMailId: z.string(),
       })
     )
     .mutation(async ({ ctx: { prisma, session }, input }) => {
-      const { eventId, amount, paymentDate } = input;
+      const { eventId, amount, paymentDate, gmailMailId } = input;
+
+      if (!session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
+      const payment = await prisma.payment.findFirst({
+        where: {
+          userId: session.user.id,
+          amount: amount,
+          paymentDate: paymentDate,
+          gmailMailId: gmailMailId,
+        },
+      });
+
+      if (payment) return null;
+
       return await prisma.payment.create({
         data: {
           eventId: eventId,
           userId: session.user.id,
           amount: amount,
           paymentDate: paymentDate,
+          gmailMailId: gmailMailId,
         },
       });
     }),

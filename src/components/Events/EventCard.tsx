@@ -110,7 +110,8 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
           </Typography>
           {map(payments, (payment) => {
             return (
-              !isUserParticipating && (
+              !isUserParticipating &&
+              payment.eventId === event.id && (
                 <div key={payment.id}>
                   <div key={payment.id} className="flex items-center gap-x-2">
                     <div>{payment?.user.name}</div>

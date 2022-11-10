@@ -1,9 +1,10 @@
 import { TRPCError } from "@trpc/server";
+import { isAfter } from "date-fns";
 import type { OAuth2ClientOptions } from "google-auth-library";
 import { OAuth2Client } from "google-auth-library";
 import type { gmail_v1 } from "googleapis";
 import { google } from "googleapis";
-import { filter, find, map } from "lodash";
+import { filter, map } from "lodash";
 import { z } from "zod";
 
 import { protectedProcedure, publicProcedure, router } from "../trpc";
@@ -15,6 +16,8 @@ const credentials: OAuth2ClientOptions = {
 };
 
 const oAuth2Client = new OAuth2Client(credentials);
+
+const PAYPAL_LABEL = "Label_3926228921657449356";
 
 const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
 
@@ -48,7 +51,10 @@ export const gmailRouter = router({
         });
 
         const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
-        const { data } = await gmail.users.messages.list({ userId: "me" });
+        const { data } = await gmail.users.messages.list({
+          userId: "me",
+          labelIds: [PAYPAL_LABEL],
+        });
 
         const result = await Promise.all(
           map(data.messages, async (label) => {
@@ -60,25 +66,20 @@ export const gmailRouter = router({
           })
         );
 
-        const filteredByPaypal = filter(result, (res) => {
-          const header = find(res.payload?.headers, (header) => {
-            return header.name === "From";
-          });
+        if (!result)
+          throw new TRPCError({ code: "NOT_FOUND", message: "No Paypal data" });
 
+        const filteredByUserAndDate = filter(result, (res) => {
+          if (!res.internalDate) return false;
+
+          const paymentDate = new Date(Number(res.internalDate));
           return (
-            res.labelIds?.includes("INBOX") &&
-            header?.value?.includes("service@paypal.de")
+            res.snippet?.includes(name) &&
+            isAfter(paymentDate, new Date("01.11.2022"))
           );
         }) as gmail_v1.Schema$Message[];
 
-        if (!filteredByPaypal)
-          throw new TRPCError({ code: "NOT_FOUND", message: "No Paypal data" });
-
-        const filteredByUser = filter(filteredByPaypal, (res) => {
-          return res.snippet?.includes(name);
-        }) as gmail_v1.Schema$Message[];
-
-        return filteredByUser;
+        return filteredByUserAndDate;
       } catch (error) {
         console.log("failed token");
         console.log(error);

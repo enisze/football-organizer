@@ -5,6 +5,7 @@ import { type AppType } from "next/app";
 import { trpc } from "../utils/trpc";
 
 import { CssVarsProvider, extendTheme, StyledEngineProvider } from "@mui/joy";
+import { PromiseQueueContextProvider } from "../contexts/PromiseQueueContext";
 import "../styles/globals.css";
 
 const theme = extendTheme({
@@ -31,7 +32,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <StyledEngineProvider injectFirst>
       <CssVarsProvider theme={theme}>
         <SessionProvider session={session}>
-          <Component {...pageProps} />
+          <PromiseQueueContextProvider>
+            <Component {...pageProps} />
+          </PromiseQueueContextProvider>
         </SessionProvider>
       </CssVarsProvider>
     </StyledEngineProvider>
