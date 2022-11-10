@@ -4,6 +4,7 @@ import { trpc } from "../utils/trpc";
 
 export const useGetUserBalance = () => {
   const { data } = useSession();
+
   const { data: allPaymentsFromUser } = trpc.payment.getAllForUser.useQuery(
     undefined,
     {

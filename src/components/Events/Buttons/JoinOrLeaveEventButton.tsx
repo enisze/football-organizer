@@ -9,10 +9,18 @@ export const JoinOrLeaveEventButton: FunctionComponent<{
 }> = ({ id, isUserParticipating }) => {
   const trpcContext = trpc.useContext();
   const { mutateAsync: joinEvent } = trpc.event.join.useMutation({
-    onSuccess: () => trpcContext.event.getAll.invalidate(),
+    onSuccess: () => {
+      trpcContext.event.getAllForUser.invalidate();
+      trpcContext.event.getAll.invalidate();
+      trpcContext.payment.getAllForUser.invalidate();
+    },
   });
   const { mutateAsync: leaveEvent } = trpc.event.leave.useMutation({
-    onSuccess: () => trpcContext.event.getAll.invalidate(),
+    onSuccess: () => {
+      trpcContext.event.getAll.invalidate();
+      trpcContext.event.getAllForUser.invalidate();
+      trpcContext.payment.getAllForUser.invalidate();
+    },
   });
 
   const joinOrLeave = async () => {
