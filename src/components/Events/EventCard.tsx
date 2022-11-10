@@ -130,7 +130,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         isUserParticipating={isUserParticipating}
       />
 
-      {isUserParticipating && <AddToCalendarButton event={event} />}
+      <AddToCalendarButton event={event} />
       <PaymentArea eventId={event.id} bookingDate={event.date} />
     </Card>
   );
