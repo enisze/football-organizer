@@ -20,6 +20,7 @@ model Event {
   startTime   String 
   endTime     String
   booked       Boolean   @default(false)
+  bookingDate  DateTime?
   address      String
   participants User[]
   Payment      Payment[]
