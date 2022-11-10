@@ -7,7 +7,7 @@ import { useState } from "react";
 import { transformDate } from "../../helpers/transformDate";
 import { useIsUserParticipating } from "../../hooks/useIsUserParticipating";
 import { trpc } from "../../utils/trpc";
-import { OrganizerMap } from "../OrganizerMap";
+import { OrganizerMap } from "../Map/OrganizerMap";
 import { PaymentArea } from "../PaymentArea";
 import { AddToCalendarButton } from "./Buttons/AddToCalendarButton";
 import { JoinOrLeaveEventButton } from "./Buttons/JoinOrLeaveEventButton";
