@@ -21,7 +21,7 @@ export const useUserPaidEvent = (eventId: string, bookingDate: Date | null) => {
   const { mutateAsync: createPayment } = trpc.payment.create.useMutation({
     onSuccess: () => {
       trpcContext.payment.getAllForUser.invalidate();
-      trpcContext.payment.get.invalidate();
+      trpcContext.payment.getByEventId.invalidate();
     },
   });
 

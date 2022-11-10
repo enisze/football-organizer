@@ -39,7 +39,21 @@ export const paymentRouter = router({
         },
       });
     }),
-  get: protectedProcedure
+
+  getByUserAndEventId: protectedProcedure
+    .input(
+      z.object({
+        eventId: z.string(),
+        userId: z.string(),
+      })
+    )
+    .query(async ({ ctx: { prisma }, input }) => {
+      const { eventId, userId } = input;
+      return await prisma.payment.findFirst({
+        where: { eventId, userId },
+      });
+    }),
+  getByEventId: protectedProcedure
     .input(
       z.object({
         eventId: z.string(),
@@ -48,10 +62,9 @@ export const paymentRouter = router({
     .query(async ({ ctx: { prisma, session }, input }) => {
       const { eventId } = input;
       return await prisma.payment.findFirst({
-        where: { eventId: eventId, userId: session.user.id },
+        where: { eventId, userId: session.user.id },
       });
     }),
-
   getAllForUser: protectedProcedure.query(
     async ({ ctx: { prisma, session } }) => {
       return await prisma.payment.findMany({

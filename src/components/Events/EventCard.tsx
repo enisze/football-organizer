@@ -5,7 +5,6 @@ import { map } from "lodash";
 import type { FunctionComponent } from "react";
 import { useState } from "react";
 import { transformDate } from "../../helpers/transformDate";
-import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { useIsUserParticipating } from "../../hooks/useIsUserParticipating";
 import { trpc } from "../../utils/trpc";
 import { OrganizerMap } from "../OrganizerMap";
@@ -13,6 +12,7 @@ import { PaymentArea } from "../PaymentArea";
 import { AddToCalendarButton } from "./Buttons/AddToCalendarButton";
 import { JoinOrLeaveEventButton } from "./Buttons/JoinOrLeaveEventButton";
 import { EventCardAdminArea } from "./EventCardAdminArea";
+import { EventCardAdminPaymentArea } from "./EventCardAdminPaymentArea";
 
 type EventCardProps = {
   event: Event;
@@ -25,15 +25,12 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 }) => {
   const { address, startTime, endTime, date, id, booked } = event;
   const isUserParticipating = useIsUserParticipating(participants);
-  const isAdmin = useIsAdmin();
   const [showParticipants, setShowParticipants] = useState(false);
 
   const currentDate = new Date();
   const days = differenceInDays(date, currentDate);
 
   const eventString = days > 0 ? `Event in ${days} Tagen` : "Vergangenes Event";
-
-  const { data: payment } = trpc.payment.get.useQuery({ eventId: id });
 
   const { data } = trpc.map.getLatLong.useQuery({
     id: event.id,
@@ -84,14 +81,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
           return (
             <div key={participant.id} className="flex items-center gap-x-2">
               <div>{participant.name}</div>
-              {payment && (
-                <>
-                  <div>{payment?.amount + " €"}</div>
-                  <div>{payment?.paymentDate.toDateString()}</div>
-                  <Chip color="success">Bezahlt</Chip>
-                </>
-              )}
-              {isAdmin && !payment && <Chip color="danger">Nicht bezahlt</Chip>}
+              <EventCardAdminPaymentArea eventId={id} userId={participant.id} />
             </div>
           );
         })}

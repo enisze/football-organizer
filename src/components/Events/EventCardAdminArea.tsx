@@ -21,30 +21,28 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
       { enabled: isAdmin }
     );
 
+  if (!isAdmin) return null;
+
   return (
     <>
-      {isAdmin && (
-        <>
-          <Typography variant="soft">
-            Bezahlt aber nicht teilgenommen
-          </Typography>
-          {map(payments, (payment) => {
-            if (!payment || !payment?.user) return null;
-            return (
-              <div key={payment.id}>
-                <div key={payment.id} className="flex items-center gap-x-2">
-                  <div>{payment?.user.name}</div>
-                  <div>{payment?.amount + " €"}</div>
-                  <div>{payment?.paymentDate.toDateString()}</div>
-                  <Chip color="success">Bezahlt</Chip>
-                </div>
+      <>
+        <Typography variant="soft">Bezahlt aber nicht teilgenommen</Typography>
+        {map(payments, (payment) => {
+          if (!payment || !payment?.user) return null;
+          return (
+            <div key={payment.id}>
+              <div key={payment.id} className="flex items-center gap-x-2">
+                <div>{payment?.user.name}</div>
+                <div>{payment?.amount + " €"}</div>
+                <div>{payment?.paymentDate.toDateString()}</div>
+                <Chip color="success">Bezahlt</Chip>
               </div>
-            );
-          })}
-        </>
-      )}
-      {isAdmin && <DeleteEventButton id={eventId} />}
-      {isAdmin && <BookEventButton id={eventId} />}
+            </div>
+          );
+        })}
+      </>
+      <DeleteEventButton id={eventId} />
+      <BookEventButton id={eventId} />
     </>
   );
 };

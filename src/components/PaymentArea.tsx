@@ -10,7 +10,7 @@ export const PaymentArea: FunctionComponent<{
   eventId: string;
   bookingDate: Date | null;
 }> = ({ eventId, bookingDate }) => {
-  const { data: payment } = trpc.payment.get.useQuery({ eventId });
+  const { data: payment } = trpc.payment.getByEventId.useQuery({ eventId });
   const userPaid = useUserPaidEvent(eventId, bookingDate);
 
   return (
