@@ -2,6 +2,7 @@ import { router } from "../trpc";
 import { authRouter } from "./auth";
 import { eventRouter } from "./event";
 import { gmailRouter } from "./gmail";
+import { mapRouter } from "./map";
 import { paymentRouter } from "./payment";
 
 export const appRouter = router({
@@ -9,6 +10,7 @@ export const appRouter = router({
   auth: authRouter,
   gmail: gmailRouter,
   payment: paymentRouter,
+  map: mapRouter,
 });
 
 // export type definition of API

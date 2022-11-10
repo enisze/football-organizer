@@ -1,6 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import { subDays } from "date-fns";
 import { z } from "zod";
+import { getAddressAndCoordinatesRedisKeys } from "../../../helpers/getAddressAndCoordinatesRedisKeys";
+import { redis } from "../../redis/redis";
 
 import { protectedProcedure, publicProcedure, router } from "../trpc";
 
@@ -75,6 +77,13 @@ export const eventRouter = router({
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx: { prisma }, input }) => {
+      const { addressKey, coordinatesKey } = getAddressAndCoordinatesRedisKeys(
+        input.id
+      );
+      await redis.connect();
+      await redis.del(addressKey);
+      await redis.del(coordinatesKey);
+      redis.disconnect();
       return await prisma.event.delete({ where: { id: input.id } });
     }),
   book: protectedProcedure

@@ -1,4 +1,4 @@
-import { Chip, Sheet, Typography } from "@mui/joy";
+import { Card, Chip, Sheet, Typography } from "@mui/joy";
 import type { Event, User } from "@prisma/client";
 import { differenceInDays } from "date-fns";
 import { find, map } from "lodash";
@@ -8,6 +8,7 @@ import { transformDate } from "../../helpers/transformDate";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { useIsUserParticipating } from "../../hooks/useIsUserParticipating";
 import { trpc } from "../../utils/trpc";
+import { OrganizerMap } from "../OrganizerMap";
 import { PaymentArea } from "../PaymentArea";
 import { AddToCalendarButton } from "./Buttons/AddToCalendarButton";
 import { BookEventButton } from "./Buttons/BookEventButton";
@@ -37,8 +38,14 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
     { eventId: event.id },
     { enabled: isAdmin }
   );
+
+  const { data } = trpc.map.getLatLong.useQuery({
+    id: event.id,
+    address: event.address,
+  });
+
   return (
-    <section className="flex w-[500px] flex-col justify-center gap-2 rounded border-2 border-gray-500 bg-gray-600 p-6 text-white shadow-xl duration-500 motion-safe:hover:scale-105">
+    <Card className="flex w-[500px] flex-col justify-center gap-2 rounded border-2 border-gray-500 bg-gray-600 p-6 text-white shadow-xl duration-500 motion-safe:hover:scale-105">
       <div className="flex items-center gap-x-2">
         <Typography className="text-white">{eventString}</Typography>
 
@@ -52,6 +59,12 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         <Typography className="text-xl font-bold text-gray-700">
           Ort und Zeit:
         </Typography>
+
+        {data && (
+          <div className="relative h-[250px] w-[350px]">
+            <OrganizerMap coordinates={data} />
+          </div>
+        )}
         <Typography className="text-lg text-gray-700">
           {"Wo: " + address}
         </Typography>
@@ -121,6 +134,6 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
       {isUserParticipating && <AddToCalendarButton event={event} />}
       <PaymentArea eventId={event.id} bookingDate={event.date} />
-    </section>
+    </Card>
   );
 };
