@@ -1,7 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { AuthShowcase } from "../components/AuthShowCase";
-import { OrganizerMap } from "../components/Map";
 
 const Home: NextPage = () => {
   return (
@@ -22,10 +21,6 @@ const Home: NextPage = () => {
           Football <span className="text-purple-300">Organizer</span> App
         </h1>
         <AuthShowcase />
-
-        <div className="relative h-[500p] w-[500px]">
-          <OrganizerMap />
-        </div>
       </main>
     </div>
   );

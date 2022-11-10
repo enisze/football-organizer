@@ -79,8 +79,10 @@ export const eventRouter = router({
       const { addressKey, coordinatesKey } = getAddressAndCoordinatesRedisKeys(
         input.id
       );
+      await redis.connect();
       await redis.del(addressKey);
       await redis.del(coordinatesKey);
+      redis.disconnect();
       return await prisma.event.delete({ where: { id: input.id } });
     }),
   book: protectedProcedure

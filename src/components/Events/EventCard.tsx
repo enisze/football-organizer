@@ -8,6 +8,7 @@ import { transformDate } from "../../helpers/transformDate";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { useIsUserParticipating } from "../../hooks/useIsUserParticipating";
 import { trpc } from "../../utils/trpc";
+import { OrganizerMap } from "../OrganizerMap";
 import { PaymentArea } from "../PaymentArea";
 import { AddToCalendarButton } from "./Buttons/AddToCalendarButton";
 import { BookEventButton } from "./Buttons/BookEventButton";
@@ -42,7 +43,6 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
     id: event.id,
     address: event.address,
   });
-  console.log(data);
 
   return (
     <Card className="flex w-[500px] flex-col justify-center gap-2 rounded border-2 border-gray-500 bg-gray-600 p-6 text-white shadow-xl duration-500 motion-safe:hover:scale-105">
@@ -59,6 +59,12 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         <Typography className="text-xl font-bold text-gray-700">
           Ort und Zeit:
         </Typography>
+
+        {data && (
+          <div className="relative h-[250px] w-[350px]">
+            <OrganizerMap coordinates={data} />
+          </div>
+        )}
         <Typography className="text-lg text-gray-700">
           {"Wo: " + address}
         </Typography>
