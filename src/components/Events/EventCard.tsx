@@ -1,4 +1,4 @@
-import { Card, Chip, Sheet, Typography } from "@mui/joy";
+import { Avatar, Card, Chip, Sheet, Typography } from "@mui/joy";
 import type { Event, User } from "@prisma/client";
 import { differenceInDays } from "date-fns";
 import { map } from "lodash";
@@ -39,7 +39,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
   return (
     <Card className="flex flex-col justify-center gap-2 rounded border-2 border-gray-500 bg-gray-600 p-6 text-white shadow-xl duration-500 motion-safe:hover:scale-105">
-      <div className="flex items-center gap-x-2">
+      <div className="flex flex-col items-center gap-y-2">
         <Typography className="text-white">{eventString}</Typography>
 
         <Chip color={booked ? "success" : "danger"}>
@@ -54,14 +54,14 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         </Typography>
 
         {data && (
-          <div className="relative h-[250px] w-[350px]">
+          <div className="relative h-[200px] w-[250px] md:h-[250px] md:w-[350px]">
             <OrganizerMap coordinates={data} />
           </div>
         )}
-        <Typography className="text-lg text-gray-700">
+        <Typography className=" text-sm text-gray-700 md:text-lg">
           {"Wo: " + address}
         </Typography>
-        <Typography className="text-lg text-gray-600">
+        <Typography className="text-sm text-gray-600 md:text-lg">
           {"Wann: " +
             transformDate(date) +
             " " +
@@ -80,6 +80,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         map(participants, (participant) => {
           return (
             <div key={participant.id} className="flex items-center gap-x-2">
+              <Avatar />
               <div>{participant.name}</div>
               <EventCardAdminPaymentArea eventId={id} userId={participant.id} />
             </div>

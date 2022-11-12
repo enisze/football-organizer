@@ -42,7 +42,7 @@ export const JoinOrLeaveEventButton: FunctionComponent<{
 
   return (
     <Button variant="outlined" color="primary" onClick={joinOrLeave}>
-      {isUserParticipating ? "Leave" : "Join"}
+      {isUserParticipating ? "Absagen" : "Zusagen"}
     </Button>
   );
 };
