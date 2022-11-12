@@ -21,6 +21,7 @@ const Home: NextPage = () => {
         <meta>
           A simple football organizer showing payments based on emails
         </meta>
+        <link rel="manifest" href="~/manifest.json" />
       </Head>
 
       {!sessionData && (
