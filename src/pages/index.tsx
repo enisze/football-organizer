@@ -18,9 +18,14 @@ const Home: NextPage = () => {
       <Head>
         <title>Football Organizer</title>
         <link rel="icon" href="/favicon.ico" />
-        <meta>
-          A simple football organizer showing payments based on emails
-        </meta>
+        <meta
+          name="googlebot"
+          content="A simple football organizer showing payments based on emails"
+        />
+        <meta
+          name="robots"
+          content="A simple football organizer showing payments based on emails"
+        />
         <link rel="manifest" href="~/manifest.json" />
       </Head>
 
