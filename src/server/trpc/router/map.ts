@@ -33,7 +33,6 @@ export const mapRouter = router({
         coordinates &&
         cachedAddress === address
       ) {
-        redis.disconnect();
         return mapCoordinatesToArray(coordinates);
       } else {
         await redis.set(addressKey, address);
@@ -48,14 +47,12 @@ export const mapRouter = router({
           const latitude = data[0].latitude;
 
           if (!latitude || !longitude) {
-            redis.disconnect();
             return null;
           }
           const coordinates = `${longitude},${latitude}`;
 
           await redis.set(coordinatesKey, coordinates);
 
-          redis.disconnect();
           return mapCoordinatesToArray(coordinates);
         } catch (error) {
           console.log(error);
