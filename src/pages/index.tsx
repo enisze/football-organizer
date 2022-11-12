@@ -18,6 +18,9 @@ const Home: NextPage = () => {
       <Head>
         <title>Football Organizer</title>
         <link rel="icon" href="/favicon.ico" />
+        <meta>
+          A simple football organizer showing payments based on emails
+        </meta>
       </Head>
 
       {!sessionData && (
