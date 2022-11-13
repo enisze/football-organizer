@@ -3,10 +3,11 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { AuthShowcase } from "../components/AuthShowCase";
 import { Heading } from "../components/Heading";
+import { LoadingWrapper } from "../components/LoadingWrapper";
 import { LoginAndLogoutButton } from "../components/LoginAndLogoutButton";
 
 const Home: NextPage = () => {
-  const { data: sessionData } = useSession();
+  const { data: sessionData, status } = useSession();
   return (
     <div>
       <div
@@ -29,16 +30,19 @@ const Home: NextPage = () => {
         <link rel="manifest" href="~/manifest.json" />
       </Head>
 
-      {!sessionData && (
-        <main
-          className="absolute top-1/2 left-1/2 flex h-full w-full flex-col items-center justify-center"
-          style={{ transform: "translate(-50%, -50%)" }}
-        >
-          <Heading />
-          <LoginAndLogoutButton />
-        </main>
-      )}
-      {sessionData && <AuthShowcase />}
+      <LoadingWrapper isLoading={status === "loading"}>
+        {!sessionData ? (
+          <main
+            className="absolute top-1/2 left-1/2 flex h-full w-full flex-col items-center justify-center"
+            style={{ transform: "translate(-50%, -50%)" }}
+          >
+            <Heading />
+            <LoginAndLogoutButton />
+          </main>
+        ) : (
+          <AuthShowcase />
+        )}
+      </LoadingWrapper>
     </div>
   );
 };

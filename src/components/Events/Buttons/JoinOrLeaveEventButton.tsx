@@ -14,6 +14,7 @@ export const JoinOrLeaveEventButton: FunctionComponent<{
       trpcContext.event.getAll.invalidate();
       trpcContext.payment.getAllForUser.invalidate();
       trpcContext.payment.getAllPaymentsForEventFromNotParticipants.invalidate();
+      trpcContext.payment.getUserBalance.invalidate();
     },
   });
   const { mutateAsync: leaveEvent } = trpc.event.leave.useMutation({
@@ -22,6 +23,7 @@ export const JoinOrLeaveEventButton: FunctionComponent<{
       trpcContext.event.getAllForUser.invalidate();
       trpcContext.payment.getAllForUser.invalidate();
       trpcContext.payment.getAllPaymentsForEventFromNotParticipants.invalidate();
+      trpcContext.payment.getUserBalance.invalidate();
     },
   });
 

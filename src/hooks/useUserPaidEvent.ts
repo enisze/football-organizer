@@ -16,8 +16,13 @@ export const useUserPaidEvent = (eventId: string, bookingDate: Date | null) => {
 
   const trpcContext = trpc.useContext();
 
-  const { data } = trpc.gmail.paypalEmails.useQuery();
-  const { data: allPayments } = trpc.payment.getAllForUser.useQuery();
+  const { data, isLoading: loadingPaypalEmails } =
+    trpc.gmail.paypalEmails.useQuery();
+  const { data: allPayments, isLoading: loadingAllPayments } =
+    trpc.payment.getAllForUser.useQuery();
+
+  const { mutateAsync: getByGmailMailid } =
+    trpc.payment.getByGmailMailid.useMutation();
   const { mutateAsync: createPayment } = trpc.payment.create.useMutation({
     onSuccess: () => {
       trpcContext.payment.getAllForUser.invalidate();
@@ -25,9 +30,12 @@ export const useUserPaidEvent = (eventId: string, bookingDate: Date | null) => {
     },
   });
 
+  const loading = loadingPaypalEmails || loadingAllPayments;
+
   const ref = useRef(false);
 
   const isPaid = useMemo(() => {
+    if (loading) return false;
     if (!bookingDate) return false;
     const payment = find(allPayments, (payment) => payment.eventId === eventId);
 
@@ -73,18 +81,34 @@ export const useUserPaidEvent = (eventId: string, bookingDate: Date | null) => {
 
     //Payment created
     if (!ref.current) {
-      queue.enqueue(async () =>
-        createPayment({
+      queue.enqueue(async () => {
+        const res = await getByGmailMailid({ gmailMailId: id });
+
+        if (res) return false;
+
+        await createPayment({
           eventId,
           amount,
           paymentDate: new Date(Number(paymentMissing.internalDate)),
           gmailMailId: id,
-        })
-      );
+        });
+
+        return true;
+      });
+
+      let wasCreated = false;
+
+      queue.on("resolve", (data) => {
+        if (data) {
+          wasCreated = true;
+        }
+      });
       ref.current = true;
+
+      return wasCreated;
     }
 
-    return true;
+    return false;
   }, [
     allPayments,
     data,
@@ -93,6 +117,8 @@ export const useUserPaidEvent = (eventId: string, bookingDate: Date | null) => {
     session?.user?.name,
     bookingDate,
     queue,
+    loading,
+    getByGmailMailid,
   ]);
 
   return isPaid;

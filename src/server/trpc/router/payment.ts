@@ -1,4 +1,3 @@
-import { TRPCError } from "@trpc/server";
 import { find, map, reduce } from "lodash";
 import { z } from "zod";
 
@@ -17,18 +16,6 @@ export const paymentRouter = router({
     .mutation(async ({ ctx: { prisma, session }, input }) => {
       const { eventId, amount, paymentDate, gmailMailId } = input;
 
-      if (!session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
-      const payment = await prisma.payment.findFirst({
-        where: {
-          userId: session.user.id,
-          amount: amount,
-          paymentDate: paymentDate,
-          gmailMailId: gmailMailId,
-        },
-      });
-
-      if (payment) return null;
-
       return await prisma.payment.create({
         data: {
           eventId: eventId,
@@ -39,7 +26,18 @@ export const paymentRouter = router({
         },
       });
     }),
-
+  getByGmailMailid: protectedProcedure
+    .input(
+      z.object({
+        gmailMailId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx: { prisma }, input }) => {
+      const { gmailMailId } = input;
+      return await prisma.payment.findFirst({
+        where: { gmailMailId },
+      });
+    }),
   getByUserAndEventId: protectedProcedure
     .input(
       z.object({
