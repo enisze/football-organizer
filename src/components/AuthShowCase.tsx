@@ -14,7 +14,7 @@ export const AuthShowcase: React.FC = () => {
   return (
     <div className=" flex flex-col items-center justify-center gap-2">
       <Heading />
-      <div className="pb-3">
+      <div className="flex flex-col items-center pb-3">
         <Typography fontSize={"xl"}>Eingeloggt als: </Typography>
         <div className="flex items-center justify-center gap-x-2">
           <LoadingWrapper isLoading={status === "loading"}>
