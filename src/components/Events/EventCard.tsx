@@ -1,4 +1,4 @@
-import { Avatar, Card, Chip, Sheet, Typography } from "@mui/joy";
+import { Avatar, Button, Card, Chip, Sheet, Typography } from "@mui/joy";
 import type { Event, User } from "@prisma/client";
 import { differenceInDays } from "date-fns";
 import { map } from "lodash";
@@ -63,21 +63,21 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
             </LoadingWrapper>
           </div>
         )}
-        <Typography className=" text-sm text-gray-700 md:text-lg">
+        <Typography className=" text-sm text-gray-700 md:text-lg ">
           Wo: <span className="font-bold">{address}</span>
         </Typography>
         <Typography className="text-sm text-gray-600 md:text-lg">
           Wann: <span className="font-bold">{dateString}</span>
         </Typography>
       </Sheet>
-      <Typography
+      <Button
         variant="soft"
         color={"info"}
-        sx={{ cursor: "pointer" }}
+        className="bg-purple-300"
         onClick={() => setShowParticipants(!showParticipants)}
       >
         {participantsString}
-      </Typography>
+      </Button>
       {showParticipants &&
         map(participants, (participant) => {
           return (

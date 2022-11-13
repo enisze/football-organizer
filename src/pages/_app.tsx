@@ -13,7 +13,6 @@ const theme = extendTheme({
     light: {
       palette: {
         primary: {
-          softBg: "#73C8A9",
           outlinedBg: "#73C8A9",
           outlinedHoverBg: "#373B44",
           outlinedColor: "#73C8A9",
