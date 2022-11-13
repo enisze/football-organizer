@@ -16,7 +16,7 @@ export const PaymentArea: FunctionComponent<{
   return (
     <div className="flex justify-center">
       {!userPaid && (
-        <Link variant="solid" href={paypalLink}>
+        <Link variant="solid" href={paypalLink} underline="none">
           Bezahlen per Paypal
         </Link>
       )}

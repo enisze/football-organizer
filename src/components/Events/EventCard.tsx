@@ -96,7 +96,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
       />
 
       <AddToCalendarButton event={event} />
-      <PaymentArea eventId={event.id} bookingDate={event.date} />
+      <PaymentArea eventId={event.id} bookingDate={event.bookingDate} />
     </Card>
   );
 };

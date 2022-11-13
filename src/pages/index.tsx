@@ -30,7 +30,7 @@ const Home: NextPage = () => {
         <link rel="manifest" href="~/manifest.json" />
       </Head>
 
-      <LoadingWrapper isLoading={status === "loading"}>
+      <LoadingWrapper isLoading={status === "loading"} center>
         {!sessionData ? (
           <main
             className="absolute top-1/2 left-1/2 flex h-full w-full flex-col items-center justify-center"
