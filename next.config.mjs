@@ -6,7 +6,25 @@
 !process.env.SKIP_ENV_VALIDATION && (await import("./src/env/server.mjs"));
 
 /** @type {import("next").NextConfig} */
+// const config = {
+//   reactStrictMode: true,
+//   swcMinify: true,
+//   i18n: {
+//     locales: ["en"],
+//     defaultLocale: "en",
+//   },
+// };
+
 const config = {
+  webpack(config) {
+    config.module.rules.push({
+      test: /\.svg$/i,
+      issuer: /\.[jt]sx?$/,
+      use: ["@svgr/webpack"],
+    });
+
+    return config;
+  },
   reactStrictMode: true,
   swcMinify: true,
   i18n: {
@@ -14,4 +32,5 @@ const config = {
     defaultLocale: "en",
   },
 };
+
 export default config;
