@@ -26,7 +26,7 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
 
   return (
     <>
-      <>
+      <div className="flex flex-col items-center gap-y-3">
         <LoadingWrapper isLoading={isLoading}>
           <Typography variant="soft">
             Bezahlt aber nicht teilgenommen
@@ -45,7 +45,7 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
             );
           })}
         </LoadingWrapper>
-      </>
+      </div>
       <DeleteEventButton id={eventId} />
       <BookEventButton id={eventId} />
     </>
