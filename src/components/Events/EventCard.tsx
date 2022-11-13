@@ -7,6 +7,7 @@ import { useState } from "react";
 import { transformDate } from "../../helpers/transformDate";
 import { useIsUserParticipating } from "../../hooks/useIsUserParticipating";
 import { trpc } from "../../utils/trpc";
+import { LoadingWrapper } from "../LoadingWrapper";
 import { OrganizerMap } from "../Map/OrganizerMap";
 import { PaymentArea } from "../PaymentArea";
 import { AddToCalendarButton } from "./Buttons/AddToCalendarButton";
@@ -32,7 +33,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
   const eventString = days > 0 ? `Event in ${days} Tagen` : "Vergangenes Event";
 
-  const { data } = trpc.map.getLatLong.useQuery({
+  const { data, isLoading } = trpc.map.getLatLong.useQuery({
     id: event.id,
     address: event.address,
   });
@@ -55,7 +56,9 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
         {data && (
           <div className="relative h-[200px] w-[250px] md:h-[250px] md:w-[350px]">
-            <OrganizerMap coordinates={data} />
+            <LoadingWrapper isLoading={isLoading}>
+              <OrganizerMap coordinates={data} />
+            </LoadingWrapper>
           </div>
         )}
         <Typography className=" text-sm text-gray-700 md:text-lg">

@@ -3,22 +3,20 @@ import { useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 
 export const useGetUserBalance = () => {
-  const { data } = useSession();
+  const { data, status } = useSession();
 
-  const { data: allPaymentsFromUser } = trpc.payment.getAllForUser.useQuery(
-    undefined,
-    {
+  const { data: allPaymentsFromUser, isLoading: loadingPayments } =
+    trpc.payment.getAllForUser.useQuery(undefined, {
       enabled: Boolean(data?.user),
-    }
-  );
-  const { data: allEventsFromUser } = trpc.event.getAllForUser.useQuery(
-    undefined,
-    {
+    });
+  const { data: allEventsFromUser, isLoading: loadingEvents } =
+    trpc.event.getAllForUser.useQuery(undefined, {
       enabled: Boolean(data?.user),
-    }
-  );
+    });
 
-  if (!data?.user) return 0;
+  const loading = loadingPayments || loadingEvents || status === "loading";
+
+  if (!data?.user && !loading) return { balance: 0, loading };
   const balance = reduce(
     allPaymentsFromUser,
     (acc, payment) => {
@@ -35,5 +33,5 @@ export const useGetUserBalance = () => {
     0
   );
 
-  return balance;
+  return { balance, loading };
 };

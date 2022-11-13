@@ -3,12 +3,13 @@ import { useSession } from "next-auth/react";
 import { useGetUserBalance } from "../hooks/useGetUserBalance";
 import { Dashboard } from "./Dashboard";
 import { Heading } from "./Heading";
+import { LoadingWrapper } from "./LoadingWrapper";
 import { LoginAndLogoutButton } from "./LoginAndLogoutButton";
 
 export const AuthShowcase: React.FC = () => {
-  const { data: sessionData } = useSession();
+  const { data: sessionData, status } = useSession();
 
-  const balance = useGetUserBalance();
+  const { balance, loading } = useGetUserBalance();
 
   return (
     <div className=" flex flex-col items-center justify-center gap-2">
@@ -17,9 +18,13 @@ export const AuthShowcase: React.FC = () => {
         <Typography fontSize={"xl"}>Eingeloggt als: </Typography>
         <div className="flex items-center justify-center gap-x-2">
           <Avatar size="md" />
-          <Typography>{sessionData?.user?.name}</Typography>
+          <LoadingWrapper isLoading={status === "loading"}>
+            <Typography>{sessionData?.user?.name}</Typography>
+          </LoadingWrapper>
         </div>
-        <Typography>Kontostand: {balance} €</Typography>
+        <LoadingWrapper isLoading={loading}>
+          <Typography>Kontostand: {balance} €</Typography>
+        </LoadingWrapper>
         <LoginAndLogoutButton />
       </>
       <Dashboard />
