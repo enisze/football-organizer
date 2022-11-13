@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { map, reduce } from "lodash";
+import { find, map, reduce } from "lodash";
 import { z } from "zod";
 
 import { protectedProcedure, router } from "../trpc";
@@ -70,6 +70,32 @@ export const paymentRouter = router({
       return await prisma.payment.findMany({
         where: { userId: session.user.id },
       });
+    }
+  ),
+  getUserBalance: protectedProcedure.query(
+    async ({ ctx: { prisma, session } }) => {
+      const payments = await prisma.payment.findMany({
+        where: { userId: session.user.id },
+      });
+      const events = await prisma.event.findMany({
+        where: {
+          participants: { some: { id: session.user.id } },
+        },
+      });
+      const balance = reduce(
+        payments,
+        (acc, payment) => {
+          const event = find(events, (event) => event.id === payment.eventId);
+          if (!event) {
+            return acc + payment.amount;
+          }
+
+          return acc;
+        },
+        0
+      );
+
+      return balance;
     }
   ),
   getAllPaymentsForEventFromNotParticipants: protectedProcedure

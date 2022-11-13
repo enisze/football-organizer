@@ -1,6 +1,6 @@
 import { Avatar, Typography } from "@mui/joy";
 import { useSession } from "next-auth/react";
-import { useGetUserBalance } from "../hooks/useGetUserBalance";
+import { trpc } from "../utils/trpc";
 import { Dashboard } from "./Dashboard";
 import { Heading } from "./Heading";
 import { LoadingWrapper } from "./LoadingWrapper";
@@ -9,7 +9,7 @@ import { LoginAndLogoutButton } from "./LoginAndLogoutButton";
 export const AuthShowcase: React.FC = () => {
   const { data: sessionData, status } = useSession();
 
-  const { balance, loading } = useGetUserBalance();
+  const { data: balance, isLoading } = trpc.payment.getUserBalance.useQuery();
 
   return (
     <div className=" flex flex-col items-center justify-center gap-2">
@@ -22,7 +22,7 @@ export const AuthShowcase: React.FC = () => {
             <Typography>{sessionData?.user?.name}</Typography>
           </LoadingWrapper>
         </div>
-        <LoadingWrapper isLoading={loading}>
+        <LoadingWrapper isLoading={isLoading}>
           <Typography>Kontostand: {balance} €</Typography>
         </LoadingWrapper>
         <LoginAndLogoutButton />

@@ -31,7 +31,7 @@ export const useUserPaidEvent = (eventId: string, bookingDate: Date | null) => {
     if (!bookingDate) return false;
     const payment = find(allPayments, (payment) => payment.eventId === eventId);
 
-    //Already paid
+    //Already paid by this user
     if (payment) return true;
 
     if (!session?.user?.name) return false;
