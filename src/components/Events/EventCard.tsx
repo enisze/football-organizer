@@ -38,6 +38,12 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
     address: event.address,
   });
 
+  const dateString = `${transformDate(date)} ${[startTime, endTime].join("-")}`;
+
+  const partialString = `${participants.length}/10`;
+
+  const participantsString = `Teilnehmer ${participants.length}/10`;
+
   return (
     <Card className="flex flex-col justify-center gap-2 rounded border-2 border-gray-500 bg-gray-600 p-6 text-white shadow-xl duration-500 motion-safe:hover:scale-105">
       <div className="flex flex-col items-center gap-y-2">
@@ -46,14 +52,10 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         <Chip color={booked ? "success" : "danger"}>
           {booked
             ? "Findet statt (Gebucht!)"
-            : "Zu wenige Teilnehmer (nicht gebucht!)"}
+            : `Nicht gebucht! ${partialString}`}
         </Chip>
       </div>
       <Sheet variant="outlined" sx={{ p: 4 }}>
-        <Typography className="text-xl font-bold text-gray-700">
-          Ort und Zeit:
-        </Typography>
-
         {data && (
           <div className="relative h-[200px] w-[250px] md:h-[250px] md:w-[350px]">
             <LoadingWrapper isLoading={isLoading}>
@@ -62,13 +64,10 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
           </div>
         )}
         <Typography className=" text-sm text-gray-700 md:text-lg">
-          {"Wo: " + address}
+          Wo: <span className="font-bold">{address}</span>
         </Typography>
         <Typography className="text-sm text-gray-600 md:text-lg">
-          {"Wann: " +
-            transformDate(date) +
-            " " +
-            [startTime, endTime].join("-")}
+          Wann: <span className="font-bold">{dateString}</span>
         </Typography>
       </Sheet>
       <Typography
@@ -77,7 +76,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         sx={{ cursor: "pointer" }}
         onClick={() => setShowParticipants(!showParticipants)}
       >
-        Teilnehmer {participants.length}/10:
+        {participantsString}
       </Typography>
       {showParticipants &&
         map(participants, (participant) => {

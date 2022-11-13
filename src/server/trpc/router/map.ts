@@ -17,6 +17,7 @@ export const mapRouter = router({
       try {
         await redis.ping();
       } catch (error) {
+        console.log("connecting");
         await redis.connect();
       }
 
