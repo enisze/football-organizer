@@ -17,8 +17,8 @@ export const AuthShowcase: React.FC = () => {
       <div className="pb-3">
         <Typography fontSize={"xl"}>Eingeloggt als: </Typography>
         <div className="flex items-center justify-center gap-x-2">
-          <Avatar size="md" />
           <LoadingWrapper isLoading={status === "loading"}>
+            <Avatar size="md" />
             <Typography>{sessionData?.user?.name}</Typography>
           </LoadingWrapper>
         </div>
