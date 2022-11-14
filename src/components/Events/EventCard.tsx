@@ -49,6 +49,12 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
       <div className="flex flex-col items-center gap-y-2">
         <Typography className="text-white">{eventString}</Typography>
 
+        <PaymentArea
+          eventId={event.id}
+          bookingDate={event.date}
+          cost={event.cost}
+        />
+
         <Chip color={booked ? "success" : "danger"}>
           {booked
             ? "Findet statt (Gebucht!)"
@@ -95,7 +101,6 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
       />
 
       <AddToCalendarButton event={event} />
-      <PaymentArea eventId={event.id} bookingDate={event.bookingDate} />
     </Card>
   );
 };

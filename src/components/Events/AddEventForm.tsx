@@ -13,11 +13,24 @@ export const AddEventForm: FunctionComponent = () => {
   return (
     <div>
       <Formik
-        initialValues={{ address: "", date: "", startTime: "", endTime: "" }}
+        initialValues={{
+          address: "",
+          date: "",
+          startTime: "",
+          endTime: "",
+          cost: 45,
+        }}
         onSubmit={(values, { setSubmitting }) => {
-          const { address, startTime, endTime } = values;
+          const { address, startTime, endTime, cost } = values;
           const date = new Date(values.date);
-          createEvent({ address, date, startTime, endTime, booked: false });
+          createEvent({
+            address,
+            date,
+            startTime,
+            endTime,
+            booked: false,
+            cost,
+          });
           setSubmitting(false);
         }}
       >
@@ -37,7 +50,6 @@ export const AddEventForm: FunctionComponent = () => {
           >
             <TextField
               label="Address"
-              placeholder="Type in here…"
               variant="outlined"
               name="address"
               onChange={handleChange}
@@ -48,7 +60,6 @@ export const AddEventForm: FunctionComponent = () => {
 
             <TextField
               label="Datum"
-              placeholder="Type in here…"
               variant="outlined"
               type="date"
               name="date"
@@ -59,7 +70,6 @@ export const AddEventForm: FunctionComponent = () => {
 
             <TextField
               label="Startzeit"
-              placeholder="Type in here…"
               variant="outlined"
               type="time"
               name="startTime"
@@ -69,13 +79,23 @@ export const AddEventForm: FunctionComponent = () => {
             />
             <TextField
               label="Endzeit"
-              placeholder="Type in here…"
               variant="outlined"
               type="time"
               name="endTime"
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.endTime}
+            />
+
+            <TextField
+              label="Kosten"
+              variant="outlined"
+              name="cost"
+              type="number"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.cost}
+              helperText={errors.cost && touched.cost}
             />
             <Button
               color="primary"

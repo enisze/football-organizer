@@ -1,4 +1,4 @@
-import { Chip, Link } from "@mui/joy";
+import { Chip, Link, Typography } from "@mui/joy";
 import type { FunctionComponent } from "react";
 import { useUserPaidEvent } from "../hooks/useUserPaidEvent";
 import { trpc } from "../utils/trpc";
@@ -9,12 +9,19 @@ const paypalLink =
 export const PaymentArea: FunctionComponent<{
   eventId: string;
   bookingDate: Date | null;
-}> = ({ eventId, bookingDate }) => {
+  cost: number;
+}> = ({ eventId, bookingDate, cost }) => {
   const { data: payment } = trpc.payment.getByEventId.useQuery({ eventId });
   const userPaid = useUserPaidEvent(eventId, bookingDate);
 
   return (
-    <div className="flex justify-center">
+    <div className="flex flex-col items-center justify-center gap-y-2">
+      <Typography className="text-white">
+        Preis pro Person:{" "}
+        <Typography variant="outlined" className="text-green-600">
+          {bookingDate ? `${cost / 10} €` : "unbekannt"}
+        </Typography>
+      </Typography>
       {!userPaid && (
         <Link variant="solid" href={paypalLink} underline="none">
           Bezahlen per Paypal
