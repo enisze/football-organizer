@@ -51,7 +51,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
         <PaymentArea
           eventId={event.id}
-          bookingDate={event.date}
+          bookingDate={event.bookingDate}
           cost={event.cost}
         />
 
