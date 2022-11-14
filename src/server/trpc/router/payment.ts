@@ -79,8 +79,9 @@ export const paymentRouter = router({
         where: {
           participants: { some: { id: session.user.id } },
         },
+        include: { payments: true },
       });
-      const balance = reduce(
+      const paidBalance = reduce(
         payments,
         (acc, payment) => {
           const event = find(events, (event) => event.id === payment.eventId);
@@ -93,7 +94,22 @@ export const paymentRouter = router({
         0
       );
 
-      return balance;
+      const unpaidBalance = reduce(
+        events,
+        (acc, event) => {
+          const payment = find(
+            event.payments,
+            (payment) => payment.userId === session.user.id
+          );
+          if (payment) {
+            return acc;
+          }
+          return acc + event.cost / 10;
+        },
+        0
+      );
+
+      return paidBalance + unpaidBalance;
     }
   ),
   getAllPaymentsForEventFromNotParticipants: protectedProcedure
@@ -105,11 +121,11 @@ export const paymentRouter = router({
     .query(async ({ ctx: { prisma }, input }) => {
       const event = await prisma.event.findUnique({
         where: { id: input.eventId },
-        include: { participants: true, Payment: true },
+        include: { participants: true, payments: true },
       });
 
       const paymentsFromNotParticipants = await Promise.all(
-        map(event?.Payment, async (payment) => {
+        map(event?.payments, async (payment) => {
           const participantIds = reduce(
             event?.participants,
             (acc: string[], user) => {

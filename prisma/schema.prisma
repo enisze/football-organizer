@@ -19,11 +19,12 @@ model Event {
   date         DateTime 
   startTime   String 
   endTime     String
+  cost        Float
   booked       Boolean   @default(false)
   bookingDate  DateTime?
   address      String
   participants User[]
-  Payment      Payment[]
+  payments      Payment[]
 }
 
 model Payment {
