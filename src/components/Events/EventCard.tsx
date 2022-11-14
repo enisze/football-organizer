@@ -7,8 +7,6 @@ import { useState } from "react";
 import { transformDate } from "../../helpers/transformDate";
 import { useIsUserParticipating } from "../../hooks/useIsUserParticipating";
 import { trpc } from "../../utils/trpc";
-import { LoadingWrapper } from "../LoadingWrapper";
-import { OrganizerMap } from "../Map/OrganizerMap";
 import { PaymentArea } from "../PaymentArea";
 import { AddToCalendarButton } from "./Buttons/AddToCalendarButton";
 import { JoinOrLeaveEventButton } from "./Buttons/JoinOrLeaveEventButton";
@@ -62,13 +60,13 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         </Chip>
       </div>
       <Sheet variant="outlined" sx={{ p: 4 }}>
-        {data && (
+        {/* {data && (
           <div className="relative h-[200px] w-[250px] md:h-[250px] md:w-[350px]">
             <LoadingWrapper isLoading={isLoading}>
               <OrganizerMap coordinates={data} />
             </LoadingWrapper>
           </div>
-        )}
+        )} */}
         <Typography className=" text-sm text-gray-700 md:text-lg ">
           Wo: <span className="font-bold">{address}</span>
         </Typography>
