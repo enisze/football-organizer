@@ -6,7 +6,6 @@ import type { FunctionComponent } from "react";
 import { useState } from "react";
 import { transformDate } from "../../helpers/transformDate";
 import { useIsUserParticipating } from "../../hooks/useIsUserParticipating";
-import { trpc } from "../../utils/trpc";
 import { PaymentArea } from "../PaymentArea";
 import { AddToCalendarButton } from "./Buttons/AddToCalendarButton";
 import { JoinOrLeaveEventButton } from "./Buttons/JoinOrLeaveEventButton";
@@ -31,10 +30,10 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
   const eventString = days > 0 ? `Event in ${days} Tagen` : "Vergangenes Event";
 
-  const { data, isLoading } = trpc.map.getLatLong.useQuery({
-    id: event.id,
-    address: event.address,
-  });
+  // const { data, isLoading } = trpc.map.getLatLong.useQuery({
+  //   id: event.id,
+  //   address: event.address,
+  // });
 
   const dateString = `${transformDate(date)} ${[startTime, endTime].join("-")}`;
 
