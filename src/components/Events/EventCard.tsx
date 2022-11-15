@@ -12,6 +12,14 @@ import { JoinOrLeaveEventButton } from "./Buttons/JoinOrLeaveEventButton";
 import { EventCardAdminArea } from "./EventCardAdminArea";
 import { EventCardAdminPaymentArea } from "./EventCardAdminPaymentArea";
 
+// const DynamicOrganizerMap = dynamic<OrganizerMapProps>(
+//   () => import("../Map/OrganizerMap").then((module) => module.OrganizerMap),
+//   {
+//     ssr: false,
+
+//   }
+// );
+
 type EventCardProps = {
   event: Event;
   participants: User[];
@@ -62,7 +70,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         {/* {data && (
           <div className="relative h-[200px] w-[250px] md:h-[250px] md:w-[350px]">
             <LoadingWrapper isLoading={isLoading}>
-              <OrganizerMap coordinates={data} />
+              <DynamicOrganizerMap coordinates={data} />
             </LoadingWrapper>
           </div>
         )} */}

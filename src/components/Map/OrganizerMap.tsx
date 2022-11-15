@@ -13,9 +13,12 @@ import View from "ol/View";
 import type { FunctionComponent, PropsWithChildren } from "react";
 import { useEffect, useRef } from "react";
 
-export const OrganizerMap: FunctionComponent<
-  PropsWithChildren<{ coordinates: number[] }>
-> = ({ children, coordinates }) => {
+export type OrganizerMapProps = PropsWithChildren<{ coordinates: number[] }>;
+
+export const OrganizerMap: FunctionComponent<OrganizerMapProps> = ({
+  children,
+  coordinates,
+}) => {
   const transformedCoordinates = fromLonLat(coordinates);
 
   const mapElement = useRef<HTMLDivElement>(null);
@@ -59,7 +62,7 @@ export const OrganizerMap: FunctionComponent<
   }, [transformedCoordinates]);
 
   return (
-    <div style={{ height: "100%", width: "100%" }} ref={mapElement}>
+    <div className={"absolute top-0 h-full w-full"} ref={mapElement}>
       {children}
     </div>
   );
