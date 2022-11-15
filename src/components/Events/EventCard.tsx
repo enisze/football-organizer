@@ -6,6 +6,7 @@ import type { FunctionComponent } from "react";
 import { useState } from "react";
 import { transformDate } from "../../helpers/transformDate";
 import { useIsUserParticipating } from "../../hooks/useIsUserParticipating";
+import { useNotifications } from "../../hooks/useNotifications";
 import { PaymentArea } from "../PaymentArea";
 import { AddToCalendarButton } from "./Buttons/AddToCalendarButton";
 import { JoinOrLeaveEventButton } from "./Buttons/JoinOrLeaveEventButton";
@@ -24,6 +25,8 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
   const { address, startTime, endTime, date, id, booked } = event;
   const isUserParticipating = useIsUserParticipating(participants);
   const [showParticipants, setShowParticipants] = useState(false);
+
+  useNotifications(isUserParticipating ? event.date.toDateString() : undefined);
 
   const currentDate = new Date();
   const days = differenceInDays(date, currentDate);
