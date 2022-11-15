@@ -27,6 +27,7 @@ export const useUserPaidEvent = (eventId: string, bookingDate: Date | null) => {
     onSuccess: () => {
       trpcContext.payment.getAllForUser.invalidate();
       trpcContext.payment.getByEventId.invalidate();
+      trpcContext.payment.getUserBalance.invalidate();
     },
   });
 
