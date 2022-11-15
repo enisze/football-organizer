@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { find, map, reduce } from "lodash";
 import { z } from "zod";
 
@@ -15,6 +16,8 @@ export const paymentRouter = router({
     )
     .mutation(async ({ ctx: { prisma, session }, input }) => {
       const { eventId, amount, paymentDate, gmailMailId } = input;
+
+      if (!session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       return await prisma.payment.create({
         data: {

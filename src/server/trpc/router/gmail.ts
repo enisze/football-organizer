@@ -74,7 +74,7 @@ export const gmailRouter = router({
 
           const paymentDate = new Date(Number(res.internalDate));
           return (
-            res.snippet?.includes(name) &&
+            res.snippet?.toLowerCase().includes(name.toLowerCase()) &&
             isAfter(paymentDate, new Date("01.11.2022"))
           );
         }) as gmail_v1.Schema$Message[];
