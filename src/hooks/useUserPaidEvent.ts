@@ -40,10 +40,28 @@ export const useUserPaidEvent = (eventId: string, bookingDate: Date | null) => {
     if (!bookingDate) return false;
     const payment = find(allPayments, (payment) => payment.eventId === eventId);
 
-    //Already paid by this user
     if (payment) return true;
 
     if (!session?.user?.name) return false;
+
+    //Special case for me
+    if (session?.user?.name === "Enis") {
+      if (!ref.current) {
+        queue.enqueue(async () => {
+          await createPayment({
+            eventId,
+            amount,
+            paymentDate: new Date(),
+            gmailMailId: "No ID",
+          });
+
+          return true;
+        });
+      }
+    }
+
+    //Already paid by this user
+
     if (!data) return false;
 
     //check if payments from mail are in payments database
