@@ -2,23 +2,26 @@ import { Avatar, Button, Card, Chip, Sheet, Typography } from "@mui/joy";
 import type { Event, User } from "@prisma/client";
 import { differenceInDays } from "date-fns";
 import { map } from "lodash";
+import dynamic from "next/dynamic";
 import type { FunctionComponent } from "react";
 import { useState } from "react";
 import { transformDate } from "../../helpers/transformDate";
 import { useIsUserParticipating } from "../../hooks/useIsUserParticipating";
+import { trpc } from "../../utils/trpc";
+import { LoadingWrapper } from "../LoadingWrapper";
+import type { OrganizerMapProps } from "../Map/OrganizerMap";
 import { PaymentArea } from "../PaymentArea";
 import { AddToCalendarButton } from "./Buttons/AddToCalendarButton";
 import { JoinOrLeaveEventButton } from "./Buttons/JoinOrLeaveEventButton";
 import { EventCardAdminArea } from "./EventCardAdminArea";
 import { EventCardAdminPaymentArea } from "./EventCardAdminPaymentArea";
 
-// const DynamicOrganizerMap = dynamic<OrganizerMapProps>(
-//   () => import("../Map/OrganizerMap").then((module) => module.OrganizerMap),
-//   {
-//     ssr: false,
-
-//   }
-// );
+const DynamicOrganizerMap = dynamic<OrganizerMapProps>(
+  () => import("../Map/OrganizerMap").then((module) => module.OrganizerMap),
+  {
+    ssr: false,
+  }
+);
 
 type EventCardProps = {
   event: Event;
@@ -38,10 +41,10 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
   const eventString = days > 0 ? `Event in ${days} Tagen` : "Vergangenes Event";
 
-  // const { data, isLoading } = trpc.map.getLatLong.useQuery({
-  //   id: event.id,
-  //   address: event.address,
-  // });
+  const { data, isLoading } = trpc.map.getLatLong.useQuery({
+    id: event.id,
+    address: event.address,
+  });
 
   const dateString = `${transformDate(date)} ${[startTime, endTime].join("-")}`;
 
@@ -67,13 +70,13 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         </Chip>
       </div>
       <Sheet variant="outlined" sx={{ p: 4 }}>
-        {/* {data && (
+        {data && (
           <div className="relative h-[200px] w-[250px] md:h-[250px] md:w-[350px]">
             <LoadingWrapper isLoading={isLoading}>
               <DynamicOrganizerMap coordinates={data} />
             </LoadingWrapper>
           </div>
-        )} */}
+        )}
         <Typography className=" text-sm text-gray-700 md:text-lg ">
           Wo: <span className="font-bold">{address}</span>
         </Typography>
