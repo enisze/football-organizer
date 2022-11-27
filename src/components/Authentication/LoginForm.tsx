@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, TextField } from "@mui/joy";
+import { Button, TextField, Typography } from "@mui/joy";
 import { signIn } from "next-auth/react";
 import type { FunctionComponent } from "react";
 import type { FieldValues } from "react-hook-form";
@@ -16,14 +16,21 @@ export const LoginForm: FunctionComponent = () => {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm({ resolver: zodResolver(loginSchema), mode: "onBlur" });
 
   const onSubmit = async (values: FieldValues) => {
-    await signIn("credentials", {
+    const res = await signIn("credentials", {
       redirect: false,
       email: values.email,
       password: values.password,
     });
+
+    if (res?.error) {
+      setError("authentication", {
+        message: "Die angegebenen Daten sind inkorrekt.",
+      });
+    }
   };
 
   return (
@@ -46,6 +53,12 @@ export const LoginForm: FunctionComponent = () => {
           error={Boolean(errors.password)}
           helperText={errors.password?.message as string}
         />
+
+        {errors.authentication?.message && (
+          <Typography color="danger">
+            {errors.authentication?.message as string}
+          </Typography>
+        )}
 
         <Button type="submit">Login</Button>
       </form>

@@ -11,7 +11,7 @@ export const LoginAndLogoutButton: FunctionComponent = () => {
 
 const SignInButton: FunctionComponent = () => {
   return (
-    <Link href={`${process.env.NEXTAUTH_URL}/signUp`}>
+    <Link href={`${process.env.NEXT_PUBLIC_BASE_URL}/signUp`}>
       <Button className="px-4 py-2 shadow-lg">Registrieren</Button>
     </Link>
   );

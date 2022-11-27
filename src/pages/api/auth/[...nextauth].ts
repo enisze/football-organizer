@@ -13,10 +13,8 @@ export const authOptions: NextAuthOptions = {
     updateAge: 1000 * 60 * 60 * 24,
     generateSessionToken: () => "testit",
   },
-  pages: {
-    // signIn: "/signUp",
-    error: "/error",
-  },
+
+  pages: { signIn: "/", newUser: "/signUp" },
   providers: [
     CredentialsProvider({
       // The name to display on the sign in form (e.g. 'Sign in with...')
@@ -27,20 +25,31 @@ export const authOptions: NextAuthOptions = {
       // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
         email: {
+          label: "Email",
           type: "email",
         },
         username: {
           label: "Name",
           type: "string",
+          placeholder: "Dein Paypal Name",
         },
-        password: { type: "password" },
-        key: { type: "string" },
+        password: { label: "Passwort", type: "password" },
+        key: { label: "Schlüssel", type: "string" },
       },
       async authorize(credentials, req) {
+        if (!credentials?.key && !credentials?.username) {
+          const user = await prisma.user.findFirst({
+            where: {
+              name: credentials?.username,
+              password: credentials?.password,
+            },
+          });
+          return user;
+        }
+
         if (
-          (credentials?.key !== process.env.AUTH_KEY &&
-            credentials?.key !== process.env.ADMIN_AUTH_KEY) ||
-          !credentials?.username
+          credentials?.key !== process.env.AUTH_KEY &&
+          credentials?.key !== process.env.ADMIN_AUTH_KEY
         )
           return null;
 
@@ -51,30 +60,16 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          const user = await prisma.user.findFirst({
-            where: { name: credentials.username },
-          });
-          if (user) {
-            return {
-              id: user.id,
-              name: user.name,
-              role: role,
-            };
-          }
-        } catch (error) {
-          console.log(error);
-        }
-
-        try {
           const createdUser = await prisma.user.create({
-            data: { name: credentials.username },
+            data: {
+              name: credentials.username,
+              email: credentials.email,
+              password: credentials.password,
+              role,
+            },
           });
 
-          return {
-            id: createdUser.id,
-            name: createdUser.name,
-            role: role,
-          };
+          return createdUser;
         } catch (error) {
           console.log(error);
         }
