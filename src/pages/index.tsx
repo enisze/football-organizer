@@ -8,6 +8,7 @@ import { LoginAndLogoutButton } from "../components/LoginAndLogoutButton";
 
 const Home: NextPage = () => {
   const { data: sessionData, status } = useSession();
+
   return (
     <div>
       <div

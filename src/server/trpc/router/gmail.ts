@@ -6,6 +6,7 @@ import type { gmail_v1 } from "googleapis";
 import { google } from "googleapis";
 import { filter, map } from "lodash";
 import { z } from "zod";
+import { sendEmail } from "../../../emails/sender";
 
 import { protectedProcedure, publicProcedure, router } from "../trpc";
 
@@ -31,6 +32,11 @@ export const gmailRouter = router({
     return authorizeUrl;
   }),
 
+  sendMailViaSMPT: publicProcedure.mutation(async ({}) => {
+    const res = await sendEmail();
+    console.log(res);
+    return res;
+  }),
   getToken: publicProcedure
     .input(z.object({ code: z.string() }))
     .query(async ({ input: { code } }) => {
