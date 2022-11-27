@@ -3,7 +3,7 @@ import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import type { FunctionComponent } from "react";
 
-export const LoginAndLogoutButton: FunctionComponent = () => {
+export const SignInAndSignOutButton: FunctionComponent = () => {
   const { data: sessionData } = useSession();
 
   return <>{sessionData ? <LogoutButton /> : <SignInButton />}</>;
