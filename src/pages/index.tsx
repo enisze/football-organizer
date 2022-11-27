@@ -32,10 +32,7 @@ const Home: NextPage = () => {
 
       <LoadingWrapper isLoading={status === "loading"} center>
         {!sessionData ? (
-          <main
-            className="absolute top-1/2 left-1/2 flex h-full w-full flex-col items-center justify-center"
-            style={{ transform: "translate(-50%, -50%)" }}
-          >
+          <main className="absolute flex h-full w-full flex-col items-center justify-center">
             <Heading />
             <LoginAndLogoutButton />
           </main>
