@@ -1,0 +1,54 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button, TextField } from "@mui/joy";
+import { signIn } from "next-auth/react";
+import type { FunctionComponent } from "react";
+import type { FieldValues } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+const loginSchema = z.object({
+  email: z.string().email({ message: "Bitte gib eine gültige Email ein." }),
+  password: z.string().min(2, { message: "Passwort fehlt" }),
+});
+
+export const LoginForm: FunctionComponent = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(loginSchema), mode: "onBlur" });
+
+  const onSubmit = async (values: FieldValues) => {
+    await signIn("credentials", {
+      redirect: false,
+      email: values.email,
+      password: values.password,
+    });
+  };
+
+  return (
+    <>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col justify-center"
+      >
+        <TextField
+          label="Email"
+          {...register("email")}
+          error={Boolean(errors.email)}
+          helperText={errors.email?.message as string}
+        />
+
+        <TextField
+          label="Passwort"
+          type="password"
+          {...register("password")}
+          error={Boolean(errors.password)}
+          helperText={errors.password?.message as string}
+        />
+
+        <Button type="submit">Login</Button>
+      </form>
+    </>
+  );
+};

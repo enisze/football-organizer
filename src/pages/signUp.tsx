@@ -1,8 +1,11 @@
-import { FunctionComponent } from "react";
+import type { FunctionComponent } from "react";
+import type { FieldValues } from "react-hook-form";
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, TextField } from "@mui/joy";
+import { getProviders, signIn } from "next-auth/react";
+import { useRouter } from "next/router";
 import { z } from "zod";
 
 const signUpSchema = z.object({
@@ -30,14 +33,29 @@ const SignUp: FunctionComponent = () => {
     formState: { errors },
   } = useForm({ resolver: zodResolver(signUpSchema), mode: "onBlur" });
 
-  const onSubmit = (data: any) => console.log(data);
+  const router = useRouter();
 
-  console.log(errors);
+  const onSubmit = async (values: FieldValues) => {
+    const res = await signIn("credentials", {
+      redirect: true,
+      email: values.email,
+      password: values.password,
+      username: values.username,
+      key: values.key,
+      callbackUrl: "/",
+    });
+    // if (res?.error) {
+    //   setError(res.error);
+    // } else {
+    //   setError(null);
+    // }
+    if (res?.url) router.push(res.url);
+  };
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="absolute flex h-full w-full flex-col items-center justify-center gap-y-2"
+      className="absolute flex h-full w-full flex-col items-center justify-center gap-y-2 bg-gray-600"
     >
       {/* register your input into the hook by invoking the "register" function */}
       <TextField
@@ -57,6 +75,7 @@ const SignUp: FunctionComponent = () => {
       <TextField
         label="Passwort"
         {...register("password")}
+        type="password"
         error={Boolean(errors.password)}
         helperText={errors.password?.message as string}
       />
@@ -67,9 +86,17 @@ const SignUp: FunctionComponent = () => {
         helperText={errors.key?.message as string}
       />
 
-      <Button type="submit">submit</Button>
+      <Button type="submit">Registrieren</Button>
     </form>
   );
 };
 
 export default SignUp;
+
+export async function getServerSideProps(context: any) {
+  return {
+    props: {
+      providers: await getProviders(),
+    },
+  };
+}

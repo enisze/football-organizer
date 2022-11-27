@@ -13,6 +13,10 @@ export const authOptions: NextAuthOptions = {
     updateAge: 1000 * 60 * 60 * 24,
     generateSessionToken: () => "testit",
   },
+  pages: {
+    // signIn: "/signUp",
+    error: "/error",
+  },
   providers: [
     CredentialsProvider({
       // The name to display on the sign in form (e.g. 'Sign in with...')
@@ -22,29 +26,33 @@ export const authOptions: NextAuthOptions = {
       // e.g. domain, username, password, 2FA token, etc.
       // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
-        name: {
+        email: {
+          type: "email",
+        },
+        username: {
           label: "Name",
           type: "string",
         },
-        password: { label: "Password", type: "password" },
+        password: { type: "password" },
+        key: { type: "string" },
       },
       async authorize(credentials, req) {
         if (
-          (credentials?.password !== process.env.AUTH_KEY &&
-            credentials?.password !== process.env.ADMIN_AUTH_KEY) ||
-          !credentials?.name
+          (credentials?.key !== process.env.AUTH_KEY &&
+            credentials?.key !== process.env.ADMIN_AUTH_KEY) ||
+          !credentials?.username
         )
           return null;
 
         let role = "user";
 
-        if (credentials.password === process.env.ADMIN_AUTH_KEY) {
+        if (credentials.key === process.env.ADMIN_AUTH_KEY) {
           role = "admin";
         }
 
         try {
           const user = await prisma.user.findFirst({
-            where: { name: credentials.name },
+            where: { name: credentials.username },
           });
           if (user) {
             return {
@@ -59,7 +67,7 @@ export const authOptions: NextAuthOptions = {
 
         try {
           const createdUser = await prisma.user.create({
-            data: { name: credentials.name },
+            data: { name: credentials.username },
           });
 
           return {
