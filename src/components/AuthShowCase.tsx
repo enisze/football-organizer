@@ -1,10 +1,10 @@
 import { Avatar, Typography } from "@mui/joy";
 import { useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
+import { LoginAndLogoutButton } from "./Authentication/LoginAndLogoutButton";
 import { Dashboard } from "./Dashboard";
 import { Heading } from "./Heading";
 import { LoadingWrapper } from "./LoadingWrapper";
-import { LoginAndLogoutButton } from "./LoginAndLogoutButton";
 
 export const AuthShowcase: React.FC = () => {
   const { data: sessionData, status } = useSession();
