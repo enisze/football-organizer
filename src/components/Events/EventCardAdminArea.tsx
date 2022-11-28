@@ -1,6 +1,7 @@
-import { Chip, Typography } from "@mui/joy";
+import { Button, Chip, Typography } from "@mui/joy";
 import { map } from "lodash";
 import type { FunctionComponent } from "react";
+import { inngest } from "../../../.inngest/inngestClient";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { trpc } from "../../utils/trpc";
 import { LoadingWrapper } from "../LoadingWrapper";
@@ -47,6 +48,14 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
         </LoadingWrapper>
       </div>
       <DeleteEventButton id={eventId} />
+      <Button
+        variant="outlined"
+        onClick={async () =>
+          await inngest.send("event/reminder", { data: { eventId } })
+        }
+      >
+        Remind
+      </Button>
       <BookEventButton id={eventId} />
     </>
   );

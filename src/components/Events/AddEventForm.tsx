@@ -33,7 +33,7 @@ export const AddEventForm: FunctionComponent = () => {
             booked: false,
             cost,
           });
-          await inngest.send("event/new", { data: { values } });
+          await inngest.send("event/new", { data: { ...values } });
           setSubmitting(false);
         }}
       >
