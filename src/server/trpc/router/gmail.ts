@@ -30,7 +30,6 @@ export const gmailRouter = router({
     });
     return authorizeUrl;
   }),
-
   getToken: publicProcedure
     .input(z.object({ code: z.string() }))
     .query(async ({ input: { code } }) => {

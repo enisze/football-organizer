@@ -1,7 +1,7 @@
 import { Avatar, Typography } from "@mui/joy";
 import { useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
-import { LoginAndLogoutButton } from "./Authentication/LoginAndLogoutButton";
+import { SignInAndSignOutButton } from "./Authentication/SignInAndSignOutButton";
 import { Dashboard } from "./Dashboard";
 import { Heading } from "./Heading";
 import { LoadingWrapper } from "./LoadingWrapper";
@@ -25,7 +25,7 @@ export const AuthShowcase: React.FC = () => {
         <LoadingWrapper isLoading={isLoading}>
           <Typography>Kontostand: {balance} €</Typography>
         </LoadingWrapper>
-        <LoginAndLogoutButton />
+        <SignInAndSignOutButton />
       </div>
       <Dashboard />
     </div>

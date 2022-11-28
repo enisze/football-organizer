@@ -1,8 +1,8 @@
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import { LoginAndLogoutButton as SignInAndLogoutButton } from "../components/Authentication/LoginAndLogoutButton";
 import { LoginForm } from "../components/Authentication/LoginForm";
+import { SignInAndSignOutButton } from "../components/Authentication/SignInAndSignOutButton";
 import { AuthShowcase } from "../components/AuthShowCase";
 import { Heading } from "../components/Heading";
 import { LoadingWrapper } from "../components/LoadingWrapper";
@@ -36,10 +36,8 @@ const Home: NextPage = () => {
         {!sessionData ? (
           <main className="absolute flex h-full w-full flex-col items-center justify-center gap-y-2">
             <Heading />
-
             <LoginForm />
-
-            <SignInAndLogoutButton />
+            <SignInAndSignOutButton />
           </main>
         ) : (
           <AuthShowcase />

@@ -1,6 +1,7 @@
 import { Button, TextField } from "@mui/joy";
 import { Formik } from "formik";
 import type { FunctionComponent } from "react";
+import { inngest } from "../../../.inngest/inngestClient";
 import { trpc } from "../../utils/trpc";
 
 export const AddEventForm: FunctionComponent = () => {
@@ -10,6 +11,7 @@ export const AddEventForm: FunctionComponent = () => {
       trpcContext.event.getAll.invalidate();
     },
   });
+
   return (
     <div>
       <Formik
@@ -20,10 +22,10 @@ export const AddEventForm: FunctionComponent = () => {
           endTime: "",
           cost: 45,
         }}
-        onSubmit={(values, { setSubmitting }) => {
+        onSubmit={async (values, { setSubmitting }) => {
           const { address, startTime, endTime, cost } = values;
           const date = new Date(values.date);
-          createEvent({
+          await createEvent({
             address,
             date,
             startTime,
@@ -31,6 +33,7 @@ export const AddEventForm: FunctionComponent = () => {
             booked: false,
             cost,
           });
+          await inngest.send("event/new", { data: { ...values } });
           setSubmitting(false);
         }}
       >

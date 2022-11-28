@@ -3,6 +3,7 @@ import NextAuth, { type NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+import { inngest } from "../../../../.inngest/inngestClient";
 import { prisma } from "../../../server/db/client";
 
 export const authOptions: NextAuthOptions = {
@@ -69,6 +70,12 @@ export const authOptions: NextAuthOptions = {
             },
           });
 
+          const { createdAt } = createdUser;
+
+          await inngest.send("user/new", {
+            data: { ...createdUser, createdAt: createdAt.toDateString() },
+          });
+
           return createdUser;
         } catch (error) {
           console.log(error);
@@ -79,10 +86,10 @@ export const authOptions: NextAuthOptions = {
   ],
   secret: process.env.JWT_SECRET,
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
+    async signIn() {
       return true;
     },
-    async jwt({ token, isNewUser, user, account, profile }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.role = user.role;
