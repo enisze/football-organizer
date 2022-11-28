@@ -1,6 +1,5 @@
 import { Chip, Link, Typography } from "@mui/joy";
 import type { FunctionComponent } from "react";
-import { useUserPaidEvent } from "../hooks/useUserPaidEvent";
 import { trpc } from "../utils/trpc";
 
 const paypalLink =
@@ -12,7 +11,9 @@ export const PaymentArea: FunctionComponent<{
   cost: number;
 }> = ({ eventId, bookingDate, cost }) => {
   const { data: payment } = trpc.payment.getByEventId.useQuery({ eventId });
-  const userPaid = useUserPaidEvent(eventId, bookingDate);
+
+  //TODO: get payment from trpc
+  const userPaid = true;
 
   return (
     <div className="flex flex-col items-center justify-center gap-y-2">
