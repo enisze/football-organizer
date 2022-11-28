@@ -1,5 +1,5 @@
 import { createFunction } from "inngest";
-import { find, forEach } from "lodash";
+import { find, forEach, reduce } from "lodash";
 import type { Event__Reminder } from "../../../../__generated__/types";
 import { sendInBlueTransport } from "../../../emails/transporter";
 
@@ -21,8 +21,16 @@ const job = async ({ event }: { event: Event__Reminder }) => {
 
   const { date, startTime, endTime, address, cost } = footballEvent;
 
+  const participantIds = reduce(
+    footballEvent.participants,
+    (acc: string[], participant) => {
+      return [...acc, participant.id];
+    },
+    []
+  );
+
   forEach(allUsers, async (user) => {
-    if (!footballEvent?.participants.includes(user)) {
+    if (!participantIds.includes(user.id)) {
       //Send event reminder
       await sendInBlueTransport.sendMail({
         from: '"Sender Name" <eniszej@gmail.com>',
