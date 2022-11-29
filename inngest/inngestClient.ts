@@ -3,5 +3,5 @@ import type { Events } from "./__generated__/types";
 
 export const inngest = new Inngest<Events>({
   name: "Football-organizer",
-  eventKey: process.env.NEXT_PUBLIC_INNGEST_EVENT_KEY,
+  eventKey: process.env.INNGEST_EVENT_KEY,
 });

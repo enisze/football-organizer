@@ -27,6 +27,7 @@ const job = async ({ event }: { event: Event__New }) => {
     });
   });
 };
+
 export const sendNewEventEmail = createFunction(
   "Send new Event Email",
   "event/new",
