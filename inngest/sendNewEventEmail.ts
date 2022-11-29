@@ -1,7 +1,7 @@
 import { createFunction } from "inngest";
 import { forEach } from "lodash";
-import type { Event__New } from "../../../../inngest/__generated__/types";
-import { sendInBlueTransport } from "../../../emails/transporter";
+import { sendInBlueTransport } from "../src/emails/transporter";
+import type { Event__New } from "./__generated__/types";
 
 const paypalLink =
   "https://www.paypal.com/paypalme/enz1994?country.x=DE&locale.x=de_DE";
