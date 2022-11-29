@@ -1,5 +1,5 @@
 import { Inngest } from "inngest";
-import { Events } from "./__generated__/types";
+import type { Events } from "./__generated__/types";
 
 export const inngest = new Inngest<Events>({
   name: "Football-organizer",

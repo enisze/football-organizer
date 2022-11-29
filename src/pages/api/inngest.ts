@@ -2,7 +2,7 @@
 import { serve } from "inngest/next";
 import { sendNewEventEmail } from "../../../inngest/sendNewEventEmail";
 import { sendPaymentAndEventReminder } from "../../../inngest/sendPaymentAndEventReminderEmails";
-export default serve("My App", [
+export default serve("Football-organizer", [
   sendNewEventEmail,
   sendPaymentAndEventReminder,
 ]);
