@@ -1,6 +1,6 @@
 import { createFunction } from "inngest";
 import { find, forEach, reduce } from "lodash";
-import type { Event__Reminder } from "../../../../__generated__/types";
+import type { Event__Reminder } from "../../../../inngest/__generated__/types";
 import { sendInBlueTransport } from "../../../emails/transporter";
 
 const paypalLink =

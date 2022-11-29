@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/joy";
 import { Formik } from "formik";
 import type { FunctionComponent } from "react";
-import { inngest } from "../../../.inngest/inngestClient";
+import { inngest } from "../../../inngest/inngestClient";
 import { trpc } from "../../utils/trpc";
 
 export const AddEventForm: FunctionComponent = () => {

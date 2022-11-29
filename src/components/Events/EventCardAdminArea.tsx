@@ -1,7 +1,7 @@
 import { Button, Chip, Typography } from "@mui/joy";
 import { map } from "lodash";
 import type { FunctionComponent } from "react";
-import { inngest } from "../../../.inngest/inngestClient";
+import { inngest } from "../../../inngest/inngestClient";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { trpc } from "../../utils/trpc";
 import { LoadingWrapper } from "../LoadingWrapper";

@@ -3,7 +3,7 @@ import NextAuth, { type NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-import { inngest } from "../../../../.inngest/inngestClient";
+import { inngest } from "../../../../inngest/inngestClient";
 import { prisma } from "../../../server/db/client";
 
 export const authOptions: NextAuthOptions = {
