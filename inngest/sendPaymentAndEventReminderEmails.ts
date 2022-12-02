@@ -23,7 +23,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
     allUsers = await prisma.user.findMany();
   } catch (error: any) {
     return {
-      status: 400,
+      statusCode: 400,
       body: { message: `No users ${error}` },
     };
   }
