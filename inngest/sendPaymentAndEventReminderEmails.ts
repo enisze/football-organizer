@@ -27,7 +27,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
   }
   return {
     status: 400,
-    body: { message: `test` },
+    body: { message: allUsers.length + " " + allUsers[0]?.email },
   };
 
   // const footballEvent = await prisma.event.findUnique({
