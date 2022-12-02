@@ -55,7 +55,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
       body: { message: "No ids" },
     };
 
-  let usersWhoGotMails: string[] = [];
+  const usersWhoGotMails: string[] = [];
 
   forEach(allUsers, async (user) => {
     if (!participantIds.includes(user.id)) {
