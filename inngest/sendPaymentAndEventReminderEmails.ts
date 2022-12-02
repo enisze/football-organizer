@@ -11,10 +11,6 @@ const paypalLink =
 
 const job = async ({ event }: { event: Event__Reminder }) => {
   const id = event.data.eventId;
-  return {
-    status: 400,
-    body: { message: "No prisma" },
-  };
 
   if (!prisma)
     return {
@@ -102,6 +98,11 @@ const job = async ({ event }: { event: Event__Reminder }) => {
       }
     }
   });
+
+  return {
+    status: 200,
+    body: { message: "Done" },
+  };
 };
 export const sendPaymentAndEventReminder = createFunction(
   "Send Payment And Event Reminder",
