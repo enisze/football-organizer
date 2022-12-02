@@ -19,7 +19,10 @@ const SignInButton: FunctionComponent = () => {
 
 const LogoutButton: FunctionComponent = () => {
   return (
-    <Button className="px-4 py-2 shadow-lg" onClick={() => signOut()}>
+    <Button
+      className="px-4 py-2 shadow-lg"
+      onClick={async () => await signOut()}
+    >
       Ausloggen
     </Button>
   );
