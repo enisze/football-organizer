@@ -1,3 +1,4 @@
+import { PrismaClient } from "@prisma/client";
 import { createFunction } from "inngest";
 import { find, forEach, reduce } from "lodash";
 import { sendInBlueTransport } from "../src/emails/transporter";
@@ -6,13 +7,15 @@ import type { Event__Reminder } from "./__generated__/types";
 const paypalLink =
   "https://www.paypal.com/paypalme/enz1994?country.x=DE&locale.x=de_DE";
 
+const prisma = new PrismaClient();
+
 const job = async ({ event }: { event: Event__Reminder }) => {
   console.log(event);
   const id = event.data.eventId;
 
-  const allUsers = await prisma?.user.findMany();
+  const allUsers = await prisma.user.findMany();
 
-  const footballEvent = await prisma?.event.findUnique({
+  const footballEvent = await prisma.event.findUnique({
     where: { id },
     include: { participants: true, payments: true },
   });
