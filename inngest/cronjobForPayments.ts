@@ -129,7 +129,6 @@ const getPaypalEmails = async () => {
     return result;
   } catch (error) {
     console.log(error);
-    return { status: 400, message: "Getting paypal emails failed" };
   }
 };
 
