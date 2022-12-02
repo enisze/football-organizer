@@ -12,9 +12,6 @@ export const PaymentArea: FunctionComponent<{
 }> = ({ eventId, bookingDate, cost }) => {
   const { data: payment } = trpc.payment.getByEventId.useQuery({ eventId });
 
-  //TODO: get payment from trpc
-  const userPaid = true;
-
   return (
     <div className="flex flex-col items-center justify-center gap-y-2">
       <Typography className="text-white">
@@ -23,12 +20,12 @@ export const PaymentArea: FunctionComponent<{
           {bookingDate ? `${cost / 10} €` : "unbekannt"}
         </Typography>
       </Typography>
-      {!userPaid && (
+      {!payment && (
         <Link variant="solid" href={paypalLink} underline="none">
           Bezahlen per Paypal
         </Link>
       )}
-      {userPaid && (
+      {payment && (
         <div className="flex items-center gap-x-2">
           {payment?.amount + "€  am " + payment?.paymentDate.toDateString()}
           <Chip color="success">Bezahlt</Chip>
