@@ -55,9 +55,13 @@ const job = async ({ event }: { event: Event__Reminder }) => {
       body: { message: "No ids" },
     };
 
+  let usersWhoGotMails;
+
   forEach(allUsers, async (user) => {
     if (!participantIds.includes(user.id)) {
       //Send event reminder
+
+      usersWhoGotMails.push(user.email);
       await sendInBlueTransport.sendMail({
         from: '"Sender Name" <eniszej@gmail.com>',
         to: user.email,
@@ -81,6 +85,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
       if (!payment) {
         //Send payment reminder
         try {
+          usersWhoGotMails.push(user.email);
           await sendInBlueTransport.sendMail({
             from: '"Sender Name" <eniszej@gmail.com>',
             to: user.email,
@@ -107,7 +112,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
 
   return {
     status: 200,
-    body: { message: "Done" },
+    body: { message: `Users who got mails: ${usersWhoGotMails} ` },
   };
 };
 export const sendPaymentAndEventReminder = createFunction(
