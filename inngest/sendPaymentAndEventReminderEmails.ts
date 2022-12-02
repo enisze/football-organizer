@@ -15,10 +15,14 @@ const job = async ({ event }: { event: Event__Reminder }) => {
 
   const allUsers = await prisma.user.findMany();
 
+  console.log("Users", allUsers);
+
   const footballEvent = await prisma.event.findUnique({
     where: { id },
     include: { participants: true, payments: true },
   });
+
+  console.log("event", footballEvent);
 
   if (!footballEvent) return;
 
