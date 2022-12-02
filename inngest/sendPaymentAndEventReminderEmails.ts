@@ -10,21 +10,18 @@ const paypalLink =
 const prisma = new PrismaClient();
 
 const job = async ({ event }: { event: Event__Reminder }) => {
-  console.log(event);
   const id = event.data.eventId;
 
   const allUsers = await prisma.user.findMany();
 
-  console.log("Users", allUsers);
+  if (!allUsers) throw new Error("No users");
 
   const footballEvent = await prisma.event.findUnique({
     where: { id },
     include: { participants: true, payments: true },
   });
 
-  console.log("event", footballEvent);
-
-  if (!footballEvent) return;
+  if (!footballEvent) throw new Error("No football event found");
 
   const { date, startTime, endTime, address, cost } = footballEvent;
 
@@ -35,6 +32,8 @@ const job = async ({ event }: { event: Event__Reminder }) => {
     },
     []
   );
+
+  if (!participantIds) throw new Error("No participant Ids");
 
   forEach(allUsers, async (user) => {
     if (!participantIds.includes(user.id)) {
