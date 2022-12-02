@@ -1,5 +1,4 @@
 import type { Event } from "@prisma/client";
-import { isAfter } from "date-fns";
 import type { OAuth2ClientOptions } from "google-auth-library";
 import { OAuth2Client } from "google-auth-library";
 import type { gmail_v1 } from "googleapis";
@@ -28,17 +27,13 @@ const job = async () => {
     (user) => {
       //Get all paypal emails from specific user
 
-      const filteredByUserAndDate = filter(result, (res) => {
+      const filteredByUser = filter(result, (res) => {
         if (!res.internalDate) return false;
 
-        const paymentDate = new Date(Number(res.internalDate));
-        return (
-          res.snippet?.toLowerCase().includes(user.name.toLowerCase()) &&
-          isAfter(paymentDate, new Date("01.11.2022"))
-        );
+        return res.snippet?.toLowerCase().includes(user.name.toLowerCase());
       }) as gmail_v1.Schema$Message[];
 
-      forEach(filteredByUserAndDate, async (email) => {
+      forEach(filteredByUser, async (email) => {
         const res = find(
           payments,
           (payment) => payment.gmailMailId === email.id
@@ -61,8 +56,8 @@ const job = async () => {
             {
               eventId: event.id,
               amount,
-              paymentDate: new Date(Number(email.internalDate)),
-              emal: user.email,
+              paymentDate: new Date(Number(email.internalDate)).toDateString(),
+              emal: user.name,
             },
           ]);
           await prisma.payment.create({
