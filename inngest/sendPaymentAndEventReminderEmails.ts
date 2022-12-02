@@ -12,12 +12,6 @@ const paypalLink =
 const job = async ({ event }: { event: Event__Reminder }) => {
   const id = event.data.eventId;
 
-  if (!prisma)
-    return {
-      status: 400,
-      body: { message: "No prisma" },
-    };
-
   let allUsers;
   try {
     allUsers = await prisma.user.findMany();

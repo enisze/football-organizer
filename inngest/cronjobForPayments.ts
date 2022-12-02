@@ -6,61 +6,81 @@ import type { gmail_v1 } from "googleapis";
 import { google } from "googleapis";
 import { createScheduledFunction } from "inngest";
 import { filter, find, forEach, map } from "lodash";
+import { PrismaClient } from "../prisma/generated/client";
 import { getEuroAmount } from "../src/helpers/getEuroAmount";
 import { isDateInCertainRange } from "../src/helpers/isDateInCertainRange";
+
+const prisma = new PrismaClient();
+
 const job = async () => {
   const result = await getPaypalEmails();
 
-  if (!result) return;
+  if (!result) return { status: 400, message: "No paypal emails" };
 
-  const events = await prisma?.event.findMany();
-  const users = await prisma?.user.findMany();
-  const payments = await prisma?.payment.findMany();
+  const events = await prisma.event.findMany();
+  const users = await prisma.user.findMany();
+  const payments = await prisma.payment.findMany();
 
-  //TODO: Check that the user name is not Enis Zejnilovic or anything similar.
-  forEach(users, (user) => {
-    //Get all paypal emails from specific user
+  const paymentsAddedForUser: any[] = [];
 
-    if (user.email === "eniszej@gmail") return;
-    const filteredByUserAndDate = filter(result, (res) => {
-      if (!res.internalDate) return false;
+  forEach(
+    filter(users, (user) => user.email !== "eniszej@gmail.com"),
+    (user) => {
+      //Get all paypal emails from specific user
 
-      const paymentDate = new Date(Number(res.internalDate));
-      return (
-        res.snippet?.toLowerCase().includes(user.name.toLowerCase()) &&
-        isAfter(paymentDate, new Date("01.11.2022"))
-      );
-    }) as gmail_v1.Schema$Message[];
+      const filteredByUserAndDate = filter(result, (res) => {
+        if (!res.internalDate) return false;
 
-    forEach(filteredByUserAndDate, async (email) => {
-      const res = find(payments, (payment) => payment.gmailMailId === email.id);
-      if (res) return;
+        const paymentDate = new Date(Number(res.internalDate));
+        return (
+          res.snippet?.toLowerCase().includes(user.name.toLowerCase()) &&
+          isAfter(paymentDate, new Date("01.11.2022"))
+        );
+      }) as gmail_v1.Schema$Message[];
 
-      const result = await isInAmountRangeAndEventBookingDate(email, events);
+      forEach(filteredByUserAndDate, async (email) => {
+        const res = find(
+          payments,
+          (payment) => payment.gmailMailId === email.id
+        );
+        if (res) return;
 
-      if (!result) return;
-      if (!email.snippet) return;
-      if (!email.id) return;
+        const result = await isInAmountRangeAndEventBookingDate(email, events);
 
-      const { conditionFulfilled, event } = result;
+        if (!result) return;
+        if (!email.snippet) return;
+        if (!email.id) return;
 
-      if (!event?.id) return;
+        const { conditionFulfilled, event } = result;
 
-      if (conditionFulfilled) {
-        const amount = getEuroAmount(email.snippet);
-        await prisma?.payment.create({
-          data: {
-            eventId: event.id,
-            amount,
-            paymentDate: new Date(Number(email.internalDate)),
-            gmailMailId: email.id,
-            userId: user.id,
-          },
-        });
-      }
-      return;
-    });
-  });
+        if (!event?.id) return;
+
+        if (conditionFulfilled) {
+          const amount = getEuroAmount(email.snippet);
+          paymentsAddedForUser.push([
+            {
+              eventId: event.id,
+              amount,
+              paymentDate: new Date(Number(email.internalDate)),
+              emal: user.email,
+            },
+          ]);
+          await prisma.payment.create({
+            data: {
+              eventId: event.id,
+              amount,
+              paymentDate: new Date(Number(email.internalDate)),
+              gmailMailId: email.id,
+              userId: user.id,
+            },
+          });
+        }
+        return;
+      });
+    }
+  );
+
+  return { message: paymentsAddedForUser };
 };
 
 export const cronjobForPayments = createScheduledFunction(
@@ -109,6 +129,7 @@ const getPaypalEmails = async () => {
     return result;
   } catch (error) {
     console.log(error);
+    return { status: 400, message: "Getting paypal emails failed" };
   }
 };
 
