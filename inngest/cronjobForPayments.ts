@@ -6,8 +6,8 @@ import type { gmail_v1 } from "googleapis";
 import { google } from "googleapis";
 import { createScheduledFunction } from "inngest";
 import { filter, find, forEach, map } from "lodash";
-import { getEuroAmount } from "../../../helpers/getEuroAmount";
-import { isDateInCertainRange } from "../../../helpers/isDateInCertainRange";
+import { getEuroAmount } from "../src/helpers/getEuroAmount";
+import { isDateInCertainRange } from "../src/helpers/isDateInCertainRange";
 const job = async () => {
   const result = await getPaypalEmails();
 
@@ -20,6 +20,8 @@ const job = async () => {
   //TODO: Check that the user name is not Enis Zejnilovic or anything similar.
   forEach(users, (user) => {
     //Get all paypal emails from specific user
+
+    if (user.email === "eniszej@gmail") return;
     const filteredByUserAndDate = filter(result, (res) => {
       if (!res.internalDate) return false;
 
