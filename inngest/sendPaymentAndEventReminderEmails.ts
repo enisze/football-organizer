@@ -1,4 +1,5 @@
 import { createFunction } from "inngest";
+import { reduce } from "lodash";
 import { PrismaClient } from "../prisma/generated/client";
 import type { Event__Reminder } from "./__generated__/types";
 
@@ -25,37 +26,39 @@ const job = async ({ event }: { event: Event__Reminder }) => {
       body: { message: `No users ${error}` },
     };
   }
+
+  const footballEvent = await prisma.event.findUnique({
+    where: { id },
+    include: { participants: true, payments: true },
+  });
+
+  if (!footballEvent)
+    return {
+      status: 400,
+      body: { message: "No football event" },
+    };
+
+  const { date, startTime, endTime, address, cost } = footballEvent;
+
+  const participantIds = reduce(
+    footballEvent.participants,
+    (acc: string[], participant) => {
+      return [...acc, participant.id];
+    },
+    []
+  );
+
+  if (!participantIds)
+    return {
+      status: 400,
+      body: { message: "No ids" },
+    };
+
   return {
-    status: 400,
-    body: { message: allUsers.length + " " + allUsers[0]?.email },
+    date,
+    startTime,
+    participantIds,
   };
-
-  // const footballEvent = await prisma.event.findUnique({
-  //   where: { id },
-  //   include: { participants: true, payments: true },
-  // });
-
-  // if (!footballEvent)
-  //   return {
-  //     status: 400,
-  //     body: { message: "No football event" },
-  //   };
-
-  // const { date, startTime, endTime, address, cost } = footballEvent;
-
-  // const participantIds = reduce(
-  //   footballEvent.participants,
-  //   (acc: string[], participant) => {
-  //     return [...acc, participant.id];
-  //   },
-  //   []
-  // );
-
-  // if (!participantIds)
-  //   return {
-  //     status: 400,
-  //     body: { message: "No ids" },
-  //   };
 
   // forEach(allUsers, async (user) => {
   //   if (!participantIds.includes(user.id)) {
