@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { subDays } from "date-fns";
 import { z } from "zod";
+import { inngest } from "../../../../inngest/inngestClient";
 import { getAddressAndCoordinatesRedisKeys } from "../../../helpers/getAddressAndCoordinatesRedisKeys";
 import { redis } from "../../redis/redis";
 
@@ -22,6 +23,10 @@ export const eventRouter = router({
     )
     .mutation(async ({ ctx: { prisma }, input }) => {
       if (!input) throw new TRPCError({ code: "BAD_REQUEST" });
+
+      await inngest.send("event/new", {
+        data: { ...input, date: input.date.toDateString() },
+      });
       return await prisma.event.create({
         data: { ...input },
       });
@@ -32,6 +37,14 @@ export const eventRouter = router({
       include: { participants: true },
     });
   }),
+  remind: protectedProcedure
+    .input(z.object({ eventId: z.string() }))
+    .mutation(async ({ input }) => {
+      const { eventId } = input;
+
+      await inngest.send("event/reminder", { data: { eventId } });
+      return true;
+    }),
 
   getAllForUser: publicProcedure.query(async ({ ctx: { session, prisma } }) => {
     if (!session) throw new TRPCError({ code: "UNAUTHORIZED" });

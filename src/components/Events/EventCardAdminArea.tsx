@@ -1,7 +1,6 @@
 import { Button, Chip, Typography } from "@mui/joy";
 import { map } from "lodash";
 import type { FunctionComponent } from "react";
-import { inngest } from "../../../.inngest/inngestClient";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { trpc } from "../../utils/trpc";
 import { LoadingWrapper } from "../LoadingWrapper";
@@ -16,6 +15,8 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
   eventId,
 }) => {
   const isAdmin = useIsAdmin();
+
+  const { mutateAsync: remind } = trpc.event.remind.useMutation();
 
   const { data: payments, isLoading } =
     trpc.payment.getAllPaymentsForEventFromNotParticipants.useQuery(
@@ -50,9 +51,7 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
       <DeleteEventButton id={eventId} />
       <Button
         variant="outlined"
-        onClick={async () =>
-          await inngest.send("event/reminder", { data: { eventId } })
-        }
+        onClick={async () => await remind({ eventId })}
       >
         Remind
       </Button>

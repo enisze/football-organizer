@@ -3,7 +3,7 @@ import NextAuth, { type NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-import { inngest } from "../../../../.inngest/inngestClient";
+import { inngest } from "../../../../inngest/inngestClient";
 import { prisma } from "../../../server/db/client";
 
 export const authOptions: NextAuthOptions = {
@@ -41,7 +41,7 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.key && !credentials?.username) {
           const user = await prisma.user.findFirst({
             where: {
-              name: credentials?.username,
+              email: credentials?.email,
               password: credentials?.password,
             },
           });
@@ -96,7 +96,7 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token, user }) {
       if (token && session.user) {
         session.user.id = token.id;
         session.user.role = token.role;

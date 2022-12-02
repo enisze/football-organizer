@@ -4,6 +4,12 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
+    // We want the output to be included within ./src/generated, as
+  // this is bundled into the final sent image.
+  //
+  // This is different to installing the generated client in node_modules.
+  output          = "./generated/client"
+  binaryTargets   = ["native"]
 }
 
 datasource db {
