@@ -1959,10 +1959,10 @@ inherits@2, inherits@^2.0.3:
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
-inngest@^0.8.2:
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/inngest/-/inngest-0.8.2.tgz#c8c0afc784d7b77e10b290a85d761ad3e2bbed36"
-  integrity sha512-aj7d1i4kEyewlc4MntC0xQ1FuxtOQlTzwsXb+dWsiL9fSsObkS32IMvq646tjxZ6cuiKQ8wAX54mEtDwz0AgAg==
+inngest@^0.8.5:
+  version "0.8.5"
+  resolved "https://registry.yarnpkg.com/inngest/-/inngest-0.8.5.tgz#35e692d04222ea62921df21c54953df011761c8b"
+  integrity sha512-y2XG+wlASXFIsQXyVWEpLxMEMBsVcszadfz8l8tU77KboSoQrJe/9F7xYkiQ4aDSXmj1D9RuwQzOxAMwIE/AUQ==
   dependencies:
     buffer "^6.0.3"
     cross-fetch "^3.1.5"

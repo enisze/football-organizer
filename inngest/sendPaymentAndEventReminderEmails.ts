@@ -14,14 +14,22 @@ const job = async ({ event }: { event: Event__Reminder }) => {
 
   const allUsers = await prisma.user.findMany();
 
-  if (!allUsers) throw new Error("No users");
+  if (!allUsers)
+    return {
+      status: 400,
+      body: { message: "No users" },
+    };
 
   const footballEvent = await prisma.event.findUnique({
     where: { id },
     include: { participants: true, payments: true },
   });
 
-  if (!footballEvent) throw new Error("No football event found");
+  if (!footballEvent)
+    return {
+      status: 400,
+      body: { message: "No football event" },
+    };
 
   const { date, startTime, endTime, address, cost } = footballEvent;
 
@@ -33,7 +41,11 @@ const job = async ({ event }: { event: Event__Reminder }) => {
     []
   );
 
-  if (!participantIds) throw new Error("No participant Ids");
+  if (!participantIds)
+    return {
+      status: 400,
+      body: { message: "No ids" },
+    };
 
   forEach(allUsers, async (user) => {
     if (!participantIds.includes(user.id)) {
