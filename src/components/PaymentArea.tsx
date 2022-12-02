@@ -1,6 +1,5 @@
 import { Chip, Link, Typography } from "@mui/joy";
 import type { FunctionComponent } from "react";
-import { useUserPaidEvent } from "../hooks/useUserPaidEvent";
 import { trpc } from "../utils/trpc";
 
 const paypalLink =
@@ -12,7 +11,6 @@ export const PaymentArea: FunctionComponent<{
   cost: number;
 }> = ({ eventId, bookingDate, cost }) => {
   const { data: payment } = trpc.payment.getByEventId.useQuery({ eventId });
-  const userPaid = useUserPaidEvent(eventId, bookingDate);
 
   return (
     <div className="flex flex-col items-center justify-center gap-y-2">
@@ -22,12 +20,12 @@ export const PaymentArea: FunctionComponent<{
           {bookingDate ? `${cost / 10} €` : "unbekannt"}
         </Typography>
       </Typography>
-      {!userPaid && (
+      {!payment && (
         <Link variant="solid" href={paypalLink} underline="none">
           Bezahlen per Paypal
         </Link>
       )}
-      {userPaid && (
+      {payment && (
         <div className="flex items-center gap-x-2">
           {payment?.amount + "€  am " + payment?.paymentDate.toDateString()}
           <Chip color="success">Bezahlt</Chip>
