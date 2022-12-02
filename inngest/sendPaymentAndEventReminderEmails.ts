@@ -55,7 +55,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
       body: { message: "No ids" },
     };
 
-  let usersWhoGotMails;
+  let usersWhoGotMails: string[] = [];
 
   forEach(allUsers, async (user) => {
     if (!participantIds.includes(user.id)) {
@@ -82,6 +82,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
         footballEvent.payments,
         (payment) => payment.userId === user.id
       );
+
       if (!payment) {
         //Send payment reminder
         try {
@@ -112,7 +113,9 @@ const job = async ({ event }: { event: Event__Reminder }) => {
 
   return {
     status: 200,
-    body: { message: `Users who got mails: ${usersWhoGotMails} ` },
+    body: {
+      message: `Users who got mails: ${usersWhoGotMails}, ${participantIds},  `,
+    },
   };
 };
 export const sendPaymentAndEventReminder = createFunction(
