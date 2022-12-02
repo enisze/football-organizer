@@ -11,6 +11,10 @@ const paypalLink =
 
 const job = async ({ event }: { event: Event__Reminder }) => {
   const id = event.data.eventId;
+  return {
+    status: 400,
+    body: { message: "No prisma" },
+  };
 
   if (!prisma)
     return {
