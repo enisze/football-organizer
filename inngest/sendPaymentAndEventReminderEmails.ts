@@ -65,7 +65,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
   <p>Datum: <strong>${date}</strong></p>
   <p>Zeit: <strong>${startTime} - ${endTime} Uhr</strong></p>
   <p>Ort: <strong>${address}</strong></p>
-  <p>Preis: <strong>${cost}</strong></p>
+  <p>Preis: <strong>${cost / 10}</strong></p>
   <a href="${paypalLink}">Hier kannst du bei Paypal bezahlen :)</a>
   <p><strong>Sag doch bitte zu und komm vorbei. </strong></p>
           `,
