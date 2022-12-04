@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import type { FunctionComponent } from "react";
 import { useState } from "react";
 import { trpc } from "../../../utils/trpc";
+import { LoadingWrapper } from "../../LoadingWrapper";
 
 export const JoinOrLeaveEventButton: FunctionComponent<{
   id: string;
@@ -10,20 +11,26 @@ export const JoinOrLeaveEventButton: FunctionComponent<{
 }> = ({ id, isUserParticipating }) => {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const trpcContext = trpc.useContext();
-  const { mutateAsync: joinEvent } = trpc.event.join.useMutation({
-    onSuccess: () => {
-      trpcContext.event.getAll.invalidate();
-      trpcContext.payment.getAllPaymentsForEventFromNotParticipants.invalidate();
-      trpcContext.payment.getUserBalance.invalidate();
-    },
-  });
-  const { mutateAsync: leaveEvent } = trpc.event.leave.useMutation({
-    onSuccess: () => {
-      trpcContext.event.getAll.invalidate();
-      trpcContext.payment.getAllPaymentsForEventFromNotParticipants.invalidate();
-      trpcContext.payment.getUserBalance.invalidate();
-    },
-  });
+
+  const [userParticipating, setUserParticipating] =
+    useState(isUserParticipating);
+
+  const { mutateAsync: joinEvent, isLoading: loadingJoin } =
+    trpc.event.join.useMutation({
+      onSuccess: () => {
+        trpcContext.event.getAll.invalidate();
+        trpcContext.payment.getAllPaymentsForEventFromNotParticipants.invalidate();
+        trpcContext.payment.getUserBalance.invalidate();
+      },
+    });
+  const { mutateAsync: leaveEvent, isLoading: loadingLeave } =
+    trpc.event.leave.useMutation({
+      onSuccess: () => {
+        trpcContext.event.getAll.invalidate();
+        trpcContext.payment.getAllPaymentsForEventFromNotParticipants.invalidate();
+        trpcContext.payment.getUserBalance.invalidate();
+      },
+    });
 
   const { data: payment } = trpc.payment.getByEventId.useQuery({ eventId: id });
 
@@ -31,12 +38,14 @@ export const JoinOrLeaveEventButton: FunctionComponent<{
     if (isUserParticipating) {
       if (!payment) {
         await leaveEvent({ eventId: id });
+        setUserParticipating(false);
       } else {
         setShowLeaveModal(true);
       }
     } else {
       try {
         await joinEvent({ eventId: id });
+        setUserParticipating(true);
       } catch (error) {
         if (error instanceof TRPCError) {
           error.code === "PRECONDITION_FAILED";
@@ -46,11 +55,15 @@ export const JoinOrLeaveEventButton: FunctionComponent<{
     }
   };
 
+  const loading = loadingJoin || loadingLeave;
+
   return (
     <>
-      <Button variant="outlined" color="primary" onClick={joinOrLeave}>
-        {isUserParticipating ? "Absagen" : "Zusagen"}
-      </Button>
+      <LoadingWrapper isLoading={loading} className="self-center">
+        <Button variant="outlined" color="primary" onClick={joinOrLeave}>
+          {userParticipating ? "Absagen" : "Zusagen"}
+        </Button>
+      </LoadingWrapper>
       <Modal
         aria-labelledby="modal-title"
         aria-describedby="modal-desc"
