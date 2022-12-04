@@ -15,10 +15,10 @@ export const AddEventForm: FunctionComponent = () => {
     <div>
       <Formik
         initialValues={{
-          address: "",
+          address: "Zülpicher Wall 1, 50674 Köln",
           date: "",
-          startTime: "",
-          endTime: "",
+          startTime: "20:00",
+          endTime: "21:30",
           cost: 45,
         }}
         onSubmit={async (values, { setSubmitting }) => {
