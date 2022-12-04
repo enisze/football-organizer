@@ -66,13 +66,6 @@ export const paymentRouter = router({
         where: { eventId, userId: session.user.id },
       });
     }),
-  getAllForUser: protectedProcedure.query(
-    async ({ ctx: { prisma, session } }) => {
-      return await prisma.payment.findMany({
-        where: { userId: session.user.id },
-      });
-    }
-  ),
   getUserBalance: protectedProcedure.query(
     async ({ ctx: { prisma, session } }) => {
       const payments = await prisma.payment.findMany({

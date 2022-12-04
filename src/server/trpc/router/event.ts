@@ -46,13 +46,6 @@ export const eventRouter = router({
       return true;
     }),
 
-  getAllForUser: publicProcedure.query(async ({ ctx: { session, prisma } }) => {
-    if (!session) throw new TRPCError({ code: "UNAUTHORIZED" });
-    const { user } = session;
-    return await prisma.event.findMany({
-      where: { participants: { some: { id: user?.id } } },
-    });
-  }),
   join: protectedProcedure
     .input(
       z.object({
@@ -105,10 +98,10 @@ export const eventRouter = router({
       return await prisma.event.delete({ where: { id: input.id } });
     }),
   book: protectedProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ id: z.string(), date: z.date() }))
     .mutation(async ({ ctx: { prisma }, input }) => {
       return await prisma.event.update({
-        data: { booked: true, bookingDate: subDays(new Date(), 1) },
+        data: { booked: true, bookingDate: subDays(input.date, 1) },
         where: { id: input.id },
       });
     }),
