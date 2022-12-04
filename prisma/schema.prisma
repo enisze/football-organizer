@@ -8,7 +8,7 @@ generator client {
   // this is bundled into the final sent image.
   //
   // This is different to installing the generated client in node_modules.
-  //output          = "./generated/client"
+  output          = "./generated/client"
   binaryTargets   = ["native"]
 }
 
