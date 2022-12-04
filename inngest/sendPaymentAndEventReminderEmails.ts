@@ -57,7 +57,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
 
       usersWhoGotMails.push(user.email);
       await sendInBlueTransport.sendMail({
-        from: '"Sender Name" <eniszej@gmail.com>',
+        from: '"Football Organizer" <eniszej@gmail.com>',
         to: user.email,
         subject: "ERINNERUNG: FUSSBALL FINDET STATT ! ",
         html: `<p>Hey ${user.name},</p>
@@ -82,7 +82,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
         try {
           usersWhoGotMails.push(user.email);
           await sendInBlueTransport.sendMail({
-            from: '"Sender Name" <eniszej@gmail.com>',
+            from: '"Football Organizer" <eniszej@gmail.com>',
             to: user.email,
             subject: "ERINNERUNG: DU HAST FUSSBALL NOCH NICHT BEZAHLT ! ",
             html: `<p>Hey ${user.name},</p>

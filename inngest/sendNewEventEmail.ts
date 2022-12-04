@@ -12,7 +12,7 @@ const job = async ({ event }: { event: Event__New }) => {
 
   forEach(allUsers, async (user) => {
     await sendInBlueTransport.sendMail({
-      from: '"Sender Name" <eniszej@gmail.com>',
+      from: '"Football Organizer" <eniszej@gmail.com>',
       to: user.email,
       subject: "EIN NEUES FUSSBALL EVENT WURDE ERSTELLT",
       html: `
