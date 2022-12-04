@@ -17,10 +17,13 @@ const job = async ({ event }: { event: Event__Reminder }) => {
     allUsers = await prisma.user.findMany();
   } catch (error: any) {
     return {
-      statusCode: 400,
-      body: { message: `No users ${error}` },
+      message: `No users ${error}`,
     };
   }
+  if (!allUsers)
+    return {
+      message: `No users found`,
+    };
 
   const footballEvent = await prisma.event.findUnique({
     where: { id },
@@ -29,8 +32,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
 
   if (!footballEvent)
     return {
-      status: 400,
-      body: { message: "No football event" },
+      message: "No football event",
     };
 
   const { date, startTime, endTime, address, cost } = footballEvent;
@@ -45,8 +47,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
 
   if (!participantIds)
     return {
-      status: 400,
-      body: { message: "No ids" },
+      message: "No ids",
     };
 
   const usersWhoGotMails: string[] = [];
@@ -99,17 +100,14 @@ const job = async ({ event }: { event: Event__Reminder }) => {
             headers: { "x-myheader": "test header" },
           });
         } catch (error: any) {
-          return { status: 400, body: { message: "sending email failed" } };
+          return { message: "sending email failed" };
         }
       }
     }
   });
 
   return {
-    status: 200,
-    body: {
-      message: `Users who got mails: ${usersWhoGotMails}, ${participantIds},  `,
-    },
+    message: `Users who got mails: ${usersWhoGotMails}, ${participantIds},  `,
   };
 };
 export const sendPaymentAndEventReminder = createFunction(
