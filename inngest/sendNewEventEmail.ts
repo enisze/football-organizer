@@ -20,6 +20,8 @@ const job = async ({ event }: { event: Event__New }) => {
 
     const { address, cost, date, endTime, startTime } = event.data;
 
+    return { address, cost, allUsers };
+
     forEach(allUsers, async (user) => {
       await sendInBlueTransport.sendMail({
         from: '"Football Organizer" <eniszej@gmail.com>',
