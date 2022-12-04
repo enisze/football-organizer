@@ -29,7 +29,6 @@ export const AddEventForm: FunctionComponent = () => {
             date,
             startTime,
             endTime,
-            booked: false,
             cost,
           });
           setSubmitting(false);
