@@ -62,7 +62,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
         subject: "ERINNERUNG: FUSSBALL FINDET STATT ! ",
         html: `<p>Hey ${user.name},</p>
           <p>Folgendes Event findet bald statt: </p>
-  <p>Datum: <strong>${date}</strong></p>
+  <p>Datum: <strong>${date.toDateString()}</strong></p>
   <p>Zeit: <strong>${startTime} - ${endTime} Uhr</strong></p>
   <p>Ort: <strong>${address}</strong></p>
   <p>Preis: <strong>${cost / 10}</strong></p>
@@ -87,7 +87,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
             subject: "ERINNERUNG: DU HAST FUSSBALL NOCH NICHT BEZAHLT ! ",
             html: `<p>Hey ${user.name},</p>
           <p>Du hast zu folgendem Event zugesagt: </p>
-  <p>Datum: <strong>${date}</strong></p>
+  <p>Datum: <strong>${date.toDateString()}</strong></p>
   <p>Zeit: <strong>${startTime} - ${endTime} Uhr</strong></p>
   <p>Ort: <strong>${address}</strong></p>
   <p>Preis: <strong>${cost / 10}</strong></p>
