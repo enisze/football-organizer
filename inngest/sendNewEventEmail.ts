@@ -1,13 +1,17 @@
 import { createFunction } from "inngest";
 import { forEach } from "lodash";
+import { PrismaClient } from "../prisma/generated/client";
 import { sendInBlueTransport } from "../src/emails/transporter";
 import type { Event__New } from "./__generated__/types";
+
+const prisma = new PrismaClient();
 
 const paypalLink =
   "https://www.paypal.com/paypalme/enz1994?country.x=DE&locale.x=de_DE";
 
 const job = async ({ event }: { event: Event__New }) => {
-  const allUsers = await prisma?.user.findMany();
+  const allUsers = await prisma.user.findMany();
+
   const { address, cost, date, endTime, startTime } = event.data;
 
   forEach(allUsers, async (user) => {
