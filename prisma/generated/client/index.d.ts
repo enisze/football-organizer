@@ -34,7 +34,7 @@ export type Event = {
  * 
  */
 export type ParticipantsOnEvents = {
-  userId: string
+  id: string
   eventId: string
   date: Date
   status: UserEventStatus
@@ -2129,21 +2129,21 @@ export namespace Prisma {
   }
 
   export type ParticipantsOnEventsMinAggregateOutputType = {
-    userId: string | null
+    id: string | null
     eventId: string | null
     date: Date | null
     status: UserEventStatus | null
   }
 
   export type ParticipantsOnEventsMaxAggregateOutputType = {
-    userId: string | null
+    id: string | null
     eventId: string | null
     date: Date | null
     status: UserEventStatus | null
   }
 
   export type ParticipantsOnEventsCountAggregateOutputType = {
-    userId: number
+    id: number
     eventId: number
     date: number
     status: number
@@ -2152,21 +2152,21 @@ export namespace Prisma {
 
 
   export type ParticipantsOnEventsMinAggregateInputType = {
-    userId?: true
+    id?: true
     eventId?: true
     date?: true
     status?: true
   }
 
   export type ParticipantsOnEventsMaxAggregateInputType = {
-    userId?: true
+    id?: true
     eventId?: true
     date?: true
     status?: true
   }
 
   export type ParticipantsOnEventsCountAggregateInputType = {
-    userId?: true
+    id?: true
     eventId?: true
     date?: true
     status?: true
@@ -2252,7 +2252,7 @@ export namespace Prisma {
 
 
   export type ParticipantsOnEventsGroupByOutputType = {
-    userId: string
+    id: string
     eventId: string
     date: Date
     status: UserEventStatus
@@ -2277,7 +2277,7 @@ export namespace Prisma {
 
   export type ParticipantsOnEventsSelect = {
     user?: boolean | UserArgs
-    userId?: boolean
+    id?: boolean
     event?: boolean | EventArgs
     eventId?: boolean
     date?: boolean
@@ -2364,8 +2364,8 @@ export namespace Prisma {
      * // Get first 10 ParticipantsOnEvents
      * const participantsOnEvents = await prisma.participantsOnEvents.findMany({ take: 10 })
      * 
-     * // Only select the `userId`
-     * const participantsOnEventsWithUserIdOnly = await prisma.participantsOnEvents.findMany({ select: { userId: true } })
+     * // Only select the `id`
+     * const participantsOnEventsWithIdOnly = await prisma.participantsOnEvents.findMany({ select: { id: true } })
      * 
     **/
     findMany<T extends ParticipantsOnEventsFindManyArgs>(
@@ -7834,7 +7834,7 @@ export namespace Prisma {
 
 
   export const ParticipantsOnEventsScalarFieldEnum: {
-    userId: 'userId',
+    id: 'id',
     eventId: 'eventId',
     date: 'date',
     status: 'status'
@@ -7989,7 +7989,7 @@ export namespace Prisma {
     OR?: Enumerable<ParticipantsOnEventsWhereInput>
     NOT?: Enumerable<ParticipantsOnEventsWhereInput>
     user?: XOR<UserRelationFilter, UserWhereInput>
-    userId?: StringFilter | string
+    id?: StringFilter | string
     event?: XOR<EventRelationFilter, EventWhereInput>
     eventId?: StringFilter | string
     date?: DateTimeFilter | Date | string
@@ -7998,7 +7998,7 @@ export namespace Prisma {
 
   export type ParticipantsOnEventsOrderByWithRelationInput = {
     user?: UserOrderByWithRelationInput
-    userId?: SortOrder
+    id?: SortOrder
     event?: EventOrderByWithRelationInput
     eventId?: SortOrder
     date?: SortOrder
@@ -8006,11 +8006,11 @@ export namespace Prisma {
   }
 
   export type ParticipantsOnEventsWhereUniqueInput = {
-    userId_eventId?: ParticipantsOnEventsUserIdEventIdCompoundUniqueInput
+    id_eventId?: ParticipantsOnEventsIdEventIdCompoundUniqueInput
   }
 
   export type ParticipantsOnEventsOrderByWithAggregationInput = {
-    userId?: SortOrder
+    id?: SortOrder
     eventId?: SortOrder
     date?: SortOrder
     status?: SortOrder
@@ -8023,7 +8023,7 @@ export namespace Prisma {
     AND?: Enumerable<ParticipantsOnEventsScalarWhereWithAggregatesInput>
     OR?: Enumerable<ParticipantsOnEventsScalarWhereWithAggregatesInput>
     NOT?: Enumerable<ParticipantsOnEventsScalarWhereWithAggregatesInput>
-    userId?: StringWithAggregatesFilter | string
+    id?: StringWithAggregatesFilter | string
     eventId?: StringWithAggregatesFilter | string
     date?: DateTimeWithAggregatesFilter | Date | string
     status?: EnumUserEventStatusWithAggregatesFilter | UserEventStatus
@@ -8426,7 +8426,7 @@ export namespace Prisma {
   }
 
   export type ParticipantsOnEventsUncheckedCreateInput = {
-    userId: string
+    id: string
     eventId: string
     date?: Date | string
     status?: UserEventStatus
@@ -8440,14 +8440,14 @@ export namespace Prisma {
   }
 
   export type ParticipantsOnEventsUncheckedUpdateInput = {
-    userId?: StringFieldUpdateOperationsInput | string
+    id?: StringFieldUpdateOperationsInput | string
     eventId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsCreateManyInput = {
-    userId: string
+    id: string
     eventId: string
     date?: Date | string
     status?: UserEventStatus
@@ -8459,7 +8459,7 @@ export namespace Prisma {
   }
 
   export type ParticipantsOnEventsUncheckedUpdateManyInput = {
-    userId?: StringFieldUpdateOperationsInput | string
+    id?: StringFieldUpdateOperationsInput | string
     eventId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
@@ -9036,27 +9036,27 @@ export namespace Prisma {
     not?: NestedEnumUserEventStatusFilter | UserEventStatus
   }
 
-  export type ParticipantsOnEventsUserIdEventIdCompoundUniqueInput = {
-    userId: string
+  export type ParticipantsOnEventsIdEventIdCompoundUniqueInput = {
+    id: string
     eventId: string
   }
 
   export type ParticipantsOnEventsCountOrderByAggregateInput = {
-    userId?: SortOrder
+    id?: SortOrder
     eventId?: SortOrder
     date?: SortOrder
     status?: SortOrder
   }
 
   export type ParticipantsOnEventsMaxOrderByAggregateInput = {
-    userId?: SortOrder
+    id?: SortOrder
     eventId?: SortOrder
     date?: SortOrder
     status?: SortOrder
   }
 
   export type ParticipantsOnEventsMinOrderByAggregateInput = {
-    userId?: SortOrder
+    id?: SortOrder
     eventId?: SortOrder
     date?: SortOrder
     status?: SortOrder
@@ -9961,7 +9961,7 @@ export namespace Prisma {
   }
 
   export type ParticipantsOnEventsUncheckedCreateWithoutEventInput = {
-    userId: string
+    id: string
     date?: Date | string
     status?: UserEventStatus
   }
@@ -10026,7 +10026,7 @@ export namespace Prisma {
     AND?: Enumerable<ParticipantsOnEventsScalarWhereInput>
     OR?: Enumerable<ParticipantsOnEventsScalarWhereInput>
     NOT?: Enumerable<ParticipantsOnEventsScalarWhereInput>
-    userId?: StringFilter | string
+    id?: StringFilter | string
     eventId?: StringFilter | string
     date?: DateTimeFilter | Date | string
     status?: EnumUserEventStatusFilter | UserEventStatus
@@ -10643,7 +10643,7 @@ export namespace Prisma {
   }
 
   export type ParticipantsOnEventsCreateManyEventInput = {
-    userId: string
+    id: string
     date?: Date | string
     status?: UserEventStatus
   }
@@ -10685,13 +10685,13 @@ export namespace Prisma {
   }
 
   export type ParticipantsOnEventsUncheckedUpdateWithoutEventInput = {
-    userId?: StringFieldUpdateOperationsInput | string
+    id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsUncheckedUpdateManyWithoutParticipantsInput = {
-    userId?: StringFieldUpdateOperationsInput | string
+    id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
