@@ -18,6 +18,13 @@ datasource db {
   referentialIntegrity = "prisma"
 }
 
+
+enum Status {
+  CANCELED
+  CREATED
+  BOOKED
+}
+
 model Event {
   id           String    @id @default(cuid())
   createdAt    DateTime  @default(now())
@@ -26,7 +33,7 @@ model Event {
   startTime   String 
   endTime     String
   cost        Float
-  booked       Boolean   @default(false)
+  status  Status @default(CREATED)
   bookingDate  DateTime?
   address      String
   participants User[]

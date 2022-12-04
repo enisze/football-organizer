@@ -24,7 +24,7 @@ export type Event = {
   startTime: string
   endTime: string
   cost: number
-  booked: boolean
+  status: Status
   bookingDate: Date | null
   address: string
 }
@@ -98,6 +98,22 @@ export type VerificationToken = {
   token: string
   expires: Date
 }
+
+
+/**
+ * Enums
+ */
+
+// Based on
+// https://github.com/microsoft/TypeScript/issues/3192#issuecomment-261720275
+
+export const Status: {
+  CANCELED: 'CANCELED',
+  CREATED: 'CREATED',
+  BOOKED: 'BOOKED'
+};
+
+export type Status = (typeof Status)[keyof typeof Status]
 
 
 /**
@@ -1090,7 +1106,7 @@ export namespace Prisma {
     startTime: string | null
     endTime: string | null
     cost: number | null
-    booked: boolean | null
+    status: Status | null
     bookingDate: Date | null
     address: string | null
   }
@@ -1103,7 +1119,7 @@ export namespace Prisma {
     startTime: string | null
     endTime: string | null
     cost: number | null
-    booked: boolean | null
+    status: Status | null
     bookingDate: Date | null
     address: string | null
   }
@@ -1116,7 +1132,7 @@ export namespace Prisma {
     startTime: number
     endTime: number
     cost: number
-    booked: number
+    status: number
     bookingDate: number
     address: number
     _all: number
@@ -1139,7 +1155,7 @@ export namespace Prisma {
     startTime?: true
     endTime?: true
     cost?: true
-    booked?: true
+    status?: true
     bookingDate?: true
     address?: true
   }
@@ -1152,7 +1168,7 @@ export namespace Prisma {
     startTime?: true
     endTime?: true
     cost?: true
-    booked?: true
+    status?: true
     bookingDate?: true
     address?: true
   }
@@ -1165,7 +1181,7 @@ export namespace Prisma {
     startTime?: true
     endTime?: true
     cost?: true
-    booked?: true
+    status?: true
     bookingDate?: true
     address?: true
     _all?: true
@@ -1271,7 +1287,7 @@ export namespace Prisma {
     startTime: string
     endTime: string
     cost: number
-    booked: boolean
+    status: Status
     bookingDate: Date | null
     address: string
     _count: EventCountAggregateOutputType | null
@@ -1303,7 +1319,7 @@ export namespace Prisma {
     startTime?: boolean
     endTime?: boolean
     cost?: boolean
-    booked?: boolean
+    status?: boolean
     bookingDate?: boolean
     address?: boolean
     participants?: boolean | UserFindManyArgs
@@ -6855,7 +6871,7 @@ export namespace Prisma {
     startTime: 'startTime',
     endTime: 'endTime',
     cost: 'cost',
-    booked: 'booked',
+    status: 'status',
     bookingDate: 'bookingDate',
     address: 'address'
   };
@@ -6944,7 +6960,7 @@ export namespace Prisma {
     startTime?: StringFilter | string
     endTime?: StringFilter | string
     cost?: FloatFilter | number
-    booked?: BoolFilter | boolean
+    status?: EnumStatusFilter | Status
     bookingDate?: DateTimeNullableFilter | Date | string | null
     address?: StringFilter | string
     participants?: UserListRelationFilter
@@ -6959,7 +6975,7 @@ export namespace Prisma {
     startTime?: SortOrder
     endTime?: SortOrder
     cost?: SortOrder
-    booked?: SortOrder
+    status?: SortOrder
     bookingDate?: SortOrder
     address?: SortOrder
     participants?: UserOrderByRelationAggregateInput
@@ -6978,7 +6994,7 @@ export namespace Prisma {
     startTime?: SortOrder
     endTime?: SortOrder
     cost?: SortOrder
-    booked?: SortOrder
+    status?: SortOrder
     bookingDate?: SortOrder
     address?: SortOrder
     _count?: EventCountOrderByAggregateInput
@@ -6999,7 +7015,7 @@ export namespace Prisma {
     startTime?: StringWithAggregatesFilter | string
     endTime?: StringWithAggregatesFilter | string
     cost?: FloatWithAggregatesFilter | number
-    booked?: BoolWithAggregatesFilter | boolean
+    status?: EnumStatusWithAggregatesFilter | Status
     bookingDate?: DateTimeNullableWithAggregatesFilter | Date | string | null
     address?: StringWithAggregatesFilter | string
   }
@@ -7302,7 +7318,7 @@ export namespace Prisma {
     startTime: string
     endTime: string
     cost: number
-    booked?: boolean
+    status?: Status
     bookingDate?: Date | string | null
     address: string
     participants?: UserCreateNestedManyWithoutEventsInput
@@ -7317,7 +7333,7 @@ export namespace Prisma {
     startTime: string
     endTime: string
     cost: number
-    booked?: boolean
+    status?: Status
     bookingDate?: Date | string | null
     address: string
     participants?: UserUncheckedCreateNestedManyWithoutEventsInput
@@ -7332,7 +7348,7 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
     cost?: FloatFieldUpdateOperationsInput | number
-    booked?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumStatusFieldUpdateOperationsInput | Status
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
     participants?: UserUpdateManyWithoutEventsNestedInput
@@ -7347,7 +7363,7 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
     cost?: FloatFieldUpdateOperationsInput | number
-    booked?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumStatusFieldUpdateOperationsInput | Status
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
     participants?: UserUncheckedUpdateManyWithoutEventsNestedInput
@@ -7362,7 +7378,7 @@ export namespace Prisma {
     startTime: string
     endTime: string
     cost: number
-    booked?: boolean
+    status?: Status
     bookingDate?: Date | string | null
     address: string
   }
@@ -7375,7 +7391,7 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
     cost?: FloatFieldUpdateOperationsInput | number
-    booked?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumStatusFieldUpdateOperationsInput | Status
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
   }
@@ -7388,7 +7404,7 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
     cost?: FloatFieldUpdateOperationsInput | number
-    booked?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumStatusFieldUpdateOperationsInput | Status
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
   }
@@ -7791,9 +7807,11 @@ export namespace Prisma {
     not?: NestedFloatFilter | number
   }
 
-  export type BoolFilter = {
-    equals?: boolean
-    not?: NestedBoolFilter | boolean
+  export type EnumStatusFilter = {
+    equals?: Status
+    in?: Enumerable<Status>
+    notIn?: Enumerable<Status>
+    not?: NestedEnumStatusFilter | Status
   }
 
   export type DateTimeNullableFilter = {
@@ -7835,7 +7853,7 @@ export namespace Prisma {
     startTime?: SortOrder
     endTime?: SortOrder
     cost?: SortOrder
-    booked?: SortOrder
+    status?: SortOrder
     bookingDate?: SortOrder
     address?: SortOrder
   }
@@ -7852,7 +7870,7 @@ export namespace Prisma {
     startTime?: SortOrder
     endTime?: SortOrder
     cost?: SortOrder
-    booked?: SortOrder
+    status?: SortOrder
     bookingDate?: SortOrder
     address?: SortOrder
   }
@@ -7865,7 +7883,7 @@ export namespace Prisma {
     startTime?: SortOrder
     endTime?: SortOrder
     cost?: SortOrder
-    booked?: SortOrder
+    status?: SortOrder
     bookingDate?: SortOrder
     address?: SortOrder
   }
@@ -7921,12 +7939,14 @@ export namespace Prisma {
     _max?: NestedFloatFilter
   }
 
-  export type BoolWithAggregatesFilter = {
-    equals?: boolean
-    not?: NestedBoolWithAggregatesFilter | boolean
+  export type EnumStatusWithAggregatesFilter = {
+    equals?: Status
+    in?: Enumerable<Status>
+    notIn?: Enumerable<Status>
+    not?: NestedEnumStatusWithAggregatesFilter | Status
     _count?: NestedIntFilter
-    _min?: NestedBoolFilter
-    _max?: NestedBoolFilter
+    _min?: NestedEnumStatusFilter
+    _max?: NestedEnumStatusFilter
   }
 
   export type DateTimeNullableWithAggregatesFilter = {
@@ -8259,8 +8279,8 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
+  export type EnumStatusFieldUpdateOperationsInput = {
+    set?: Status
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -8589,9 +8609,11 @@ export namespace Prisma {
     not?: NestedFloatFilter | number
   }
 
-  export type NestedBoolFilter = {
-    equals?: boolean
-    not?: NestedBoolFilter | boolean
+  export type NestedEnumStatusFilter = {
+    equals?: Status
+    in?: Enumerable<Status>
+    notIn?: Enumerable<Status>
+    not?: NestedEnumStatusFilter | Status
   }
 
   export type NestedDateTimeNullableFilter = {
@@ -8663,12 +8685,14 @@ export namespace Prisma {
     _max?: NestedFloatFilter
   }
 
-  export type NestedBoolWithAggregatesFilter = {
-    equals?: boolean
-    not?: NestedBoolWithAggregatesFilter | boolean
+  export type NestedEnumStatusWithAggregatesFilter = {
+    equals?: Status
+    in?: Enumerable<Status>
+    notIn?: Enumerable<Status>
+    not?: NestedEnumStatusWithAggregatesFilter | Status
     _count?: NestedIntFilter
-    _min?: NestedBoolFilter
-    _max?: NestedBoolFilter
+    _min?: NestedEnumStatusFilter
+    _max?: NestedEnumStatusFilter
   }
 
   export type NestedDateTimeNullableWithAggregatesFilter = {
@@ -8885,7 +8909,7 @@ export namespace Prisma {
     startTime: string
     endTime: string
     cost: number
-    booked?: boolean
+    status?: Status
     bookingDate?: Date | string | null
     address: string
     participants?: UserCreateNestedManyWithoutEventsInput
@@ -8899,7 +8923,7 @@ export namespace Prisma {
     startTime: string
     endTime: string
     cost: number
-    booked?: boolean
+    status?: Status
     bookingDate?: Date | string | null
     address: string
     participants?: UserUncheckedCreateNestedManyWithoutEventsInput
@@ -8956,7 +8980,7 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
     cost?: FloatFieldUpdateOperationsInput | number
-    booked?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumStatusFieldUpdateOperationsInput | Status
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
     participants?: UserUpdateManyWithoutEventsNestedInput
@@ -8970,7 +8994,7 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
     cost?: FloatFieldUpdateOperationsInput | number
-    booked?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumStatusFieldUpdateOperationsInput | Status
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
     participants?: UserUncheckedUpdateManyWithoutEventsNestedInput
@@ -9209,7 +9233,7 @@ export namespace Prisma {
     startTime: string
     endTime: string
     cost: number
-    booked?: boolean
+    status?: Status
     bookingDate?: Date | string | null
     address: string
     payments?: PaymentCreateNestedManyWithoutEventInput
@@ -9223,7 +9247,7 @@ export namespace Prisma {
     startTime: string
     endTime: string
     cost: number
-    booked?: boolean
+    status?: Status
     bookingDate?: Date | string | null
     address: string
     payments?: PaymentUncheckedCreateNestedManyWithoutEventInput
@@ -9351,7 +9375,7 @@ export namespace Prisma {
     startTime?: StringFilter | string
     endTime?: StringFilter | string
     cost?: FloatFilter | number
-    booked?: BoolFilter | boolean
+    status?: EnumStatusFilter | Status
     bookingDate?: DateTimeNullableFilter | Date | string | null
     address?: StringFilter | string
   }
@@ -9549,7 +9573,7 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
     cost?: FloatFieldUpdateOperationsInput | number
-    booked?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumStatusFieldUpdateOperationsInput | Status
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
     payments?: PaymentUpdateManyWithoutEventNestedInput
@@ -9563,7 +9587,7 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
     cost?: FloatFieldUpdateOperationsInput | number
-    booked?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumStatusFieldUpdateOperationsInput | Status
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
     payments?: PaymentUncheckedUpdateManyWithoutEventNestedInput
@@ -9577,7 +9601,7 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
     cost?: FloatFieldUpdateOperationsInput | number
-    booked?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumStatusFieldUpdateOperationsInput | Status
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
   }

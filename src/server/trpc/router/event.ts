@@ -89,7 +89,7 @@ export const eventRouter = router({
       );
 
       try {
-        await redis.ping();
+        console.log(await redis.ping());
       } catch (error) {
         await redis.connect();
       }
@@ -101,7 +101,15 @@ export const eventRouter = router({
     .input(z.object({ id: z.string(), date: z.date() }))
     .mutation(async ({ ctx: { prisma }, input }) => {
       return await prisma.event.update({
-        data: { booked: true, bookingDate: subDays(input.date, 1) },
+        data: { status: "BOOKED", bookingDate: subDays(input.date, 1) },
+        where: { id: input.id },
+      });
+    }),
+  cancel: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx: { prisma }, input }) => {
+      return await prisma.event.update({
+        data: { status: "CANCELED", bookingDate: null },
         where: { id: input.id },
       });
     }),

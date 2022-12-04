@@ -29,7 +29,6 @@ const Home: NextPage = () => {
           name="robots"
           content="A simple football organizer showing payments based on emails"
         />
-        <link rel="manifest" href="~/manifest.json" />
       </Head>
 
       <LoadingWrapper isLoading={status === "loading"} center>

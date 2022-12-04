@@ -111,7 +111,7 @@ exports.Prisma.EventScalarFieldEnum = makeEnum({
   startTime: 'startTime',
   endTime: 'endTime',
   cost: 'cost',
-  booked: 'booked',
+  status: 'status',
   bookingDate: 'bookingDate',
   address: 'address'
 });
@@ -162,7 +162,11 @@ exports.Prisma.VerificationTokenScalarFieldEnum = makeEnum({
   token: 'token',
   expires: 'expires'
 });
-
+exports.Status = makeEnum({
+  CANCELED: 'CANCELED',
+  CREATED: 'CREATED',
+  BOOKED: 'BOOKED'
+});
 
 exports.Prisma.ModelName = makeEnum({
   Event: 'Event',

@@ -17,6 +17,7 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
   const isAdmin = useIsAdmin();
 
   const { mutateAsync: remind } = trpc.event.remind.useMutation();
+  const { mutateAsync: cancel } = trpc.event.cancel.useMutation();
 
   const { data: payments, isLoading } =
     trpc.payment.getAllPaymentsForEventFromNotParticipants.useQuery(
@@ -56,6 +57,12 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
         Remind
       </Button>
       <BookEventButton id={eventId} />
+      <Button
+        variant="outlined"
+        onClick={async () => await cancel({ id: eventId })}
+      >
+        Cancel Event
+      </Button>
     </>
   );
 };

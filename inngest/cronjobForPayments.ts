@@ -74,6 +74,7 @@ const job = async () => {
       });
     }
   );
+  //TODO: Delete all events older than a week
 
   return { message: paymentsAddedForUser };
 };
