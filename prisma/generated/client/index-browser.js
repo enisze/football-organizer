@@ -116,6 +116,13 @@ exports.Prisma.EventScalarFieldEnum = makeEnum({
   address: 'address'
 });
 
+exports.Prisma.ParticipantsOnEventsScalarFieldEnum = makeEnum({
+  userId: 'userId',
+  eventId: 'eventId',
+  date: 'date',
+  status: 'status'
+});
+
 exports.Prisma.PaymentScalarFieldEnum = makeEnum({
   id: 'id',
   createdAt: 'createdAt',
@@ -162,14 +169,21 @@ exports.Prisma.VerificationTokenScalarFieldEnum = makeEnum({
   token: 'token',
   expires: 'expires'
 });
-exports.Status = makeEnum({
+exports.EventStatus = makeEnum({
   CANCELED: 'CANCELED',
   CREATED: 'CREATED',
   BOOKED: 'BOOKED'
 });
 
+exports.UserEventStatus = makeEnum({
+  AVAILABLE: 'AVAILABLE',
+  JOINED: 'JOINED',
+  CANCELED: 'CANCELED'
+});
+
 exports.Prisma.ModelName = makeEnum({
   Event: 'Event',
+  ParticipantsOnEvents: 'ParticipantsOnEvents',
   Payment: 'Payment',
   Account: 'Account',
   Session: 'Session',
