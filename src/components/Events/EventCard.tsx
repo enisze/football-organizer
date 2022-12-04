@@ -73,10 +73,10 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
           }
         >
           {status === "BOOKED"
-            ? "Findet statt (Gebucht!)"
+            ? `GEBUCHT: ${participantsString}`
             : status === "CANCELED"
             ? "ABGESAGT"
-            : `Nicht gebucht! ${partialString}`}
+            : `NOCH NICHT GEBUCHT ${partialString}`}
         </Chip>
       </div>
       <Sheet variant="outlined" sx={{ p: 4 }}>
