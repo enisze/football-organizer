@@ -16,7 +16,6 @@ export const eventRouter = router({
           date: z.date(),
           startTime: z.string(),
           endTime: z.string(),
-          booked: z.boolean(),
           cost: z.number(),
         })
         .nullish()
