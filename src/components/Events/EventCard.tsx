@@ -32,7 +32,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
   event,
   participants,
 }) => {
-  const { address, startTime, endTime, date, id, booked } = event;
+  const { address, startTime, endTime, date, id, status } = event;
   const isUserParticipating = useIsUserParticipating(participants);
   const [showParticipants, setShowParticipants] = useState(false);
 
@@ -63,9 +63,19 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
           cost={event.cost}
         />
 
-        <Chip color={booked ? "success" : "danger"}>
-          {booked
+        <Chip
+          color={
+            status === "BOOKED"
+              ? "success"
+              : status === "CANCELED"
+              ? "danger"
+              : "info"
+          }
+        >
+          {status === "BOOKED"
             ? "Findet statt (Gebucht!)"
+            : status === "CANCELED"
+            ? "ABGESAGT"
             : `Nicht gebucht! ${partialString}`}
         </Chip>
       </div>
