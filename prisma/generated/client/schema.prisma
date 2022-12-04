@@ -46,12 +46,12 @@ model Event {
 }
 
 model ParticipantsOnEvents {
-  user    User            @relation(fields: [id], references: [id])
-  id      String
-  event   Event           @relation(fields: [eventId], references: [id])
-  eventId String
-  date    DateTime        @default(now())
-  status  UserEventStatus @default(AVAILABLE)
+  user            User            @relation(fields: [id], references: [id])
+  id              String
+  event           Event           @relation(fields: [eventId], references: [id])
+  eventId         String
+  date            DateTime        @default(now())
+  userEventStatus UserEventStatus @default(AVAILABLE)
 
   @@id([id, eventId])
 }

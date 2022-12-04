@@ -37,7 +37,7 @@ export type ParticipantsOnEvents = {
   id: string
   eventId: string
   date: Date
-  status: UserEventStatus
+  userEventStatus: UserEventStatus
 }
 
 /**
@@ -2132,21 +2132,21 @@ export namespace Prisma {
     id: string | null
     eventId: string | null
     date: Date | null
-    status: UserEventStatus | null
+    userEventStatus: UserEventStatus | null
   }
 
   export type ParticipantsOnEventsMaxAggregateOutputType = {
     id: string | null
     eventId: string | null
     date: Date | null
-    status: UserEventStatus | null
+    userEventStatus: UserEventStatus | null
   }
 
   export type ParticipantsOnEventsCountAggregateOutputType = {
     id: number
     eventId: number
     date: number
-    status: number
+    userEventStatus: number
     _all: number
   }
 
@@ -2155,21 +2155,21 @@ export namespace Prisma {
     id?: true
     eventId?: true
     date?: true
-    status?: true
+    userEventStatus?: true
   }
 
   export type ParticipantsOnEventsMaxAggregateInputType = {
     id?: true
     eventId?: true
     date?: true
-    status?: true
+    userEventStatus?: true
   }
 
   export type ParticipantsOnEventsCountAggregateInputType = {
     id?: true
     eventId?: true
     date?: true
-    status?: true
+    userEventStatus?: true
     _all?: true
   }
 
@@ -2255,7 +2255,7 @@ export namespace Prisma {
     id: string
     eventId: string
     date: Date
-    status: UserEventStatus
+    userEventStatus: UserEventStatus
     _count: ParticipantsOnEventsCountAggregateOutputType | null
     _min: ParticipantsOnEventsMinAggregateOutputType | null
     _max: ParticipantsOnEventsMaxAggregateOutputType | null
@@ -2281,7 +2281,7 @@ export namespace Prisma {
     event?: boolean | EventArgs
     eventId?: boolean
     date?: boolean
-    status?: boolean
+    userEventStatus?: boolean
   }
 
   export type ParticipantsOnEventsInclude = {
@@ -7837,7 +7837,7 @@ export namespace Prisma {
     id: 'id',
     eventId: 'eventId',
     date: 'date',
-    status: 'status'
+    userEventStatus: 'userEventStatus'
   };
 
   export type ParticipantsOnEventsScalarFieldEnum = (typeof ParticipantsOnEventsScalarFieldEnum)[keyof typeof ParticipantsOnEventsScalarFieldEnum]
@@ -7993,7 +7993,7 @@ export namespace Prisma {
     event?: XOR<EventRelationFilter, EventWhereInput>
     eventId?: StringFilter | string
     date?: DateTimeFilter | Date | string
-    status?: EnumUserEventStatusFilter | UserEventStatus
+    userEventStatus?: EnumUserEventStatusFilter | UserEventStatus
   }
 
   export type ParticipantsOnEventsOrderByWithRelationInput = {
@@ -8002,7 +8002,7 @@ export namespace Prisma {
     event?: EventOrderByWithRelationInput
     eventId?: SortOrder
     date?: SortOrder
-    status?: SortOrder
+    userEventStatus?: SortOrder
   }
 
   export type ParticipantsOnEventsWhereUniqueInput = {
@@ -8013,7 +8013,7 @@ export namespace Prisma {
     id?: SortOrder
     eventId?: SortOrder
     date?: SortOrder
-    status?: SortOrder
+    userEventStatus?: SortOrder
     _count?: ParticipantsOnEventsCountOrderByAggregateInput
     _max?: ParticipantsOnEventsMaxOrderByAggregateInput
     _min?: ParticipantsOnEventsMinOrderByAggregateInput
@@ -8026,7 +8026,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter | string
     eventId?: StringWithAggregatesFilter | string
     date?: DateTimeWithAggregatesFilter | Date | string
-    status?: EnumUserEventStatusWithAggregatesFilter | UserEventStatus
+    userEventStatus?: EnumUserEventStatusWithAggregatesFilter | UserEventStatus
   }
 
   export type PaymentWhereInput = {
@@ -8422,47 +8422,47 @@ export namespace Prisma {
     user: UserCreateNestedOneWithoutEventsInput
     event: EventCreateNestedOneWithoutParticipantsInput
     date?: Date | string
-    status?: UserEventStatus
+    userEventStatus?: UserEventStatus
   }
 
   export type ParticipantsOnEventsUncheckedCreateInput = {
     id: string
     eventId: string
     date?: Date | string
-    status?: UserEventStatus
+    userEventStatus?: UserEventStatus
   }
 
   export type ParticipantsOnEventsUpdateInput = {
     user?: UserUpdateOneRequiredWithoutEventsNestedInput
     event?: EventUpdateOneRequiredWithoutParticipantsNestedInput
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     eventId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsCreateManyInput = {
     id: string
     eventId: string
     date?: Date | string
-    status?: UserEventStatus
+    userEventStatus?: UserEventStatus
   }
 
   export type ParticipantsOnEventsUpdateManyMutationInput = {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     eventId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type PaymentCreateInput = {
@@ -9045,21 +9045,21 @@ export namespace Prisma {
     id?: SortOrder
     eventId?: SortOrder
     date?: SortOrder
-    status?: SortOrder
+    userEventStatus?: SortOrder
   }
 
   export type ParticipantsOnEventsMaxOrderByAggregateInput = {
     id?: SortOrder
     eventId?: SortOrder
     date?: SortOrder
-    status?: SortOrder
+    userEventStatus?: SortOrder
   }
 
   export type ParticipantsOnEventsMinOrderByAggregateInput = {
     id?: SortOrder
     eventId?: SortOrder
     date?: SortOrder
-    status?: SortOrder
+    userEventStatus?: SortOrder
   }
 
   export type EnumUserEventStatusWithAggregatesFilter = {
@@ -9957,13 +9957,13 @@ export namespace Prisma {
   export type ParticipantsOnEventsCreateWithoutEventInput = {
     user: UserCreateNestedOneWithoutEventsInput
     date?: Date | string
-    status?: UserEventStatus
+    userEventStatus?: UserEventStatus
   }
 
   export type ParticipantsOnEventsUncheckedCreateWithoutEventInput = {
     id: string
     date?: Date | string
-    status?: UserEventStatus
+    userEventStatus?: UserEventStatus
   }
 
   export type ParticipantsOnEventsCreateOrConnectWithoutEventInput = {
@@ -10029,7 +10029,7 @@ export namespace Prisma {
     id?: StringFilter | string
     eventId?: StringFilter | string
     date?: DateTimeFilter | Date | string
-    status?: EnumUserEventStatusFilter | UserEventStatus
+    userEventStatus?: EnumUserEventStatusFilter | UserEventStatus
   }
 
   export type UserCreateWithoutEventsInput = {
@@ -10521,13 +10521,13 @@ export namespace Prisma {
   export type ParticipantsOnEventsCreateWithoutUserInput = {
     event: EventCreateNestedOneWithoutParticipantsInput
     date?: Date | string
-    status?: UserEventStatus
+    userEventStatus?: UserEventStatus
   }
 
   export type ParticipantsOnEventsUncheckedCreateWithoutUserInput = {
     eventId: string
     date?: Date | string
-    status?: UserEventStatus
+    userEventStatus?: UserEventStatus
   }
 
   export type ParticipantsOnEventsCreateOrConnectWithoutUserInput = {
@@ -10645,7 +10645,7 @@ export namespace Prisma {
   export type ParticipantsOnEventsCreateManyEventInput = {
     id: string
     date?: Date | string
-    status?: UserEventStatus
+    userEventStatus?: UserEventStatus
   }
 
   export type PaymentUpdateWithoutEventInput = {
@@ -10681,19 +10681,19 @@ export namespace Prisma {
   export type ParticipantsOnEventsUpdateWithoutEventInput = {
     user?: UserUpdateOneRequiredWithoutEventsNestedInput
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsUncheckedUpdateWithoutEventInput = {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsUncheckedUpdateManyWithoutParticipantsInput = {
     id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type AccountCreateManyUserInput = {
@@ -10729,7 +10729,7 @@ export namespace Prisma {
   export type ParticipantsOnEventsCreateManyUserInput = {
     eventId: string
     date?: Date | string
-    status?: UserEventStatus
+    userEventStatus?: UserEventStatus
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -10815,19 +10815,19 @@ export namespace Prisma {
   export type ParticipantsOnEventsUpdateWithoutUserInput = {
     event?: EventUpdateOneRequiredWithoutParticipantsNestedInput
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsUncheckedUpdateWithoutUserInput = {
     eventId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsUncheckedUpdateManyWithoutEventsInput = {
     eventId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
 

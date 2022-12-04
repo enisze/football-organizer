@@ -37,10 +37,17 @@ const job = async ({ event }: { event: Event__Reminder }) => {
 
   const { date, startTime, endTime, address, cost } = footballEvent;
 
+  //Ids which have not canceled yet
   const participantIds = reduce(
     footballEvent.participants,
     (acc: string[], participant) => {
-      return [...acc, participant.id];
+      if (
+        participant.userEventStatus === "AVAILABLE" ||
+        participant.userEventStatus === "JOINED"
+      ) {
+        return [...acc, participant.id];
+      }
+      return acc;
     },
     []
   );
