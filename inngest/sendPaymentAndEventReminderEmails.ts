@@ -59,7 +59,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
       await sendInBlueTransport.sendMail({
         from: '"Sender Name" <eniszej@gmail.com>',
         to: user.email,
-        subject: "ERINNERUNG: FUSSBALL FINDET STATT :) ",
+        subject: "ERINNERUNG: FUSSBALL FINDET STATT ! ",
         html: `<p>Hey ${user.name},</p>
           <p>Folgendes Event findet bald statt: </p>
   <p>Datum: <strong>${date}</strong></p>
@@ -67,7 +67,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
   <p>Ort: <strong>${address}</strong></p>
   <p>Preis: <strong>${cost}</strong></p>
   <a href="${paypalLink}">Hier kannst du bei Paypal bezahlen :)</a>
-  <p><strong>Sag doch bitte zu und komm vorbei :) </strong></p>
+  <p><strong>Sag doch bitte zu und komm vorbei. </strong></p>
           `,
         headers: { "x-myheader": "test header" },
       });
@@ -84,15 +84,15 @@ const job = async ({ event }: { event: Event__Reminder }) => {
           await sendInBlueTransport.sendMail({
             from: '"Sender Name" <eniszej@gmail.com>',
             to: user.email,
-            subject: "ERINNERUNG: DU HAST FUSSBALL NOCH NICHT BEZAHLT :) ",
+            subject: "ERINNERUNG: DU HAST FUSSBALL NOCH NICHT BEZAHLT ! ",
             html: `<p>Hey ${user.name},</p>
           <p>Du hast zu folgendem Event zugesagt: </p>
   <p>Datum: <strong>${date}</strong></p>
   <p>Zeit: <strong>${startTime} - ${endTime} Uhr</strong></p>
   <p>Ort: <strong>${address}</strong></p>
-  <p>Preis: <strong>${cost}</strong></p>
+  <p>Preis: <strong>${cost / 10}</strong></p>
 
-  <p><strong>Bezahl doch bitte ueber den unten stehenden Link bspw. :) Dankee </strong></p>
+  <p><strong>Bezahl doch bitte über den unten stehenden Link, Danke. </strong></p>
 
   <a href="${paypalLink}">Hier kannst du bei Paypal bezahlen :)</a>
           `,
