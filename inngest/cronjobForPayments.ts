@@ -32,6 +32,8 @@ const job = async () => {
 
       if (userEventConnection?.userEventStatus === "CANCELED") return;
 
+      console.log(user.name + " is participating");
+
       //Get all paypal emails from specific user
 
       const filteredByUser = filter(result, (res) => {
@@ -39,6 +41,8 @@ const job = async () => {
 
         return res.snippet?.toLowerCase().includes(user.name.toLowerCase());
       }) as gmail_v1.Schema$Message[];
+
+      console.log(user.name + " got " + filteredByUser.length + " mails");
 
       forEach(filteredByUser, async (email) => {
         const res = find(
