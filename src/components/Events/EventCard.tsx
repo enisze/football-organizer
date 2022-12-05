@@ -28,6 +28,9 @@ type EventCardProps = {
   participants: ParticipantsOnEvents[];
 };
 
+//TODO: Fix get Users participating and not participating should still be allowed to move to participating
+//The filtering is currentyl done wrong
+// refactor this stuff
 export const EventCard: FunctionComponent<EventCardProps> = ({
   event,
   participants,
@@ -37,9 +40,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
   const { data: session } = useSession();
 
   const { data: users } = trpc.user.getUserNamesByIds.useQuery({
-    ids: filter(participants, (user) => user.userEventStatus === "JOINED").map(
-      (user) => user.id
-    ),
+    ids: map(participants, (user) => user.id),
   });
 
   const participatingUser = find(
@@ -60,9 +61,15 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
   const dateString = `${transformDate(date)} ${[startTime, endTime].join("-")}`;
 
-  const partialString = `${users?.length ?? 0}/10`;
+  const amountOfParticipants =
+    filter(
+      participants,
+      (participant) => participant.userEventStatus === "JOINED"
+    ).length ?? 0;
 
-  const participantsString = `Teilnehmer ${users?.length ?? 0}/10`;
+  const partialString = `${amountOfParticipants}/10`;
+
+  const participantsString = `Teilnehmer ${amountOfParticipants}/10`;
 
   return (
     <Card className="flex flex-col justify-center gap-2 rounded border-2 border-gray-500 bg-gray-600 p-6 text-white shadow-xl duration-500 motion-safe:hover:scale-105">
@@ -117,12 +124,23 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
       {showParticipants &&
         map(users, (participant) => {
           const id = participant?.id;
+
+          const participantData = find(
+            participants,
+            (user) => participant?.id === user.id
+          );
+
           return (
-            <div key={id} className="flex items-center gap-x-2">
-              <Avatar />
-              <div>{participant?.name}</div>
-              <EventCardAdminPaymentArea eventId={event.id} userId={id ?? ""} />
-            </div>
+            participantData?.userEventStatus === "JOINED" && (
+              <div key={id} className="flex items-center gap-x-2">
+                <Avatar />
+                <div>{participant?.name}</div>
+                <EventCardAdminPaymentArea
+                  eventId={event.id}
+                  userId={id ?? ""}
+                />
+              </div>
+            )
           );
         })}
       <EventCardAdminArea eventId={id} />
