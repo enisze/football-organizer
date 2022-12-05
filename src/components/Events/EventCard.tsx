@@ -28,9 +28,9 @@ type EventCardProps = {
   participants: ParticipantsOnEvents[];
 };
 
-//TODO: Fix get Users participating and not participating should still be allowed to move to participating
-//The filtering is currentyl done wrong
-// refactor this stuff
+//TODO: Adjust schema event thingy -> Warteliste status?
+//TODO: Show Warteliste, if we have participants which are on the waiting list too?
+
 export const EventCard: FunctionComponent<EventCardProps> = ({
   event,
   participants,
@@ -40,12 +40,14 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
   const { data: session } = useSession();
 
   const { data: users } = trpc.user.getUserNamesByIds.useQuery({
-    ids: map(participants, (user) => user.id),
+    ids: filter(participants, (user) => user.userEventStatus === "JOINED").map(
+      (user) => user.id
+    ),
   });
 
   const participatingUser = find(
     participants,
-    (user) => user.id === session?.user?.id
+    (user) => user.id === session?.user?.id && user.userEventStatus === "JOINED"
   );
   const [showParticipants, setShowParticipants] = useState(false);
 
@@ -125,22 +127,12 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         map(users, (participant) => {
           const id = participant?.id;
 
-          const participantData = find(
-            participants,
-            (user) => participant?.id === user.id
-          );
-
           return (
-            participantData?.userEventStatus === "JOINED" && (
-              <div key={id} className="flex items-center gap-x-2">
-                <Avatar />
-                <div>{participant?.name}</div>
-                <EventCardAdminPaymentArea
-                  eventId={event.id}
-                  userId={id ?? ""}
-                />
-              </div>
-            )
+            <div key={id} className="flex items-center gap-x-2">
+              <Avatar />
+              <div>{participant?.name}</div>
+              <EventCardAdminPaymentArea eventId={event.id} userId={id ?? ""} />
+            </div>
           );
         })}
       <EventCardAdminArea eventId={id} />
