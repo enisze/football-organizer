@@ -20,7 +20,9 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
   const { mutateAsync: remind } = trpc.event.remind.useMutation({
     onSuccess: () => trpcContext.event.getAll.invalidate(),
   });
-  const { mutateAsync: cancel } = trpc.event.cancel.useMutation();
+  const { mutateAsync: cancel } = trpc.event.cancel.useMutation({
+    onSuccess: () => trpcContext.event.getAll.invalidate(),
+  });
 
   const { data: payments, isLoading } =
     trpc.payment.getAllPaymentsForEventFromNotParticipants.useQuery(
