@@ -1,7 +1,7 @@
 import { Avatar, Button, Card, Chip, Sheet, Typography } from "@mui/joy";
 import type { Event, ParticipantsOnEvents } from "@prisma/client";
 import { differenceInDays } from "date-fns";
-import { find, map } from "lodash";
+import { filter, find, map } from "lodash";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import type { FunctionComponent } from "react";
@@ -37,10 +37,10 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
   const { data: session } = useSession();
 
   const { data: users } = trpc.user.getUserNamesByIds.useQuery({
-    ids: map(participants, (user) => user.id),
+    ids: filter(participants, (user) => user.userEventStatus === "JOINED").map(
+      (user) => user.id
+    ),
   });
-
-  console.log(users);
 
   const participatingUser = find(
     participants,
@@ -60,9 +60,9 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
   const dateString = `${transformDate(date)} ${[startTime, endTime].join("-")}`;
 
-  const partialString = `${participants.length}/10`;
+  const partialString = `${users?.length ?? 0}/10`;
 
-  const participantsString = `Teilnehmer ${participants.length}/10`;
+  const participantsString = `Teilnehmer ${users?.length ?? 0}/10`;
 
   return (
     <Card className="flex flex-col justify-center gap-2 rounded border-2 border-gray-500 bg-gray-600 p-6 text-white shadow-xl duration-500 motion-safe:hover:scale-105">

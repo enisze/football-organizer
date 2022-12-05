@@ -15,8 +15,11 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
   eventId,
 }) => {
   const isAdmin = useIsAdmin();
+  const trpcContext = trpc.useContext();
 
-  const { mutateAsync: remind } = trpc.event.remind.useMutation();
+  const { mutateAsync: remind } = trpc.event.remind.useMutation({
+    onSuccess: () => trpcContext.event.getAll.invalidate(),
+  });
   const { mutateAsync: cancel } = trpc.event.cancel.useMutation();
 
   const { data: payments, isLoading } =

@@ -52,7 +52,8 @@ export const eventRouter = router({
       })
     )
     .mutation(async ({ ctx: { prisma, session }, input }) => {
-      if (!session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
+      const userId = session.user.id;
+      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       const event = await prisma.event.findUnique({
         where: { id: input.eventId },
@@ -62,18 +63,21 @@ export const eventRouter = router({
       if (event?.participants.length === 10)
         throw new TRPCError({ code: "PRECONDITION_FAILED" });
 
-      return await prisma.event.update({
-        data: {
-          participants: {
-            connectOrCreate: {
-              create: { id: session.user.id, userEventStatus: "JOINED" },
-              where: {
-                id_eventId: { eventId: input.eventId, id: session.user.id },
-              },
-            },
+      return await prisma.participantsOnEvents.upsert({
+        create: {
+          eventId: input.eventId,
+          id: userId,
+          userEventStatus: "JOINED",
+        },
+        update: {
+          userEventStatus: "JOINED",
+        },
+        where: {
+          id_eventId: {
+            eventId: input.eventId,
+            id: userId,
           },
         },
-        where: { id: input.eventId },
       });
     }),
   leave: protectedProcedure
@@ -83,22 +87,23 @@ export const eventRouter = router({
       })
     )
     .mutation(async ({ ctx: { prisma, session }, input }) => {
-      if (!session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
-      return await prisma.event.update({
-        data: {
-          participants: {
-            update: {
-              where: {
-                id_eventId: {
-                  eventId: input.eventId,
-                  id: session.user.id,
-                },
-              },
-              data: { userEventStatus: "CANCELED" },
-            },
+      const userId = session.user.id;
+      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+      return await prisma.participantsOnEvents.upsert({
+        create: {
+          eventId: input.eventId,
+          id: userId,
+          userEventStatus: "CANCELED",
+        },
+        update: {
+          userEventStatus: "CANCELED",
+        },
+        where: {
+          id_eventId: {
+            eventId: input.eventId,
+            id: userId,
           },
         },
-        where: { id: input.eventId },
       });
     }),
   delete: protectedProcedure
