@@ -14,7 +14,7 @@ const prisma = new PrismaClient();
 const job = async () => {
   const result = await getPaypalEmails();
 
-  if (!result) return { status: 400, message: "No paypal emails" };
+  if (!result) return { message: "No paypal emails" };
 
   const events = await prisma.event.findMany();
   const users = await prisma.user.findMany();
@@ -24,7 +24,14 @@ const job = async () => {
 
   forEach(
     filter(users, (user) => user.email !== "eniszej@gmail.com"),
-    (user) => {
+
+    async (user) => {
+      const userEventConnection = await prisma.participantsOnEvents.findFirst({
+        where: { id: user.id },
+      });
+
+      if (userEventConnection?.userEventStatus === "CANCELED") return;
+
       //Get all paypal emails from specific user
 
       const filteredByUser = filter(result, (res) => {
@@ -57,7 +64,7 @@ const job = async () => {
               eventId: event.id,
               amount,
               paymentDate: new Date(Number(email.internalDate)).toDateString(),
-              emal: user.name,
+              name: user.name,
             },
           ]);
           await prisma.payment.create({
