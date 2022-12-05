@@ -63,7 +63,16 @@ export const eventRouter = router({
         throw new TRPCError({ code: "PRECONDITION_FAILED" });
 
       return await prisma.event.update({
-        data: { participants: { connect: { id: session.user.id } } },
+        data: {
+          participants: {
+            connectOrCreate: {
+              create: { id: session.user.id, userEventStatus: "JOINED" },
+              where: {
+                id_eventId: { eventId: input.eventId, id: session.user.id },
+              },
+            },
+          },
+        },
         where: { id: input.eventId },
       });
     }),
@@ -76,7 +85,19 @@ export const eventRouter = router({
     .mutation(async ({ ctx: { prisma, session }, input }) => {
       if (!session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
       return await prisma.event.update({
-        data: { participants: { disconnect: { id: session.user.id } } },
+        data: {
+          participants: {
+            update: {
+              where: {
+                id_eventId: {
+                  eventId: input.eventId,
+                  id: session.user.id,
+                },
+              },
+              data: { userEventStatus: "CANCELED" },
+            },
+          },
+        },
         where: { id: input.eventId },
       });
     }),
@@ -112,4 +133,7 @@ export const eventRouter = router({
         where: { id: input.id },
       });
     }),
+  deleteAll: protectedProcedure.query(async ({ ctx: { prisma } }) => {
+    return await prisma.event.deleteMany();
+  }),
 });

@@ -11,6 +11,8 @@ import { LoadingWrapper } from "./LoadingWrapper";
 export const Dashboard: FunctionComponent = () => {
   const { data: events, isLoading } = trpc.event.getAll.useQuery();
 
+  // const a = trpc.event.deleteAll.useQuery();
+  // const b = trpc.user.deleteAll.useQuery();
   const isAdmin = useIsAdmin();
   return (
     <div className="flex flex-col items-center justify-center">

@@ -1,12 +1,12 @@
 import { Avatar, Button, Card, Chip, Sheet, Typography } from "@mui/joy";
-import type { Event, User } from "@prisma/client";
+import type { Event, ParticipantsOnEvents } from "@prisma/client";
 import { differenceInDays } from "date-fns";
-import { map } from "lodash";
+import { find, map } from "lodash";
+import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import type { FunctionComponent } from "react";
 import { useState } from "react";
 import { transformDate } from "../../helpers/transformDate";
-import { useIsUserParticipating } from "../../hooks/useIsUserParticipating";
 import { trpc } from "../../utils/trpc";
 import { LoadingWrapper } from "../LoadingWrapper";
 import type { OrganizerMapProps } from "../Map/OrganizerMap";
@@ -25,7 +25,7 @@ const DynamicOrganizerMap = dynamic<OrganizerMapProps>(
 
 type EventCardProps = {
   event: Event;
-  participants: User[];
+  participants: ParticipantsOnEvents[];
 };
 
 export const EventCard: FunctionComponent<EventCardProps> = ({
@@ -33,7 +33,19 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
   participants,
 }) => {
   const { address, startTime, endTime, date, id, status } = event;
-  const isUserParticipating = useIsUserParticipating(participants);
+
+  const { data: session } = useSession();
+
+  const { data: users } = trpc.user.getUserNamesByIds.useQuery({
+    ids: map(participants, (user) => user.id),
+  });
+
+  console.log(users);
+
+  const participatingUser = find(
+    participants,
+    (user) => user.id === session?.user?.id
+  );
   const [showParticipants, setShowParticipants] = useState(false);
 
   const currentDate = new Date();
@@ -103,19 +115,20 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         {participantsString}
       </Button>
       {showParticipants &&
-        map(participants, (participant) => {
+        map(users, (participant) => {
+          const id = participant?.id;
           return (
-            <div key={participant.id} className="flex items-center gap-x-2">
+            <div key={id} className="flex items-center gap-x-2">
               <Avatar />
-              <div>{participant.name}</div>
-              <EventCardAdminPaymentArea eventId={id} userId={participant.id} />
+              <div>{participant?.name}</div>
+              <EventCardAdminPaymentArea eventId={event.id} userId={id ?? ""} />
             </div>
           );
         })}
       <EventCardAdminArea eventId={id} />
       <JoinOrLeaveEventButton
         id={id}
-        isUserParticipating={isUserParticipating}
+        isUserParticipating={Boolean(participatingUser)}
       />
 
       <AddToCalendarButton event={event} />

@@ -24,9 +24,20 @@ export type Event = {
   startTime: string
   endTime: string
   cost: number
-  status: Status
+  status: EventStatus
   bookingDate: Date | null
   address: string
+}
+
+/**
+ * Model ParticipantsOnEvents
+ * 
+ */
+export type ParticipantsOnEvents = {
+  id: string
+  eventId: string
+  date: Date
+  userEventStatus: UserEventStatus
 }
 
 /**
@@ -107,13 +118,22 @@ export type VerificationToken = {
 // Based on
 // https://github.com/microsoft/TypeScript/issues/3192#issuecomment-261720275
 
-export const Status: {
+export const EventStatus: {
   CANCELED: 'CANCELED',
   CREATED: 'CREATED',
   BOOKED: 'BOOKED'
 };
 
-export type Status = (typeof Status)[keyof typeof Status]
+export type EventStatus = (typeof EventStatus)[keyof typeof EventStatus]
+
+
+export const UserEventStatus: {
+  AVAILABLE: 'AVAILABLE',
+  JOINED: 'JOINED',
+  CANCELED: 'CANCELED'
+};
+
+export type UserEventStatus = (typeof UserEventStatus)[keyof typeof UserEventStatus]
 
 
 /**
@@ -265,6 +285,16 @@ export class PrismaClient<
     * ```
     */
   get event(): Prisma.EventDelegate<GlobalReject>;
+
+  /**
+   * `prisma.participantsOnEvents`: Exposes CRUD operations for the **ParticipantsOnEvents** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ParticipantsOnEvents
+    * const participantsOnEvents = await prisma.participantsOnEvents.findMany()
+    * ```
+    */
+  get participantsOnEvents(): Prisma.ParticipantsOnEventsDelegate<GlobalReject>;
 
   /**
    * `prisma.payment`: Exposes CRUD operations for the **Payment** model.
@@ -804,6 +834,7 @@ export namespace Prisma {
 
   export const ModelName: {
     Event: 'Event',
+    ParticipantsOnEvents: 'ParticipantsOnEvents',
     Payment: 'Payment',
     Account: 'Account',
     Session: 'Session',
@@ -973,13 +1004,13 @@ export namespace Prisma {
 
 
   export type EventCountOutputType = {
-    participants: number
     payments: number
+    participants: number
   }
 
   export type EventCountOutputTypeSelect = {
-    participants?: boolean
     payments?: boolean
+    participants?: boolean
   }
 
   export type EventCountOutputTypeGetPayload<
@@ -1026,15 +1057,15 @@ export namespace Prisma {
   export type UserCountOutputType = {
     accounts: number
     sessions: number
-    events: number
     payments: number
+    events: number
   }
 
   export type UserCountOutputTypeSelect = {
     accounts?: boolean
     sessions?: boolean
-    events?: boolean
     payments?: boolean
+    events?: boolean
   }
 
   export type UserCountOutputTypeGetPayload<
@@ -1106,7 +1137,7 @@ export namespace Prisma {
     startTime: string | null
     endTime: string | null
     cost: number | null
-    status: Status | null
+    status: EventStatus | null
     bookingDate: Date | null
     address: string | null
   }
@@ -1119,7 +1150,7 @@ export namespace Prisma {
     startTime: string | null
     endTime: string | null
     cost: number | null
-    status: Status | null
+    status: EventStatus | null
     bookingDate: Date | null
     address: string | null
   }
@@ -1287,7 +1318,7 @@ export namespace Prisma {
     startTime: string
     endTime: string
     cost: number
-    status: Status
+    status: EventStatus
     bookingDate: Date | null
     address: string
     _count: EventCountAggregateOutputType | null
@@ -1322,14 +1353,14 @@ export namespace Prisma {
     status?: boolean
     bookingDate?: boolean
     address?: boolean
-    participants?: boolean | UserFindManyArgs
     payments?: boolean | PaymentFindManyArgs
+    participants?: boolean | ParticipantsOnEventsFindManyArgs
     _count?: boolean | EventCountOutputTypeArgs
   }
 
   export type EventInclude = {
-    participants?: boolean | UserFindManyArgs
     payments?: boolean | PaymentFindManyArgs
+    participants?: boolean | ParticipantsOnEventsFindManyArgs
     _count?: boolean | EventCountOutputTypeArgs
   }
 
@@ -1344,15 +1375,15 @@ export namespace Prisma {
     ?'include' extends U
     ? Event  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'participants' ? Array < UserGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
         P extends 'payments' ? Array < PaymentGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends 'participants' ? Array < ParticipantsOnEventsGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
         P extends '_count' ? EventCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
     : 'select' extends U
     ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'participants' ? Array < UserGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
         P extends 'payments' ? Array < PaymentGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends 'participants' ? Array < ParticipantsOnEventsGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
         P extends '_count' ? EventCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Event ? Event[P] : never
   } 
     : Event
@@ -1728,9 +1759,9 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    participants<T extends UserFindManyArgs = {}>(args?: Subset<T, UserFindManyArgs>): CheckSelect<T, PrismaPromise<Array<User>| Null>, PrismaPromise<Array<UserGetPayload<T>>| Null>>;
-
     payments<T extends PaymentFindManyArgs = {}>(args?: Subset<T, PaymentFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Payment>| Null>, PrismaPromise<Array<PaymentGetPayload<T>>| Null>>;
+
+    participants<T extends ParticipantsOnEventsFindManyArgs = {}>(args?: Subset<T, ParticipantsOnEventsFindManyArgs>): CheckSelect<T, PrismaPromise<Array<ParticipantsOnEvents>| Null>, PrismaPromise<Array<ParticipantsOnEventsGetPayload<T>>| Null>>;
 
     private get _document();
     /**
@@ -2082,6 +2113,929 @@ export namespace Prisma {
      * 
     **/
     include?: EventInclude | null
+  }
+
+
+
+  /**
+   * Model ParticipantsOnEvents
+   */
+
+
+  export type AggregateParticipantsOnEvents = {
+    _count: ParticipantsOnEventsCountAggregateOutputType | null
+    _min: ParticipantsOnEventsMinAggregateOutputType | null
+    _max: ParticipantsOnEventsMaxAggregateOutputType | null
+  }
+
+  export type ParticipantsOnEventsMinAggregateOutputType = {
+    id: string | null
+    eventId: string | null
+    date: Date | null
+    userEventStatus: UserEventStatus | null
+  }
+
+  export type ParticipantsOnEventsMaxAggregateOutputType = {
+    id: string | null
+    eventId: string | null
+    date: Date | null
+    userEventStatus: UserEventStatus | null
+  }
+
+  export type ParticipantsOnEventsCountAggregateOutputType = {
+    id: number
+    eventId: number
+    date: number
+    userEventStatus: number
+    _all: number
+  }
+
+
+  export type ParticipantsOnEventsMinAggregateInputType = {
+    id?: true
+    eventId?: true
+    date?: true
+    userEventStatus?: true
+  }
+
+  export type ParticipantsOnEventsMaxAggregateInputType = {
+    id?: true
+    eventId?: true
+    date?: true
+    userEventStatus?: true
+  }
+
+  export type ParticipantsOnEventsCountAggregateInputType = {
+    id?: true
+    eventId?: true
+    date?: true
+    userEventStatus?: true
+    _all?: true
+  }
+
+  export type ParticipantsOnEventsAggregateArgs = {
+    /**
+     * Filter which ParticipantsOnEvents to aggregate.
+     * 
+    **/
+    where?: ParticipantsOnEventsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParticipantsOnEvents to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<ParticipantsOnEventsOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     * 
+    **/
+    cursor?: ParticipantsOnEventsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParticipantsOnEvents from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParticipantsOnEvents.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ParticipantsOnEvents
+    **/
+    _count?: true | ParticipantsOnEventsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ParticipantsOnEventsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ParticipantsOnEventsMaxAggregateInputType
+  }
+
+  export type GetParticipantsOnEventsAggregateType<T extends ParticipantsOnEventsAggregateArgs> = {
+        [P in keyof T & keyof AggregateParticipantsOnEvents]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateParticipantsOnEvents[P]>
+      : GetScalarType<T[P], AggregateParticipantsOnEvents[P]>
+  }
+
+
+
+
+  export type ParticipantsOnEventsGroupByArgs = {
+    where?: ParticipantsOnEventsWhereInput
+    orderBy?: Enumerable<ParticipantsOnEventsOrderByWithAggregationInput>
+    by: Array<ParticipantsOnEventsScalarFieldEnum>
+    having?: ParticipantsOnEventsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ParticipantsOnEventsCountAggregateInputType | true
+    _min?: ParticipantsOnEventsMinAggregateInputType
+    _max?: ParticipantsOnEventsMaxAggregateInputType
+  }
+
+
+  export type ParticipantsOnEventsGroupByOutputType = {
+    id: string
+    eventId: string
+    date: Date
+    userEventStatus: UserEventStatus
+    _count: ParticipantsOnEventsCountAggregateOutputType | null
+    _min: ParticipantsOnEventsMinAggregateOutputType | null
+    _max: ParticipantsOnEventsMaxAggregateOutputType | null
+  }
+
+  type GetParticipantsOnEventsGroupByPayload<T extends ParticipantsOnEventsGroupByArgs> = PrismaPromise<
+    Array<
+      PickArray<ParticipantsOnEventsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ParticipantsOnEventsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ParticipantsOnEventsGroupByOutputType[P]>
+            : GetScalarType<T[P], ParticipantsOnEventsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ParticipantsOnEventsSelect = {
+    user?: boolean | UserArgs
+    id?: boolean
+    event?: boolean | EventArgs
+    eventId?: boolean
+    date?: boolean
+    userEventStatus?: boolean
+  }
+
+  export type ParticipantsOnEventsInclude = {
+    user?: boolean | UserArgs
+    event?: boolean | EventArgs
+  }
+
+  export type ParticipantsOnEventsGetPayload<
+    S extends boolean | null | undefined | ParticipantsOnEventsArgs,
+    U = keyof S
+      > = S extends true
+        ? ParticipantsOnEvents
+    : S extends undefined
+    ? never
+    : S extends ParticipantsOnEventsArgs | ParticipantsOnEventsFindManyArgs
+    ?'include' extends U
+    ? ParticipantsOnEvents  & {
+    [P in TrueKeys<S['include']>]:
+        P extends 'user' ? UserGetPayload<Exclude<S['include'], undefined | null>[P]> :
+        P extends 'event' ? EventGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+  } 
+    : 'select' extends U
+    ? {
+    [P in TrueKeys<S['select']>]:
+        P extends 'user' ? UserGetPayload<Exclude<S['select'], undefined | null>[P]> :
+        P extends 'event' ? EventGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof ParticipantsOnEvents ? ParticipantsOnEvents[P] : never
+  } 
+    : ParticipantsOnEvents
+  : ParticipantsOnEvents
+
+
+  type ParticipantsOnEventsCountArgs = Merge<
+    Omit<ParticipantsOnEventsFindManyArgs, 'select' | 'include'> & {
+      select?: ParticipantsOnEventsCountAggregateInputType | true
+    }
+  >
+
+  export interface ParticipantsOnEventsDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+    /**
+     * Find zero or one ParticipantsOnEvents that matches the filter.
+     * @param {ParticipantsOnEventsFindUniqueArgs} args - Arguments to find a ParticipantsOnEvents
+     * @example
+     * // Get one ParticipantsOnEvents
+     * const participantsOnEvents = await prisma.participantsOnEvents.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends ParticipantsOnEventsFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, ParticipantsOnEventsFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'ParticipantsOnEvents'> extends True ? CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>> : CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents | null, null>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T> | null, null>>
+
+    /**
+     * Find the first ParticipantsOnEvents that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParticipantsOnEventsFindFirstArgs} args - Arguments to find a ParticipantsOnEvents
+     * @example
+     * // Get one ParticipantsOnEvents
+     * const participantsOnEvents = await prisma.participantsOnEvents.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends ParticipantsOnEventsFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, ParticipantsOnEventsFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'ParticipantsOnEvents'> extends True ? CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>> : CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents | null, null>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T> | null, null>>
+
+    /**
+     * Find zero or more ParticipantsOnEvents that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParticipantsOnEventsFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ParticipantsOnEvents
+     * const participantsOnEvents = await prisma.participantsOnEvents.findMany()
+     * 
+     * // Get first 10 ParticipantsOnEvents
+     * const participantsOnEvents = await prisma.participantsOnEvents.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const participantsOnEventsWithIdOnly = await prisma.participantsOnEvents.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends ParticipantsOnEventsFindManyArgs>(
+      args?: SelectSubset<T, ParticipantsOnEventsFindManyArgs>
+    ): CheckSelect<T, PrismaPromise<Array<ParticipantsOnEvents>>, PrismaPromise<Array<ParticipantsOnEventsGetPayload<T>>>>
+
+    /**
+     * Create a ParticipantsOnEvents.
+     * @param {ParticipantsOnEventsCreateArgs} args - Arguments to create a ParticipantsOnEvents.
+     * @example
+     * // Create one ParticipantsOnEvents
+     * const ParticipantsOnEvents = await prisma.participantsOnEvents.create({
+     *   data: {
+     *     // ... data to create a ParticipantsOnEvents
+     *   }
+     * })
+     * 
+    **/
+    create<T extends ParticipantsOnEventsCreateArgs>(
+      args: SelectSubset<T, ParticipantsOnEventsCreateArgs>
+    ): CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>>
+
+    /**
+     * Create many ParticipantsOnEvents.
+     *     @param {ParticipantsOnEventsCreateManyArgs} args - Arguments to create many ParticipantsOnEvents.
+     *     @example
+     *     // Create many ParticipantsOnEvents
+     *     const participantsOnEvents = await prisma.participantsOnEvents.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends ParticipantsOnEventsCreateManyArgs>(
+      args?: SelectSubset<T, ParticipantsOnEventsCreateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a ParticipantsOnEvents.
+     * @param {ParticipantsOnEventsDeleteArgs} args - Arguments to delete one ParticipantsOnEvents.
+     * @example
+     * // Delete one ParticipantsOnEvents
+     * const ParticipantsOnEvents = await prisma.participantsOnEvents.delete({
+     *   where: {
+     *     // ... filter to delete one ParticipantsOnEvents
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends ParticipantsOnEventsDeleteArgs>(
+      args: SelectSubset<T, ParticipantsOnEventsDeleteArgs>
+    ): CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>>
+
+    /**
+     * Update one ParticipantsOnEvents.
+     * @param {ParticipantsOnEventsUpdateArgs} args - Arguments to update one ParticipantsOnEvents.
+     * @example
+     * // Update one ParticipantsOnEvents
+     * const participantsOnEvents = await prisma.participantsOnEvents.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends ParticipantsOnEventsUpdateArgs>(
+      args: SelectSubset<T, ParticipantsOnEventsUpdateArgs>
+    ): CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>>
+
+    /**
+     * Delete zero or more ParticipantsOnEvents.
+     * @param {ParticipantsOnEventsDeleteManyArgs} args - Arguments to filter ParticipantsOnEvents to delete.
+     * @example
+     * // Delete a few ParticipantsOnEvents
+     * const { count } = await prisma.participantsOnEvents.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends ParticipantsOnEventsDeleteManyArgs>(
+      args?: SelectSubset<T, ParticipantsOnEventsDeleteManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ParticipantsOnEvents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParticipantsOnEventsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ParticipantsOnEvents
+     * const participantsOnEvents = await prisma.participantsOnEvents.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends ParticipantsOnEventsUpdateManyArgs>(
+      args: SelectSubset<T, ParticipantsOnEventsUpdateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one ParticipantsOnEvents.
+     * @param {ParticipantsOnEventsUpsertArgs} args - Arguments to update or create a ParticipantsOnEvents.
+     * @example
+     * // Update or create a ParticipantsOnEvents
+     * const participantsOnEvents = await prisma.participantsOnEvents.upsert({
+     *   create: {
+     *     // ... data to create a ParticipantsOnEvents
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ParticipantsOnEvents we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends ParticipantsOnEventsUpsertArgs>(
+      args: SelectSubset<T, ParticipantsOnEventsUpsertArgs>
+    ): CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>>
+
+    /**
+     * Find one ParticipantsOnEvents that matches the filter or throw
+     * `NotFoundError` if no matches were found.
+     * @param {ParticipantsOnEventsFindUniqueOrThrowArgs} args - Arguments to find a ParticipantsOnEvents
+     * @example
+     * // Get one ParticipantsOnEvents
+     * const participantsOnEvents = await prisma.participantsOnEvents.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends ParticipantsOnEventsFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, ParticipantsOnEventsFindUniqueOrThrowArgs>
+    ): CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>>
+
+    /**
+     * Find the first ParticipantsOnEvents that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParticipantsOnEventsFindFirstOrThrowArgs} args - Arguments to find a ParticipantsOnEvents
+     * @example
+     * // Get one ParticipantsOnEvents
+     * const participantsOnEvents = await prisma.participantsOnEvents.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends ParticipantsOnEventsFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, ParticipantsOnEventsFindFirstOrThrowArgs>
+    ): CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>>
+
+    /**
+     * Count the number of ParticipantsOnEvents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParticipantsOnEventsCountArgs} args - Arguments to filter ParticipantsOnEvents to count.
+     * @example
+     * // Count the number of ParticipantsOnEvents
+     * const count = await prisma.participantsOnEvents.count({
+     *   where: {
+     *     // ... the filter for the ParticipantsOnEvents we want to count
+     *   }
+     * })
+    **/
+    count<T extends ParticipantsOnEventsCountArgs>(
+      args?: Subset<T, ParticipantsOnEventsCountArgs>,
+    ): PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ParticipantsOnEventsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ParticipantsOnEvents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParticipantsOnEventsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ParticipantsOnEventsAggregateArgs>(args: Subset<T, ParticipantsOnEventsAggregateArgs>): PrismaPromise<GetParticipantsOnEventsAggregateType<T>>
+
+    /**
+     * Group by ParticipantsOnEvents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParticipantsOnEventsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ParticipantsOnEventsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ParticipantsOnEventsGroupByArgs['orderBy'] }
+        : { orderBy?: ParticipantsOnEventsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ParticipantsOnEventsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetParticipantsOnEventsGroupByPayload<T> : PrismaPromise<InputErrors>
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ParticipantsOnEvents.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__ParticipantsOnEventsClient<T, Null = never> implements PrismaPromise<T> {
+    [prisma]: true;
+    private readonly _dmmf;
+    private readonly _fetcher;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+    user<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | Null>, Prisma__UserClient<UserGetPayload<T> | Null>>;
+
+    event<T extends EventArgs = {}>(args?: Subset<T, EventArgs>): CheckSelect<T, Prisma__EventClient<Event | Null>, Prisma__EventClient<EventGetPayload<T> | Null>>;
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * ParticipantsOnEvents base type for findUnique actions
+   */
+  export type ParticipantsOnEventsFindUniqueArgsBase = {
+    /**
+     * Select specific fields to fetch from the ParticipantsOnEvents
+     * 
+    **/
+    select?: ParticipantsOnEventsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ParticipantsOnEventsInclude | null
+    /**
+     * Filter, which ParticipantsOnEvents to fetch.
+     * 
+    **/
+    where: ParticipantsOnEventsWhereUniqueInput
+  }
+
+  /**
+   * ParticipantsOnEvents: findUnique
+   */
+  export interface ParticipantsOnEventsFindUniqueArgs extends ParticipantsOnEventsFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * ParticipantsOnEvents base type for findFirst actions
+   */
+  export type ParticipantsOnEventsFindFirstArgsBase = {
+    /**
+     * Select specific fields to fetch from the ParticipantsOnEvents
+     * 
+    **/
+    select?: ParticipantsOnEventsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ParticipantsOnEventsInclude | null
+    /**
+     * Filter, which ParticipantsOnEvents to fetch.
+     * 
+    **/
+    where?: ParticipantsOnEventsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParticipantsOnEvents to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<ParticipantsOnEventsOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ParticipantsOnEvents.
+     * 
+    **/
+    cursor?: ParticipantsOnEventsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParticipantsOnEvents from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParticipantsOnEvents.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ParticipantsOnEvents.
+     * 
+    **/
+    distinct?: Enumerable<ParticipantsOnEventsScalarFieldEnum>
+  }
+
+  /**
+   * ParticipantsOnEvents: findFirst
+   */
+  export interface ParticipantsOnEventsFindFirstArgs extends ParticipantsOnEventsFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * ParticipantsOnEvents findMany
+   */
+  export type ParticipantsOnEventsFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the ParticipantsOnEvents
+     * 
+    **/
+    select?: ParticipantsOnEventsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ParticipantsOnEventsInclude | null
+    /**
+     * Filter, which ParticipantsOnEvents to fetch.
+     * 
+    **/
+    where?: ParticipantsOnEventsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParticipantsOnEvents to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<ParticipantsOnEventsOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ParticipantsOnEvents.
+     * 
+    **/
+    cursor?: ParticipantsOnEventsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParticipantsOnEvents from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParticipantsOnEvents.
+     * 
+    **/
+    skip?: number
+    distinct?: Enumerable<ParticipantsOnEventsScalarFieldEnum>
+  }
+
+
+  /**
+   * ParticipantsOnEvents create
+   */
+  export type ParticipantsOnEventsCreateArgs = {
+    /**
+     * Select specific fields to fetch from the ParticipantsOnEvents
+     * 
+    **/
+    select?: ParticipantsOnEventsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ParticipantsOnEventsInclude | null
+    /**
+     * The data needed to create a ParticipantsOnEvents.
+     * 
+    **/
+    data: XOR<ParticipantsOnEventsCreateInput, ParticipantsOnEventsUncheckedCreateInput>
+  }
+
+
+  /**
+   * ParticipantsOnEvents createMany
+   */
+  export type ParticipantsOnEventsCreateManyArgs = {
+    /**
+     * The data used to create many ParticipantsOnEvents.
+     * 
+    **/
+    data: Enumerable<ParticipantsOnEventsCreateManyInput>
+    skipDuplicates?: boolean
+  }
+
+
+  /**
+   * ParticipantsOnEvents update
+   */
+  export type ParticipantsOnEventsUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the ParticipantsOnEvents
+     * 
+    **/
+    select?: ParticipantsOnEventsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ParticipantsOnEventsInclude | null
+    /**
+     * The data needed to update a ParticipantsOnEvents.
+     * 
+    **/
+    data: XOR<ParticipantsOnEventsUpdateInput, ParticipantsOnEventsUncheckedUpdateInput>
+    /**
+     * Choose, which ParticipantsOnEvents to update.
+     * 
+    **/
+    where: ParticipantsOnEventsWhereUniqueInput
+  }
+
+
+  /**
+   * ParticipantsOnEvents updateMany
+   */
+  export type ParticipantsOnEventsUpdateManyArgs = {
+    /**
+     * The data used to update ParticipantsOnEvents.
+     * 
+    **/
+    data: XOR<ParticipantsOnEventsUpdateManyMutationInput, ParticipantsOnEventsUncheckedUpdateManyInput>
+    /**
+     * Filter which ParticipantsOnEvents to update
+     * 
+    **/
+    where?: ParticipantsOnEventsWhereInput
+  }
+
+
+  /**
+   * ParticipantsOnEvents upsert
+   */
+  export type ParticipantsOnEventsUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the ParticipantsOnEvents
+     * 
+    **/
+    select?: ParticipantsOnEventsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ParticipantsOnEventsInclude | null
+    /**
+     * The filter to search for the ParticipantsOnEvents to update in case it exists.
+     * 
+    **/
+    where: ParticipantsOnEventsWhereUniqueInput
+    /**
+     * In case the ParticipantsOnEvents found by the `where` argument doesn't exist, create a new ParticipantsOnEvents with this data.
+     * 
+    **/
+    create: XOR<ParticipantsOnEventsCreateInput, ParticipantsOnEventsUncheckedCreateInput>
+    /**
+     * In case the ParticipantsOnEvents was found with the provided `where` argument, update it with this data.
+     * 
+    **/
+    update: XOR<ParticipantsOnEventsUpdateInput, ParticipantsOnEventsUncheckedUpdateInput>
+  }
+
+
+  /**
+   * ParticipantsOnEvents delete
+   */
+  export type ParticipantsOnEventsDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the ParticipantsOnEvents
+     * 
+    **/
+    select?: ParticipantsOnEventsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ParticipantsOnEventsInclude | null
+    /**
+     * Filter which ParticipantsOnEvents to delete.
+     * 
+    **/
+    where: ParticipantsOnEventsWhereUniqueInput
+  }
+
+
+  /**
+   * ParticipantsOnEvents deleteMany
+   */
+  export type ParticipantsOnEventsDeleteManyArgs = {
+    /**
+     * Filter which ParticipantsOnEvents to delete
+     * 
+    **/
+    where?: ParticipantsOnEventsWhereInput
+  }
+
+
+  /**
+   * ParticipantsOnEvents: findUniqueOrThrow
+   */
+  export type ParticipantsOnEventsFindUniqueOrThrowArgs = ParticipantsOnEventsFindUniqueArgsBase
+      
+
+  /**
+   * ParticipantsOnEvents: findFirstOrThrow
+   */
+  export type ParticipantsOnEventsFindFirstOrThrowArgs = ParticipantsOnEventsFindFirstArgsBase
+      
+
+  /**
+   * ParticipantsOnEvents without action
+   */
+  export type ParticipantsOnEventsArgs = {
+    /**
+     * Select specific fields to fetch from the ParticipantsOnEvents
+     * 
+    **/
+    select?: ParticipantsOnEventsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ParticipantsOnEventsInclude | null
   }
 
 
@@ -5204,16 +6158,16 @@ export namespace Prisma {
     password?: boolean
     accounts?: boolean | AccountFindManyArgs
     sessions?: boolean | SessionFindManyArgs
-    events?: boolean | EventFindManyArgs
     payments?: boolean | PaymentFindManyArgs
+    events?: boolean | ParticipantsOnEventsFindManyArgs
     _count?: boolean | UserCountOutputTypeArgs
   }
 
   export type UserInclude = {
     accounts?: boolean | AccountFindManyArgs
     sessions?: boolean | SessionFindManyArgs
-    events?: boolean | EventFindManyArgs
     payments?: boolean | PaymentFindManyArgs
+    events?: boolean | ParticipantsOnEventsFindManyArgs
     _count?: boolean | UserCountOutputTypeArgs
   }
 
@@ -5230,8 +6184,8 @@ export namespace Prisma {
     [P in TrueKeys<S['include']>]:
         P extends 'accounts' ? Array < AccountGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
         P extends 'sessions' ? Array < SessionGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends 'events' ? Array < EventGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
         P extends 'payments' ? Array < PaymentGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
+        P extends 'events' ? Array < ParticipantsOnEventsGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
         P extends '_count' ? UserCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
   } 
     : 'select' extends U
@@ -5239,8 +6193,8 @@ export namespace Prisma {
     [P in TrueKeys<S['select']>]:
         P extends 'accounts' ? Array < AccountGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
         P extends 'sessions' ? Array < SessionGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends 'events' ? Array < EventGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
         P extends 'payments' ? Array < PaymentGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
+        P extends 'events' ? Array < ParticipantsOnEventsGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
         P extends '_count' ? UserCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof User ? User[P] : never
   } 
     : User
@@ -5620,9 +6574,9 @@ export namespace Prisma {
 
     sessions<T extends SessionFindManyArgs = {}>(args?: Subset<T, SessionFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Session>| Null>, PrismaPromise<Array<SessionGetPayload<T>>| Null>>;
 
-    events<T extends EventFindManyArgs = {}>(args?: Subset<T, EventFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Event>| Null>, PrismaPromise<Array<EventGetPayload<T>>| Null>>;
-
     payments<T extends PaymentFindManyArgs = {}>(args?: Subset<T, PaymentFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Payment>| Null>, PrismaPromise<Array<PaymentGetPayload<T>>| Null>>;
+
+    events<T extends ParticipantsOnEventsFindManyArgs = {}>(args?: Subset<T, ParticipantsOnEventsFindManyArgs>): CheckSelect<T, PrismaPromise<Array<ParticipantsOnEvents>| Null>, PrismaPromise<Array<ParticipantsOnEventsGetPayload<T>>| Null>>;
 
     private get _document();
     /**
@@ -6879,6 +7833,16 @@ export namespace Prisma {
   export type EventScalarFieldEnum = (typeof EventScalarFieldEnum)[keyof typeof EventScalarFieldEnum]
 
 
+  export const ParticipantsOnEventsScalarFieldEnum: {
+    id: 'id',
+    eventId: 'eventId',
+    date: 'date',
+    userEventStatus: 'userEventStatus'
+  };
+
+  export type ParticipantsOnEventsScalarFieldEnum = (typeof ParticipantsOnEventsScalarFieldEnum)[keyof typeof ParticipantsOnEventsScalarFieldEnum]
+
+
   export const PaymentScalarFieldEnum: {
     id: 'id',
     createdAt: 'createdAt',
@@ -6960,11 +7924,11 @@ export namespace Prisma {
     startTime?: StringFilter | string
     endTime?: StringFilter | string
     cost?: FloatFilter | number
-    status?: EnumStatusFilter | Status
+    status?: EnumEventStatusFilter | EventStatus
     bookingDate?: DateTimeNullableFilter | Date | string | null
     address?: StringFilter | string
-    participants?: UserListRelationFilter
     payments?: PaymentListRelationFilter
+    participants?: ParticipantsOnEventsListRelationFilter
   }
 
   export type EventOrderByWithRelationInput = {
@@ -6978,8 +7942,8 @@ export namespace Prisma {
     status?: SortOrder
     bookingDate?: SortOrder
     address?: SortOrder
-    participants?: UserOrderByRelationAggregateInput
     payments?: PaymentOrderByRelationAggregateInput
+    participants?: ParticipantsOnEventsOrderByRelationAggregateInput
   }
 
   export type EventWhereUniqueInput = {
@@ -7015,9 +7979,54 @@ export namespace Prisma {
     startTime?: StringWithAggregatesFilter | string
     endTime?: StringWithAggregatesFilter | string
     cost?: FloatWithAggregatesFilter | number
-    status?: EnumStatusWithAggregatesFilter | Status
+    status?: EnumEventStatusWithAggregatesFilter | EventStatus
     bookingDate?: DateTimeNullableWithAggregatesFilter | Date | string | null
     address?: StringWithAggregatesFilter | string
+  }
+
+  export type ParticipantsOnEventsWhereInput = {
+    AND?: Enumerable<ParticipantsOnEventsWhereInput>
+    OR?: Enumerable<ParticipantsOnEventsWhereInput>
+    NOT?: Enumerable<ParticipantsOnEventsWhereInput>
+    user?: XOR<UserRelationFilter, UserWhereInput>
+    id?: StringFilter | string
+    event?: XOR<EventRelationFilter, EventWhereInput>
+    eventId?: StringFilter | string
+    date?: DateTimeFilter | Date | string
+    userEventStatus?: EnumUserEventStatusFilter | UserEventStatus
+  }
+
+  export type ParticipantsOnEventsOrderByWithRelationInput = {
+    user?: UserOrderByWithRelationInput
+    id?: SortOrder
+    event?: EventOrderByWithRelationInput
+    eventId?: SortOrder
+    date?: SortOrder
+    userEventStatus?: SortOrder
+  }
+
+  export type ParticipantsOnEventsWhereUniqueInput = {
+    id_eventId?: ParticipantsOnEventsIdEventIdCompoundUniqueInput
+  }
+
+  export type ParticipantsOnEventsOrderByWithAggregationInput = {
+    id?: SortOrder
+    eventId?: SortOrder
+    date?: SortOrder
+    userEventStatus?: SortOrder
+    _count?: ParticipantsOnEventsCountOrderByAggregateInput
+    _max?: ParticipantsOnEventsMaxOrderByAggregateInput
+    _min?: ParticipantsOnEventsMinOrderByAggregateInput
+  }
+
+  export type ParticipantsOnEventsScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<ParticipantsOnEventsScalarWhereWithAggregatesInput>
+    OR?: Enumerable<ParticipantsOnEventsScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<ParticipantsOnEventsScalarWhereWithAggregatesInput>
+    id?: StringWithAggregatesFilter | string
+    eventId?: StringWithAggregatesFilter | string
+    date?: DateTimeWithAggregatesFilter | Date | string
+    userEventStatus?: EnumUserEventStatusWithAggregatesFilter | UserEventStatus
   }
 
   export type PaymentWhereInput = {
@@ -7219,8 +8228,8 @@ export namespace Prisma {
     password?: StringFilter | string
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
-    events?: EventListRelationFilter
     payments?: PaymentListRelationFilter
+    events?: ParticipantsOnEventsListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -7234,8 +8243,8 @@ export namespace Prisma {
     password?: SortOrder
     accounts?: AccountOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
-    events?: EventOrderByRelationAggregateInput
     payments?: PaymentOrderByRelationAggregateInput
+    events?: ParticipantsOnEventsOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = {
@@ -7318,11 +8327,11 @@ export namespace Prisma {
     startTime: string
     endTime: string
     cost: number
-    status?: Status
+    status?: EventStatus
     bookingDate?: Date | string | null
     address: string
-    participants?: UserCreateNestedManyWithoutEventsInput
     payments?: PaymentCreateNestedManyWithoutEventInput
+    participants?: ParticipantsOnEventsCreateNestedManyWithoutEventInput
   }
 
   export type EventUncheckedCreateInput = {
@@ -7333,11 +8342,11 @@ export namespace Prisma {
     startTime: string
     endTime: string
     cost: number
-    status?: Status
+    status?: EventStatus
     bookingDate?: Date | string | null
     address: string
-    participants?: UserUncheckedCreateNestedManyWithoutEventsInput
     payments?: PaymentUncheckedCreateNestedManyWithoutEventInput
+    participants?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type EventUpdateInput = {
@@ -7348,11 +8357,11 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
     cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumStatusFieldUpdateOperationsInput | Status
+    status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
-    participants?: UserUpdateManyWithoutEventsNestedInput
     payments?: PaymentUpdateManyWithoutEventNestedInput
+    participants?: ParticipantsOnEventsUpdateManyWithoutEventNestedInput
   }
 
   export type EventUncheckedUpdateInput = {
@@ -7363,11 +8372,11 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
     cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumStatusFieldUpdateOperationsInput | Status
+    status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
-    participants?: UserUncheckedUpdateManyWithoutEventsNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutEventNestedInput
+    participants?: ParticipantsOnEventsUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type EventCreateManyInput = {
@@ -7378,7 +8387,7 @@ export namespace Prisma {
     startTime: string
     endTime: string
     cost: number
-    status?: Status
+    status?: EventStatus
     bookingDate?: Date | string | null
     address: string
   }
@@ -7391,7 +8400,7 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
     cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumStatusFieldUpdateOperationsInput | Status
+    status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
   }
@@ -7404,9 +8413,56 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
     cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumStatusFieldUpdateOperationsInput | Status
+    status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ParticipantsOnEventsCreateInput = {
+    user: UserCreateNestedOneWithoutEventsInput
+    event: EventCreateNestedOneWithoutParticipantsInput
+    date?: Date | string
+    userEventStatus?: UserEventStatus
+  }
+
+  export type ParticipantsOnEventsUncheckedCreateInput = {
+    id: string
+    eventId: string
+    date?: Date | string
+    userEventStatus?: UserEventStatus
+  }
+
+  export type ParticipantsOnEventsUpdateInput = {
+    user?: UserUpdateOneRequiredWithoutEventsNestedInput
+    event?: EventUpdateOneRequiredWithoutParticipantsNestedInput
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+  }
+
+  export type ParticipantsOnEventsUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+  }
+
+  export type ParticipantsOnEventsCreateManyInput = {
+    id: string
+    eventId: string
+    date?: Date | string
+    userEventStatus?: UserEventStatus
+  }
+
+  export type ParticipantsOnEventsUpdateManyMutationInput = {
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+  }
+
+  export type ParticipantsOnEventsUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type PaymentCreateInput = {
@@ -7647,8 +8703,8 @@ export namespace Prisma {
     password: string
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
-    events?: EventCreateNestedManyWithoutParticipantsInput
     payments?: PaymentCreateNestedManyWithoutUserInput
+    events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -7662,8 +8718,8 @@ export namespace Prisma {
     password: string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    events?: EventUncheckedCreateNestedManyWithoutParticipantsInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
+    events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -7677,8 +8733,8 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
-    events?: EventUpdateManyWithoutParticipantsNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
+    events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -7692,8 +8748,8 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    events?: EventUncheckedUpdateManyWithoutParticipantsNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
+    events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -7807,11 +8863,11 @@ export namespace Prisma {
     not?: NestedFloatFilter | number
   }
 
-  export type EnumStatusFilter = {
-    equals?: Status
-    in?: Enumerable<Status>
-    notIn?: Enumerable<Status>
-    not?: NestedEnumStatusFilter | Status
+  export type EnumEventStatusFilter = {
+    equals?: EventStatus
+    in?: Enumerable<EventStatus>
+    notIn?: Enumerable<EventStatus>
+    not?: NestedEnumEventStatusFilter | EventStatus
   }
 
   export type DateTimeNullableFilter = {
@@ -7825,23 +8881,23 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter | Date | string | null
   }
 
-  export type UserListRelationFilter = {
-    every?: UserWhereInput
-    some?: UserWhereInput
-    none?: UserWhereInput
-  }
-
   export type PaymentListRelationFilter = {
     every?: PaymentWhereInput
     some?: PaymentWhereInput
     none?: PaymentWhereInput
   }
 
-  export type UserOrderByRelationAggregateInput = {
-    _count?: SortOrder
+  export type ParticipantsOnEventsListRelationFilter = {
+    every?: ParticipantsOnEventsWhereInput
+    some?: ParticipantsOnEventsWhereInput
+    none?: ParticipantsOnEventsWhereInput
   }
 
   export type PaymentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ParticipantsOnEventsOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -7939,14 +8995,14 @@ export namespace Prisma {
     _max?: NestedFloatFilter
   }
 
-  export type EnumStatusWithAggregatesFilter = {
-    equals?: Status
-    in?: Enumerable<Status>
-    notIn?: Enumerable<Status>
-    not?: NestedEnumStatusWithAggregatesFilter | Status
+  export type EnumEventStatusWithAggregatesFilter = {
+    equals?: EventStatus
+    in?: Enumerable<EventStatus>
+    notIn?: Enumerable<EventStatus>
+    not?: NestedEnumEventStatusWithAggregatesFilter | EventStatus
     _count?: NestedIntFilter
-    _min?: NestedEnumStatusFilter
-    _max?: NestedEnumStatusFilter
+    _min?: NestedEnumEventStatusFilter
+    _max?: NestedEnumEventStatusFilter
   }
 
   export type DateTimeNullableWithAggregatesFilter = {
@@ -7963,14 +9019,57 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter
   }
 
+  export type UserRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
   export type EventRelationFilter = {
     is?: EventWhereInput
     isNot?: EventWhereInput
   }
 
-  export type UserRelationFilter = {
-    is?: UserWhereInput
-    isNot?: UserWhereInput
+  export type EnumUserEventStatusFilter = {
+    equals?: UserEventStatus
+    in?: Enumerable<UserEventStatus>
+    notIn?: Enumerable<UserEventStatus>
+    not?: NestedEnumUserEventStatusFilter | UserEventStatus
+  }
+
+  export type ParticipantsOnEventsIdEventIdCompoundUniqueInput = {
+    id: string
+    eventId: string
+  }
+
+  export type ParticipantsOnEventsCountOrderByAggregateInput = {
+    id?: SortOrder
+    eventId?: SortOrder
+    date?: SortOrder
+    userEventStatus?: SortOrder
+  }
+
+  export type ParticipantsOnEventsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    eventId?: SortOrder
+    date?: SortOrder
+    userEventStatus?: SortOrder
+  }
+
+  export type ParticipantsOnEventsMinOrderByAggregateInput = {
+    id?: SortOrder
+    eventId?: SortOrder
+    date?: SortOrder
+    userEventStatus?: SortOrder
+  }
+
+  export type EnumUserEventStatusWithAggregatesFilter = {
+    equals?: UserEventStatus
+    in?: Enumerable<UserEventStatus>
+    notIn?: Enumerable<UserEventStatus>
+    not?: NestedEnumUserEventStatusWithAggregatesFilter | UserEventStatus
+    _count?: NestedIntFilter
+    _min?: NestedEnumUserEventStatusFilter
+    _max?: NestedEnumUserEventStatusFilter
   }
 
   export type PaymentCountOrderByAggregateInput = {
@@ -8163,21 +9262,11 @@ export namespace Prisma {
     none?: SessionWhereInput
   }
 
-  export type EventListRelationFilter = {
-    every?: EventWhereInput
-    some?: EventWhereInput
-    none?: EventWhereInput
-  }
-
   export type AccountOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type SessionOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type EventOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -8237,12 +9326,6 @@ export namespace Prisma {
     expires?: SortOrder
   }
 
-  export type UserCreateNestedManyWithoutEventsInput = {
-    create?: XOR<Enumerable<UserCreateWithoutEventsInput>, Enumerable<UserUncheckedCreateWithoutEventsInput>>
-    connectOrCreate?: Enumerable<UserCreateOrConnectWithoutEventsInput>
-    connect?: Enumerable<UserWhereUniqueInput>
-  }
-
   export type PaymentCreateNestedManyWithoutEventInput = {
     create?: XOR<Enumerable<PaymentCreateWithoutEventInput>, Enumerable<PaymentUncheckedCreateWithoutEventInput>>
     connectOrCreate?: Enumerable<PaymentCreateOrConnectWithoutEventInput>
@@ -8250,10 +9333,11 @@ export namespace Prisma {
     connect?: Enumerable<PaymentWhereUniqueInput>
   }
 
-  export type UserUncheckedCreateNestedManyWithoutEventsInput = {
-    create?: XOR<Enumerable<UserCreateWithoutEventsInput>, Enumerable<UserUncheckedCreateWithoutEventsInput>>
-    connectOrCreate?: Enumerable<UserCreateOrConnectWithoutEventsInput>
-    connect?: Enumerable<UserWhereUniqueInput>
+  export type ParticipantsOnEventsCreateNestedManyWithoutEventInput = {
+    create?: XOR<Enumerable<ParticipantsOnEventsCreateWithoutEventInput>, Enumerable<ParticipantsOnEventsUncheckedCreateWithoutEventInput>>
+    connectOrCreate?: Enumerable<ParticipantsOnEventsCreateOrConnectWithoutEventInput>
+    createMany?: ParticipantsOnEventsCreateManyEventInputEnvelope
+    connect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
   }
 
   export type PaymentUncheckedCreateNestedManyWithoutEventInput = {
@@ -8261,6 +9345,13 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<PaymentCreateOrConnectWithoutEventInput>
     createMany?: PaymentCreateManyEventInputEnvelope
     connect?: Enumerable<PaymentWhereUniqueInput>
+  }
+
+  export type ParticipantsOnEventsUncheckedCreateNestedManyWithoutEventInput = {
+    create?: XOR<Enumerable<ParticipantsOnEventsCreateWithoutEventInput>, Enumerable<ParticipantsOnEventsUncheckedCreateWithoutEventInput>>
+    connectOrCreate?: Enumerable<ParticipantsOnEventsCreateOrConnectWithoutEventInput>
+    createMany?: ParticipantsOnEventsCreateManyEventInputEnvelope
+    connect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -8279,25 +9370,12 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type EnumStatusFieldUpdateOperationsInput = {
-    set?: Status
+  export type EnumEventStatusFieldUpdateOperationsInput = {
+    set?: EventStatus
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
-  }
-
-  export type UserUpdateManyWithoutEventsNestedInput = {
-    create?: XOR<Enumerable<UserCreateWithoutEventsInput>, Enumerable<UserUncheckedCreateWithoutEventsInput>>
-    connectOrCreate?: Enumerable<UserCreateOrConnectWithoutEventsInput>
-    upsert?: Enumerable<UserUpsertWithWhereUniqueWithoutEventsInput>
-    set?: Enumerable<UserWhereUniqueInput>
-    disconnect?: Enumerable<UserWhereUniqueInput>
-    delete?: Enumerable<UserWhereUniqueInput>
-    connect?: Enumerable<UserWhereUniqueInput>
-    update?: Enumerable<UserUpdateWithWhereUniqueWithoutEventsInput>
-    updateMany?: Enumerable<UserUpdateManyWithWhereWithoutEventsInput>
-    deleteMany?: Enumerable<UserScalarWhereInput>
   }
 
   export type PaymentUpdateManyWithoutEventNestedInput = {
@@ -8314,17 +9392,18 @@ export namespace Prisma {
     deleteMany?: Enumerable<PaymentScalarWhereInput>
   }
 
-  export type UserUncheckedUpdateManyWithoutEventsNestedInput = {
-    create?: XOR<Enumerable<UserCreateWithoutEventsInput>, Enumerable<UserUncheckedCreateWithoutEventsInput>>
-    connectOrCreate?: Enumerable<UserCreateOrConnectWithoutEventsInput>
-    upsert?: Enumerable<UserUpsertWithWhereUniqueWithoutEventsInput>
-    set?: Enumerable<UserWhereUniqueInput>
-    disconnect?: Enumerable<UserWhereUniqueInput>
-    delete?: Enumerable<UserWhereUniqueInput>
-    connect?: Enumerable<UserWhereUniqueInput>
-    update?: Enumerable<UserUpdateWithWhereUniqueWithoutEventsInput>
-    updateMany?: Enumerable<UserUpdateManyWithWhereWithoutEventsInput>
-    deleteMany?: Enumerable<UserScalarWhereInput>
+  export type ParticipantsOnEventsUpdateManyWithoutEventNestedInput = {
+    create?: XOR<Enumerable<ParticipantsOnEventsCreateWithoutEventInput>, Enumerable<ParticipantsOnEventsUncheckedCreateWithoutEventInput>>
+    connectOrCreate?: Enumerable<ParticipantsOnEventsCreateOrConnectWithoutEventInput>
+    upsert?: Enumerable<ParticipantsOnEventsUpsertWithWhereUniqueWithoutEventInput>
+    createMany?: ParticipantsOnEventsCreateManyEventInputEnvelope
+    set?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    disconnect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    delete?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    connect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    update?: Enumerable<ParticipantsOnEventsUpdateWithWhereUniqueWithoutEventInput>
+    updateMany?: Enumerable<ParticipantsOnEventsUpdateManyWithWhereWithoutEventInput>
+    deleteMany?: Enumerable<ParticipantsOnEventsScalarWhereInput>
   }
 
   export type PaymentUncheckedUpdateManyWithoutEventNestedInput = {
@@ -8339,6 +9418,52 @@ export namespace Prisma {
     update?: Enumerable<PaymentUpdateWithWhereUniqueWithoutEventInput>
     updateMany?: Enumerable<PaymentUpdateManyWithWhereWithoutEventInput>
     deleteMany?: Enumerable<PaymentScalarWhereInput>
+  }
+
+  export type ParticipantsOnEventsUncheckedUpdateManyWithoutEventNestedInput = {
+    create?: XOR<Enumerable<ParticipantsOnEventsCreateWithoutEventInput>, Enumerable<ParticipantsOnEventsUncheckedCreateWithoutEventInput>>
+    connectOrCreate?: Enumerable<ParticipantsOnEventsCreateOrConnectWithoutEventInput>
+    upsert?: Enumerable<ParticipantsOnEventsUpsertWithWhereUniqueWithoutEventInput>
+    createMany?: ParticipantsOnEventsCreateManyEventInputEnvelope
+    set?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    disconnect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    delete?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    connect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    update?: Enumerable<ParticipantsOnEventsUpdateWithWhereUniqueWithoutEventInput>
+    updateMany?: Enumerable<ParticipantsOnEventsUpdateManyWithWhereWithoutEventInput>
+    deleteMany?: Enumerable<ParticipantsOnEventsScalarWhereInput>
+  }
+
+  export type UserCreateNestedOneWithoutEventsInput = {
+    create?: XOR<UserCreateWithoutEventsInput, UserUncheckedCreateWithoutEventsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutEventsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EventCreateNestedOneWithoutParticipantsInput = {
+    create?: XOR<EventCreateWithoutParticipantsInput, EventUncheckedCreateWithoutParticipantsInput>
+    connectOrCreate?: EventCreateOrConnectWithoutParticipantsInput
+    connect?: EventWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutEventsNestedInput = {
+    create?: XOR<UserCreateWithoutEventsInput, UserUncheckedCreateWithoutEventsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutEventsInput
+    upsert?: UserUpsertWithoutEventsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<UserUpdateWithoutEventsInput, UserUncheckedUpdateWithoutEventsInput>
+  }
+
+  export type EventUpdateOneRequiredWithoutParticipantsNestedInput = {
+    create?: XOR<EventCreateWithoutParticipantsInput, EventUncheckedCreateWithoutParticipantsInput>
+    connectOrCreate?: EventCreateOrConnectWithoutParticipantsInput
+    upsert?: EventUpsertWithoutParticipantsInput
+    connect?: EventWhereUniqueInput
+    update?: XOR<EventUpdateWithoutParticipantsInput, EventUncheckedUpdateWithoutParticipantsInput>
+  }
+
+  export type EnumUserEventStatusFieldUpdateOperationsInput = {
+    set?: UserEventStatus
   }
 
   export type EventCreateNestedOneWithoutPaymentsInput = {
@@ -8423,17 +9548,18 @@ export namespace Prisma {
     connect?: Enumerable<SessionWhereUniqueInput>
   }
 
-  export type EventCreateNestedManyWithoutParticipantsInput = {
-    create?: XOR<Enumerable<EventCreateWithoutParticipantsInput>, Enumerable<EventUncheckedCreateWithoutParticipantsInput>>
-    connectOrCreate?: Enumerable<EventCreateOrConnectWithoutParticipantsInput>
-    connect?: Enumerable<EventWhereUniqueInput>
-  }
-
   export type PaymentCreateNestedManyWithoutUserInput = {
     create?: XOR<Enumerable<PaymentCreateWithoutUserInput>, Enumerable<PaymentUncheckedCreateWithoutUserInput>>
     connectOrCreate?: Enumerable<PaymentCreateOrConnectWithoutUserInput>
     createMany?: PaymentCreateManyUserInputEnvelope
     connect?: Enumerable<PaymentWhereUniqueInput>
+  }
+
+  export type ParticipantsOnEventsCreateNestedManyWithoutUserInput = {
+    create?: XOR<Enumerable<ParticipantsOnEventsCreateWithoutUserInput>, Enumerable<ParticipantsOnEventsUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<ParticipantsOnEventsCreateOrConnectWithoutUserInput>
+    createMany?: ParticipantsOnEventsCreateManyUserInputEnvelope
+    connect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
   }
 
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
@@ -8450,17 +9576,18 @@ export namespace Prisma {
     connect?: Enumerable<SessionWhereUniqueInput>
   }
 
-  export type EventUncheckedCreateNestedManyWithoutParticipantsInput = {
-    create?: XOR<Enumerable<EventCreateWithoutParticipantsInput>, Enumerable<EventUncheckedCreateWithoutParticipantsInput>>
-    connectOrCreate?: Enumerable<EventCreateOrConnectWithoutParticipantsInput>
-    connect?: Enumerable<EventWhereUniqueInput>
-  }
-
   export type PaymentUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<Enumerable<PaymentCreateWithoutUserInput>, Enumerable<PaymentUncheckedCreateWithoutUserInput>>
     connectOrCreate?: Enumerable<PaymentCreateOrConnectWithoutUserInput>
     createMany?: PaymentCreateManyUserInputEnvelope
     connect?: Enumerable<PaymentWhereUniqueInput>
+  }
+
+  export type ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<Enumerable<ParticipantsOnEventsCreateWithoutUserInput>, Enumerable<ParticipantsOnEventsUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<ParticipantsOnEventsCreateOrConnectWithoutUserInput>
+    createMany?: ParticipantsOnEventsCreateManyUserInputEnvelope
+    connect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
   }
 
   export type AccountUpdateManyWithoutUserNestedInput = {
@@ -8491,19 +9618,6 @@ export namespace Prisma {
     deleteMany?: Enumerable<SessionScalarWhereInput>
   }
 
-  export type EventUpdateManyWithoutParticipantsNestedInput = {
-    create?: XOR<Enumerable<EventCreateWithoutParticipantsInput>, Enumerable<EventUncheckedCreateWithoutParticipantsInput>>
-    connectOrCreate?: Enumerable<EventCreateOrConnectWithoutParticipantsInput>
-    upsert?: Enumerable<EventUpsertWithWhereUniqueWithoutParticipantsInput>
-    set?: Enumerable<EventWhereUniqueInput>
-    disconnect?: Enumerable<EventWhereUniqueInput>
-    delete?: Enumerable<EventWhereUniqueInput>
-    connect?: Enumerable<EventWhereUniqueInput>
-    update?: Enumerable<EventUpdateWithWhereUniqueWithoutParticipantsInput>
-    updateMany?: Enumerable<EventUpdateManyWithWhereWithoutParticipantsInput>
-    deleteMany?: Enumerable<EventScalarWhereInput>
-  }
-
   export type PaymentUpdateManyWithoutUserNestedInput = {
     create?: XOR<Enumerable<PaymentCreateWithoutUserInput>, Enumerable<PaymentUncheckedCreateWithoutUserInput>>
     connectOrCreate?: Enumerable<PaymentCreateOrConnectWithoutUserInput>
@@ -8516,6 +9630,20 @@ export namespace Prisma {
     update?: Enumerable<PaymentUpdateWithWhereUniqueWithoutUserInput>
     updateMany?: Enumerable<PaymentUpdateManyWithWhereWithoutUserInput>
     deleteMany?: Enumerable<PaymentScalarWhereInput>
+  }
+
+  export type ParticipantsOnEventsUpdateManyWithoutUserNestedInput = {
+    create?: XOR<Enumerable<ParticipantsOnEventsCreateWithoutUserInput>, Enumerable<ParticipantsOnEventsUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<ParticipantsOnEventsCreateOrConnectWithoutUserInput>
+    upsert?: Enumerable<ParticipantsOnEventsUpsertWithWhereUniqueWithoutUserInput>
+    createMany?: ParticipantsOnEventsCreateManyUserInputEnvelope
+    set?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    disconnect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    delete?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    connect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    update?: Enumerable<ParticipantsOnEventsUpdateWithWhereUniqueWithoutUserInput>
+    updateMany?: Enumerable<ParticipantsOnEventsUpdateManyWithWhereWithoutUserInput>
+    deleteMany?: Enumerable<ParticipantsOnEventsScalarWhereInput>
   }
 
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
@@ -8546,19 +9674,6 @@ export namespace Prisma {
     deleteMany?: Enumerable<SessionScalarWhereInput>
   }
 
-  export type EventUncheckedUpdateManyWithoutParticipantsNestedInput = {
-    create?: XOR<Enumerable<EventCreateWithoutParticipantsInput>, Enumerable<EventUncheckedCreateWithoutParticipantsInput>>
-    connectOrCreate?: Enumerable<EventCreateOrConnectWithoutParticipantsInput>
-    upsert?: Enumerable<EventUpsertWithWhereUniqueWithoutParticipantsInput>
-    set?: Enumerable<EventWhereUniqueInput>
-    disconnect?: Enumerable<EventWhereUniqueInput>
-    delete?: Enumerable<EventWhereUniqueInput>
-    connect?: Enumerable<EventWhereUniqueInput>
-    update?: Enumerable<EventUpdateWithWhereUniqueWithoutParticipantsInput>
-    updateMany?: Enumerable<EventUpdateManyWithWhereWithoutParticipantsInput>
-    deleteMany?: Enumerable<EventScalarWhereInput>
-  }
-
   export type PaymentUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<Enumerable<PaymentCreateWithoutUserInput>, Enumerable<PaymentUncheckedCreateWithoutUserInput>>
     connectOrCreate?: Enumerable<PaymentCreateOrConnectWithoutUserInput>
@@ -8571,6 +9686,20 @@ export namespace Prisma {
     update?: Enumerable<PaymentUpdateWithWhereUniqueWithoutUserInput>
     updateMany?: Enumerable<PaymentUpdateManyWithWhereWithoutUserInput>
     deleteMany?: Enumerable<PaymentScalarWhereInput>
+  }
+
+  export type ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<Enumerable<ParticipantsOnEventsCreateWithoutUserInput>, Enumerable<ParticipantsOnEventsUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<ParticipantsOnEventsCreateOrConnectWithoutUserInput>
+    upsert?: Enumerable<ParticipantsOnEventsUpsertWithWhereUniqueWithoutUserInput>
+    createMany?: ParticipantsOnEventsCreateManyUserInputEnvelope
+    set?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    disconnect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    delete?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    connect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    update?: Enumerable<ParticipantsOnEventsUpdateWithWhereUniqueWithoutUserInput>
+    updateMany?: Enumerable<ParticipantsOnEventsUpdateManyWithWhereWithoutUserInput>
+    deleteMany?: Enumerable<ParticipantsOnEventsScalarWhereInput>
   }
 
   export type NestedStringFilter = {
@@ -8609,11 +9738,11 @@ export namespace Prisma {
     not?: NestedFloatFilter | number
   }
 
-  export type NestedEnumStatusFilter = {
-    equals?: Status
-    in?: Enumerable<Status>
-    notIn?: Enumerable<Status>
-    not?: NestedEnumStatusFilter | Status
+  export type NestedEnumEventStatusFilter = {
+    equals?: EventStatus
+    in?: Enumerable<EventStatus>
+    notIn?: Enumerable<EventStatus>
+    not?: NestedEnumEventStatusFilter | EventStatus
   }
 
   export type NestedDateTimeNullableFilter = {
@@ -8685,14 +9814,14 @@ export namespace Prisma {
     _max?: NestedFloatFilter
   }
 
-  export type NestedEnumStatusWithAggregatesFilter = {
-    equals?: Status
-    in?: Enumerable<Status>
-    notIn?: Enumerable<Status>
-    not?: NestedEnumStatusWithAggregatesFilter | Status
+  export type NestedEnumEventStatusWithAggregatesFilter = {
+    equals?: EventStatus
+    in?: Enumerable<EventStatus>
+    notIn?: Enumerable<EventStatus>
+    not?: NestedEnumEventStatusWithAggregatesFilter | EventStatus
     _count?: NestedIntFilter
-    _min?: NestedEnumStatusFilter
-    _max?: NestedEnumStatusFilter
+    _min?: NestedEnumEventStatusFilter
+    _max?: NestedEnumEventStatusFilter
   }
 
   export type NestedDateTimeNullableWithAggregatesFilter = {
@@ -8718,6 +9847,23 @@ export namespace Prisma {
     gt?: number
     gte?: number
     not?: NestedIntNullableFilter | number | null
+  }
+
+  export type NestedEnumUserEventStatusFilter = {
+    equals?: UserEventStatus
+    in?: Enumerable<UserEventStatus>
+    notIn?: Enumerable<UserEventStatus>
+    not?: NestedEnumUserEventStatusFilter | UserEventStatus
+  }
+
+  export type NestedEnumUserEventStatusWithAggregatesFilter = {
+    equals?: UserEventStatus
+    in?: Enumerable<UserEventStatus>
+    notIn?: Enumerable<UserEventStatus>
+    not?: NestedEnumUserEventStatusWithAggregatesFilter | UserEventStatus
+    _count?: NestedIntFilter
+    _min?: NestedEnumUserEventStatusFilter
+    _max?: NestedEnumUserEventStatusFilter
   }
 
   export type NestedStringNullableFilter = {
@@ -8778,6 +9924,114 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter | number | null
   }
 
+  export type PaymentCreateWithoutEventInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    amount: number
+    paymentDate: Date | string
+    gmailMailId: string
+    user: UserCreateNestedOneWithoutPaymentsInput
+  }
+
+  export type PaymentUncheckedCreateWithoutEventInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    amount: number
+    paymentDate: Date | string
+    gmailMailId: string
+    userId: string
+  }
+
+  export type PaymentCreateOrConnectWithoutEventInput = {
+    where: PaymentWhereUniqueInput
+    create: XOR<PaymentCreateWithoutEventInput, PaymentUncheckedCreateWithoutEventInput>
+  }
+
+  export type PaymentCreateManyEventInputEnvelope = {
+    data: Enumerable<PaymentCreateManyEventInput>
+    skipDuplicates?: boolean
+  }
+
+  export type ParticipantsOnEventsCreateWithoutEventInput = {
+    user: UserCreateNestedOneWithoutEventsInput
+    date?: Date | string
+    userEventStatus?: UserEventStatus
+  }
+
+  export type ParticipantsOnEventsUncheckedCreateWithoutEventInput = {
+    id: string
+    date?: Date | string
+    userEventStatus?: UserEventStatus
+  }
+
+  export type ParticipantsOnEventsCreateOrConnectWithoutEventInput = {
+    where: ParticipantsOnEventsWhereUniqueInput
+    create: XOR<ParticipantsOnEventsCreateWithoutEventInput, ParticipantsOnEventsUncheckedCreateWithoutEventInput>
+  }
+
+  export type ParticipantsOnEventsCreateManyEventInputEnvelope = {
+    data: Enumerable<ParticipantsOnEventsCreateManyEventInput>
+    skipDuplicates?: boolean
+  }
+
+  export type PaymentUpsertWithWhereUniqueWithoutEventInput = {
+    where: PaymentWhereUniqueInput
+    update: XOR<PaymentUpdateWithoutEventInput, PaymentUncheckedUpdateWithoutEventInput>
+    create: XOR<PaymentCreateWithoutEventInput, PaymentUncheckedCreateWithoutEventInput>
+  }
+
+  export type PaymentUpdateWithWhereUniqueWithoutEventInput = {
+    where: PaymentWhereUniqueInput
+    data: XOR<PaymentUpdateWithoutEventInput, PaymentUncheckedUpdateWithoutEventInput>
+  }
+
+  export type PaymentUpdateManyWithWhereWithoutEventInput = {
+    where: PaymentScalarWhereInput
+    data: XOR<PaymentUpdateManyMutationInput, PaymentUncheckedUpdateManyWithoutPaymentsInput>
+  }
+
+  export type PaymentScalarWhereInput = {
+    AND?: Enumerable<PaymentScalarWhereInput>
+    OR?: Enumerable<PaymentScalarWhereInput>
+    NOT?: Enumerable<PaymentScalarWhereInput>
+    id?: StringFilter | string
+    createdAt?: DateTimeFilter | Date | string
+    updatedAt?: DateTimeFilter | Date | string
+    amount?: FloatFilter | number
+    paymentDate?: DateTimeFilter | Date | string
+    gmailMailId?: StringFilter | string
+    eventId?: StringFilter | string
+    userId?: StringFilter | string
+  }
+
+  export type ParticipantsOnEventsUpsertWithWhereUniqueWithoutEventInput = {
+    where: ParticipantsOnEventsWhereUniqueInput
+    update: XOR<ParticipantsOnEventsUpdateWithoutEventInput, ParticipantsOnEventsUncheckedUpdateWithoutEventInput>
+    create: XOR<ParticipantsOnEventsCreateWithoutEventInput, ParticipantsOnEventsUncheckedCreateWithoutEventInput>
+  }
+
+  export type ParticipantsOnEventsUpdateWithWhereUniqueWithoutEventInput = {
+    where: ParticipantsOnEventsWhereUniqueInput
+    data: XOR<ParticipantsOnEventsUpdateWithoutEventInput, ParticipantsOnEventsUncheckedUpdateWithoutEventInput>
+  }
+
+  export type ParticipantsOnEventsUpdateManyWithWhereWithoutEventInput = {
+    where: ParticipantsOnEventsScalarWhereInput
+    data: XOR<ParticipantsOnEventsUpdateManyMutationInput, ParticipantsOnEventsUncheckedUpdateManyWithoutParticipantsInput>
+  }
+
+  export type ParticipantsOnEventsScalarWhereInput = {
+    AND?: Enumerable<ParticipantsOnEventsScalarWhereInput>
+    OR?: Enumerable<ParticipantsOnEventsScalarWhereInput>
+    NOT?: Enumerable<ParticipantsOnEventsScalarWhereInput>
+    id?: StringFilter | string
+    eventId?: StringFilter | string
+    date?: DateTimeFilter | Date | string
+    userEventStatus?: EnumUserEventStatusFilter | UserEventStatus
+  }
+
   export type UserCreateWithoutEventsInput = {
     id?: string
     createdAt?: Date | string
@@ -8811,94 +10065,103 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutEventsInput, UserUncheckedCreateWithoutEventsInput>
   }
 
-  export type PaymentCreateWithoutEventInput = {
+  export type EventCreateWithoutParticipantsInput = {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    amount: number
-    paymentDate: Date | string
-    gmailMailId: string
-    user: UserCreateNestedOneWithoutPaymentsInput
+    date: Date | string
+    startTime: string
+    endTime: string
+    cost: number
+    status?: EventStatus
+    bookingDate?: Date | string | null
+    address: string
+    payments?: PaymentCreateNestedManyWithoutEventInput
   }
 
-  export type PaymentUncheckedCreateWithoutEventInput = {
+  export type EventUncheckedCreateWithoutParticipantsInput = {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    amount: number
-    paymentDate: Date | string
-    gmailMailId: string
-    userId: string
+    date: Date | string
+    startTime: string
+    endTime: string
+    cost: number
+    status?: EventStatus
+    bookingDate?: Date | string | null
+    address: string
+    payments?: PaymentUncheckedCreateNestedManyWithoutEventInput
   }
 
-  export type PaymentCreateOrConnectWithoutEventInput = {
-    where: PaymentWhereUniqueInput
-    create: XOR<PaymentCreateWithoutEventInput, PaymentUncheckedCreateWithoutEventInput>
+  export type EventCreateOrConnectWithoutParticipantsInput = {
+    where: EventWhereUniqueInput
+    create: XOR<EventCreateWithoutParticipantsInput, EventUncheckedCreateWithoutParticipantsInput>
   }
 
-  export type PaymentCreateManyEventInputEnvelope = {
-    data: Enumerable<PaymentCreateManyEventInput>
-    skipDuplicates?: boolean
-  }
-
-  export type UserUpsertWithWhereUniqueWithoutEventsInput = {
-    where: UserWhereUniqueInput
+  export type UserUpsertWithoutEventsInput = {
     update: XOR<UserUpdateWithoutEventsInput, UserUncheckedUpdateWithoutEventsInput>
     create: XOR<UserCreateWithoutEventsInput, UserUncheckedCreateWithoutEventsInput>
   }
 
-  export type UserUpdateWithWhereUniqueWithoutEventsInput = {
-    where: UserWhereUniqueInput
-    data: XOR<UserUpdateWithoutEventsInput, UserUncheckedUpdateWithoutEventsInput>
+  export type UserUpdateWithoutEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    payments?: PaymentUpdateManyWithoutUserNestedInput
   }
 
-  export type UserUpdateManyWithWhereWithoutEventsInput = {
-    where: UserScalarWhereInput
-    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutParticipantsInput>
+  export type UserUncheckedUpdateWithoutEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
   }
 
-  export type UserScalarWhereInput = {
-    AND?: Enumerable<UserScalarWhereInput>
-    OR?: Enumerable<UserScalarWhereInput>
-    NOT?: Enumerable<UserScalarWhereInput>
-    id?: StringFilter | string
-    createdAt?: DateTimeFilter | Date | string
-    name?: StringFilter | string
-    email?: StringFilter | string
-    emailVerified?: DateTimeNullableFilter | Date | string | null
-    image?: StringNullableFilter | string | null
-    role?: StringFilter | string
-    password?: StringFilter | string
+  export type EventUpsertWithoutParticipantsInput = {
+    update: XOR<EventUpdateWithoutParticipantsInput, EventUncheckedUpdateWithoutParticipantsInput>
+    create: XOR<EventCreateWithoutParticipantsInput, EventUncheckedCreateWithoutParticipantsInput>
   }
 
-  export type PaymentUpsertWithWhereUniqueWithoutEventInput = {
-    where: PaymentWhereUniqueInput
-    update: XOR<PaymentUpdateWithoutEventInput, PaymentUncheckedUpdateWithoutEventInput>
-    create: XOR<PaymentCreateWithoutEventInput, PaymentUncheckedCreateWithoutEventInput>
+  export type EventUpdateWithoutParticipantsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: StringFieldUpdateOperationsInput | string
+    cost?: FloatFieldUpdateOperationsInput | number
+    status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
+    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    payments?: PaymentUpdateManyWithoutEventNestedInput
   }
 
-  export type PaymentUpdateWithWhereUniqueWithoutEventInput = {
-    where: PaymentWhereUniqueInput
-    data: XOR<PaymentUpdateWithoutEventInput, PaymentUncheckedUpdateWithoutEventInput>
-  }
-
-  export type PaymentUpdateManyWithWhereWithoutEventInput = {
-    where: PaymentScalarWhereInput
-    data: XOR<PaymentUpdateManyMutationInput, PaymentUncheckedUpdateManyWithoutPaymentsInput>
-  }
-
-  export type PaymentScalarWhereInput = {
-    AND?: Enumerable<PaymentScalarWhereInput>
-    OR?: Enumerable<PaymentScalarWhereInput>
-    NOT?: Enumerable<PaymentScalarWhereInput>
-    id?: StringFilter | string
-    createdAt?: DateTimeFilter | Date | string
-    updatedAt?: DateTimeFilter | Date | string
-    amount?: FloatFilter | number
-    paymentDate?: DateTimeFilter | Date | string
-    gmailMailId?: StringFilter | string
-    eventId?: StringFilter | string
-    userId?: StringFilter | string
+  export type EventUncheckedUpdateWithoutParticipantsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: StringFieldUpdateOperationsInput | string
+    cost?: FloatFieldUpdateOperationsInput | number
+    status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
+    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: StringFieldUpdateOperationsInput | string
+    payments?: PaymentUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type EventCreateWithoutPaymentsInput = {
@@ -8909,10 +10172,10 @@ export namespace Prisma {
     startTime: string
     endTime: string
     cost: number
-    status?: Status
+    status?: EventStatus
     bookingDate?: Date | string | null
     address: string
-    participants?: UserCreateNestedManyWithoutEventsInput
+    participants?: ParticipantsOnEventsCreateNestedManyWithoutEventInput
   }
 
   export type EventUncheckedCreateWithoutPaymentsInput = {
@@ -8923,10 +10186,10 @@ export namespace Prisma {
     startTime: string
     endTime: string
     cost: number
-    status?: Status
+    status?: EventStatus
     bookingDate?: Date | string | null
     address: string
-    participants?: UserUncheckedCreateNestedManyWithoutEventsInput
+    participants?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type EventCreateOrConnectWithoutPaymentsInput = {
@@ -8945,7 +10208,7 @@ export namespace Prisma {
     password: string
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
-    events?: EventCreateNestedManyWithoutParticipantsInput
+    events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPaymentsInput = {
@@ -8959,7 +10222,7 @@ export namespace Prisma {
     password: string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    events?: EventUncheckedCreateNestedManyWithoutParticipantsInput
+    events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPaymentsInput = {
@@ -8980,10 +10243,10 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
     cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumStatusFieldUpdateOperationsInput | Status
+    status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
-    participants?: UserUpdateManyWithoutEventsNestedInput
+    participants?: ParticipantsOnEventsUpdateManyWithoutEventNestedInput
   }
 
   export type EventUncheckedUpdateWithoutPaymentsInput = {
@@ -8994,10 +10257,10 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
     cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumStatusFieldUpdateOperationsInput | Status
+    status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
-    participants?: UserUncheckedUpdateManyWithoutEventsNestedInput
+    participants?: ParticipantsOnEventsUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type UserUpsertWithoutPaymentsInput = {
@@ -9016,7 +10279,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
-    events?: EventUpdateManyWithoutParticipantsNestedInput
+    events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPaymentsInput = {
@@ -9030,7 +10293,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    events?: EventUncheckedUpdateManyWithoutParticipantsNestedInput
+    events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -9043,8 +10306,8 @@ export namespace Prisma {
     role: string
     password: string
     sessions?: SessionCreateNestedManyWithoutUserInput
-    events?: EventCreateNestedManyWithoutParticipantsInput
     payments?: PaymentCreateNestedManyWithoutUserInput
+    events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -9057,8 +10320,8 @@ export namespace Prisma {
     role: string
     password: string
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    events?: EventUncheckedCreateNestedManyWithoutParticipantsInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
+    events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -9081,8 +10344,8 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     sessions?: SessionUpdateManyWithoutUserNestedInput
-    events?: EventUpdateManyWithoutParticipantsNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
+    events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -9095,8 +10358,8 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    events?: EventUncheckedUpdateManyWithoutParticipantsNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
+    events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -9109,8 +10372,8 @@ export namespace Prisma {
     role: string
     password: string
     accounts?: AccountCreateNestedManyWithoutUserInput
-    events?: EventCreateNestedManyWithoutParticipantsInput
     payments?: PaymentCreateNestedManyWithoutUserInput
+    events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -9123,8 +10386,8 @@ export namespace Prisma {
     role: string
     password: string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    events?: EventUncheckedCreateNestedManyWithoutParticipantsInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
+    events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -9147,8 +10410,8 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
-    events?: EventUpdateManyWithoutParticipantsNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
+    events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -9161,8 +10424,8 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    events?: EventUncheckedUpdateManyWithoutParticipantsNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
+    events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -9225,39 +10488,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type EventCreateWithoutParticipantsInput = {
-    id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    date: Date | string
-    startTime: string
-    endTime: string
-    cost: number
-    status?: Status
-    bookingDate?: Date | string | null
-    address: string
-    payments?: PaymentCreateNestedManyWithoutEventInput
-  }
-
-  export type EventUncheckedCreateWithoutParticipantsInput = {
-    id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    date: Date | string
-    startTime: string
-    endTime: string
-    cost: number
-    status?: Status
-    bookingDate?: Date | string | null
-    address: string
-    payments?: PaymentUncheckedCreateNestedManyWithoutEventInput
-  }
-
-  export type EventCreateOrConnectWithoutParticipantsInput = {
-    where: EventWhereUniqueInput
-    create: XOR<EventCreateWithoutParticipantsInput, EventUncheckedCreateWithoutParticipantsInput>
-  }
-
   export type PaymentCreateWithoutUserInput = {
     id?: string
     createdAt?: Date | string
@@ -9285,6 +10515,28 @@ export namespace Prisma {
 
   export type PaymentCreateManyUserInputEnvelope = {
     data: Enumerable<PaymentCreateManyUserInput>
+    skipDuplicates?: boolean
+  }
+
+  export type ParticipantsOnEventsCreateWithoutUserInput = {
+    event: EventCreateNestedOneWithoutParticipantsInput
+    date?: Date | string
+    userEventStatus?: UserEventStatus
+  }
+
+  export type ParticipantsOnEventsUncheckedCreateWithoutUserInput = {
+    eventId: string
+    date?: Date | string
+    userEventStatus?: UserEventStatus
+  }
+
+  export type ParticipantsOnEventsCreateOrConnectWithoutUserInput = {
+    where: ParticipantsOnEventsWhereUniqueInput
+    create: XOR<ParticipantsOnEventsCreateWithoutUserInput, ParticipantsOnEventsUncheckedCreateWithoutUserInput>
+  }
+
+  export type ParticipantsOnEventsCreateManyUserInputEnvelope = {
+    data: Enumerable<ParticipantsOnEventsCreateManyUserInput>
     skipDuplicates?: boolean
   }
 
@@ -9348,38 +10600,6 @@ export namespace Prisma {
     expires?: DateTimeFilter | Date | string
   }
 
-  export type EventUpsertWithWhereUniqueWithoutParticipantsInput = {
-    where: EventWhereUniqueInput
-    update: XOR<EventUpdateWithoutParticipantsInput, EventUncheckedUpdateWithoutParticipantsInput>
-    create: XOR<EventCreateWithoutParticipantsInput, EventUncheckedCreateWithoutParticipantsInput>
-  }
-
-  export type EventUpdateWithWhereUniqueWithoutParticipantsInput = {
-    where: EventWhereUniqueInput
-    data: XOR<EventUpdateWithoutParticipantsInput, EventUncheckedUpdateWithoutParticipantsInput>
-  }
-
-  export type EventUpdateManyWithWhereWithoutParticipantsInput = {
-    where: EventScalarWhereInput
-    data: XOR<EventUpdateManyMutationInput, EventUncheckedUpdateManyWithoutEventsInput>
-  }
-
-  export type EventScalarWhereInput = {
-    AND?: Enumerable<EventScalarWhereInput>
-    OR?: Enumerable<EventScalarWhereInput>
-    NOT?: Enumerable<EventScalarWhereInput>
-    id?: StringFilter | string
-    createdAt?: DateTimeFilter | Date | string
-    updatedAt?: DateTimeFilter | Date | string
-    date?: DateTimeFilter | Date | string
-    startTime?: StringFilter | string
-    endTime?: StringFilter | string
-    cost?: FloatFilter | number
-    status?: EnumStatusFilter | Status
-    bookingDate?: DateTimeNullableFilter | Date | string | null
-    address?: StringFilter | string
-  }
-
   export type PaymentUpsertWithWhereUniqueWithoutUserInput = {
     where: PaymentWhereUniqueInput
     update: XOR<PaymentUpdateWithoutUserInput, PaymentUncheckedUpdateWithoutUserInput>
@@ -9396,6 +10616,22 @@ export namespace Prisma {
     data: XOR<PaymentUpdateManyMutationInput, PaymentUncheckedUpdateManyWithoutPaymentsInput>
   }
 
+  export type ParticipantsOnEventsUpsertWithWhereUniqueWithoutUserInput = {
+    where: ParticipantsOnEventsWhereUniqueInput
+    update: XOR<ParticipantsOnEventsUpdateWithoutUserInput, ParticipantsOnEventsUncheckedUpdateWithoutUserInput>
+    create: XOR<ParticipantsOnEventsCreateWithoutUserInput, ParticipantsOnEventsUncheckedCreateWithoutUserInput>
+  }
+
+  export type ParticipantsOnEventsUpdateWithWhereUniqueWithoutUserInput = {
+    where: ParticipantsOnEventsWhereUniqueInput
+    data: XOR<ParticipantsOnEventsUpdateWithoutUserInput, ParticipantsOnEventsUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ParticipantsOnEventsUpdateManyWithWhereWithoutUserInput = {
+    where: ParticipantsOnEventsScalarWhereInput
+    data: XOR<ParticipantsOnEventsUpdateManyMutationInput, ParticipantsOnEventsUncheckedUpdateManyWithoutEventsInput>
+  }
+
   export type PaymentCreateManyEventInput = {
     id?: string
     createdAt?: Date | string
@@ -9406,43 +10642,10 @@ export namespace Prisma {
     userId: string
   }
 
-  export type UserUpdateWithoutEventsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    accounts?: AccountUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    payments?: PaymentUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutEventsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateManyWithoutParticipantsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
+  export type ParticipantsOnEventsCreateManyEventInput = {
+    id: string
+    date?: Date | string
+    userEventStatus?: UserEventStatus
   }
 
   export type PaymentUpdateWithoutEventInput = {
@@ -9475,6 +10678,24 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
   }
 
+  export type ParticipantsOnEventsUpdateWithoutEventInput = {
+    user?: UserUpdateOneRequiredWithoutEventsNestedInput
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+  }
+
+  export type ParticipantsOnEventsUncheckedUpdateWithoutEventInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+  }
+
+  export type ParticipantsOnEventsUncheckedUpdateManyWithoutParticipantsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+  }
+
   export type AccountCreateManyUserInput = {
     id?: string
     type: string
@@ -9503,6 +10724,12 @@ export namespace Prisma {
     paymentDate: Date | string
     gmailMailId: string
     eventId: string
+  }
+
+  export type ParticipantsOnEventsCreateManyUserInput = {
+    eventId: string
+    date?: Date | string
+    userEventStatus?: UserEventStatus
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -9565,47 +10792,6 @@ export namespace Prisma {
     expires?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type EventUpdateWithoutParticipantsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    startTime?: StringFieldUpdateOperationsInput | string
-    endTime?: StringFieldUpdateOperationsInput | string
-    cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumStatusFieldUpdateOperationsInput | Status
-    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    address?: StringFieldUpdateOperationsInput | string
-    payments?: PaymentUpdateManyWithoutEventNestedInput
-  }
-
-  export type EventUncheckedUpdateWithoutParticipantsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    startTime?: StringFieldUpdateOperationsInput | string
-    endTime?: StringFieldUpdateOperationsInput | string
-    cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumStatusFieldUpdateOperationsInput | Status
-    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    address?: StringFieldUpdateOperationsInput | string
-    payments?: PaymentUncheckedUpdateManyWithoutEventNestedInput
-  }
-
-  export type EventUncheckedUpdateManyWithoutEventsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    startTime?: StringFieldUpdateOperationsInput | string
-    endTime?: StringFieldUpdateOperationsInput | string
-    cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumStatusFieldUpdateOperationsInput | Status
-    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    address?: StringFieldUpdateOperationsInput | string
-  }
-
   export type PaymentUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9624,6 +10810,24 @@ export namespace Prisma {
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     gmailMailId?: StringFieldUpdateOperationsInput | string
     eventId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ParticipantsOnEventsUpdateWithoutUserInput = {
+    event?: EventUpdateOneRequiredWithoutParticipantsNestedInput
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+  }
+
+  export type ParticipantsOnEventsUncheckedUpdateWithoutUserInput = {
+    eventId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+  }
+
+  export type ParticipantsOnEventsUncheckedUpdateManyWithoutEventsInput = {
+    eventId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
 

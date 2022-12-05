@@ -4,11 +4,11 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
-    // We want the output to be included within ./src/generated, as
+  // We want the output to be included within ./src/generated, as
   // this is bundled into the final sent image.
   //
   // This is different to installing the generated client in node_modules.
-  output          = "./generated/client"
+  // output          = "./generated/client"
   binaryTargets   = ["native"]
 }
 
@@ -18,39 +18,55 @@ datasource db {
   referentialIntegrity = "prisma"
 }
 
-
-enum Status {
+enum EventStatus {
   CANCELED
   CREATED
   BOOKED
 }
 
+enum UserEventStatus {
+  AVAILABLE
+  JOINED
+  CANCELED
+}
+
 model Event {
-  id           String    @id @default(cuid())
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  date         DateTime 
-  startTime   String 
-  endTime     String
-  cost        Float
-  status  Status @default(CREATED)
+  id           String                 @id @default(cuid())
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
+  date         DateTime
+  startTime    String
+  endTime      String
+  cost         Float
+  status       EventStatus            @default(CREATED)
   bookingDate  DateTime?
   address      String
-  participants User[]
-  payments      Payment[]
+  payments     Payment[]
+  participants ParticipantsOnEvents[]
+}
+
+model ParticipantsOnEvents {
+  user            User            @relation(fields: [id], references: [id], onDelete: Cascade)
+  id              String
+  event           Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId         String
+  date            DateTime        @default(now())
+  userEventStatus UserEventStatus @default(AVAILABLE)
+
+  @@id([id, eventId])
 }
 
 model Payment {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  amount    Float
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  amount      Float
   paymentDate DateTime
   gmailMailId String
-  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  eventId   String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId     String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
 }
 
 // Necessary for Next auth
@@ -81,18 +97,18 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  createdAt DateTime @default(now())
-  name          String   @unique
-  email         String   @unique
+  id            String                 @id @default(cuid())
+  createdAt     DateTime               @default(now())
+  name          String                 @unique
+  email         String                 @unique
   emailVerified DateTime?
   image         String?
   role          String
   password      String
   accounts      Account[]
   sessions      Session[]
-  events        Event[]
   payments      Payment[]
+  events        ParticipantsOnEvents[]
 }
 
 model VerificationToken {
