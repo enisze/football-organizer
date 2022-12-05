@@ -1,3 +1,4 @@
+import { map } from "lodash";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
 
@@ -18,4 +19,23 @@ export const userRouter = router({
         },
       });
     }),
+  getUserNamesByIds: protectedProcedure
+    .input(z.object({ ids: z.string().array() }))
+    .query(async ({ ctx: { prisma }, input }) => {
+      const res = await Promise.all(
+        map(input.ids, (id) =>
+          prisma.user.findUnique({
+            where: {
+              id,
+            },
+            select: { name: true, id: true },
+          })
+        )
+      );
+      return res;
+    }),
+
+  deleteAll: protectedProcedure.query(async ({ ctx: { prisma }, input }) => {
+    await prisma.user.deleteMany();
+  }),
 });

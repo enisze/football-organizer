@@ -8,7 +8,7 @@ generator client {
   // this is bundled into the final sent image.
   //
   // This is different to installing the generated client in node_modules.
- output          = "./generated/client"
+  // output          = "./generated/client"
   binaryTargets   = ["native"]
 }
 
@@ -46,9 +46,9 @@ model Event {
 }
 
 model ParticipantsOnEvents {
-  user            User            @relation(fields: [id], references: [id])
+  user            User            @relation(fields: [id], references: [id], onDelete: Cascade)
   id              String
-  event           Event           @relation(fields: [eventId], references: [id])
+  event           Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId         String
   date            DateTime        @default(now())
   userEventStatus UserEventStatus @default(AVAILABLE)

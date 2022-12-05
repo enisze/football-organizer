@@ -65,8 +65,11 @@ export const eventRouter = router({
       return await prisma.event.update({
         data: {
           participants: {
-            connect: {
-              id_eventId: { eventId: input.eventId, id: session.user.id },
+            connectOrCreate: {
+              create: { id: session.user.id, userEventStatus: "JOINED" },
+              where: {
+                id_eventId: { eventId: input.eventId, id: session.user.id },
+              },
             },
           },
         },
@@ -130,4 +133,7 @@ export const eventRouter = router({
         where: { id: input.id },
       });
     }),
+  deleteAll: protectedProcedure.query(async ({ ctx: { prisma } }) => {
+    return await prisma.event.deleteMany();
+  }),
 });

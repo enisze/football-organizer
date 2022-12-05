@@ -21,6 +21,7 @@ export const JoinOrLeaveEventButton: FunctionComponent<{
         trpcContext.event.getAll.invalidate();
         trpcContext.payment.getAllPaymentsForEventFromNotParticipants.invalidate();
         trpcContext.payment.getUserBalance.invalidate();
+        trpcContext.user.getUserNamesByIds.invalidate();
       },
     });
   const { mutateAsync: leaveEvent, isLoading: loadingLeave } =
@@ -29,6 +30,7 @@ export const JoinOrLeaveEventButton: FunctionComponent<{
         trpcContext.event.getAll.invalidate();
         trpcContext.payment.getAllPaymentsForEventFromNotParticipants.invalidate();
         trpcContext.payment.getUserBalance.invalidate();
+        trpcContext.user.getUserNamesByIds.invalidate();
       },
     });
 
