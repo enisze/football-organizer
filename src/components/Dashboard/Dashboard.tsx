@@ -27,18 +27,22 @@ export const Dashboard: FunctionComponent = () => {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="m-8 flex flex-col items-center justify-center">
       {isAdmin && <AdminBoard />}
 
-      <Tabs defaultValue={1} className="w-full">
+      <Tabs
+        defaultValue={1}
+        className="flex w-full items-center justify-center rounded bg-transparent"
+      >
         <TabList variant="soft" color="neutral">
           <Tab value={0}>Vergangene Events</Tab>
           <Tab value={1}>Kommende Events</Tab>
         </TabList>
-        <TabPanel value={0}>
+
+        <TabPanel value={0} className="flex justify-center bg-transparent">
           <EventList events={previousEvents} isLoading={isLoading} />
         </TabPanel>
-        <TabPanel value={1}>
+        <TabPanel value={1} className="flex justify-center">
           <EventList events={upcomingEvents} isLoading={isLoading} />
         </TabPanel>
       </Tabs>
