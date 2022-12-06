@@ -35,6 +35,7 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
   return (
     <>
       <div className="flex flex-col items-center gap-y-3">
+        <Typography variant="soft">{"Id: " + eventId}</Typography>
         <LoadingWrapper isLoading={isLoading}>
           <Typography variant="soft">
             Bezahlt aber nicht teilgenommen

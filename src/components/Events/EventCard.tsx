@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, Chip, Sheet, Typography } from "@mui/joy";
+import { Avatar, Button, Card, Sheet, Typography } from "@mui/joy";
 import type { Event, ParticipantsOnEvents } from "@prisma/client";
 import { differenceInDays } from "date-fns";
 import { filter, find, map } from "lodash";
@@ -15,6 +15,7 @@ import { AddToCalendarButton } from "./Buttons/AddToCalendarButton";
 import { JoinOrLeaveEventButton } from "./Buttons/JoinOrLeaveEventButton";
 import { EventCardAdminArea } from "./EventCardAdminArea";
 import { EventCardAdminPaymentArea } from "./EventCardAdminPaymentArea";
+import { StatusChip } from "./StatusChip";
 
 const DynamicOrganizerMap = dynamic<OrganizerMapProps>(
   () => import("../Map/OrganizerMap").then((module) => module.OrganizerMap),
@@ -84,21 +85,11 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
           cost={event.cost}
         />
 
-        <Chip
-          color={
-            status === "BOOKED"
-              ? "success"
-              : status === "CANCELED"
-              ? "danger"
-              : "info"
-          }
-        >
-          {status === "BOOKED"
-            ? `GEBUCHT: ${participantsString}`
-            : status === "CANCELED"
-            ? "ABGESAGT"
-            : `NOCH NICHT GEBUCHT ${partialString}`}
-        </Chip>
+        <StatusChip
+          status={status}
+          bookedString={participantsString}
+          notbookedString={partialString}
+        />
       </div>
       <Sheet variant="outlined" sx={{ p: 4 }}>
         {data && (
