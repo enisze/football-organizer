@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { LoginForm } from "../components/Authentication/LoginForm";
 import { SignInAndSignOutButton } from "../components/Authentication/SignInAndSignOutButton";
+import { Dashboard } from "../components/Dashboard/Dashboard";
 import { Heading } from "../components/Heading";
 import { LoadingWrapper } from "../components/LoadingWrapper";
 import { UserInformation } from "../components/UserInformation";
@@ -39,7 +40,10 @@ const Home: NextPage = () => {
             <SignInAndSignOutButton />
           </main>
         ) : (
-          <UserInformation />
+          <div className="flex flex-col pb-2">
+            <UserInformation />
+            <Dashboard />
+          </div>
         )}
       </LoadingWrapper>
     </div>

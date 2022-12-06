@@ -2,7 +2,6 @@ import { Avatar, Typography } from "@mui/joy";
 import { useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 import { SignInAndSignOutButton } from "./Authentication/SignInAndSignOutButton";
-import { Dashboard } from "./Dashboard/Dashboard";
 import { Heading } from "./Heading";
 import { LoadingWrapper } from "./LoadingWrapper";
 
@@ -27,7 +26,6 @@ export const UserInformation: React.FC = () => {
         </LoadingWrapper>
         <SignInAndSignOutButton />
       </div>
-      <Dashboard />
     </div>
   );
 };
