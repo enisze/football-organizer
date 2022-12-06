@@ -9,7 +9,7 @@ export const PaymentArea: FunctionComponent<{
   eventId: string;
   bookingDate: Date | null;
   cost: number;
-}> = ({ eventId, bookingDate, cost }) => {
+}> = ({ eventId, cost }) => {
   const { data: payment } = trpc.payment.getByEventId.useQuery({ eventId });
 
   return (
@@ -17,7 +17,7 @@ export const PaymentArea: FunctionComponent<{
       <Typography className="text-white">
         Preis pro Person:{" "}
         <Typography variant="outlined" className="text-green-600">
-          {bookingDate ? `${cost / 10} €` : "unbekannt"}
+          {cost ? `${cost / 10} €` : "unbekannt"}
         </Typography>
       </Typography>
       {!payment && (

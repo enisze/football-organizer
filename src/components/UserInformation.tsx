@@ -2,11 +2,10 @@ import { Avatar, Typography } from "@mui/joy";
 import { useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 import { SignInAndSignOutButton } from "./Authentication/SignInAndSignOutButton";
-import { Dashboard } from "./Dashboard";
 import { Heading } from "./Heading";
 import { LoadingWrapper } from "./LoadingWrapper";
 
-export const AuthShowcase: React.FC = () => {
+export const UserInformation: React.FC = () => {
   const { data: sessionData, status } = useSession();
 
   const { data: balance, isLoading } = trpc.payment.getUserBalance.useQuery();
@@ -27,7 +26,6 @@ export const AuthShowcase: React.FC = () => {
         </LoadingWrapper>
         <SignInAndSignOutButton />
       </div>
-      <Dashboard />
     </div>
   );
 };

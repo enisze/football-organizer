@@ -37,7 +37,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
       message: "No football event",
     };
 
-  const { date, startTime, endTime, address, cost, participants, id } =
+  const { date, startTime, endTime, address, cost, participants } =
     footballEvent;
 
   //Ids which have not canceled yet
