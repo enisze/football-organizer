@@ -6,7 +6,7 @@ export const StatusChip: FunctionComponent<{
   bookedString: string;
   notbookedString: string;
   status: EventStatus;
-}> = ({ bookedString, notbookedString }) => {
+}> = ({ bookedString, notbookedString, status }) => {
   return (
     <Chip
       color={
