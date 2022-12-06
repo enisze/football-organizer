@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import type { FunctionComponent } from "react";
 import { useState } from "react";
 import { transformDate } from "../../helpers/transformDate";
+import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { trpc } from "../../utils/trpc";
 import { LoadingWrapper } from "../LoadingWrapper";
 import type { OrganizerMapProps } from "../Map/OrganizerMap";
@@ -39,12 +40,23 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
   const { address, startTime, endTime, date, id, status } = event;
 
   const { data: session } = useSession();
+  const admin = useIsAdmin();
 
   const { data: users } = trpc.user.getUserNamesByIds.useQuery({
     ids: filter(participants, (user) => user.userEventStatus === "JOINED").map(
       (user) => user.id
     ),
   });
+
+  const { data: canceledUsers } = trpc.user.getUserNamesByIds.useQuery(
+    {
+      ids: filter(
+        participants,
+        (user) => user.userEventStatus === "CANCELED"
+      ).map((user) => user.id),
+    },
+    { enabled: admin }
+  );
 
   const participatingUser = find(
     participants,
@@ -126,6 +138,29 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
             </div>
           );
         })}
+      {admin && (
+        <>
+          <Typography variant="outlined" color="info">
+            Absagen
+          </Typography>
+
+          {map(users, (participant) => {
+            const id = participant?.id;
+
+            return (
+              <div key={id} className="flex items-center gap-x-2">
+                <Avatar />
+                <div>{participant?.name}</div>
+                <EventCardAdminPaymentArea
+                  eventId={event.id}
+                  userId={id ?? ""}
+                />
+              </div>
+            );
+          })}
+        </>
+      )}
+
       <EventCardAdminArea eventId={id} />
       <JoinOrLeaveEventButton
         id={id}

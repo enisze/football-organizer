@@ -76,8 +76,6 @@ export async function getServerSideProps(context: any) {
 
   const { participants, ...realEvent } = event;
 
-  console.log(realEvent);
-
   return {
     props: {
       event: realEvent,
