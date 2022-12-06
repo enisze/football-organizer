@@ -21,7 +21,7 @@ const Home: NextPage = () => {
       />
       <Head>
         <title>Football Organizer</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.ico?v=2" />
         <meta
           name="googlebot"
           content="A simple football organizer showing payments based on emails"
