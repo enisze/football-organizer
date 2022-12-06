@@ -1,5 +1,5 @@
 import { createFunction } from "inngest";
-import { forEach } from "lodash";
+import { forEach, map } from "lodash";
 import { PrismaClient } from "../prisma/generated/client";
 import { sendInBlueTransport } from "../src/emails/transporter";
 import type { Event__New } from "./__generated__/types";
@@ -20,6 +20,8 @@ const job = async ({ event }: { event: Event__New }) => {
 
     const { address, cost, date, endTime, startTime } = event.data;
 
+    const names = map(allUsers, (user) => user.email).join(",");
+
     forEach(allUsers, async (user) => {
       await sendInBlueTransport.sendMail({
         from: '"Football Organizer" <eniszej@gmail.com>',
@@ -36,6 +38,8 @@ const job = async ({ event }: { event: Event__New }) => {
         headers: { "x-myheader": "test header" },
       });
     });
+
+    return { message: `Messages sent to: ${names}` };
   } catch (error: any) {
     return {
       message: `No users ${error}`,
