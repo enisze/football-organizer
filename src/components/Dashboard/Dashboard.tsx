@@ -1,12 +1,12 @@
 import type { FunctionComponent } from "react";
-import { trpc } from "../utils/trpc";
+import { trpc } from "../../utils/trpc";
 
 import { List, ListItem } from "@mui/joy";
 import { map } from "lodash";
-import { useIsAdmin } from "../hooks/useIsAdmin";
+import { useIsAdmin } from "../../hooks/useIsAdmin";
+import { EventCard } from "../Events/EventCard";
+import { LoadingWrapper } from "../LoadingWrapper";
 import { AdminBoard } from "./AdminBoard";
-import { EventCard } from "./Events/EventCard";
-import { LoadingWrapper } from "./LoadingWrapper";
 
 export const Dashboard: FunctionComponent = () => {
   const { data: events, isLoading } = trpc.event.getAll.useQuery();

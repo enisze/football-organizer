@@ -3,9 +3,9 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { LoginForm } from "../components/Authentication/LoginForm";
 import { SignInAndSignOutButton } from "../components/Authentication/SignInAndSignOutButton";
-import { AuthShowcase } from "../components/AuthShowCase";
 import { Heading } from "../components/Heading";
 import { LoadingWrapper } from "../components/LoadingWrapper";
+import { UserInformation } from "../components/UserInformation";
 
 const Home: NextPage = () => {
   const { data: sessionData, status } = useSession();
@@ -39,7 +39,7 @@ const Home: NextPage = () => {
             <SignInAndSignOutButton />
           </main>
         ) : (
-          <AuthShowcase />
+          <UserInformation />
         )}
       </LoadingWrapper>
     </div>
