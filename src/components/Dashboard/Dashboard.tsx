@@ -4,7 +4,7 @@ import { trpc } from "../../utils/trpc";
 import { List, ListItem, Tab, TabList, TabPanel, Tabs } from "@mui/joy";
 import type { Event, ParticipantsOnEvents } from "@prisma/client";
 import { isAfter } from "date-fns";
-import { forEach, map } from "lodash";
+import { forEach, map, orderBy } from "lodash";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { EventCard } from "../Events/EventCard";
 import { LoadingWrapper } from "../LoadingWrapper";
@@ -84,5 +84,11 @@ const getPreviousAndUpcomingEvents = (events: EventsWithparticipants) => {
     }
   });
 
-  return { previousEvents, upcomingEvents };
+  const sortedPreviousEvents = orderBy(previousEvents, ["date"], ["desc"]);
+  const sortedUpcomingEvents = orderBy(upcomingEvents, ["date"], ["asc"]);
+
+  return {
+    previousEvents: sortedPreviousEvents,
+    upcomingEvents: sortedUpcomingEvents,
+  };
 };
