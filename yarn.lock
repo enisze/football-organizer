@@ -2382,6 +2382,11 @@ next-auth@^4.17.0:
     preact-render-to-string "^5.1.19"
     uuid "^8.3.2"
 
+next-secure-headers@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/next-secure-headers/-/next-secure-headers-2.2.0.tgz#d4eb1b00a424f811c1455d1288990a4aad3026af"
+  integrity sha512-C7OfZ9JdSJyYMz2ZBMI/WwNbt0qNjlFWX9afUp8nEUzbz6ez3JbeopdyxSZJZJAzVLIAfyk6n73rFpd4e22jRg==
+
 next-superjson-plugin@^0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/next-superjson-plugin/-/next-superjson-plugin-0.5.2.tgz#7b0c23787e2e9b881f37a55570d282aee8dff64e"

@@ -1,4 +1,7 @@
 // @ts-check
+
+import { createSecureHeaders } from "next-secure-headers";
+
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
  * This is especially useful for Docker builds.
@@ -13,24 +16,19 @@ const config = {
     return [
       {
         source: "/(.*)",
-        headers: [
-          {
-            key: "X-Frame-Options",
-            value: "DENY",
+        headers: createSecureHeaders({
+          contentSecurityPolicy: {
+            directives: {
+              defaultSrc: "'self'",
+              styleSrc: "self",
+            },
           },
-          {
-            key: "X-Content-Type-Options",
-            value: "nosniff",
-          },
-          {
-            key: "Referrer-Policy",
-            value: "origin-when-cross-origin",
-          },
-          {
-            key: "Strict-Transport-Security",
-            value: "max-age=3571000; includeSubDomains; preload",
-          },
-        ],
+          forceHTTPSRedirect: [
+            true,
+            { maxAge: 60 * 60 * 24 * 4, includeSubDomains: true },
+          ],
+          referrerPolicy: "same-origin",
+        }),
       },
     ];
   },
