@@ -28,6 +28,7 @@ const DynamicOrganizerMap = dynamic<OrganizerMapProps>(
 type EventCardProps = {
   event: Event;
   participants: ParticipantsOnEvents[];
+  showActions?: boolean;
 };
 
 //TODO: Adjust schema event thingy -> Warteliste status?
@@ -36,6 +37,7 @@ type EventCardProps = {
 export const EventCard: FunctionComponent<EventCardProps> = ({
   event,
   participants,
+  showActions = true,
 }) => {
   const { address, startTime, endTime, date, id, status } = event;
 
@@ -144,7 +146,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
             Absagen
           </Typography>
 
-          {map(users, (participant) => {
+          {map(canceledUsers, (participant) => {
             const id = participant?.id;
 
             return (
@@ -162,10 +164,12 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
       )}
 
       <EventCardAdminArea eventId={id} />
-      <JoinOrLeaveEventButton
-        id={id}
-        isUserParticipating={Boolean(participatingUser)}
-      />
+      {showActions && (
+        <JoinOrLeaveEventButton
+          id={id}
+          isUserParticipating={Boolean(participatingUser)}
+        />
+      )}
 
       <AddToCalendarButton event={event} />
     </Card>

@@ -1,6 +1,7 @@
 import { Button, Sheet, Typography } from "@mui/joy";
 import type { Event, ParticipantsOnEvents } from "@prisma/client";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import type { FunctionComponent } from "react";
 import { LoginForm } from "../../components/Authentication/LoginForm";
 import { EventCard } from "../../components/Events/EventCard";
@@ -26,6 +27,10 @@ const EventPage: FunctionComponent<{
       trpcContext.user.getUserNamesByIds.invalidate();
     },
   });
+
+  const url = process.env.NEXT_PUBLIC_BASE_URL as string;
+
+  const link = new URL(url);
 
   return (
     <>
@@ -54,8 +59,15 @@ const EventPage: FunctionComponent<{
                   Du hast dich erfolgreich abgemeldet.
                 </Typography>
               )}
+              <Link href={link}>
+                <Typography color="primary">Zur Startseite</Typography>
+              </Link>
             </Sheet>
-            <EventCard event={event} participants={participants} />
+            <EventCard
+              event={event}
+              participants={participants}
+              showActions={false}
+            />
           </>
         )}
       </div>
