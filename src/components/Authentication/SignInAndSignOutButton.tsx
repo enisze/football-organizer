@@ -2,11 +2,18 @@ import { Button } from "@mui/joy";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import type { FunctionComponent } from "react";
+import { LoadingWrapper } from "../LoadingWrapper";
 
 export const SignInAndSignOutButton: FunctionComponent = () => {
-  const { data: sessionData } = useSession();
+  const { data: sessionData, status } = useSession();
 
-  return <>{sessionData ? <LogoutButton /> : <SignInButton />}</>;
+  return (
+    <>
+      <LoadingWrapper isLoading={status === "loading"}>
+        {sessionData ? <LogoutButton /> : <SignInButton />}
+      </LoadingWrapper>
+    </>
+  );
 };
 
 const SignInButton: FunctionComponent = () => {

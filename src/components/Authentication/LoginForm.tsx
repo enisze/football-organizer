@@ -1,10 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, TextField, Typography } from "@mui/joy";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import type { FunctionComponent } from "react";
 import type { FieldValues } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { LoadingWrapper } from "../LoadingWrapper";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Bitte gib eine gültige Email ein." }),
@@ -18,6 +19,8 @@ export const LoginForm: FunctionComponent = () => {
     formState: { errors },
     setError,
   } = useForm({ resolver: zodResolver(loginSchema), mode: "onBlur" });
+
+  const { status } = useSession();
 
   const onSubmit = async (values: FieldValues) => {
     const res = await signIn("credentials", {
@@ -60,7 +63,9 @@ export const LoginForm: FunctionComponent = () => {
           </Typography>
         )}
 
-        <Button type="submit">Login</Button>
+        <LoadingWrapper isLoading={status === "loading"}>
+          <Button type="submit">Login</Button>
+        </LoadingWrapper>
       </form>
     </>
   );
