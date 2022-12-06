@@ -35,7 +35,8 @@ const job = async ({ event }: { event: Event__Reminder }) => {
       message: "No football event",
     };
 
-  const { date, startTime, endTime, address, cost } = footballEvent;
+  const { date, startTime, endTime, address, cost, participants } =
+    footballEvent;
 
   //Ids which have not canceled yet
   const participantIds = reduce(
@@ -67,7 +68,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
       await sendInBlueTransport.sendMail({
         from: '"Football Organizer" <eniszej@gmail.com>',
         to: user.email,
-        subject: "ERINNERUNG: FUSSBALL FINDET STATT ! ",
+        subject: `ERINNERUNG: FUSSBALL FINDET STATT ${participants.length}/10 ! `,
         html: `<p>Hey ${user.name},</p>
           <p>Folgendes Event findet bald statt: </p>
   <p>Datum: <strong>${date.toDateString()}</strong></p>
@@ -75,7 +76,9 @@ const job = async ({ event }: { event: Event__Reminder }) => {
   <p>Ort: <strong>${address}</strong></p>
   <p>Preis: <strong>${cost / 10} €</strong></p>
   <a href="${paypalLink}">Hier kannst du bei Paypal bezahlen :)</a>
-  <p><strong>Sag doch bitte zu und komm vorbei. </strong></p>
+  <p><strong>Es sind noch ${
+    10 - participants.length
+  } Plätze frei!. Sag doch bitte zu und komm vorbei. </strong></p>
           `,
         headers: { "x-myheader": "test header" },
       });
