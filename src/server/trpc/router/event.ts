@@ -23,12 +23,15 @@ export const eventRouter = router({
     .mutation(async ({ ctx: { prisma }, input }) => {
       if (!input) throw new TRPCError({ code: "BAD_REQUEST" });
 
-      await inngest.send("event/new", {
-        data: { ...input, date: input.date.toDateString() },
-      });
-      return await prisma.event.create({
+      const result = await prisma.event.create({
         data: { ...input },
+        select: { id: true },
       });
+      await inngest.send("event/new", {
+        data: { ...input, date: input.date.toDateString(), id: result.id },
+      });
+
+      return result;
     }),
   getAll: publicProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.event.findMany({

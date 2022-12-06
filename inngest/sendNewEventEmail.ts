@@ -9,6 +9,8 @@ const prisma = new PrismaClient();
 const paypalLink =
   "https://www.paypal.com/paypalme/enz1994?country.x=DE&locale.x=de_DE";
 
+const websiteLink = "https://www.football-organizer.vercel.app";
+
 const job = async ({ event }: { event: Event__New }) => {
   try {
     const allUsers = await prisma.user.findMany();
@@ -18,7 +20,7 @@ const job = async ({ event }: { event: Event__New }) => {
         message: `No users found`,
       };
 
-    const { address, cost, date, endTime, startTime } = event.data;
+    const { address, cost, date, endTime, startTime, id } = event.data;
 
     const names = map(allUsers, (user) => user.email).join(",");
 
@@ -34,6 +36,10 @@ const job = async ({ event }: { event: Event__New }) => {
 <p>Ort: <strong>${address}</strong></p>
 <p>Preis: <strong>${cost / 10} €</strong></p>
 <a href="${paypalLink}">Hier kannst du bei Paypal bezahlen :)</a>
+
+  <a href="${
+    websiteLink + "/events/" + id
+  }">Hier kannst du Zusagen oder die Benachrichtung zu diesem Event abschalten.</a>
     `,
         headers: { "x-myheader": "test header" },
       });

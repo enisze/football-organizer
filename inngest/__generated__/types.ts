@@ -16,6 +16,7 @@ export type Event__New = {
     startTime: string;
     address: string;
     cost: number;
+    id: string;
   };
   ts: number;
 };
