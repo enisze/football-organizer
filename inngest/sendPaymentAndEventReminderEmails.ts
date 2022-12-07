@@ -83,7 +83,6 @@ const job = async ({ event }: { event: Event__Reminder }) => {
     process.env.NEXT_PUBLIC_BASE_URL + "/events/" + id
   }">Hier kannst du Zusagen oder die Benachrichtung zu diesem Event abschalten.</a>
           `,
-        // headers: { "x-myheader": "test header" },
       });
     } else {
       const payment = find(
@@ -110,7 +109,6 @@ const job = async ({ event }: { event: Event__Reminder }) => {
 
   <a href="${paypalLink}">Hier kannst du bei Paypal bezahlen :)</a>
           `,
-            // headers: { "x-myheader": "test header" },
           });
         } catch (error: any) {
           return { message: "sending email failed" };
