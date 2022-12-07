@@ -9,8 +9,6 @@ const prisma = new PrismaClient();
 const paypalLink =
   "https://www.paypal.com/paypalme/enz1994?country.x=DE&locale.x=de_DE";
 
-const websiteLink = "https://www.football-organizer.vercel.app";
-
 const job = async ({ event }: { event: Event__Reminder }) => {
   const id = event.data.eventId;
 
@@ -82,7 +80,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
     10 - participants.length
   } Plätze frei!. Sag doch bitte zu und komm vorbei. </strong></p>
   <a href="${
-    websiteLink + "/events/" + id
+    process.env.NEXT_PUBLIC_BASE_URL + "/events/" + id
   }">Hier kannst du Zusagen oder die Benachrichtung zu diesem Event abschalten.</a>
           `,
         // headers: { "x-myheader": "test header" },
