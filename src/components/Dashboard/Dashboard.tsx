@@ -35,6 +35,7 @@ export const Dashboard: FunctionComponent = () => {
       <Tabs
         className="flex w-full items-center justify-center rounded bg-transparent"
         size="lg"
+        defaultValue={1}
         onChange={(event, value) => setIndex(value as number)}
       >
         <TabList variant="plain">
