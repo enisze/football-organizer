@@ -1,4 +1,5 @@
-import { FunctionComponent, useMemo } from "react";
+import type { FunctionComponent } from "react";
+import { useMemo, useState } from "react";
 import { trpc } from "../../utils/trpc";
 
 import { List, ListItem, Tab, TabList, TabPanel, Tabs } from "@mui/joy";
@@ -16,6 +17,7 @@ type EventsWithparticipants =
 
 export const Dashboard: FunctionComponent = () => {
   const { data: events, isLoading } = trpc.event.getAll.useQuery();
+  const [index, setIndex] = useState(1);
 
   // const a = trpc.event.deleteAll.useQuery();
   // const b = trpc.user.deleteAll.useQuery();
@@ -31,12 +33,18 @@ export const Dashboard: FunctionComponent = () => {
       {isAdmin && <AdminBoard />}
 
       <Tabs
-        defaultValue={1}
         className="flex w-full items-center justify-center rounded bg-transparent"
+        size="lg"
+        onChange={(event, value) => setIndex(value as number)}
       >
-        <TabList variant="soft" color="neutral">
-          <Tab value={0}>Vergangene Events</Tab>
-          <Tab value={1}>Kommende Events</Tab>
+        <TabList variant="plain">
+          <Tab color="primary" variant={index === 0 ? "outlined" : "plain"}>
+            Vergangene Events
+          </Tab>
+
+          <Tab color="primary" variant={index === 1 ? "outlined" : "plain"}>
+            Kommende Events
+          </Tab>
         </TabList>
 
         <TabPanel value={0} className="flex justify-center bg-transparent">

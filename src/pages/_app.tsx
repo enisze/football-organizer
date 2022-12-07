@@ -17,6 +17,12 @@ const theme = extendTheme({
           outlinedHoverBg: "#373B44",
           outlinedColor: "#73C8A9",
           outlinedHoverBorder: "#73C8A9",
+          outlinedActiveBg: "#1E293B",
+          outlinedActiveBorder: "#1E293B",
+          plainHoverBg: "#373B44",
+          plainColor: "#73C8A9",
+          plainActiveBorder: "#73C8A9",
+
           solidBg: "#373B44",
           solidHoverBg: "#1E293B",
           solidColor: "#73C8A9",

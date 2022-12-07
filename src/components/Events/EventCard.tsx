@@ -34,12 +34,27 @@ type EventCardProps = {
 //TODO: Adjust schema event thingy -> Warteliste status?
 //TODO: Show Warteliste, if we have participants which are on the waiting list too?
 
+const cardClassname = (upcoming?: boolean) => {
+  const className =
+    "flex flex-col justify-center gap-2 rounded border-2  p-6 text-white shadow-xl duration-500 motion-safe:hover:scale-105";
+
+  const previousColors = " border-gray-500 bg-gray-800";
+  const upcomingColors = " border-gray-500 bg-gray-600";
+
+  const colors = upcoming ? upcomingColors : previousColors;
+
+  const result = className + colors;
+  return result;
+};
+
 export const EventCard: FunctionComponent<EventCardProps> = ({
   event,
   participants,
   showActions = true,
 }) => {
   const { address, startTime, endTime, date, id, status } = event;
+
+  const [showParticipants, setShowParticipants] = useState(false);
 
   const { data: session } = useSession();
   const admin = useIsAdmin();
@@ -64,12 +79,15 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
     participants,
     (user) => user.id === session?.user?.id && user.userEventStatus === "JOINED"
   );
-  const [showParticipants, setShowParticipants] = useState(false);
 
   const currentDate = new Date();
   const days = differenceInDays(date, currentDate);
 
-  const eventString = days > 0 ? `Event in ${days} Tagen` : "Vergangenes Event";
+  const isPastEvent = days < 0;
+
+  const eventString = isPastEvent
+    ? "Vergangenes Event"
+    : `Event in ${days} Tagen`;
 
   const { data, isLoading } = trpc.map.getLatLong.useQuery({
     id: event.id,
@@ -89,9 +107,14 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
   const participantsString = `Teilnehmer ${amountOfParticipants}/10`;
 
   return (
-    <Card className="flex flex-col justify-center gap-2 rounded border-2 border-gray-500 bg-gray-600 p-6 text-white shadow-xl duration-500 motion-safe:hover:scale-105">
+    <Card className={cardClassname(days > 0)}>
       <div className="flex flex-col items-center gap-y-2">
-        <Typography className="text-white">{eventString}</Typography>
+        <Typography
+          className={isPastEvent ? "text-red-400" : "text-white"}
+          variant={isPastEvent ? "outlined" : "plain"}
+        >
+          {eventString}
+        </Typography>
 
         <PaymentArea
           eventId={event.id}
@@ -113,7 +136,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
             </LoadingWrapper>
           </div>
         )}
-        <Typography className=" text-sm text-gray-700 md:text-lg ">
+        <Typography className="text-sm text-gray-700 md:text-lg">
           Wo: <span className="font-bold">{address}</span>
         </Typography>
         <Typography className="text-sm text-gray-600 md:text-lg">
@@ -140,7 +163,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
             </div>
           );
         })}
-      {admin && (
+      {admin && showParticipants && (
         <>
           <Typography variant="outlined" color="info">
             Absagen
@@ -164,7 +187,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
       )}
 
       <EventCardAdminArea eventId={id} />
-      {showActions && (
+      {showActions && !isPastEvent && (
         <JoinOrLeaveEventButton
           id={id}
           isUserParticipating={Boolean(participatingUser)}

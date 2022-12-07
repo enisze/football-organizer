@@ -37,22 +37,26 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
       <div className="flex flex-col items-center gap-y-3">
         <Typography variant="soft">{"Id: " + eventId}</Typography>
         <LoadingWrapper isLoading={isLoading}>
-          <Typography variant="soft">
-            Bezahlt aber nicht teilgenommen
-          </Typography>
-          {map(payments, (payment) => {
-            if (!payment || !payment?.user) return null;
-            return (
-              <div key={payment.id}>
-                <div key={payment.id} className="flex items-center gap-x-2">
-                  <div>{payment?.user.name}</div>
-                  <div>{payment?.amount + " €"}</div>
-                  <div>{payment?.paymentDate.toDateString()}</div>
-                  <Chip color="success">Bezahlt</Chip>
-                </div>
-              </div>
-            );
-          })}
+          {payments && payments.length > 0 && (
+            <>
+              <Typography variant="soft">
+                Bezahlt aber nicht teilgenommen
+              </Typography>
+              {map(payments, (payment) => {
+                if (!payment || !payment?.user) return null;
+                return (
+                  <div key={payment.id}>
+                    <div key={payment.id} className="flex items-center gap-x-2">
+                      <div>{payment?.user.name}</div>
+                      <div>{payment?.amount + " €"}</div>
+                      <div>{payment?.paymentDate.toDateString()}</div>
+                      <Chip color="success">Bezahlt</Chip>
+                    </div>
+                  </div>
+                );
+              })}
+            </>
+          )}
         </LoadingWrapper>
       </div>
       <DeleteEventButton id={eventId} />
