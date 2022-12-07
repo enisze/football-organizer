@@ -35,13 +35,13 @@ const job = async ({ event }: { event: Event__New }) => {
 <p>Zeit: <strong>${startTime} - ${endTime} Uhr</strong></p>
 <p>Ort: <strong>${address}</strong></p>
 <p>Preis: <strong>${cost / 10} €</strong></p>
-<a href="${paypalLink}">Hier kannst du bei Paypal bezahlen :)</a>
+<p><a href="${paypalLink}">Hier kannst du bei Paypal bezahlen :)</a></p>
 
   <a href="${
     websiteLink + "/events/" + id
   }">Hier kannst du Zusagen oder die Benachrichtung zu diesem Event abschalten.</a>
     `,
-        headers: { "x-myheader": "test header" },
+        // headers: { "x-myheader": "test header" },
       });
     });
 
