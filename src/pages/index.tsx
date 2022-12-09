@@ -15,7 +15,7 @@ const Home: NextPage = () => {
     <div>
       <div
         style={{
-          background: "linear-gradient(to top, #373B44, #73C8A9)",
+          background: "linear-gradient(to bottom, #373B44, #73C8A9)",
         }}
         className="fixed -z-10 flex h-full w-full"
       />
