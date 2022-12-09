@@ -6,7 +6,7 @@ import { SignInAndSignOutButton } from "../components/Authentication/SignInAndSi
 import { Dashboard } from "../components/Dashboard/Dashboard";
 import { Heading } from "../components/Heading";
 import { LoadingWrapper } from "../components/LoadingWrapper";
-import { UserInformation } from "../components/UserInformation";
+import { Navbar } from "../components/Navbar";
 
 const Home: NextPage = () => {
   const { data: sessionData, status } = useSession();
@@ -41,7 +41,7 @@ const Home: NextPage = () => {
           </main>
         ) : (
           <div className="flex flex-col pb-2">
-            <UserInformation />
+            <Navbar />
             <Dashboard />
           </div>
         )}
