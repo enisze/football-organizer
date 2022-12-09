@@ -2,7 +2,15 @@ import type { FunctionComponent } from "react";
 import { useMemo, useState } from "react";
 import { trpc } from "../../utils/trpc";
 
-import { List, ListItem, Tab, TabList, TabPanel, Tabs } from "@mui/joy";
+import {
+  List,
+  ListItem,
+  Tab,
+  TabList,
+  TabPanel,
+  Tabs,
+  Typography,
+} from "@mui/joy";
 import type { Event, ParticipantsOnEvents } from "@prisma/client";
 import { isAfter } from "date-fns";
 import { find, forEach, map, orderBy } from "lodash";
@@ -41,6 +49,9 @@ export const Dashboard: FunctionComponent = () => {
     <div className="m-8 flex flex-col items-center justify-center">
       {isAdmin && <AdminBoard />}
 
+      <Typography fontSize={40} color="primary">
+        Events
+      </Typography>
       <Tabs
         className="flex w-full items-center justify-center rounded bg-transparent"
         size="lg"
@@ -49,14 +60,14 @@ export const Dashboard: FunctionComponent = () => {
       >
         <TabList variant="plain">
           <Tab color="primary" variant={index === 0 ? "outlined" : "plain"}>
-            Vergangene Events
+            Vergangene
           </Tab>
 
           <Tab color="primary" variant={index === 1 ? "outlined" : "plain"}>
-            Kommende Events
+            Kommende
           </Tab>
           <Tab color="primary" variant={index === 2 ? "outlined" : "plain"}>
-            Deine Events
+            Deine
           </Tab>
         </TabList>
 

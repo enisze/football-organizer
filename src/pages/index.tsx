@@ -7,9 +7,12 @@ import { Dashboard } from "../components/Dashboard/Dashboard";
 import { Heading } from "../components/Heading";
 import { LoadingWrapper } from "../components/LoadingWrapper";
 import { Navbar } from "../components/Navbar";
+import { useWindowSize } from "../hooks/useWindowSize";
 
 const Home: NextPage = () => {
   const { data: sessionData, status } = useSession();
+
+  const { width } = useWindowSize();
 
   return (
     <div>
@@ -35,7 +38,7 @@ const Home: NextPage = () => {
       <LoadingWrapper isLoading={status === "loading"} center>
         {!sessionData ? (
           <main className="absolute flex h-full w-full flex-col items-center justify-center gap-y-2">
-            <Heading />
+            <Heading size={width && width < 720 ? "md" : "lg"} />
             <LoginForm />
             <SignInAndSignOutButton />
           </main>
