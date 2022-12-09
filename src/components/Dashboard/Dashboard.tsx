@@ -60,24 +60,22 @@ export const Dashboard: FunctionComponent = () => {
       >
         <TabList variant="plain">
           <Tab color="primary" variant={index === 0 ? "outlined" : "plain"}>
-            Vergangene
-          </Tab>
-
-          <Tab color="primary" variant={index === 1 ? "outlined" : "plain"}>
             Kommende
           </Tab>
-          <Tab color="primary" variant={index === 2 ? "outlined" : "plain"}>
+          <Tab color="primary" variant={index === 1 ? "outlined" : "plain"}>
             Deine
           </Tab>
+          {isAdmin && (
+            <Tab color="primary" variant={index === 2 ? "outlined" : "plain"}>
+              Vergangene
+            </Tab>
+          )}
         </TabList>
 
-        <TabPanel value={0} className="flex justify-center bg-transparent">
-          <EventList events={previousEvents} isLoading={isLoading} />
-        </TabPanel>
-        <TabPanel value={1} className="flex justify-center">
+        <TabPanel value={0} className="flex justify-center">
           <EventList events={upcomingEvents} isLoading={isLoading} />
         </TabPanel>
-        <TabPanel value={2} className="flex justify-center">
+        <TabPanel value={1} className="flex justify-center">
           <Tabs
             className="flex w-full items-center justify-center rounded bg-transparent"
             size="lg"
@@ -106,6 +104,9 @@ export const Dashboard: FunctionComponent = () => {
               <EventList events={joinedEvents} isLoading={isLoading} />
             </TabPanel>
           </Tabs>
+        </TabPanel>
+        <TabPanel value={2} className="flex justify-center bg-transparent">
+          <EventList events={previousEvents} isLoading={isLoading} />
         </TabPanel>
       </Tabs>
     </div>
