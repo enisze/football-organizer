@@ -49,9 +49,6 @@ export const Dashboard: FunctionComponent = () => {
     <div className="m-8 flex flex-col items-center justify-center">
       {isAdmin && <AdminBoard />}
 
-      <Typography fontSize={40} color="primary">
-        Events
-      </Typography>
       <Tabs
         className="flex w-full items-center justify-center rounded bg-transparent"
         size="lg"
@@ -60,14 +57,14 @@ export const Dashboard: FunctionComponent = () => {
       >
         <TabList variant="plain">
           <Tab color="primary" variant={index === 0 ? "outlined" : "plain"}>
-            Kommende
+            Kommende Events
           </Tab>
           <Tab color="primary" variant={index === 1 ? "outlined" : "plain"}>
-            Deine
+            Deine Events
           </Tab>
           {isAdmin && (
             <Tab color="primary" variant={index === 2 ? "outlined" : "plain"}>
-              Vergangene
+              Vergangene Events
             </Tab>
           )}
         </TabList>
@@ -120,14 +117,18 @@ const EventList: FunctionComponent<{
   return (
     <LoadingWrapper isLoading={isLoading}>
       <List>
-        {map(events, (event) => {
-          const { participants, ...realEvent } = event;
-          return (
-            <ListItem key={realEvent.id}>
-              <EventCard event={realEvent} participants={participants} />
-            </ListItem>
-          );
-        })}
+        {events && events?.length > 0 ? (
+          map(events, (event) => {
+            const { participants, ...realEvent } = event;
+            return (
+              <ListItem key={realEvent.id}>
+                <EventCard event={realEvent} participants={participants} />
+              </ListItem>
+            );
+          })
+        ) : (
+          <Typography>Keine Events</Typography>
+        )}
       </List>
     </LoadingWrapper>
   );
