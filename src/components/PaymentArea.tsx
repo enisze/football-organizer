@@ -1,4 +1,4 @@
-import { Chip, Link, Typography } from "@mui/joy";
+import { Button, Chip, Link, Typography } from "@mui/joy";
 import type { FunctionComponent } from "react";
 import { trpc } from "../utils/trpc";
 
@@ -13,7 +13,7 @@ export const PaymentArea: FunctionComponent<{
   const { data: payment } = trpc.payment.getByEventId.useQuery({ eventId });
 
   return (
-    <div className="flex flex-col items-center justify-center gap-y-2">
+    <div className="flex w-full flex-col items-center justify-center gap-y-2">
       <Typography className="text-white">
         Preis pro Person:{" "}
         <Typography variant="outlined" className="text-green-600">
@@ -21,8 +21,10 @@ export const PaymentArea: FunctionComponent<{
         </Typography>
       </Typography>
       {!payment && (
-        <Link variant="solid" href={paypalLink} underline="none">
-          Bezahlen per Paypal
+        <Link href={paypalLink} underline="none" className="w-full">
+          <Button variant="outlined" className="w-full">
+            Bezahlen per Paypal
+          </Button>
         </Link>
       )}
       {payment && (

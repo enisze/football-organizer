@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, Sheet, Typography } from "@mui/joy";
+import { Avatar, Button, Card, Chip, Sheet, Typography } from "@mui/joy";
 import type { Event, ParticipantsOnEvents } from "@prisma/client";
 import { differenceInDays } from "date-fns";
 import { filter, find, map } from "lodash";
@@ -109,30 +109,29 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
   return (
     <Card className={cardClassname(days > 0)}>
       <div className="flex flex-col items-center gap-y-2">
-        <Typography
-          className={isPastEvent ? "text-red-400" : "text-white"}
-          variant={isPastEvent ? "outlined" : "plain"}
-        >
-          {eventString}
-        </Typography>
-
-        <PaymentArea
-          eventId={event.id}
-          bookingDate={event.bookingDate}
-          cost={event.cost}
-        />
-
         <StatusChip
           status={status}
           bookedString={participantsString}
           notbookedString={partialString}
         />
       </div>
-      <Sheet variant="outlined" sx={{ p: 4 }}>
+      <Sheet variant="outlined" className="rounded border p-4">
         {data && (
           <div className="relative h-[200px] w-[250px] md:h-[250px] md:w-[350px]">
             <LoadingWrapper isLoading={isLoading}>
-              <DynamicOrganizerMap coordinates={data} />
+              <div className="flex">
+                <DynamicOrganizerMap coordinates={data} />
+                <div className="absolute top-1 left-1">
+                  <Chip>
+                    <Typography
+                      className={isPastEvent ? "text-red-400" : "text-white"}
+                      variant={isPastEvent ? "outlined" : "plain"}
+                    >
+                      {eventString}
+                    </Typography>
+                  </Chip>
+                </div>
+              </div>
             </LoadingWrapper>
           </div>
         )}
@@ -187,6 +186,11 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
       )}
 
       <EventCardAdminArea eventId={id} />
+      <PaymentArea
+        eventId={event.id}
+        bookingDate={event.bookingDate}
+        cost={event.cost}
+      />
       {showActions && !isPastEvent && (
         <JoinOrLeaveEventButton
           id={id}
