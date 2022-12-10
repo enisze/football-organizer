@@ -85,9 +85,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
   const isPastEvent = days < 0;
 
-  const eventString = isPastEvent
-    ? "Vergangenes Event"
-    : `Event in ${days} Tagen`;
+  const eventString = isPastEvent ? "Vergangenes Event" : `In ${days} Tagen`;
 
   const { data, isLoading } = trpc.map.getLatLong.useQuery({
     id: event.id,
@@ -141,6 +139,13 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         <Typography className="text-sm text-gray-600 md:text-lg">
           Wann: <span className="font-bold">{dateString}</span>
         </Typography>
+
+        <Typography className="text-gray-600 md:text-lg">
+          Preis pro Person:{" "}
+          <Typography className="font-bold">
+            {`${event.cost / 10} €`}
+          </Typography>
+        </Typography>
       </Sheet>
       <Button
         variant="soft"
@@ -186,11 +191,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
       )}
 
       <EventCardAdminArea eventId={id} />
-      <PaymentArea
-        eventId={event.id}
-        bookingDate={event.bookingDate}
-        cost={event.cost}
-      />
+      <PaymentArea eventId={event.id} bookingDate={event.bookingDate} />
       {showActions && !isPastEvent && (
         <JoinOrLeaveEventButton
           id={id}
