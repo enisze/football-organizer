@@ -1,16 +1,17 @@
+import type { Event } from "@prisma/client";
 import compileMjml from "mjml";
-import type { Event__New } from "../__generated__/types";
 import { paypalLink } from "./helpers/constants";
+import { getButton } from "./helpers/getButton";
 import { getEventTemplate } from "./helpers/getEventTemplate";
 
 export const generateNewEventTemplate = ({
   event,
   userName,
 }: {
-  event: Event__New;
+  event: Partial<Event>;
   userName: string;
 }) => {
-  const { id } = event.data;
+  const { id } = event;
 
   const eventLink = process.env.NEXT_PUBLIC_BASE_URL + "/events/" + id;
 
@@ -37,13 +38,15 @@ Ein neues Event wurde erstellt.
         </mj-text>
       </mj-column>
     </mj-section>
+<mj-section background-color="#373B44" padding-bottom="15px">
     ${eventTemplate}
+    </mj-section>
     <mj-section background-color="#1E293B" padding-bottom="20px" padding-top="20px">
       <mj-column width="50%">
-        <mj-button background-color="#73C8A9" color="#373B44" font-size="14px" align="center" font-weight="bold" border="none" padding="15px 30px" border-radius="10px" href="${paypalLink}" font-family="Helvetica" padding-left="25px" padding-right="25px" padding-bottom="10px">Bei Paypal bezahlen</mj-button>
+      ${getButton(paypalLink, "Bei Paypal bezahlen")}
       </mj-column>
       <mj-column width="50%">
-        <mj-button background-color="#73C8A9" color="#373B44" font-size="14px" align="center" font-weight="bold" border="none" padding="15px 30px" border-radius="10px" href="${eventLink}" font-family="Helvetica" padding-left="25px" padding-right="25px" padding-bottom="12px">Zusagen / Absagen</mj-button>
+      ${getButton(eventLink, "Zusagen / Absagen")}
       </mj-column>
     </mj-section>
     <mj-section background-color="#1E293B" padding-bottom="5px" padding-top="0">

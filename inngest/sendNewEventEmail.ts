@@ -20,7 +20,7 @@ const job = async ({ event }: { event: Event__New }) => {
 
     forEach(allUsers, async (user) => {
       const html = generateNewEventTemplate({
-        event,
+        event: { ...event.data, date: new Date(event.data.date) },
         userName: user.name,
       }).html;
 

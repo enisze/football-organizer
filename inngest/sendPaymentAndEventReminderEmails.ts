@@ -1,14 +1,13 @@
-import { ParticipantsOnEvents, UserEventStatus } from "@prisma/client";
+import type { ParticipantsOnEvents, UserEventStatus } from "@prisma/client";
 import { createFunction } from "inngest";
 import { find, forEach, reduce } from "lodash";
 import { PrismaClient } from "../prisma/generated/client";
 import { sendInBlueTransport } from "../src/emails/transporter";
+import { generateEventReminderTemplate } from "./emailTemplates/eventReminderTemplate";
+import { generatePaymentReminderTemplate } from "./emailTemplates/paymentReminderTemplate";
 import type { Event__Reminder } from "./__generated__/types";
 
 const prisma = new PrismaClient();
-
-const paypalLink =
-  "https://www.paypal.com/paypalme/enz1994?country.x=DE&locale.x=de_DE";
 
 const job = async ({ event }: { event: Event__Reminder }) => {
   const id = event.data.eventId;
@@ -25,8 +24,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
       message: "No football event",
     };
 
-  const { date, startTime, endTime, address, cost, participants } =
-    footballEvent;
+  const { participants } = footballEvent;
 
   //Ids which are available
   const availableParticipantIds = getParticipantIdsByStatus(
@@ -45,25 +43,17 @@ const job = async ({ event }: { event: Event__Reminder }) => {
     if (availableParticipantIds.includes(user.id)) {
       //Send event reminder
 
+      const html = generateEventReminderTemplate({
+        event: footballEvent,
+        userName: user.name,
+      }).html;
+
       usersWhoGotMails.push(user.email);
       await sendInBlueTransport.sendMail({
         from: '"Football Organizer" <eniszej@gmail.com>',
         to: user.email,
         subject: `ERINNERUNG: FUSSBALL FINDET STATT ${participants.length}/10 ! `,
-        html: `<p>Hey ${user.name},</p>
-          <p>Folgendes Event findet bald statt: </p>
-  <p>Datum: <strong>${date.toDateString()}</strong></p>
-  <p>Zeit: <strong>${startTime} - ${endTime} Uhr</strong></p>
-  <p>Ort: <strong>${address}</strong></p>
-  <p>Preis: <strong>${cost / 10} €</strong></p>
-  <a href="${paypalLink}">Hier kannst du bei Paypal bezahlen :)</a>
-  <p><strong>Es sind noch ${
-    10 - participants.length
-  } Plätze frei!. Sag doch bitte zu und komm vorbei. </strong></p>
-  <a href="${
-    process.env.NEXT_PUBLIC_BASE_URL + "/events/" + id
-  }">Hier kannst du Zusagen oder die Benachrichtung zu diesem Event abschalten.</a>
-          `,
+        html,
       });
     }
 
@@ -77,21 +67,17 @@ const job = async ({ event }: { event: Event__Reminder }) => {
         //Send payment reminder
         try {
           usersWhoGotMails.push(user.email);
+
+          const html = generatePaymentReminderTemplate({
+            event: footballEvent,
+            userName: user.name,
+          }).html;
+
           await sendInBlueTransport.sendMail({
             from: '"Football Organizer" <eniszej@gmail.com>',
             to: user.email,
             subject: "ERINNERUNG: DU HAST FUSSBALL NOCH NICHT BEZAHLT ! ",
-            html: `<p>Hey ${user.name},</p>
-          <p>Du hast zu folgendem Event zugesagt: </p>
-  <p>Datum: <strong>${date.toDateString()}</strong></p>
-  <p>Zeit: <strong>${startTime} - ${endTime} Uhr</strong></p>
-  <p>Ort: <strong>${address}</strong></p>
-  <p>Preis: <strong>${cost / 10} €</strong></p>
-
-  <p><strong>Bezahl doch bitte über den unten stehenden Link, Danke. </strong></p>
-
-  <a href="${paypalLink}">Hier kannst du bei Paypal bezahlen :)</a>
-          `,
+            html,
           });
         } catch (error: any) {
           return { message: "sending email failed" };
@@ -120,7 +106,6 @@ const getParticipantIdsByStatus = (
   return reduce(
     participants,
     (acc: string[], participant) => {
-      console.log(participant.userEventStatus);
       if (participant.userEventStatus === eventStatus) {
         return [...acc, participant.id];
       }
@@ -129,3 +114,13 @@ const getParticipantIdsByStatus = (
     []
   );
 };
+
+job({
+  event: {
+    data: {
+      eventId: "clbd6yt8v0004nqoqmj2c8zdl",
+    },
+    name: "event/reminder",
+    ts: new Date().getMilliseconds(),
+  },
+});
