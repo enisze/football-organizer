@@ -1,5 +1,6 @@
 import { Button, Chip, Link } from "@mui/joy";
 import type { FunctionComponent } from "react";
+import { isDateInCertainRange } from "../helpers/isDateInCertainRange";
 import { trpc } from "../utils/trpc";
 
 const paypalLink =
@@ -8,12 +9,16 @@ const paypalLink =
 export const PaymentArea: FunctionComponent<{
   eventId: string;
   bookingDate: Date | null;
-}> = ({ eventId }) => {
+}> = ({ eventId, bookingDate }) => {
   const { data: payment } = trpc.payment.getByEventId.useQuery({ eventId });
+
+  const isInCertainRange = bookingDate
+    ? isDateInCertainRange(new Date(), bookingDate)
+    : false;
 
   return (
     <div className="flex w-full flex-col items-center justify-center gap-y-2">
-      {!payment && (
+      {!payment && isInCertainRange && (
         <Link href={paypalLink} underline="none" className="w-full">
           <Button variant="outlined" className="w-full">
             Bezahlen per Paypal
