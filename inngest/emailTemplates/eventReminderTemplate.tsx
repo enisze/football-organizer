@@ -36,7 +36,7 @@ export const generateEventReminderTemplate = ({
         <mj-text align="center" color="#FFF" font-family="Helvetica" padding-left="25px" padding-right="25px" padding-bottom="28px" padding-top="28px"><span style="font-size:20px; font-weight:bold">
 Ein Event zu dem du weder zu- noch abgesagt hast steht noch an.
 <br/>
- Es sind noch ${participantsAmount} Plätze frei.
+ Es sind noch ${10 - participantsAmount} Plätze frei.
           <br />
           <span style="font-size:15px">Es findet voraussichtlich zu den Daten statt:</span>
         </mj-text>
