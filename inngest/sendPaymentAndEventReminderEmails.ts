@@ -27,9 +27,9 @@ const job = async ({ event }: { event: Event__Reminder }) => {
   const { participants } = footballEvent;
 
   //Ids which are available
-  const availableParticipantIds = getParticipantIdsByStatus(
+  const canceledParticipantIds = getParticipantIdsByStatus(
     footballEvent.participants,
-    "AVAILABLE"
+    "CANCELED"
   );
 
   const joinedParticipantIds = getParticipantIdsByStatus(
@@ -40,7 +40,11 @@ const job = async ({ event }: { event: Event__Reminder }) => {
   const usersWhoGotMails: string[] = [];
 
   forEach(allUsers, async (user) => {
-    if (availableParticipantIds.includes(user.id) && participants.length < 10) {
+    if (
+      !joinedParticipantIds.includes(user.id) &&
+      !canceledParticipantIds.includes(user.id) &&
+      participants.length < 10
+    ) {
       //Send event reminder
 
       const html = generateEventReminderTemplate({
@@ -88,10 +92,12 @@ const job = async ({ event }: { event: Event__Reminder }) => {
   });
 
   console.log(
-    `Users who got mails: ${usersWhoGotMails}, ${availableParticipantIds}`
+    `Users who got mails: ${usersWhoGotMails}, ${canceledParticipantIds}`
   );
   return {
-    message: `Users who got mails: ${usersWhoGotMails}, ${availableParticipantIds},  `,
+    message: `Users who got mails: ${usersWhoGotMails}.
+    Joined users: ${joinedParticipantIds}.
+    Canceled users: ${canceledParticipantIds}`,
   };
 };
 export const sendPaymentAndEventReminder = createFunction(
