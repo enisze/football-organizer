@@ -54,3 +54,18 @@ export const sendNewEventEmail = createFunction(
   "event/new",
   job
 );
+
+// job({
+//   event: {
+//     data: {
+//       id: "test",
+//       address: "test",
+//       cost: 10,
+//       date: "t",
+//       startTime: "a",
+//       endTime: "b",
+//     },
+//     name: "event/new",
+//     ts: new Date().getMilliseconds(),
+//   },
+// });
