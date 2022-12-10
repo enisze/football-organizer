@@ -121,7 +121,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
             <LoadingWrapper isLoading={isLoading}>
               <div className="flex">
                 <DynamicOrganizerMap coordinates={data} />
-                <div className="absolute top-1 left-1">
+                <div className="absolute top-1 right-1">
                   <Chip>
                     <Typography
                       className={isPastEvent ? "text-red-400" : "text-white"}
