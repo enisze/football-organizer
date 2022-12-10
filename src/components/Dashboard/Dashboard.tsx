@@ -18,7 +18,6 @@ import { useSession } from "next-auth/react";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { EventCard } from "../Events/EventCard";
 import { LoadingWrapper } from "../LoadingWrapper";
-import { AdminBoard } from "./AdminBoard";
 
 type EventsWithparticipants =
   | (Event & { participants: ParticipantsOnEvents[] })[]
@@ -47,8 +46,6 @@ export const Dashboard: FunctionComponent = () => {
 
   return (
     <div className="m-8 flex flex-col items-center justify-center">
-      {isAdmin && <AdminBoard />}
-
       <Tabs
         className="flex w-full items-center justify-center rounded bg-transparent"
         size="lg"

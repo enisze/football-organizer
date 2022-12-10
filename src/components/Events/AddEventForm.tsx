@@ -3,7 +3,9 @@ import { Formik } from "formik";
 import type { FunctionComponent } from "react";
 import { trpc } from "../../utils/trpc";
 
-export const AddEventForm: FunctionComponent = () => {
+export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
+  onSubmit,
+}) => {
   const trpcContext = trpc.useContext();
   const { mutateAsync: createEvent } = trpc.event.create.useMutation({
     onSuccess: () => {
@@ -102,6 +104,7 @@ export const AddEventForm: FunctionComponent = () => {
               variant="outlined"
               type="submit"
               disabled={isSubmitting}
+              onClick={onSubmit}
             >
               Submit
             </Button>
