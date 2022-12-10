@@ -57,7 +57,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
       await sendInBlueTransport.sendMail({
         from: '"Football Organizer" <eniszej@gmail.com>',
         to: user.email,
-        subject: `ERINNERUNG: FUSSBALL FINDET STATT ${participants.length}/10 ! `,
+        subject: `ERINNERUNG: FUSSBALL FINDET STATT ${participants.length}/10 TEILNEHMER ! `,
         html,
       });
     }
@@ -122,12 +122,12 @@ const getParticipantIdsByStatus = (
   );
 };
 
-job({
-  event: {
-    data: {
-      eventId: "clbd6yt8v0004nqoqmj2c8zdl",
-    },
-    name: "event/reminder",
-    ts: new Date().getMilliseconds(),
-  },
-});
+// job({
+//   event: {
+//     data: {
+//       eventId: "clbd6yt8v0004nqoqmj2c8zdl",
+//     },
+//     name: "event/reminder",
+//     ts: new Date().getMilliseconds(),
+//   },
+// });
