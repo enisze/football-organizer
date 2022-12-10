@@ -54,6 +54,7 @@ export const Navbar: FunctionComponent = () => {
           open={showDropDown}
           anchorEl={anchorEl}
           sx={{ marginTop: "8px", margin: "8px" }}
+          onClose={() => setShowDropdown(false)}
         >
           <MenuItem className="text-white">Kontostand: {balance}€</MenuItem>
           <Divider />
