@@ -41,6 +41,7 @@ export async function getServerSideProps(context: any) {
   const eventReminder = generateEventReminderTemplate({
     event: dummyEvent,
     userName: "Testname",
+    participantsAmount: 5,
   });
 
   return {

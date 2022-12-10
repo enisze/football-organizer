@@ -7,9 +7,11 @@ import { getEventTemplate } from "./helpers/getEventTemplate";
 export const generateEventReminderTemplate = ({
   event,
   userName,
+  participantsAmount,
 }: {
   event: Partial<Event>;
   userName: string;
+  participantsAmount: number;
 }) => {
   const { id } = event;
 
@@ -33,6 +35,8 @@ export const generateEventReminderTemplate = ({
         <mj-divider border-color="#ffffff" border-width="2px" border-style="solid" padding-left="20px" padding-right="20px" padding-bottom="0px" padding-top="0"></mj-divider>
         <mj-text align="center" color="#FFF" font-family="Helvetica" padding-left="25px" padding-right="25px" padding-bottom="28px" padding-top="28px"><span style="font-size:20px; font-weight:bold">
 Ein Event zu dem du weder zu- noch abgesagt hast steht noch an.
+<br/>
+ Es sind noch ${participantsAmount} Plätze frei.
           <br />
           <span style="font-size:15px">Es findet voraussichtlich zu den Daten statt:</span>
         </mj-text>

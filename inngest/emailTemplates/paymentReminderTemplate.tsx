@@ -42,9 +42,7 @@ Du hast zu folgendem Event zugesagt:
     <mj-section background-color="#1E293B" padding-bottom="20px" padding-top="20px">
 
         <mj-text align="center" color="#FFF" font-family="Helvetica" padding-left="25px" padding-right="25px" padding-bottom="28px" padding-top="28px"><span style="font-size:20px; font-weight:bold">
-Über den Button kannst du den fehlenden Betrag von ${
-    cost && cost / 10
-  } € bezahlen:
+Hier kannst du den fehlenden Betrag von ${cost && cost / 10} € bezahlen:
         </mj-text>
       <mj-column width="50%">
       ${getButton(paypalLink, "Bei Paypal bezahlen")}

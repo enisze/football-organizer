@@ -40,12 +40,13 @@ const job = async ({ event }: { event: Event__Reminder }) => {
   const usersWhoGotMails: string[] = [];
 
   forEach(allUsers, async (user) => {
-    if (availableParticipantIds.includes(user.id)) {
+    if (availableParticipantIds.includes(user.id) && participants.length < 10) {
       //Send event reminder
 
       const html = generateEventReminderTemplate({
         event: footballEvent,
         userName: user.name,
+        participantsAmount: participants.length,
       }).html;
 
       usersWhoGotMails.push(user.email);
