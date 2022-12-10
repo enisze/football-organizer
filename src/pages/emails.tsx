@@ -1,4 +1,4 @@
-import { Event } from "@prisma/client";
+import type { Event } from "@prisma/client";
 import { map } from "lodash";
 import type { FunctionComponent } from "react";
 import { generateEventReminderTemplate } from "../../inngest/emailTemplates/eventReminderTemplate";
