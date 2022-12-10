@@ -34,6 +34,7 @@ export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
             cost,
           });
           setSubmitting(false);
+          onSubmit();
         }}
       >
         {({
@@ -104,7 +105,6 @@ export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
               variant="outlined"
               type="submit"
               disabled={isSubmitting}
-              onClick={onSubmit}
             >
               Submit
             </Button>
