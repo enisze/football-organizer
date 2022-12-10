@@ -123,7 +123,6 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
                   <Chip>
                     <Typography
                       className={isPastEvent ? "text-red-400" : "text-white"}
-                      variant={isPastEvent ? "outlined" : "plain"}
                     >
                       {eventString}
                     </Typography>
