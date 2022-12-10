@@ -1,3 +1,4 @@
+import { ParticipantsOnEvents, UserEventStatus } from "@prisma/client";
 import { createFunction } from "inngest";
 import { find, forEach, reduce } from "lodash";
 import { PrismaClient } from "../prisma/generated/client";
@@ -12,18 +13,7 @@ const paypalLink =
 const job = async ({ event }: { event: Event__Reminder }) => {
   const id = event.data.eventId;
 
-  let allUsers;
-  try {
-    allUsers = await prisma.user.findMany();
-  } catch (error: any) {
-    return {
-      message: `No users ${error}`,
-    };
-  }
-  if (!allUsers)
-    return {
-      message: `No users found`,
-    };
+  const allUsers = await prisma.user.findMany();
 
   const footballEvent = await prisma.event.findUnique({
     where: { id },
@@ -38,30 +28,21 @@ const job = async ({ event }: { event: Event__Reminder }) => {
   const { date, startTime, endTime, address, cost, participants } =
     footballEvent;
 
-  //Ids which have not canceled yet
-  const participantIds = reduce(
+  //Ids which are available
+  const availableParticipantIds = getParticipantIdsByStatus(
     footballEvent.participants,
-    (acc: string[], participant) => {
-      if (
-        participant.userEventStatus === "AVAILABLE" ||
-        participant.userEventStatus === "JOINED"
-      ) {
-        return [...acc, participant.id];
-      }
-      return acc;
-    },
-    []
+    "AVAILABLE"
   );
 
-  if (!participantIds)
-    return {
-      message: "No ids",
-    };
+  const joinedParticipantIds = getParticipantIdsByStatus(
+    footballEvent.participants,
+    "JOINED"
+  );
 
   const usersWhoGotMails: string[] = [];
 
   forEach(allUsers, async (user) => {
-    if (!participantIds.includes(user.id)) {
+    if (availableParticipantIds.includes(user.id)) {
       //Send event reminder
 
       usersWhoGotMails.push(user.email);
@@ -84,7 +65,9 @@ const job = async ({ event }: { event: Event__Reminder }) => {
   }">Hier kannst du Zusagen oder die Benachrichtung zu diesem Event abschalten.</a>
           `,
       });
-    } else {
+    }
+
+    if (joinedParticipantIds.includes(user.id)) {
       const payment = find(
         footballEvent.payments,
         (payment) => payment.userId === user.id
@@ -117,8 +100,11 @@ const job = async ({ event }: { event: Event__Reminder }) => {
     }
   });
 
+  console.log(
+    `Users who got mails: ${usersWhoGotMails}, ${availableParticipantIds}`
+  );
   return {
-    message: `Users who got mails: ${usersWhoGotMails}, ${participantIds},  `,
+    message: `Users who got mails: ${usersWhoGotMails}, ${availableParticipantIds},  `,
   };
 };
 export const sendPaymentAndEventReminder = createFunction(
@@ -126,3 +112,20 @@ export const sendPaymentAndEventReminder = createFunction(
   "event/reminder",
   job
 );
+
+const getParticipantIdsByStatus = (
+  participants: ParticipantsOnEvents[],
+  eventStatus: UserEventStatus
+) => {
+  return reduce(
+    participants,
+    (acc: string[], participant) => {
+      console.log(participant.userEventStatus);
+      if (participant.userEventStatus === eventStatus) {
+        return [...acc, participant.id];
+      }
+      return acc;
+    },
+    []
+  );
+};
