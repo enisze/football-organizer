@@ -2,12 +2,10 @@ import { createFunction } from "inngest";
 import { forEach, map } from "lodash";
 import { PrismaClient } from "../prisma/generated/client";
 import { sendInBlueTransport } from "../src/emails/transporter";
+import { generateNewEventTemplate } from "./emailTemplates/newEventTemplate";
 import type { Event__New } from "./__generated__/types";
 
 const prisma = new PrismaClient();
-
-const paypalLink =
-  "https://www.paypal.com/paypalme/enz1994?country.x=DE&locale.x=de_DE";
 
 const job = async ({ event }: { event: Event__New }) => {
   try {
@@ -18,29 +16,23 @@ const job = async ({ event }: { event: Event__New }) => {
         message: `No users found`,
       };
 
-    const { address, cost, date, endTime, startTime, id } = event.data;
-
     const names = map(allUsers, (user) => user.email).join(",");
 
     forEach(allUsers, async (user) => {
+      const html = generateNewEventTemplate({
+        event,
+        userName: user.name,
+      }).html;
+
       await sendInBlueTransport.sendMail({
         from: '"Football Organizer" <eniszej@gmail.com>',
         to: user.email,
         subject: "EIN NEUES FUSSBALL EVENT WURDE ERSTELLT",
-        html: `
-    Hey, ein neues Event wurde erstellt. Es findet voraussichtlich zu den Daten statt:
-<p>Datum: <strong>${date}</strong></p>
-<p>Zeit: <strong>${startTime} - ${endTime} Uhr</strong></p>
-<p>Ort: <strong>${address}</strong></p>
-<p>Preis: <strong>${cost / 10} €</strong></p>
-<p><a href="${paypalLink}">Hier kannst du bei Paypal bezahlen :)</a></p>
-
-  <a href="${
-    process.env.NEXT_PUBLIC_BASE_URL + "/events/" + id
-  }">Hier kannst du Zusagen oder die Benachrichtung zu diesem Event abschalten.</a>
-    `,
+        html,
       });
     });
+
+    console.log(`Message sent to: ${names}`);
 
     return { message: `Messages sent to: ${names}` };
   } catch (error: any) {
@@ -55,17 +47,17 @@ export const sendNewEventEmail = createFunction(
   job
 );
 
-// job({
-//   event: {
-//     data: {
-//       id: "test",
-//       address: "test",
-//       cost: 10,
-//       date: "t",
-//       startTime: "a",
-//       endTime: "b",
-//     },
-//     name: "event/new",
-//     ts: new Date().getMilliseconds(),
-//   },
-// });
+job({
+  event: {
+    data: {
+      id: "test",
+      address: "test",
+      cost: 10,
+      date: "t",
+      startTime: "a",
+      endTime: "b",
+    },
+    name: "event/new",
+    ts: new Date().getMilliseconds(),
+  },
+});
