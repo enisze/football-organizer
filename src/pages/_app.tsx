@@ -5,6 +5,8 @@ import { type AppType } from "next/app";
 import { trpc } from "../utils/trpc";
 
 import { CssVarsProvider, extendTheme, StyledEngineProvider } from "@mui/joy";
+import { RecoilRoot } from "recoil";
+import { RecoilURLSyncJSON } from "recoil-sync";
 import { PromiseQueueContextProvider } from "../contexts/PromiseQueueContext";
 import "../styles/globals.css";
 
@@ -37,15 +39,31 @@ const MyApp: AppType<{ session: Session | null }> = ({
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <StyledEngineProvider injectFirst>
-      <CssVarsProvider theme={theme}>
-        <SessionProvider session={session}>
-          <PromiseQueueContextProvider>
-            <Component {...pageProps} />
-          </PromiseQueueContextProvider>
-        </SessionProvider>
-      </CssVarsProvider>
-    </StyledEngineProvider>
+    <RecoilRoot>
+      <RecoilURLSyncJSON
+        location={{ part: "queryParams" }}
+        browserInterface={{
+          getURL: () => {
+            if (typeof Window === "undefined") {
+              return process.env.NEXT_PUBLIC_BASE_URL as string;
+            } else {
+              return window.document.location.toString();
+              // ...or here but it never seems to make it to here
+            }
+          },
+        }}
+      >
+        <StyledEngineProvider injectFirst>
+          <CssVarsProvider theme={theme}>
+            <SessionProvider session={session}>
+              <PromiseQueueContextProvider>
+                <Component {...pageProps} />
+              </PromiseQueueContextProvider>
+            </SessionProvider>
+          </CssVarsProvider>
+        </StyledEngineProvider>
+      </RecoilURLSyncJSON>
+    </RecoilRoot>
   );
 };
 

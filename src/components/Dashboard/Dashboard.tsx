@@ -15,9 +15,11 @@ import type { Event, ParticipantsOnEvents } from "@prisma/client";
 import { isAfter } from "date-fns";
 import { find, forEach, map, orderBy } from "lodash";
 import { useSession } from "next-auth/react";
+import { useRecoilState } from "recoil";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { EventCard } from "../Events/EventCard";
 import { LoadingWrapper } from "../LoadingWrapper";
+import { currentTabState } from "./tabState";
 
 type EventsWithparticipants =
   | (Event & { participants: ParticipantsOnEvents[] })[]
@@ -25,7 +27,8 @@ type EventsWithparticipants =
 
 export const Dashboard: FunctionComponent = () => {
   const { data: events, isLoading } = trpc.event.getAll.useQuery();
-  const [index, setIndex] = useState(1);
+
+  const [tab, setTab] = useRecoilState(currentTabState);
   const [index2, setIndex2] = useState(1);
 
   const { data } = useSession();
@@ -35,8 +38,8 @@ export const Dashboard: FunctionComponent = () => {
   const isAdmin = useIsAdmin();
 
   const { previousEvents, upcomingEvents } = useMemo(
-    () => getPreviousAndUpcomingEvents(events, data?.user?.id),
-    [events, data?.user?.id]
+    () => getPreviousAndUpcomingEvents(events),
+    [events]
   );
 
   const { joinedEvents, leftEvents } = useMemo(
@@ -49,21 +52,23 @@ export const Dashboard: FunctionComponent = () => {
       <Tabs
         className="flex w-full items-center justify-center rounded bg-transparent"
         size="lg"
-        defaultValue={1}
-        onChange={(event, value) => setIndex(value as number)}
+        value={tab}
+        onChange={(event, value) => setTab(value as number)}
       >
         <TabList variant="plain">
-          <Tab color="primary" variant={index === 0 ? "outlined" : "plain"}>
+          <Tab color="primary" variant={tab === 0 ? "outlined" : "plain"}>
             Kommende Events
           </Tab>
-          <Tab color="primary" variant={index === 1 ? "outlined" : "plain"}>
+          <Tab color="primary" variant={tab === 1 ? "outlined" : "plain"}>
             Deine Events
           </Tab>
-          {isAdmin && (
-            <Tab color="primary" variant={index === 2 ? "outlined" : "plain"}>
-              Vergangene Events
-            </Tab>
-          )}
+          <Tab
+            color="primary"
+            hidden={!isAdmin}
+            variant={tab === 2 ? "outlined" : "plain"}
+          >
+            Vergangene Events
+          </Tab>
         </TabList>
 
         <TabPanel value={0} className="flex justify-center">
@@ -131,25 +136,17 @@ const EventList: FunctionComponent<{
   );
 };
 
-const getPreviousAndUpcomingEvents = (
-  events: EventsWithparticipants,
-  id: string | undefined
-) => {
+const getPreviousAndUpcomingEvents = (events: EventsWithparticipants) => {
   const previousEvents: EventsWithparticipants = [];
   const upcomingEvents: EventsWithparticipants = [];
 
   const currentDate = new Date();
 
   forEach(events, (event) => {
-    const res = find(event.participants, (participant) => {
-      return participant.id === id;
-    });
-    if (!res) {
-      if (isAfter(event.date, currentDate)) {
-        upcomingEvents.push(event);
-      } else {
-        previousEvents.push(event);
-      }
+    if (isAfter(event.date, currentDate)) {
+      upcomingEvents.push(event);
+    } else {
+      previousEvents.push(event);
     }
   });
 

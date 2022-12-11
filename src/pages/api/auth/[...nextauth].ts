@@ -12,7 +12,6 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
     updateAge: 1000 * 60 * 60 * 24,
-    generateSessionToken: () => "testit",
   },
 
   pages: { signIn: "/", newUser: "/signUp" },

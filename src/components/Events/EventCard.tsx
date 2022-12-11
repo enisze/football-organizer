@@ -6,9 +6,11 @@ import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import type { FunctionComponent } from "react";
 import { useState } from "react";
+import { useRecoilState } from "recoil";
 import { transformDate } from "../../helpers/transformDate";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { trpc } from "../../utils/trpc";
+import { currentTabState } from "../Dashboard/tabState";
 import { LoadingWrapper } from "../LoadingWrapper";
 import type { OrganizerMapProps } from "../Map/OrganizerMap";
 import { PaymentArea } from "../PaymentArea";
@@ -54,6 +56,10 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 }) => {
   const { address, startTime, endTime, date, id, status } = event;
 
+  const [tab, setTab] = useRecoilState(currentTabState);
+
+  const isMyTab = tab === 1;
+
   const [showParticipants, setShowParticipants] = useState(false);
 
   const { data: session } = useSession();
@@ -79,6 +85,13 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
     participants,
     (user) => user.id === session?.user?.id && user.userEventStatus === "JOINED"
   );
+
+  const isYourEvent =
+    (Boolean(
+      find(canceledUsers, (user) => user?.name === session?.user?.name)
+    ) ||
+      Boolean(find(users, (user) => user?.id === session?.user?.id))) &&
+    !isMyTab;
 
   const currentDate = new Date();
   const days = differenceInDays(date, currentDate);
@@ -189,9 +202,18 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         </>
       )}
 
+      {isYourEvent && (
+        <Typography
+          color="primary"
+          className="cursor-pointer self-center"
+          onClick={() => setTab(1)}
+        >
+          Bereits zu-/abgesagt
+        </Typography>
+      )}
       <EventCardAdminArea eventId={id} />
       <PaymentArea eventId={event.id} bookingDate={event.bookingDate} />
-      {showActions && !isPastEvent && (
+      {!isYourEvent && showActions && !isPastEvent && (
         <JoinOrLeaveEventButton
           id={id}
           isUserParticipating={Boolean(participatingUser)}
