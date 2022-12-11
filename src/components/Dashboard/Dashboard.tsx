@@ -19,18 +19,21 @@ import { useRecoilState } from "recoil";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { EventCard } from "../Events/EventCard";
 import { LoadingWrapper } from "../LoadingWrapper";
+import { OGRadioGroup } from "./OGRadioGroup";
 import { currentTabState } from "./tabState";
 
 type EventsWithparticipants =
   | (Event & { participants: ParticipantsOnEvents[] })[]
   | undefined;
 
+type Filter = "all" | "joined" | "canceled";
+
 export const Dashboard: FunctionComponent = () => {
   const { data: events, isLoading } = trpc.event.getAll.useQuery();
 
   const [tab, setTab] = useRecoilState(currentTabState);
-  const [index2, setIndex2] = useState(1);
 
+  const [selectedValue, setSelectedValue] = useState<Filter>("all");
   const { data } = useSession();
 
   // const a = trpc.event.deleteAll.useQuery();
@@ -46,6 +49,13 @@ export const Dashboard: FunctionComponent = () => {
     () => getUserJoinedAndLeftEvents(events, data?.user?.id),
     [events, data?.user?.id]
   );
+
+  const filteredEvents =
+    selectedValue === "all"
+      ? [...joinedEvents, ...leftEvents]
+      : selectedValue === "joined"
+      ? joinedEvents
+      : leftEvents;
 
   return (
     <div className="m-8 flex flex-col items-center justify-center">
@@ -75,34 +85,13 @@ export const Dashboard: FunctionComponent = () => {
           <EventList events={upcomingEvents} isLoading={isLoading} />
         </TabPanel>
         <TabPanel value={1} className="flex justify-center">
-          <Tabs
-            className="flex w-full items-center justify-center rounded bg-transparent"
-            size="lg"
-            defaultValue={1}
-            onChange={(event, value) => setIndex2(value as number)}
-          >
-            <TabList>
-              <Tab
-                color="primary"
-                variant={index2 === 0 ? "outlined" : "plain"}
-              >
-                Abgesagt
-              </Tab>
-              <Tab
-                color="primary"
-                variant={index2 === 1 ? "outlined" : "plain"}
-              >
-                Zugesagt
-              </Tab>
-            </TabList>
-
-            <TabPanel value={0} className="flex justify-center bg-transparent">
-              <EventList events={leftEvents} isLoading={isLoading} />
-            </TabPanel>
-            <TabPanel value={1} className="flex justify-center">
-              <EventList events={joinedEvents} isLoading={isLoading} />
-            </TabPanel>
-          </Tabs>
+          <div className="flex flex-col">
+            <OGRadioGroup
+              selectedValue={selectedValue}
+              setSelectedValue={setSelectedValue}
+            />
+            <EventList events={filteredEvents} isLoading={isLoading} />
+          </div>
         </TabPanel>
         <TabPanel value={2} className="flex justify-center bg-transparent">
           <EventList events={previousEvents} isLoading={isLoading} />
