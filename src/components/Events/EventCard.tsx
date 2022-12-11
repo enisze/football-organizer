@@ -142,6 +142,14 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
                   </Chip>
                 </div>
               </div>
+
+              <div className="absolute bottom-1 right-1">
+                <Chip color={participatingUser ? "success" : "danger"}>
+                  <Typography className="text-white">
+                    Du hast {participatingUser ? "Zugesagt" : "Abgesagt"}
+                  </Typography>
+                </Chip>
+              </div>
             </LoadingWrapper>
           </div>
         )}
