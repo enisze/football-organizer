@@ -1,10 +1,10 @@
-import type { Event } from "@prisma/client";
 import type { OAuth2ClientOptions } from "google-auth-library";
 import { OAuth2Client } from "google-auth-library";
 import type { gmail_v1 } from "googleapis";
 import { google } from "googleapis";
 import { createScheduledFunction } from "inngest";
 import { filter, find, forEach, map } from "lodash";
+import type { Event } from "../prisma/generated/client";
 import { PrismaClient } from "../prisma/generated/client";
 import { getEuroAmount } from "../src/helpers/getEuroAmount";
 import { isDateInCertainRange } from "../src/helpers/isDateInCertainRange";
