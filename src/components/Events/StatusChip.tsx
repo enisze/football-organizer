@@ -3,10 +3,11 @@ import type { EventStatus } from "@prisma/client";
 import type { FunctionComponent } from "react";
 
 export const StatusChip: FunctionComponent<{
-  bookedString: string;
-  notbookedString: string;
+  numberOfParticipants: number;
   status: EventStatus;
-}> = ({ bookedString, notbookedString, status }) => {
+}> = ({ numberOfParticipants, status }) => {
+  const label = `${numberOfParticipants}/10`;
+
   return (
     <Chip
       color={
@@ -18,10 +19,10 @@ export const StatusChip: FunctionComponent<{
       }
     >
       {status === "BOOKED"
-        ? `GEBUCHT: ${bookedString}`
+        ? `GEBUCHT: ${label}`
         : status === "CANCELED"
         ? "ABGESAGT"
-        : `NOCH NICHT GEBUCHT ${notbookedString}`}
+        : `NOCH NICHT GEBUCHT ${label}`}
     </Chip>
   );
 };

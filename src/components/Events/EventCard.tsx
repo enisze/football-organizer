@@ -1,14 +1,11 @@
-import { Avatar, Button, Card, Chip, Sheet, Typography } from "@mui/joy";
+import { Card, Chip, Sheet, Typography } from "@mui/joy";
 import type { Event, ParticipantsOnEvents } from "@prisma/client";
-import { differenceInDays } from "date-fns";
-import { filter, find, map } from "lodash";
+import { filter, find } from "lodash";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import type { FunctionComponent } from "react";
-import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { transformDate } from "../../helpers/transformDate";
-import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { trpc } from "../../utils/trpc";
 import { currentTabState } from "../Dashboard/tabState";
 import { LoadingWrapper } from "../LoadingWrapper";
@@ -17,7 +14,8 @@ import { PaymentArea } from "../PaymentArea";
 import { AddToCalendarButton } from "./Buttons/AddToCalendarButton";
 import { JoinOrLeaveEventButton } from "./Buttons/JoinOrLeaveEventButton";
 import { EventCardAdminArea } from "./EventCardAdminArea";
-import { EventCardAdminPaymentArea } from "./EventCardAdminPaymentArea";
+import { EventDateChip } from "./EventDateChip";
+import { ParticipantsArea } from "./ParticipantsArea";
 import { StatusChip } from "./StatusChip";
 
 const DynamicOrganizerMap = dynamic<OrganizerMapProps>(
@@ -60,71 +58,33 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
   const isMyTab = tab === 1;
 
-  const [showParticipants, setShowParticipants] = useState(false);
-
   const { data: session } = useSession();
-  const admin = useIsAdmin();
 
-  const { data: users } = trpc.user.getUserNamesByIds.useQuery({
-    ids: filter(participants, (user) => user.userEventStatus === "JOINED").map(
-      (user) => user.id
-    ),
-  });
-
-  const { data: canceledUsers } = trpc.user.getUserNamesByIds.useQuery(
-    {
-      ids: filter(
-        participants,
-        (user) => user.userEventStatus === "CANCELED"
-      ).map((user) => user.id),
-    },
-    { enabled: admin }
-  );
-
-  const participatingUser = find(
+  const userStatus = find(
     participants,
-    (user) => user.id === session?.user?.id && user.userEventStatus === "JOINED"
-  );
-
-  const isYourEvent =
-    (Boolean(
-      find(canceledUsers, (user) => user?.name === session?.user?.name)
-    ) ||
-      Boolean(find(users, (user) => user?.id === session?.user?.id))) &&
-    !isMyTab;
-
-  const currentDate = new Date();
-  const days = differenceInDays(date, currentDate);
-
-  const isPastEvent = days < 0;
-
-  const eventString = isPastEvent ? "Vergangenes Event" : `In ${days} Tagen`;
+    (user) => user.id === session?.user?.id
+  )?.userEventStatus;
 
   const { data, isLoading } = trpc.map.getLatLong.useQuery({
     id: event.id,
     address: event.address,
   });
 
+  const joinedUsers = filter(
+    participants,
+    (participant) => participant.userEventStatus === "JOINED"
+  );
+  const canceledUsers = filter(
+    participants,
+    (participant) => participant.userEventStatus === "CANCELED"
+  );
+
   const dateString = `${transformDate(date)} ${[startTime, endTime].join("-")}`;
 
-  const amountOfParticipants =
-    filter(
-      participants,
-      (participant) => participant.userEventStatus === "JOINED"
-    ).length ?? 0;
-
-  const partialString = `${amountOfParticipants}/10`;
-
-  const participantsString = `Teilnehmer ${amountOfParticipants}/10`;
-
   return (
-    <Card className={cardClassname(days > 0)}>
+    <Card className={cardClassname(isMyTab)}>
       <div className="flex flex-col items-center gap-y-2">
-        <StatusChip
-          status={status}
-          bookedString={participantsString}
-          notbookedString={partialString}
-        />
+        <StatusChip status={status} numberOfParticipants={joinedUsers.length} />
       </div>
       <Sheet variant="outlined" className="rounded border p-4">
         {data && (
@@ -133,23 +93,20 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
               <div className="flex">
                 <DynamicOrganizerMap coordinates={data} />
                 <div className="absolute top-1 right-1">
-                  <Chip>
-                    <Typography
-                      className={isPastEvent ? "text-red-400" : "text-white"}
-                    >
-                      {eventString}
-                    </Typography>
-                  </Chip>
+                  <EventDateChip eventDate={event.date} />
                 </div>
               </div>
 
-              <div className="absolute bottom-1 right-1">
-                <Chip color={participatingUser ? "success" : "danger"}>
-                  <Typography className="text-white">
-                    Du hast {participatingUser ? "Zugesagt" : "Abgesagt"}
-                  </Typography>
-                </Chip>
-              </div>
+              {userStatus && (
+                <div className="absolute bottom-1 right-1">
+                  <Chip color={userStatus === "JOINED" ? "success" : "danger"}>
+                    <Typography className="text-white">
+                      Du hast{" "}
+                      {userStatus === "JOINED" ? "Zugesagt" : "Abgesagt"}
+                    </Typography>
+                  </Chip>
+                </div>
+              )}
             </LoadingWrapper>
           </div>
         )}
@@ -167,50 +124,18 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
           </Typography>
         </Typography>
       </Sheet>
-      <Button
-        variant="soft"
-        color={"info"}
-        className="bg-purple-300"
-        onClick={() => setShowParticipants(!showParticipants)}
-      >
-        {participantsString}
-      </Button>
-      {showParticipants &&
-        map(users, (participant) => {
-          const id = participant?.id;
+      <ParticipantsArea
+        eventId={event.id}
+        participants={joinedUsers}
+        heading="Teilnehmer"
+      />
+      <ParticipantsArea
+        eventId={event.id}
+        participants={canceledUsers}
+        heading="Absagen"
+      />
 
-          return (
-            <div key={id} className="flex items-center gap-x-2">
-              <Avatar />
-              <div>{participant?.name}</div>
-              <EventCardAdminPaymentArea eventId={event.id} userId={id ?? ""} />
-            </div>
-          );
-        })}
-      {admin && showParticipants && (
-        <>
-          <Typography variant="outlined" color="info">
-            Absagen
-          </Typography>
-
-          {map(canceledUsers, (participant) => {
-            const id = participant?.id;
-
-            return (
-              <div key={id} className="flex items-center gap-x-2">
-                <Avatar />
-                <div>{participant?.name}</div>
-                <EventCardAdminPaymentArea
-                  eventId={event.id}
-                  userId={id ?? ""}
-                />
-              </div>
-            );
-          })}
-        </>
-      )}
-
-      {isYourEvent && (
+      {userStatus && !isMyTab && (
         <Typography
           color="primary"
           className="cursor-pointer self-center"
@@ -221,12 +146,13 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
       )}
       <EventCardAdminArea eventId={id} />
       <PaymentArea eventId={event.id} bookingDate={event.bookingDate} />
-      {!isYourEvent && showActions && !isPastEvent && (
-        <JoinOrLeaveEventButton
-          id={id}
-          isUserParticipating={Boolean(participatingUser)}
-        />
-      )}
+      {(!isMyTab && Boolean(userStatus)) ||
+        (showActions && (
+          <JoinOrLeaveEventButton
+            id={id}
+            isUserParticipating={Boolean(userStatus)}
+          />
+        ))}
 
       <AddToCalendarButton event={event} />
     </Card>
