@@ -54,6 +54,7 @@
     "react-hook-form": "^7.39.6",
     "recoil": "^0.7.6",
     "recoil-sync": "^0.2.0",
+    "sib-api-v3-typescript": "^2.2.2",
     "superjson": "^1.11.0",
     "trpc-panel": "^1.0.6",
     "tsx": "^3.12.1",

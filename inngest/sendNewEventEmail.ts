@@ -1,7 +1,8 @@
 import { createFunction } from "inngest";
-import { forEach, map } from "lodash";
+import { forEach } from "lodash";
+import { SendSmtpEmail } from "sib-api-v3-typescript";
 import { PrismaClient } from "../prisma/generated/client";
-import { sendInBlueTransport } from "../src/emails/transporter";
+import apiInstance from "../src/emails/transporter";
 import { generateNewEventTemplate } from "./emailTemplates/newEventTemplate";
 import type { Event__New } from "./__generated__/types";
 
@@ -16,7 +17,7 @@ const job = async ({ event }: { event: Event__New }) => {
         message: `No users found`,
       };
 
-    const names = map(allUsers, (user) => user.email).join(",");
+    const usersWhoGotMails: string[] = [];
 
     forEach(allUsers, async (user) => {
       const html = generateNewEventTemplate({
@@ -24,17 +25,30 @@ const job = async ({ event }: { event: Event__New }) => {
         userName: user.name,
       }).html;
 
-      await sendInBlueTransport.sendMail({
-        from: '"Football Organizer" <eniszej@gmail.com>',
-        to: user.email,
-        subject: "EIN NEUES FUSSBALL EVENT WURDE ERSTELLT",
-        html,
-      });
+      const sendSmptMail = new SendSmtpEmail();
+
+      sendSmptMail.to = [{ email: user.email }];
+      sendSmptMail.htmlContent = html;
+      sendSmptMail.sender = {
+        email: "eniszej@gmail.com",
+        name: "Football Organizer",
+      };
+      sendSmptMail.subject = "EIN NEUES FUSSBALL EVENT WURDE ERSTELLT";
+
+      try {
+        const { response } = await apiInstance.sendTransacEmail(sendSmptMail);
+
+        usersWhoGotMails.push(user.email);
+
+        console.log(response.statusCode, response.statusMessage);
+      } catch (error) {
+        console.log(error);
+      }
     });
 
-    console.log(`Message sent to: ${names}`);
+    console.log(`Message sent to: ${JSON.stringify(usersWhoGotMails)}`);
 
-    return { message: `Messages sent to: ${names}` };
+    return { message: `Messages sent to: ${usersWhoGotMails}` };
   } catch (error: any) {
     return {
       message: `No users ${error}`,

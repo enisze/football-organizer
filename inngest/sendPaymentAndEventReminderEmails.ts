@@ -2,10 +2,12 @@ import type { ParticipantsOnEvents, UserEventStatus } from "@prisma/client";
 import { createFunction } from "inngest";
 import { find, forEach, reduce } from "lodash";
 import { PrismaClient } from "../prisma/generated/client";
-import { sendInBlueTransport } from "../src/emails/transporter";
+import apiInstance from "../src/emails/transporter";
 import { generateEventReminderTemplate } from "./emailTemplates/eventReminderTemplate";
 import { generatePaymentReminderTemplate } from "./emailTemplates/paymentReminderTemplate";
 import type { Event__Reminder } from "./__generated__/types";
+
+import { SendSmtpEmail } from "sib-api-v3-typescript";
 
 const prisma = new PrismaClient();
 
@@ -37,7 +39,8 @@ const job = async ({ event }: { event: Event__Reminder }) => {
     "JOINED"
   );
 
-  const usersWhoGotMails: string[] = [];
+  const usersEventReminder: string[] = [];
+  const usersPaymentReminder: string[] = [];
 
   forEach(allUsers, async (user) => {
     if (
@@ -53,13 +56,19 @@ const job = async ({ event }: { event: Event__Reminder }) => {
         participantsAmount: participants.length,
       }).html;
 
-      usersWhoGotMails.push(user.email);
-      await sendInBlueTransport.sendMail({
-        from: '"Football Organizer" <eniszej@gmail.com>',
-        to: user.email,
-        subject: `ERINNERUNG: FUSSBALL FINDET STATT ${participants.length}/10 TEILNEHMER ! `,
-        html,
-      });
+      const sendSmptMail = new SendSmtpEmail();
+
+      sendSmptMail.to = [{ email: user.email }];
+      sendSmptMail.htmlContent = html;
+      sendSmptMail.sender = {
+        email: "eniszej@gmail.com",
+        name: "Football Organizer",
+      };
+      sendSmptMail.subject = `ERINNERUNG: FUSSBALL FINDET STATT ${participants.length}/10 TEILNEHMER!`;
+
+      const { response } = await apiInstance.sendTransacEmail(sendSmptMail);
+      usersEventReminder.push(user.email);
+      console.log(response.statusCode, response.statusMessage);
     }
 
     if (joinedParticipantIds.includes(user.id)) {
@@ -70,34 +79,39 @@ const job = async ({ event }: { event: Event__Reminder }) => {
 
       if (!payment) {
         //Send payment reminder
-        try {
-          usersWhoGotMails.push(user.email);
 
-          const html = generatePaymentReminderTemplate({
-            event: footballEvent,
-            userName: user.name,
-          }).html;
+        const html = generatePaymentReminderTemplate({
+          event: footballEvent,
+          userName: user.name,
+        }).html;
 
-          await sendInBlueTransport.sendMail({
-            from: '"Football Organizer" <eniszej@gmail.com>',
-            to: user.email,
-            subject: "ERINNERUNG: DU HAST FUSSBALL NOCH NICHT BEZAHLT ! ",
-            html,
-          });
-        } catch (error: any) {
-          return { message: "sending email failed" };
-        }
+        const sendSmptMail = new SendSmtpEmail();
+
+        sendSmptMail.to = [{ email: user.email }];
+        sendSmptMail.htmlContent = html;
+        sendSmptMail.sender = {
+          email: "eniszej@gmail.com",
+          name: "Football Organizer",
+        };
+        sendSmptMail.subject =
+          "ERINNERUNG: DU HAST FUSSBALL NOCH NICHT BEZAHLT!";
+
+        const { response } = await apiInstance.sendTransacEmail(sendSmptMail);
+
+        usersPaymentReminder.push(user.email);
+        console.log(response.statusCode, response.statusMessage);
       }
     }
   });
 
   console.log(
-    `Users who got mails: ${usersWhoGotMails}, ${canceledParticipantIds}`
+    `Event reminders: ${JSON.stringify(
+      usersEventReminder
+    )}, Payment reminders: ${usersPaymentReminder}`
   );
   return {
-    message: `Users who got mails: ${usersWhoGotMails}.
-    Joined users: ${joinedParticipantIds}.
-    Canceled users: ${canceledParticipantIds}`,
+    message: `Event reminders: ${usersEventReminder}.
+    Payment reminders: ${usersPaymentReminder}`,
   };
 };
 export const sendPaymentAndEventReminder = createFunction(

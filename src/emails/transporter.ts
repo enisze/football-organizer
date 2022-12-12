@@ -1,21 +1,13 @@
-import nodemailer from "nodemailer";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Transport = require("nodemailer-sendinblue-transport");
+import {
+  TransactionalEmailsApi,
+  TransactionalEmailsApiApiKeys,
+} from "sib-api-v3-typescript";
 
-//Somehow did not work
-const transporter = nodemailer.createTransport({
-  host: process.env.SMPT_HOST,
-  port: Number(process.env.SMPT_PORT),
-  secure: false,
-  requireTLS: true,
-  auth: {
-    user: process.env.SMPT_USERNAME,
-    pass: process.env.SMPT_PASSWORD,
-  },
-  logger: true,
-  service: "SendinBlue",
-});
+const apiInstance = new TransactionalEmailsApi();
 
-export const sendInBlueTransport = nodemailer.createTransport(
-  new Transport({ apiKey: process.env.SENDINBLUE_API_KEY })
+apiInstance.setApiKey(
+  TransactionalEmailsApiApiKeys.apiKey,
+  process.env.SENDINBLUE_API_KEY ?? ""
 );
+
+export default apiInstance;
