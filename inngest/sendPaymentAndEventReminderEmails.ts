@@ -7,7 +7,7 @@ import { generateEventReminderTemplate } from "./emailTemplates/eventReminderTem
 import { generatePaymentReminderTemplate } from "./emailTemplates/paymentReminderTemplate";
 import type { Event__Reminder } from "./__generated__/types";
 
-import { SendSmtpEmail } from "sib-api-v3-typescript";
+import { SendSmtpEmail } from "@sendinblue/client";
 
 const prisma = new PrismaClient();
 

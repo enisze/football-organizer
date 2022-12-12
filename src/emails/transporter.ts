@@ -1,7 +1,7 @@
 import {
   TransactionalEmailsApi,
   TransactionalEmailsApiApiKeys,
-} from "sib-api-v3-typescript";
+} from "@sendinblue/client";
 
 const apiInstance = new TransactionalEmailsApi();
 

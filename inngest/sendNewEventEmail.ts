@@ -1,6 +1,6 @@
+import { SendSmtpEmail } from "@sendinblue/client";
 import { createFunction } from "inngest";
 import { forEach } from "lodash";
-import { SendSmtpEmail } from "sib-api-v3-typescript";
 import { PrismaClient } from "../prisma/generated/client";
 import apiInstance from "../src/emails/transporter";
 import { generateNewEventTemplate } from "./emailTemplates/newEventTemplate";
