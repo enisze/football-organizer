@@ -10,7 +10,7 @@ export const OGRadioGroup: FunctionComponent<{
   };
 
   return (
-    <RadioGroup row>
+    <RadioGroup row className="self-center">
       <Radio
         checked={selectedValue === "all"}
         onChange={handleChange}
