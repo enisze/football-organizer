@@ -16,6 +16,8 @@ const job = async () => {
 
   if (!result) return { message: "No paypal emails" };
 
+  if (result === "Token has expired") return { message: "New token needed" };
+
   const events = await prisma.event.findMany();
   const users = await prisma.user.findMany();
   const payments = await prisma.payment.findMany();
@@ -26,14 +28,6 @@ const job = async () => {
     filter(users, (user) => user.email !== "eniszej@gmail.com"),
 
     async (user) => {
-      const userEventConnection = await prisma.participantsOnEvents.findFirst({
-        where: { id: user.id },
-      });
-
-      if (userEventConnection?.userEventStatus === "CANCELED") return;
-
-      console.log(user.name + " is participating");
-
       //Get all paypal emails from specific user
 
       const filteredByUser = filter(result, (res) => {
@@ -92,7 +86,7 @@ const job = async () => {
 
 export const cronjobForPayments = createScheduledFunction(
   "Cronjob for emails to payments",
-  "10 11 * * *", // The cron syntax for the function
+  "0 18 * * *", // The cron syntax for the function
   job
 );
 
@@ -136,6 +130,7 @@ const getPaypalEmails = async () => {
     return result;
   } catch (error) {
     console.log(error);
+    return "Token has expired";
   }
 };
 
