@@ -17,12 +17,14 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
   const isAdmin = useIsAdmin();
   const trpcContext = trpc.useContext();
 
-  const { mutateAsync: remind } = trpc.event.remind.useMutation({
-    onSuccess: () => trpcContext.event.getAll.invalidate(),
-  });
-  const { mutateAsync: cancel } = trpc.event.cancel.useMutation({
-    onSuccess: () => trpcContext.event.getAll.invalidate(),
-  });
+  const { mutateAsync: remind, isLoading: loadingRemind } =
+    trpc.event.remind.useMutation({
+      onSuccess: () => trpcContext.event.getAll.invalidate(),
+    });
+  const { mutateAsync: cancel, isLoading: loadingCancel } =
+    trpc.event.cancel.useMutation({
+      onSuccess: () => trpcContext.event.getAll.invalidate(),
+    });
 
   const { data: payments, isLoading } =
     trpc.payment.getAllPaymentsForEventFromNotParticipants.useQuery(
@@ -60,19 +62,24 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
         </LoadingWrapper>
       </div>
       <DeleteEventButton id={eventId} />
-      <Button
-        variant="outlined"
-        onClick={async () => await remind({ eventId })}
-      >
-        Remind
-      </Button>
+
+      <LoadingWrapper isLoading={loadingRemind}>
+        <Button
+          variant="outlined"
+          onClick={async () => await remind({ eventId })}
+        >
+          Remind
+        </Button>
+      </LoadingWrapper>
       <BookEventButton id={eventId} />
-      <Button
-        variant="outlined"
-        onClick={async () => await cancel({ id: eventId })}
-      >
-        Cancel Event
-      </Button>
+      <LoadingWrapper isLoading={loadingCancel}>
+        <Button
+          variant="outlined"
+          onClick={async () => await cancel({ id: eventId })}
+        >
+          Cancel Event
+        </Button>
+      </LoadingWrapper>
     </>
   );
 };
