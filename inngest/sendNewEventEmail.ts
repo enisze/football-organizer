@@ -35,15 +35,9 @@ const job = async ({ event }: { event: Event__New }) => {
       };
       sendSmptMail.subject = "EIN NEUES FUSSBALL EVENT WURDE ERSTELLT";
 
-      try {
-        const { response } = await apiInstance.sendTransacEmail(sendSmptMail);
-
-        usersWhoGotMails.push(user.email);
-
-        console.log(response.statusCode, response.statusMessage);
-      } catch (error) {
-        console.log(error);
-      }
+      usersWhoGotMails.push(user.email);
+      const { response } = await apiInstance.sendTransacEmail(sendSmptMail);
+      console.log(response.statusCode, response.statusMessage);
     });
 
     console.log(`Message sent to: ${JSON.stringify(usersWhoGotMails)}`);

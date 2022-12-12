@@ -66,8 +66,9 @@ const job = async ({ event }: { event: Event__Reminder }) => {
       };
       sendSmptMail.subject = `ERINNERUNG: FUSSBALL FINDET STATT ${participants.length}/10 TEILNEHMER!`;
 
-      const { response } = await apiInstance.sendTransacEmail(sendSmptMail);
       usersEventReminder.push(user.email);
+
+      const { response } = await apiInstance.sendTransacEmail(sendSmptMail);
       console.log(response.statusCode, response.statusMessage);
     }
 
@@ -96,9 +97,10 @@ const job = async ({ event }: { event: Event__Reminder }) => {
         sendSmptMail.subject =
           "ERINNERUNG: DU HAST FUSSBALL NOCH NICHT BEZAHLT!";
 
+        usersPaymentReminder.push(user.email);
+
         const { response } = await apiInstance.sendTransacEmail(sendSmptMail);
 
-        usersPaymentReminder.push(user.email);
         console.log(response.statusCode, response.statusMessage);
       }
     }
@@ -139,7 +141,7 @@ const getParticipantIdsByStatus = (
 // job({
 //   event: {
 //     data: {
-//       eventId: "clbd6yt8v0004nqoqmj2c8zdl",
+//       eventId: "clblbxpwm0002nqy7vxtu5zid",
 //     },
 //     name: "event/reminder",
 //     ts: new Date().getMilliseconds(),
