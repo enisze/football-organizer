@@ -27,6 +27,7 @@ export const gmailRouter = router({
       access_type: "offline",
       scope: SCOPES,
       prompt: "consent",
+      redirect_uri: process.env.NEXT_PUBLIC_BASE_URL + "/oauth2callback",
     });
     return authorizeUrl;
   }),
