@@ -79,8 +79,6 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
     (participant) => participant.userEventStatus === "CANCELED"
   );
 
-  const dateString = `${transformDate(date)} ${[startTime, endTime].join("-")}`;
-
   return (
     <Card className={cardClassname(isMyTab)}>
       <div className="flex flex-col items-center gap-y-2">
@@ -111,10 +109,14 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
           </div>
         )}
         <Typography className="text-sm text-gray-700 md:text-lg">
-          Wo: <span className="font-bold">{address}</span>
+          Ort: <span className="font-bold">{address}</span>
         </Typography>
         <Typography className="text-sm text-gray-600 md:text-lg">
-          Wann: <span className="font-bold">{dateString}</span>
+          Datum: <span className="font-bold">{transformDate(date)}</span>
+        </Typography>
+        <Typography className="text-sm text-gray-600 md:text-lg">
+          Uhrzeit:{" "}
+          <span className="font-bold">{[startTime, endTime].join("-")}</span>
         </Typography>
 
         <Typography className="text-gray-600 md:text-lg">

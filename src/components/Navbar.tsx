@@ -37,7 +37,7 @@ export const Navbar: FunctionComponent = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="from-dark-green to-dark-gray flex items-center justify-between bg-slate-800 bg-gradient-to-r px-4 py-3">
+    <nav className="from-dark-green to-dark-gray fixed z-10 flex w-full items-center justify-between bg-slate-800 bg-gradient-to-r px-4 py-3">
       <Heading size="sm" />
 
       <div>
