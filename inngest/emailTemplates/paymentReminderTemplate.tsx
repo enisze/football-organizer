@@ -1,5 +1,5 @@
-import type { Event } from "@prisma/client";
 import compileMjml from "mjml";
+import type { Event } from "../../prisma/generated/client";
 import { paypalLink } from "./helpers/constants";
 import { getButton } from "./helpers/getButton";
 import { getEventTemplate } from "./helpers/getEventTemplate";
@@ -11,9 +11,7 @@ export const generatePaymentReminderTemplate = ({
   event: Partial<Event>;
   userName: string;
 }) => {
-  const { id, cost } = event;
-
-  const eventLink = process.env.NEXT_PUBLIC_BASE_URL + "/events/" + id;
+  const { cost } = event;
 
   const eventTemplate = getEventTemplate(event);
 

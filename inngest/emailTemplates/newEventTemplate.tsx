@@ -1,5 +1,5 @@
-import type { Event } from "@prisma/client";
 import compileMjml from "mjml";
+import type { Event } from "../../prisma/generated/client";
 import { paypalLink } from "./helpers/constants";
 import { getButton } from "./helpers/getButton";
 import { getEventTemplate } from "./helpers/getEventTemplate";

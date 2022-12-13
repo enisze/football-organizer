@@ -1,4 +1,4 @@
-import type { Event } from "@prisma/client";
+import type { Event } from "../../../prisma/generated/client";
 import { transformDate } from "../../../src/helpers/transformDate";
 
 export const getEventTemplate = (event: Partial<Event>) => {
