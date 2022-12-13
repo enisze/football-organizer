@@ -14,7 +14,7 @@ import { trpc } from "../../../utils/trpc";
 export const BookEventButton: FunctionComponent<{ id: string }> = ({ id }) => {
   const trpcContext = trpc.useContext();
   const { mutateAsync: bookEvent } = trpc.event.book.useMutation({
-    onSuccess: () => trpcContext.event.getAll.invalidate(),
+    onSuccess: () => trpcContext.invalidate(),
   });
 
   const [showBookModal, setShowBookModal] = useState(false);

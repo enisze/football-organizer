@@ -5,7 +5,7 @@ import { inngest } from "../../../../inngest/inngestClient";
 import { getAddressAndCoordinatesRedisKeys } from "../../../helpers/getAddressAndCoordinatesRedisKeys";
 import { redis } from "../../redis/redis";
 
-import { protectedProcedure, publicProcedure, router } from "../trpc";
+import { protectedProcedure, router } from "../trpc";
 
 export const eventRouter = router({
   create: protectedProcedure
@@ -33,12 +33,37 @@ export const eventRouter = router({
 
       return result;
     }),
-  getAll: publicProcedure.query(async ({ ctx }) => {
+  getAll: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.event.findMany({
       take: 10,
       include: { participants: true },
     });
   }),
+  isUserParticipating: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ ctx: { session, prisma }, input }) => {
+      const user = await prisma.participantsOnEvents.findUnique({
+        where: { id_eventId: { eventId: input.id, id: session.user.id } },
+      });
+
+      return user?.userEventStatus === "JOINED";
+    }),
+  getById: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      return await ctx.prisma.event.findUnique({
+        where: { id: input.id },
+        include: { participants: true },
+      });
+    }),
   remind: protectedProcedure
     .input(z.object({ eventId: z.string() }))
     .mutation(async ({ input }) => {

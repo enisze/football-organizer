@@ -7,7 +7,7 @@ import { google } from "googleapis";
 import { filter, map } from "lodash";
 import { z } from "zod";
 
-import { protectedProcedure, publicProcedure, router } from "../trpc";
+import { protectedProcedure, router } from "../trpc";
 
 const credentials: OAuth2ClientOptions = {
   clientId: process.env.GMAIL_CLIENT_ID,
@@ -22,7 +22,7 @@ const PAYPAL_LABEL = "Label_3926228921657449356";
 const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
 
 export const gmailRouter = router({
-  generateAuthLink: publicProcedure.query(() => {
+  generateAuthLink: protectedProcedure.query(() => {
     const authorizeUrl = oAuth2Client.generateAuthUrl({
       access_type: "offline",
       scope: SCOPES,
@@ -31,7 +31,7 @@ export const gmailRouter = router({
     });
     return authorizeUrl;
   }),
-  getToken: publicProcedure
+  getToken: protectedProcedure
     .input(z.object({ code: z.string() }))
     .query(async ({ input: { code } }) => {
       const { tokens } = await oAuth2Client.getToken(code);

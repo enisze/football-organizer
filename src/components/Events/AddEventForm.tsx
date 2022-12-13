@@ -9,7 +9,7 @@ export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
   const trpcContext = trpc.useContext();
   const { mutateAsync: createEvent } = trpc.event.create.useMutation({
     onSuccess: () => {
-      trpcContext.event.getAll.invalidate();
+      trpcContext.invalidate();
     },
   });
 

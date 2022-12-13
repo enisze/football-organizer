@@ -9,7 +9,7 @@ export const DeleteEventButton: FunctionComponent<{ id: string }> = ({
   const trpcContext = trpc.useContext();
   const { mutateAsync: deleteEvent, isLoading } = trpc.event.delete.useMutation(
     {
-      onSuccess: () => trpcContext.event.getAll.invalidate(),
+      onSuccess: () => trpcContext.invalidate(),
     }
   );
   return (

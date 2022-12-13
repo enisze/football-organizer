@@ -36,7 +36,7 @@ type EventCardProps = {
 
 const cardClassname = (upcoming?: boolean) => {
   const className =
-    "flex flex-col justify-center gap-2 rounded border-2  p-6 text-white shadow-xl duration-500 motion-safe:hover:scale-105";
+    "flex flex-col w-max justify-center gap-2 rounded border-2  p-6 text-white shadow-xl duration-500 motion-safe:hover:scale-105";
 
   const previousColors = " border-gray-500 bg-gray-800";
   const upcomingColors = " border-gray-500 bg-gray-600";
@@ -149,12 +149,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
       <EventCardAdminArea eventId={id} />
       <PaymentArea eventId={event.id} bookingDate={event.bookingDate} />
       {(!isMyTab && Boolean(userStatus)) ||
-        (showActions && (
-          <JoinOrLeaveEventButton
-            id={id}
-            isUserParticipating={Boolean(userStatus)}
-          />
-        ))}
+        (showActions && <JoinOrLeaveEventButton id={id} />)}
 
       <AddToCalendarButton event={event} />
     </Card>

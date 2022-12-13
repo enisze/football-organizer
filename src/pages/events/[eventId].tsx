@@ -1,32 +1,32 @@
 import { Button, Sheet, Typography } from "@mui/joy";
-import type { Event, ParticipantsOnEvents } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import type { FunctionComponent } from "react";
 import { LoginForm } from "../../components/Authentication/LoginForm";
 import { EventCard } from "../../components/Events/EventCard";
 
-import { prisma } from "../../server/db/client";
 import { trpc } from "../../utils/trpc";
 
-const EventPage: FunctionComponent<{
-  event: Event;
-  participants: ParticipantsOnEvents[];
-}> = (props) => {
-  const { event, participants } = props;
+const EventPage: FunctionComponent = () => {
+  const router = useRouter();
 
+  const id = router.query.eventId as string;
+
+  const { data } = trpc.event.getById.useQuery({ id });
   const { status } = useSession();
 
   const trpcContext = trpc.useContext();
 
   const { mutateAsync: leaveEvent, isSuccess } = trpc.event.leave.useMutation({
     onSuccess: () => {
-      trpcContext.event.getAll.invalidate();
-      trpcContext.payment.getAllPaymentsForEventFromNotParticipants.invalidate();
-      trpcContext.payment.getUserBalance.invalidate();
-      trpcContext.user.getUserNamesByIds.invalidate();
+      trpcContext.invalidate();
     },
   });
+
+  if (!data) return <div>Wrong ID</div>;
+
+  const { participants, ...event } = data;
 
   const url = process.env.NEXT_PUBLIC_BASE_URL as string;
 
@@ -45,8 +45,8 @@ const EventPage: FunctionComponent<{
         {status === "unauthenticated" ? (
           <LoginForm />
         ) : (
-          <>
-            <Sheet className="my-5 flex flex-col items-center justify-center gap-y-2 rounded bg-black p-5">
+          <div className="flex flex-col items-center">
+            <Sheet className="my-5 flex flex-col items-center justify-center gap-y-2 rounded bg-[#1E293B] p-5">
               <Button
                 onClick={async () => await leaveEvent({ eventId: event.id })}
                 variant="outlined"
@@ -63,12 +63,8 @@ const EventPage: FunctionComponent<{
                 <Typography color="primary">Zur Startseite</Typography>
               </Link>
             </Sheet>
-            <EventCard
-              event={event}
-              participants={participants}
-              showActions={false}
-            />
-          </>
+            <EventCard event={event} participants={participants} />
+          </div>
         )}
       </div>
     </>
@@ -76,22 +72,3 @@ const EventPage: FunctionComponent<{
 };
 
 export default EventPage;
-
-export async function getServerSideProps(context: any) {
-  const id = context.query.eventId as string;
-  const event = await prisma.event.findUnique({
-    where: { id },
-    include: { participants: true },
-  });
-
-  if (!event) return null;
-
-  const { participants, ...realEvent } = event;
-
-  return {
-    props: {
-      event: realEvent,
-      participants: participants,
-    },
-  };
-}

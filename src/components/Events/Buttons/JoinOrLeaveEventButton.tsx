@@ -7,30 +7,24 @@ import { LoadingWrapper } from "../../LoadingWrapper";
 
 export const JoinOrLeaveEventButton: FunctionComponent<{
   id: string;
-  isUserParticipating: boolean;
-}> = ({ id, isUserParticipating }) => {
+}> = ({ id }) => {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const trpcContext = trpc.useContext();
 
-  const [userParticipating, setUserParticipating] =
-    useState(isUserParticipating);
+  const { data: isUserParticipating } = trpc.event.isUserParticipating.useQuery(
+    { id }
+  );
 
   const { mutateAsync: joinEvent, isLoading: loadingJoin } =
     trpc.event.join.useMutation({
       onSuccess: () => {
-        trpcContext.event.getAll.invalidate();
-        trpcContext.payment.getAllPaymentsForEventFromNotParticipants.invalidate();
-        trpcContext.payment.getUserBalance.invalidate();
-        trpcContext.user.getUserNamesByIds.invalidate();
+        trpcContext.invalidate();
       },
     });
   const { mutateAsync: leaveEvent, isLoading: loadingLeave } =
     trpc.event.leave.useMutation({
       onSuccess: () => {
-        trpcContext.event.getAll.invalidate();
-        trpcContext.payment.getAllPaymentsForEventFromNotParticipants.invalidate();
-        trpcContext.payment.getUserBalance.invalidate();
-        trpcContext.user.getUserNamesByIds.invalidate();
+        trpcContext.invalidate();
       },
     });
 
@@ -40,14 +34,12 @@ export const JoinOrLeaveEventButton: FunctionComponent<{
     if (isUserParticipating) {
       if (!payment) {
         await leaveEvent({ eventId: id });
-        setUserParticipating(false);
       } else {
         setShowLeaveModal(true);
       }
     } else {
       try {
         await joinEvent({ eventId: id });
-        setUserParticipating(true);
       } catch (error) {
         if (error instanceof TRPCError) {
           error.code === "PRECONDITION_FAILED";
@@ -63,7 +55,7 @@ export const JoinOrLeaveEventButton: FunctionComponent<{
     <>
       <LoadingWrapper isLoading={loading} className="self-center">
         <Button variant="outlined" color="primary" onClick={joinOrLeave}>
-          {userParticipating ? "Absagen" : "Zusagen"}
+          {isUserParticipating ? "Absagen" : "Zusagen"}
         </Button>
       </LoadingWrapper>
       <Modal

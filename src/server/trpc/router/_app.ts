@@ -1,5 +1,4 @@
 import { router } from "../trpc";
-import { authRouter } from "./auth";
 import { eventRouter } from "./event";
 import { gmailRouter } from "./gmail";
 import { mapRouter } from "./map";
@@ -8,7 +7,6 @@ import { userRouter } from "./user";
 
 export const appRouter = router({
   event: eventRouter,
-  auth: authRouter,
   gmail: gmailRouter,
   payment: paymentRouter,
   user: userRouter,
