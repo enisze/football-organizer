@@ -2,6 +2,7 @@ import { map } from "lodash";
 import type { FunctionComponent } from "react";
 import { generateEventReminderTemplate } from "../../inngest/emailTemplates/eventReminderTemplate";
 import { generateNewEventTemplate } from "../../inngest/emailTemplates/newEventTemplate";
+import { generatePaidButCanceledTemplate } from "../../inngest/emailTemplates/paidButCanceledTemplate";
 import { generatePaymentReminderTemplate } from "../../inngest/emailTemplates/paymentReminderTemplate";
 import type { Event } from "../../prisma/generated/client";
 
@@ -44,9 +45,19 @@ export async function getServerSideProps() {
     participantsAmount: 5,
   });
 
+  const paidButCanceled = generatePaidButCanceledTemplate({
+    event: dummyEvent,
+    userName: "Testname",
+  });
+
   return {
     props: {
-      emails: [newEvent.html, paymentReminder.html, eventReminder.html],
+      emails: [
+        paidButCanceled.html,
+        newEvent.html,
+        paymentReminder.html,
+        eventReminder.html,
+      ],
     },
   };
 }

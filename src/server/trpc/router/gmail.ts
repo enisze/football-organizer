@@ -6,6 +6,7 @@ import type { gmail_v1 } from "googleapis";
 import { google } from "googleapis";
 import { filter, map } from "lodash";
 import { z } from "zod";
+import { sendPaidButCanceledMail } from "../../../../inngest/sendPaidButCanceledMail";
 
 import { protectedProcedure, router } from "../trpc";
 
@@ -31,6 +32,7 @@ export const gmailRouter = router({
     });
     return authorizeUrl;
   }),
+
   getToken: protectedProcedure
     .input(z.object({ code: z.string() }))
     .query(async ({ input: { code } }) => {
@@ -90,4 +92,14 @@ export const gmailRouter = router({
       }
     }
   ),
+  sendPaidButCancledMail: protectedProcedure
+    .input(z.object({ eventId: z.string() }))
+    .mutation(async ({ ctx: { prisma, session }, input: { eventId } }) => {
+      const event = await prisma.event.findUnique({ where: { id: eventId } });
+      const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+      });
+
+      return await sendPaidButCanceledMail(event, user);
+    }),
 });

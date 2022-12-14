@@ -15,6 +15,8 @@ export const JoinOrLeaveEventButton: FunctionComponent<{
     { id }
   );
 
+  const { mutate: sendEmail } = trpc.gmail.sendPaidButCancledMail.useMutation();
+
   const { mutateAsync: joinEvent, isLoading: loadingJoin } =
     trpc.event.join.useMutation({
       onSuccess: () => {
@@ -89,6 +91,8 @@ export const JoinOrLeaveEventButton: FunctionComponent<{
               color="info"
               onClick={async () => {
                 await leaveEvent({ eventId: id });
+
+                sendEmail({ eventId: id });
 
                 setShowLeaveModal(false);
               }}
