@@ -1,6 +1,6 @@
 import type { ParticipantsOnEvents, UserEventStatus } from "@prisma/client";
 import { createFunction } from "inngest";
-import { find, forEach, reduce } from "lodash";
+import { find, map, reduce } from "lodash";
 import { PrismaClient } from "../prisma/generated/client";
 import apiInstance from "../src/emails/transporter";
 import { generateEventReminderTemplate } from "./emailTemplates/eventReminderTemplate";
@@ -42,7 +42,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
   const usersEventReminder: string[] = [];
   const usersPaymentReminder: string[] = [];
 
-  forEach(allUsers, async (user) => {
+  const promises = map(allUsers, async (user) => {
     if (
       !joinedParticipantIds.includes(user.id) &&
       !canceledParticipantIds.includes(user.id) &&
@@ -68,8 +68,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
 
       usersEventReminder.push(user.email);
 
-      const { response } = await apiInstance.sendTransacEmail(sendSmptMail);
-      console.log(response.statusCode, response.statusMessage);
+      return apiInstance.sendTransacEmail(sendSmptMail);
     }
 
     if (joinedParticipantIds.includes(user.id)) {
@@ -99,21 +98,29 @@ const job = async ({ event }: { event: Event__Reminder }) => {
 
         usersPaymentReminder.push(user.email);
 
-        const { response } = await apiInstance.sendTransacEmail(sendSmptMail);
-
-        console.log(response.statusCode, response.statusMessage);
+        return apiInstance.sendTransacEmail(sendSmptMail);
       }
     }
   });
 
+  const responses = await Promise.all(promises);
+
+  const codes = map(responses, (res) =>
+    res
+      ? res.response.statusCode + " " + res.response.statusMessage
+      : "No status"
+  );
+
   console.log(
     `Event reminders: ${JSON.stringify(
       usersEventReminder
-    )}, Payment reminders: ${usersPaymentReminder}`
+    )}, Payment reminders: ${usersPaymentReminder},
+    Message results: ${codes}`
   );
   return {
     message: `Event reminders: ${usersEventReminder}.
-    Payment reminders: ${usersPaymentReminder}`,
+    Payment reminders: ${usersPaymentReminder},
+    Message results: ${codes}`,
   };
 };
 export const sendPaymentAndEventReminder = createFunction(

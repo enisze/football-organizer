@@ -1,6 +1,6 @@
 import { SendSmtpEmail } from "@sendinblue/client";
 import { createFunction } from "inngest";
-import { forEach } from "lodash";
+import { map } from "lodash";
 import { PrismaClient } from "../prisma/generated/client";
 import apiInstance from "../src/emails/transporter";
 import { generateNewEventTemplate } from "./emailTemplates/newEventTemplate";
@@ -19,7 +19,7 @@ const job = async ({ event }: { event: Event__New }) => {
 
     const usersWhoGotMails: string[] = [];
 
-    forEach(allUsers, async (user) => {
+    const promises = map(allUsers, async (user) => {
       const html = generateNewEventTemplate({
         event: { ...event.data, date: new Date(event.data.date) },
         userName: user.name,
@@ -36,13 +36,24 @@ const job = async ({ event }: { event: Event__New }) => {
       sendSmptMail.subject = "EIN NEUES FUSSBALL EVENT WURDE ERSTELLT";
 
       usersWhoGotMails.push(user.email);
-      const { response } = await apiInstance.sendTransacEmail(sendSmptMail);
-      console.log(response.statusCode, response.statusMessage);
+      return apiInstance.sendTransacEmail(sendSmptMail);
     });
 
-    console.log(`Message sent to: ${JSON.stringify(usersWhoGotMails)}`);
+    const responses = await Promise.all(promises);
 
-    return { message: `Messages sent to: ${usersWhoGotMails}` };
+    const codes = map(
+      responses,
+      (res) => res.response.statusCode + " " + res.response.statusMessage
+    );
+
+    console.log(`Message sent to: ${JSON.stringify(usersWhoGotMails)},
+    Message results: ${codes}`);
+
+    return {
+      message: `Messages sent to: ${usersWhoGotMails}
+    Message results: ${codes}
+    `,
+    };
   } catch (error: any) {
     return {
       message: `No users ${error}`,
