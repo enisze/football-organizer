@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import type { FunctionComponent } from "react";
 import { LoginForm } from "../../components/Authentication/LoginForm";
 import { EventCard } from "../../components/Events/EventCard";
+import { LoadingWrapper } from "../../components/LoadingWrapper";
 
 import { trpc } from "../../utils/trpc";
 
@@ -13,7 +14,7 @@ const EventPage: FunctionComponent = () => {
 
   const id = router.query.eventId as string;
 
-  const { data } = trpc.event.getById.useQuery({ id });
+  const { data, isLoading } = trpc.event.getById.useQuery({ id });
   const { status } = useSession();
 
   const trpcContext = trpc.useContext();
@@ -23,6 +24,8 @@ const EventPage: FunctionComponent = () => {
       trpcContext.invalidate();
     },
   });
+
+  if (isLoading) return <LoadingWrapper center isLoading={isLoading} />;
 
   if (!data) return <div>Wrong ID</div>;
 
