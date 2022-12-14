@@ -35,7 +35,7 @@ export const userRouter = router({
       return res;
     }),
 
-  deleteAll: protectedProcedure.query(async ({ ctx: { prisma }, input }) => {
+  deleteAll: protectedProcedure.query(async ({ ctx: { prisma } }) => {
     await prisma.user.deleteMany();
   }),
 });

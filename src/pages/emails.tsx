@@ -19,7 +19,7 @@ const EmailPage: FunctionComponent<{ emails: string[] }> = ({ emails }) => {
 
 export default EmailPage;
 
-export async function getServerSideProps(context: any) {
+export async function getServerSideProps() {
   const dummyEvent: Partial<Event> = {
     id: "test",
     address: "test",

@@ -36,7 +36,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Passwort", type: "password" },
         key: { label: "Schlüssel", type: "string" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         if (!credentials?.key && !credentials?.username) {
           const user = await prisma.user.findFirst({
             where: {
@@ -95,7 +95,7 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    async session({ session, token, user }) {
+    async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id;
         session.user.role = token.role;
