@@ -14,7 +14,10 @@ const EventPage: FunctionComponent = () => {
 
   const id = router.query.eventId as string;
 
-  const { data, isLoading } = trpc.event.getById.useQuery({ id });
+  const { data, isLoading } = trpc.event.getById.useQuery(
+    { id },
+    { enabled: Boolean(id) }
+  );
   const { status } = useSession();
 
   const trpcContext = trpc.useContext();
