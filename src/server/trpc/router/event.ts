@@ -17,6 +17,7 @@ export const eventRouter = router({
           startTime: z.string(),
           endTime: z.string(),
           cost: z.number(),
+          maxParticipants: z.number(),
         })
         .nullish()
     )

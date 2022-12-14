@@ -22,16 +22,13 @@ export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
           startTime: "20:00",
           endTime: "21:30",
           cost: 45,
+          maxParticipants: 10,
         }}
         onSubmit={async (values, { setSubmitting }) => {
-          const { address, startTime, endTime, cost } = values;
           const date = new Date(values.date);
           await createEvent({
-            address,
+            ...values,
             date,
-            startTime,
-            endTime,
-            cost,
           });
           setSubmitting(false);
           onSubmit();
@@ -99,6 +96,17 @@ export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
               onBlur={handleBlur}
               value={values.cost}
               helperText={errors.cost && touched.cost}
+            />
+
+            <TextField
+              label="Teilnehmerzahl"
+              variant="outlined"
+              name="maxParticipants"
+              type="number"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.maxParticipants}
+              helperText={errors.maxParticipants && touched.maxParticipants}
             />
             <Button
               color="primary"

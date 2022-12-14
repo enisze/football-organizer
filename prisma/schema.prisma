@@ -41,6 +41,7 @@ model Event {
   status       EventStatus            @default(CREATED)
   bookingDate  DateTime?
   address      String
+  maxParticipants Int                @default(10)
   payments     Payment[]
   participants ParticipantsOnEvents[]
 }

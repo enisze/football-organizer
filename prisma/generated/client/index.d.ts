@@ -27,6 +27,7 @@ export type Event = {
   status: EventStatus
   bookingDate: Date | null
   address: string
+  maxParticipants: number
 }
 
 /**
@@ -1123,10 +1124,12 @@ export namespace Prisma {
 
   export type EventAvgAggregateOutputType = {
     cost: number | null
+    maxParticipants: number | null
   }
 
   export type EventSumAggregateOutputType = {
     cost: number | null
+    maxParticipants: number | null
   }
 
   export type EventMinAggregateOutputType = {
@@ -1140,6 +1143,7 @@ export namespace Prisma {
     status: EventStatus | null
     bookingDate: Date | null
     address: string | null
+    maxParticipants: number | null
   }
 
   export type EventMaxAggregateOutputType = {
@@ -1153,6 +1157,7 @@ export namespace Prisma {
     status: EventStatus | null
     bookingDate: Date | null
     address: string | null
+    maxParticipants: number | null
   }
 
   export type EventCountAggregateOutputType = {
@@ -1166,16 +1171,19 @@ export namespace Prisma {
     status: number
     bookingDate: number
     address: number
+    maxParticipants: number
     _all: number
   }
 
 
   export type EventAvgAggregateInputType = {
     cost?: true
+    maxParticipants?: true
   }
 
   export type EventSumAggregateInputType = {
     cost?: true
+    maxParticipants?: true
   }
 
   export type EventMinAggregateInputType = {
@@ -1189,6 +1197,7 @@ export namespace Prisma {
     status?: true
     bookingDate?: true
     address?: true
+    maxParticipants?: true
   }
 
   export type EventMaxAggregateInputType = {
@@ -1202,6 +1211,7 @@ export namespace Prisma {
     status?: true
     bookingDate?: true
     address?: true
+    maxParticipants?: true
   }
 
   export type EventCountAggregateInputType = {
@@ -1215,6 +1225,7 @@ export namespace Prisma {
     status?: true
     bookingDate?: true
     address?: true
+    maxParticipants?: true
     _all?: true
   }
 
@@ -1321,6 +1332,7 @@ export namespace Prisma {
     status: EventStatus
     bookingDate: Date | null
     address: string
+    maxParticipants: number
     _count: EventCountAggregateOutputType | null
     _avg: EventAvgAggregateOutputType | null
     _sum: EventSumAggregateOutputType | null
@@ -1353,6 +1365,7 @@ export namespace Prisma {
     status?: boolean
     bookingDate?: boolean
     address?: boolean
+    maxParticipants?: boolean
     payments?: boolean | PaymentFindManyArgs
     participants?: boolean | ParticipantsOnEventsFindManyArgs
     _count?: boolean | EventCountOutputTypeArgs
@@ -7827,7 +7840,8 @@ export namespace Prisma {
     cost: 'cost',
     status: 'status',
     bookingDate: 'bookingDate',
-    address: 'address'
+    address: 'address',
+    maxParticipants: 'maxParticipants'
   };
 
   export type EventScalarFieldEnum = (typeof EventScalarFieldEnum)[keyof typeof EventScalarFieldEnum]
@@ -7927,6 +7941,7 @@ export namespace Prisma {
     status?: EnumEventStatusFilter | EventStatus
     bookingDate?: DateTimeNullableFilter | Date | string | null
     address?: StringFilter | string
+    maxParticipants?: IntFilter | number
     payments?: PaymentListRelationFilter
     participants?: ParticipantsOnEventsListRelationFilter
   }
@@ -7942,6 +7957,7 @@ export namespace Prisma {
     status?: SortOrder
     bookingDate?: SortOrder
     address?: SortOrder
+    maxParticipants?: SortOrder
     payments?: PaymentOrderByRelationAggregateInput
     participants?: ParticipantsOnEventsOrderByRelationAggregateInput
   }
@@ -7961,6 +7977,7 @@ export namespace Prisma {
     status?: SortOrder
     bookingDate?: SortOrder
     address?: SortOrder
+    maxParticipants?: SortOrder
     _count?: EventCountOrderByAggregateInput
     _avg?: EventAvgOrderByAggregateInput
     _max?: EventMaxOrderByAggregateInput
@@ -7982,6 +7999,7 @@ export namespace Prisma {
     status?: EnumEventStatusWithAggregatesFilter | EventStatus
     bookingDate?: DateTimeNullableWithAggregatesFilter | Date | string | null
     address?: StringWithAggregatesFilter | string
+    maxParticipants?: IntWithAggregatesFilter | number
   }
 
   export type ParticipantsOnEventsWhereInput = {
@@ -8330,6 +8348,7 @@ export namespace Prisma {
     status?: EventStatus
     bookingDate?: Date | string | null
     address: string
+    maxParticipants?: number
     payments?: PaymentCreateNestedManyWithoutEventInput
     participants?: ParticipantsOnEventsCreateNestedManyWithoutEventInput
   }
@@ -8345,6 +8364,7 @@ export namespace Prisma {
     status?: EventStatus
     bookingDate?: Date | string | null
     address: string
+    maxParticipants?: number
     payments?: PaymentUncheckedCreateNestedManyWithoutEventInput
     participants?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutEventInput
   }
@@ -8360,6 +8380,7 @@ export namespace Prisma {
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
+    maxParticipants?: IntFieldUpdateOperationsInput | number
     payments?: PaymentUpdateManyWithoutEventNestedInput
     participants?: ParticipantsOnEventsUpdateManyWithoutEventNestedInput
   }
@@ -8375,6 +8396,7 @@ export namespace Prisma {
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
+    maxParticipants?: IntFieldUpdateOperationsInput | number
     payments?: PaymentUncheckedUpdateManyWithoutEventNestedInput
     participants?: ParticipantsOnEventsUncheckedUpdateManyWithoutEventNestedInput
   }
@@ -8390,6 +8412,7 @@ export namespace Prisma {
     status?: EventStatus
     bookingDate?: Date | string | null
     address: string
+    maxParticipants?: number
   }
 
   export type EventUpdateManyMutationInput = {
@@ -8403,6 +8426,7 @@ export namespace Prisma {
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
+    maxParticipants?: IntFieldUpdateOperationsInput | number
   }
 
   export type EventUncheckedUpdateManyInput = {
@@ -8416,6 +8440,7 @@ export namespace Prisma {
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
+    maxParticipants?: IntFieldUpdateOperationsInput | number
   }
 
   export type ParticipantsOnEventsCreateInput = {
@@ -8881,6 +8906,17 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter | Date | string | null
   }
 
+  export type IntFilter = {
+    equals?: number
+    in?: Enumerable<number>
+    notIn?: Enumerable<number>
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntFilter | number
+  }
+
   export type PaymentListRelationFilter = {
     every?: PaymentWhereInput
     some?: PaymentWhereInput
@@ -8912,10 +8948,12 @@ export namespace Prisma {
     status?: SortOrder
     bookingDate?: SortOrder
     address?: SortOrder
+    maxParticipants?: SortOrder
   }
 
   export type EventAvgOrderByAggregateInput = {
     cost?: SortOrder
+    maxParticipants?: SortOrder
   }
 
   export type EventMaxOrderByAggregateInput = {
@@ -8929,6 +8967,7 @@ export namespace Prisma {
     status?: SortOrder
     bookingDate?: SortOrder
     address?: SortOrder
+    maxParticipants?: SortOrder
   }
 
   export type EventMinOrderByAggregateInput = {
@@ -8942,10 +8981,12 @@ export namespace Prisma {
     status?: SortOrder
     bookingDate?: SortOrder
     address?: SortOrder
+    maxParticipants?: SortOrder
   }
 
   export type EventSumOrderByAggregateInput = {
     cost?: SortOrder
+    maxParticipants?: SortOrder
   }
 
   export type StringWithAggregatesFilter = {
@@ -9017,6 +9058,22 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter
     _min?: NestedDateTimeNullableFilter
     _max?: NestedDateTimeNullableFilter
+  }
+
+  export type IntWithAggregatesFilter = {
+    equals?: number
+    in?: Enumerable<number>
+    notIn?: Enumerable<number>
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntWithAggregatesFilter | number
+    _count?: NestedIntFilter
+    _avg?: NestedFloatFilter
+    _sum?: NestedIntFilter
+    _min?: NestedIntFilter
+    _max?: NestedIntFilter
   }
 
   export type UserRelationFilter = {
@@ -9376,6 +9433,14 @@ export namespace Prisma {
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type PaymentUpdateManyWithoutEventNestedInput = {
@@ -9756,6 +9821,17 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter | Date | string | null
   }
 
+  export type NestedIntFilter = {
+    equals?: number
+    in?: Enumerable<number>
+    notIn?: Enumerable<number>
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntFilter | number
+  }
+
   export type NestedStringWithAggregatesFilter = {
     equals?: string
     in?: Enumerable<string>
@@ -9771,17 +9847,6 @@ export namespace Prisma {
     _count?: NestedIntFilter
     _min?: NestedStringFilter
     _max?: NestedStringFilter
-  }
-
-  export type NestedIntFilter = {
-    equals?: number
-    in?: Enumerable<number>
-    notIn?: Enumerable<number>
-    lt?: number
-    lte?: number
-    gt?: number
-    gte?: number
-    not?: NestedIntFilter | number
   }
 
   export type NestedDateTimeWithAggregatesFilter = {
@@ -9847,6 +9912,22 @@ export namespace Prisma {
     gt?: number
     gte?: number
     not?: NestedIntNullableFilter | number | null
+  }
+
+  export type NestedIntWithAggregatesFilter = {
+    equals?: number
+    in?: Enumerable<number>
+    notIn?: Enumerable<number>
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntWithAggregatesFilter | number
+    _count?: NestedIntFilter
+    _avg?: NestedFloatFilter
+    _sum?: NestedIntFilter
+    _min?: NestedIntFilter
+    _max?: NestedIntFilter
   }
 
   export type NestedEnumUserEventStatusFilter = {
@@ -10076,6 +10157,7 @@ export namespace Prisma {
     status?: EventStatus
     bookingDate?: Date | string | null
     address: string
+    maxParticipants?: number
     payments?: PaymentCreateNestedManyWithoutEventInput
   }
 
@@ -10090,6 +10172,7 @@ export namespace Prisma {
     status?: EventStatus
     bookingDate?: Date | string | null
     address: string
+    maxParticipants?: number
     payments?: PaymentUncheckedCreateNestedManyWithoutEventInput
   }
 
@@ -10147,6 +10230,7 @@ export namespace Prisma {
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
+    maxParticipants?: IntFieldUpdateOperationsInput | number
     payments?: PaymentUpdateManyWithoutEventNestedInput
   }
 
@@ -10161,6 +10245,7 @@ export namespace Prisma {
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
+    maxParticipants?: IntFieldUpdateOperationsInput | number
     payments?: PaymentUncheckedUpdateManyWithoutEventNestedInput
   }
 
@@ -10175,6 +10260,7 @@ export namespace Prisma {
     status?: EventStatus
     bookingDate?: Date | string | null
     address: string
+    maxParticipants?: number
     participants?: ParticipantsOnEventsCreateNestedManyWithoutEventInput
   }
 
@@ -10189,6 +10275,7 @@ export namespace Prisma {
     status?: EventStatus
     bookingDate?: Date | string | null
     address: string
+    maxParticipants?: number
     participants?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutEventInput
   }
 
@@ -10246,6 +10333,7 @@ export namespace Prisma {
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
+    maxParticipants?: IntFieldUpdateOperationsInput | number
     participants?: ParticipantsOnEventsUpdateManyWithoutEventNestedInput
   }
 
@@ -10260,6 +10348,7 @@ export namespace Prisma {
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     address?: StringFieldUpdateOperationsInput | string
+    maxParticipants?: IntFieldUpdateOperationsInput | number
     participants?: ParticipantsOnEventsUncheckedUpdateManyWithoutEventNestedInput
   }
 

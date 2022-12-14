@@ -2,7 +2,7 @@ import type { Event } from "../../../prisma/generated/client";
 import { transformDate } from "../../../src/helpers/transformDate";
 
 export const getEventTemplate = (event: Partial<Event>) => {
-  const { address, cost, date, endTime, startTime } = event;
+  const { address, cost, date, endTime, startTime, maxParticipants } = event;
 
   return `
       <mj-column>
@@ -22,7 +22,7 @@ export const getEventTemplate = (event: Partial<Event>) => {
       <mj-column>
         <mj-text align="center" color="#FFF" font-size="15px" font-family="Ubuntu, Helvetica, Arial, sans-serif" padding-left="25px" padding-right="25px" padding-bottom="0px"><strong>Preis</strong></mj-text>
         <mj-text align="center" color="#FFF" font-size="13px" font-family="Helvetica" padding-left="25px" padding-right="25px" padding-bottom="20px" padding-top="10px">${
-          cost && cost / 10
+          cost && cost / (maxParticipants ?? 10)
         } €</mj-text>
       </mj-column>
     `;

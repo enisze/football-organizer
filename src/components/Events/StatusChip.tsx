@@ -4,9 +4,10 @@ import type { EventStatus } from "../../../prisma/generated/client";
 
 export const StatusChip: FunctionComponent<{
   numberOfParticipants: number;
+  maxParticipants: number;
   status: EventStatus;
-}> = ({ numberOfParticipants, status }) => {
-  const label = `${numberOfParticipants}/10`;
+}> = ({ numberOfParticipants, status, maxParticipants }) => {
+  const label = `${numberOfParticipants}/${maxParticipants}`;
 
   return (
     <Chip

@@ -9,8 +9,9 @@ import { EventCardAdminPaymentArea } from "./EventCardAdminPaymentArea";
 export const ParticipantsArea: FunctionComponent<{
   participants: ParticipantsOnEvents[];
   eventId: string;
+  maxParticipants?: number;
   heading: string;
-}> = ({ participants, eventId, heading }) => {
+}> = ({ participants, eventId, heading, maxParticipants }) => {
   const [showParticipants, setShowParticipants] = useState(false);
 
   const { data: users } = trpc.user.getUserNamesByIds.useQuery({
@@ -21,7 +22,7 @@ export const ParticipantsArea: FunctionComponent<{
 
   const participantsString =
     heading === "Teilnehmer"
-      ? `${heading} ${amountOfParticipants}/10`
+      ? `${heading} ${amountOfParticipants}/${maxParticipants}`
       : `${heading}: ${amountOfParticipants}`;
   return (
     <>

@@ -113,7 +113,8 @@ exports.Prisma.EventScalarFieldEnum = makeEnum({
   cost: 'cost',
   status: 'status',
   bookingDate: 'bookingDate',
-  address: 'address'
+  address: 'address',
+  maxParticipants: 'maxParticipants'
 });
 
 exports.Prisma.ParticipantsOnEventsScalarFieldEnum = makeEnum({

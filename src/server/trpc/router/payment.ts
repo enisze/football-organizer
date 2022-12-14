@@ -100,7 +100,7 @@ export const paymentRouter = router({
           if (payment) {
             return acc;
           }
-          return acc - event.cost / 10;
+          return acc - event.cost / event.maxParticipants;
         },
         0
       );

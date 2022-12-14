@@ -49,7 +49,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
     if (
       !joinedParticipantIds.includes(user.id) &&
       !canceledParticipantIds.includes(user.id) &&
-      participants.length < 10
+      participants.length < footballEvent.maxParticipants
     ) {
       //Send event reminder
 
@@ -67,7 +67,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
         email: "eniszej@gmail.com",
         name: "Football Organizer",
       };
-      sendSmptMail.subject = `ERINNERUNG: FUSSBALL FINDET STATT ${participants.length}/10 TEILNEHMER!`;
+      sendSmptMail.subject = `ERINNERUNG: FUSSBALL FINDET STATT ${participants.length}/${footballEvent.maxParticipants} TEILNEHMER!`;
 
       usersEventReminder.push(user.email);
 

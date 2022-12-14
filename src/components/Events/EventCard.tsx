@@ -85,7 +85,11 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
   return (
     <Card className={cardClassname(isMyTab)}>
       <div className="flex flex-col items-center gap-y-2">
-        <StatusChip status={status} numberOfParticipants={joinedUsers.length} />
+        <StatusChip
+          status={status}
+          numberOfParticipants={joinedUsers.length}
+          maxParticipants={event.maxParticipants}
+        />
       </div>
       <Sheet variant="outlined" className="rounded border p-4">
         {data && (
@@ -125,13 +129,14 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         <Typography className="text-gray-600 md:text-lg">
           Preis pro Person:{" "}
           <Typography className="font-bold">
-            {`${event.cost / 10} €`}
+            {`${event.cost / event.maxParticipants} €`}
           </Typography>
         </Typography>
       </Sheet>
       <ParticipantsArea
         eventId={event.id}
         participants={joinedUsers}
+        maxParticipants={event.maxParticipants}
         heading="Teilnehmer"
       />
       <ParticipantsArea
