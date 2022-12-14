@@ -1,5 +1,5 @@
-import type { User as PrismaUser } from "@prisma/client";
 import { type DefaultSession } from "next-auth";
+import type { User as PrismaUser } from "../prisma/generated/client";
 
 import "next-auth/jwt";
 

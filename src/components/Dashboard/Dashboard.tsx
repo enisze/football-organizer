@@ -11,11 +11,14 @@ import {
   Tabs,
   Typography,
 } from "@mui/joy";
-import type { Event, ParticipantsOnEvents } from "@prisma/client";
 import { isAfter } from "date-fns";
 import { find, forEach, map, orderBy } from "lodash";
 import { useSession } from "next-auth/react";
 import { useRecoilState } from "recoil";
+import type {
+  Event,
+  ParticipantsOnEvents,
+} from "../../../prisma/generated/client";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { EventCard } from "../Events/EventCard";
 import { LoadingWrapper } from "../LoadingWrapper";

@@ -1,6 +1,9 @@
-import type { ParticipantsOnEvents, UserEventStatus } from "@prisma/client";
 import { createFunction } from "inngest";
 import { find, map, reduce } from "lodash";
+import type {
+  ParticipantsOnEvents,
+  UserEventStatus,
+} from "../prisma/generated/client";
 import { PrismaClient } from "../prisma/generated/client";
 import apiInstance from "../src/emails/transporter";
 import { generateEventReminderTemplate } from "./emailTemplates/eventReminderTemplate";

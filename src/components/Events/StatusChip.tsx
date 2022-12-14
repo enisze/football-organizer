@@ -1,6 +1,6 @@
 import { Chip } from "@mui/joy";
-import type { EventStatus } from "@prisma/client";
 import type { FunctionComponent } from "react";
+import type { EventStatus } from "../../../prisma/generated/client";
 
 export const StatusChip: FunctionComponent<{
   numberOfParticipants: number;

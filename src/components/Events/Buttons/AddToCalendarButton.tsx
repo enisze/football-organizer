@@ -6,11 +6,11 @@ import {
   Sheet,
   Typography,
 } from "@mui/joy";
-import type { Event } from "@prisma/client";
 import type { CalendarOptions } from "datebook";
 import { GoogleCalendar, ICalendar, OutlookCalendar } from "datebook";
 import type { FunctionComponent } from "react";
 import { useState } from "react";
+import type { Event } from "../../../../prisma/generated/client";
 
 export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
   event,

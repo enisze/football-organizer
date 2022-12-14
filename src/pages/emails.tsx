@@ -1,9 +1,9 @@
-import type { Event } from "@prisma/client";
 import { map } from "lodash";
 import type { FunctionComponent } from "react";
 import { generateEventReminderTemplate } from "../../inngest/emailTemplates/eventReminderTemplate";
 import { generateNewEventTemplate } from "../../inngest/emailTemplates/newEventTemplate";
 import { generatePaymentReminderTemplate } from "../../inngest/emailTemplates/paymentReminderTemplate";
+import type { Event } from "../../prisma/generated/client";
 
 const EmailPage: FunctionComponent<{ emails: string[] }> = ({ emails }) => {
   return (

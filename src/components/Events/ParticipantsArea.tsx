@@ -1,8 +1,8 @@
 import { Avatar, Button } from "@mui/joy";
-import type { ParticipantsOnEvents } from "@prisma/client";
 import { map } from "lodash";
 import type { FunctionComponent } from "react";
 import { useState } from "react";
+import type { ParticipantsOnEvents } from "../../../prisma/generated/client";
 import { trpc } from "../../utils/trpc";
 import { EventCardAdminPaymentArea } from "./EventCardAdminPaymentArea";
 
