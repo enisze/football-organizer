@@ -55,7 +55,8 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
   participants,
   showActions = true,
 }) => {
-  const { address, startTime, endTime, date, id, status } = event;
+  const { address, startTime, endTime, date, id, status, maxParticipants } =
+    event;
 
   const [tab, setTab] = useRecoilState(currentTabState);
 
@@ -88,7 +89,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         <StatusChip
           status={status}
           numberOfParticipants={joinedUsers.length}
-          maxParticipants={event.maxParticipants}
+          maxParticipants={maxParticipants}
         />
       </div>
       <Sheet variant="outlined" className="rounded border p-4">
@@ -129,14 +130,14 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         <Typography className="text-gray-600 md:text-lg">
           Preis pro Person:{" "}
           <Typography className="font-bold">
-            {`${event.cost / event.maxParticipants} €`}
+            {`${event.cost / maxParticipants} €`}
           </Typography>
         </Typography>
       </Sheet>
       <ParticipantsArea
         eventId={event.id}
         participants={joinedUsers}
-        maxParticipants={event.maxParticipants}
+        maxParticipants={maxParticipants}
         heading="Teilnehmer"
       />
       <ParticipantsArea

@@ -68,44 +68,46 @@ export const paymentRouter = router({
     }),
   getUserBalance: protectedProcedure.query(
     async ({ ctx: { prisma, session } }) => {
-      const payments = await prisma.payment.findMany({
-        where: { userId: session.user.id },
-      });
       const events = await prisma.event.findMany({
         where: {
           participants: { some: { id: session.user.id } },
         },
         include: { payments: true },
       });
-      const paidBalance = reduce(
-        payments,
-        (acc, payment) => {
-          const event = find(events, (event) => event.id === payment.eventId);
-          if (!event) {
-            return acc + payment.amount;
-          }
 
+      const userEventStatus = await prisma.participantsOnEvents.findMany({
+        where: { id: session.user.id },
+      });
+
+      const balance = reduce(
+        userEventStatus,
+        (acc, userEvent) => {
+          const event = find(events, (event) => event.id === userEvent.eventId);
+
+          if (!event) return acc;
+          const payment = find(
+            event?.payments,
+            (payment) => payment.userId === session.user.id
+          );
+
+          if (!event) return acc;
+
+          const cost: number = event?.cost / event.maxParticipants;
+
+          if (userEvent.userEventStatus === "JOINED") {
+            if (payment) return acc;
+            if (!payment) return acc - cost;
+          }
+          if (userEvent.userEventStatus === "CANCELED") {
+            if (payment) return acc + cost;
+            if (!payment) return acc;
+          }
           return acc;
         },
         0
       );
 
-      const unpaidBalance = reduce(
-        events,
-        (acc, event) => {
-          const payment = find(
-            event.payments,
-            (payment) => payment.userId === session.user.id
-          );
-          if (payment) {
-            return acc;
-          }
-          return acc - event.cost / event.maxParticipants;
-        },
-        0
-      );
-
-      return paidBalance + unpaidBalance;
+      return balance;
     }
   ),
   getAllPaymentsForEventFromNotParticipants: protectedProcedure
