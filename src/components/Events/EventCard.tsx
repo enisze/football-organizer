@@ -4,13 +4,16 @@ import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import type { FunctionComponent } from "react";
 import { useRecoilState } from "recoil";
+import type {
+  Event,
+  ParticipantsOnEvents,
+} from "../../../prisma/generated/client";
 import { transformDate } from "../../helpers/transformDate";
 import { trpc } from "../../utils/trpc";
 import { currentTabState } from "../Dashboard/tabState";
 import { LoadingWrapper } from "../LoadingWrapper";
 import type { OrganizerMapProps } from "../Map/OrganizerMap";
 import { PaymentArea } from "../PaymentArea";
-import type { Event, ParticipantsOnEvents } from "../prisma/generated/client";
 import { AddToCalendarButton } from "./Buttons/AddToCalendarButton";
 import { JoinOrLeaveEventButton } from "./Buttons/JoinOrLeaveEventButton";
 import { EventCardAdminArea } from "./EventCardAdminArea";
