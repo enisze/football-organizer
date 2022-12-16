@@ -4,7 +4,7 @@ import type { gmail_v1 } from "googleapis";
 import { google } from "googleapis";
 import { createScheduledFunction } from "inngest";
 import { filter, find, forEach, map } from "lodash";
-import type { Event } from "../prisma/generated/client";
+import type { Event, Payment } from "../prisma/generated/client";
 import { PrismaClient } from "../prisma/generated/client";
 import { getEuroAmount } from "../src/helpers/getEuroAmount";
 import { isDateInCertainRange } from "../src/helpers/isDateInCertainRange";
@@ -23,6 +23,7 @@ const job = async () => {
   const payments = await prisma.payment.findMany();
 
   const paymentsAddedForUser: any[] = [];
+  const paymentsCreated: Payment[] = [];
 
   forEach(
     filter(users, (user) => user.email !== "eniszej@gmail.com"),
@@ -65,7 +66,7 @@ const job = async () => {
               name: user.name,
             },
           ]);
-          await prisma.payment.create({
+          const res = await prisma.payment.create({
             data: {
               eventId: event.id,
               amount,
@@ -74,6 +75,7 @@ const job = async () => {
               userId: user.id,
             },
           });
+          paymentsCreated.push(res);
         }
         return;
       });
@@ -81,12 +83,13 @@ const job = async () => {
   );
   //TODO: Delete all events older than a week
 
-  return { message: paymentsAddedForUser };
+  return `Users with payments: ${paymentsAddedForUser} 
+  Payments created ${paymentsCreated}`;
 };
 
 export const cronjobForPayments = createScheduledFunction(
   "Cronjob for emails to payments",
-  "0 18 * * *", // The cron syntax for the function
+  "0 11 * * *", // The cron syntax for the function
   job
 );
 
