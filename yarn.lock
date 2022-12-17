@@ -567,6 +567,16 @@
   resolved "https://registry.yarnpkg.com/@recoiljs/refine/-/refine-0.1.1.tgz#282a1cc603bac7db08eea571bbee757f9cf7b55c"
   integrity sha512-ry02rHswJePYkH1o8K99qL4O6TBntF9/g7W5wXVwaOUrIJEZUGfl/I3+btPXbUgyyEZvNs5xcwvOw13AufmFQw==
 
+"@rive-app/canvas@1.0.97":
+  version "1.0.97"
+  resolved "https://registry.yarnpkg.com/@rive-app/canvas/-/canvas-1.0.97.tgz#b5e6f1e2b3bc423d65f5988bed67a05f777f2bd1"
+  integrity sha512-NpA/z8FW/ktIghJSeZB/ySgG3H+TMhzFC5tnotKuFnxbzhH4qyKk+6FHM7BIjBKhBQ10vHnf45kUrLTRArfQhA==
+
+"@rive-app/webgl@1.0.93":
+  version "1.0.93"
+  resolved "https://registry.yarnpkg.com/@rive-app/webgl/-/webgl-1.0.93.tgz#8e02395ffd8c812a2efaa49b600f2dbbc0b30871"
+  integrity sha512-fzwpgyT9bhwKOeetIl7vyiKSlkU+wcEIkXmrYYIRDt3aH0+orfYSHDZQWQ+D7eA+O3NzIyk/S2xXPKf64FezMg==
+
 "@rollup/plugin-terser@^0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-terser/-/plugin-terser-0.2.0.tgz#07994c6ca48fcbf352efbdb01d0273557d7a3991"
@@ -4339,6 +4349,14 @@ rimraf@^3.0.2:
   integrity sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==
   dependencies:
     glob "^7.1.3"
+
+rive-react@^3.0.34:
+  version "3.0.34"
+  resolved "https://registry.yarnpkg.com/rive-react/-/rive-react-3.0.34.tgz#c5b367a2e0bcaa5244ac16518110dc910f741b7c"
+  integrity sha512-SUyMXPHWn/KeO0+/61915a7q7/gNyajQqTJ7rP0Id1A7SURq9VI2B++olP8uORXzC+CVbZ6bNV0rYylLe238fw==
+  dependencies:
+    "@rive-app/canvas" "1.0.97"
+    "@rive-app/webgl" "1.0.93"
 
 rollup-plugin-terser@^7.0.2:
   version "7.0.2"
