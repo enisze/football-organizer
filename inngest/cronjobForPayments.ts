@@ -37,47 +37,51 @@ const job = async () => {
         return res.snippet?.toLowerCase().includes(user.name.toLowerCase());
       }) as gmail_v1.Schema$Message[];
 
-      console.log(user.name + " got " + filteredByUser.length + " mails");
+      console.log(user.name + " got " + filteredByUser.length + " paypalMails");
 
       forEach(filteredByUser, async (email) => {
         const res = find(
           payments,
           (payment) => payment.gmailMailId === email.id
         );
-        if (res) return;
+        if (res) {
+          console.log("payment already exists");
+          return;
+        }
 
         const result = await isInAmountRangeAndEventBookingDate(email, events);
 
-        if (!result) return;
-        if (!email.snippet) return;
-        if (!email.id) return;
+        if (!result || !email.snippet || !email.id) {
+          console.log("email data missing");
+          return;
+        }
 
         const { conditionFulfilled, event } = result;
 
-        if (!event?.id) return;
-
-        if (conditionFulfilled) {
-          const amount = getEuroAmount(email.snippet);
-          paymentsAddedForUser.push([
-            {
-              eventId: event.id,
-              amount,
-              paymentDate: new Date(Number(email.internalDate)).toDateString(),
-              name: user.name,
-            },
-          ]);
-          const res = await prisma.payment.create({
-            data: {
-              eventId: event.id,
-              amount,
-              paymentDate: new Date(Number(email.internalDate)),
-              gmailMailId: email.id,
-              userId: user.id,
-            },
-          });
-          paymentsCreated.push(res);
+        if (!event?.id || !conditionFulfilled) {
+          console.log("No event id or condition failed");
+          return;
         }
-        return;
+
+        const amount = getEuroAmount(email.snippet);
+        paymentsAddedForUser.push([
+          {
+            eventId: event.id,
+            amount,
+            paymentDate: new Date(Number(email.internalDate)).toDateString(),
+            name: user.name,
+          },
+        ]);
+        const paymentCreated = await prisma.payment.create({
+          data: {
+            eventId: event.id,
+            amount,
+            paymentDate: new Date(Number(email.internalDate)),
+            gmailMailId: email.id,
+            userId: user.id,
+          },
+        });
+        paymentsCreated.push(paymentCreated);
       });
     }
   );
