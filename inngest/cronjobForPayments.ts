@@ -25,6 +25,12 @@ const job = async () => {
   const paymentsAddedForUser: any[] = [];
   const paymentsCreated: Payment[] = [];
 
+  let emailAmount = 0;
+
+  const emailsAlreadyInDB: any[] = [];
+
+  let emailsWithConditions = 0;
+
   forEach(
     filter(users, (user) => user.email !== "eniszej@gmail.com"),
 
@@ -39,11 +45,14 @@ const job = async () => {
 
       console.log(user.name + " got " + filteredByUser.length + " paypalMails");
 
+      emailAmount += filteredByUser.length;
+
       forEach(filteredByUser, async (email) => {
         const res = find(
           payments,
           (payment) => payment.gmailMailId === email.id
         );
+        emailsAlreadyInDB.push(res);
         if (res) {
           console.log("payment already exists");
           return;
@@ -62,6 +71,7 @@ const job = async () => {
           console.log("No event id or condition failed");
           return;
         }
+        emailsWithConditions += 1;
 
         const amount = getEuroAmount(email.snippet);
         paymentsAddedForUser.push([
@@ -87,7 +97,11 @@ const job = async () => {
   );
   //TODO: Delete all events older than a week
 
-  return `Users with payments: ${paymentsAddedForUser} 
+  return `
+  Email amount: ${emailAmount}
+  Emails found already in DB: ${emailsAlreadyInDB}
+  Amount of emails that fulfill conditions and are not in DB yet: ${emailsWithConditions}
+  Users with payments: ${paymentsAddedForUser} 
   Payments created ${paymentsCreated}`;
 };
 
