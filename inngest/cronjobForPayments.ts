@@ -4,7 +4,7 @@ import type { gmail_v1 } from "googleapis";
 import { google } from "googleapis";
 import { createScheduledFunction } from "inngest";
 import { filter, find, forEach, map } from "lodash";
-import type { Event, Payment } from "../prisma/generated/client";
+import type { Event } from "../prisma/generated/client";
 import { PrismaClient } from "../prisma/generated/client";
 import { getEuroAmount } from "../src/helpers/getEuroAmount";
 import { isDateInCertainRange } from "../src/helpers/isDateInCertainRange";
@@ -23,7 +23,6 @@ const job = async () => {
   const payments = await prisma.payment.findMany();
 
   const paymentsAddedForUser: any[] = [];
-  const paymentsCreated: Payment[] = [];
 
   let emailAmount = 0;
 
@@ -33,8 +32,7 @@ const job = async () => {
 
   forEach(
     filter(users, (user) => user.email !== "eniszej@gmail.com"),
-
-    async (user) => {
+    (user) => {
       //Get all paypal emails from specific user
 
       const filteredByUser = filter(result, (res) => {
@@ -47,7 +45,7 @@ const job = async () => {
 
       emailAmount += filteredByUser.length;
 
-      forEach(filteredByUser, async (email) => {
+      forEach(filteredByUser, (email) => {
         const res = find(
           payments,
           (payment) => payment.gmailMailId === email.id
@@ -58,7 +56,7 @@ const job = async () => {
           return;
         }
 
-        const result = await isInAmountRangeAndEventBookingDate(email, events);
+        const result = isInAmountRangeAndEventBookingDate(email, events);
 
         if (!result || !email.snippet || !email.id) {
           console.log("email data missing");
@@ -74,26 +72,29 @@ const job = async () => {
         emailsWithConditions += 1;
 
         const amount = getEuroAmount(email.snippet);
+
         paymentsAddedForUser.push([
           {
-            eventId: event.id,
-            amount,
-            paymentDate: new Date(Number(email.internalDate)).toDateString(),
-            name: user.name,
-          },
-        ]);
-        const paymentCreated = await prisma.payment.create({
-          data: {
             eventId: event.id,
             amount,
             paymentDate: new Date(Number(email.internalDate)),
             gmailMailId: email.id,
             userId: user.id,
+            name: user.name,
           },
-        });
-        paymentsCreated.push(paymentCreated);
+        ]);
       });
     }
+  );
+
+  await Promise.all(
+    map(paymentsAddedForUser, (payment) =>
+      prisma.payment.create({
+        data: {
+          ...payment,
+        },
+      })
+    )
   );
   //TODO: Delete all events older than a week
 
@@ -101,8 +102,7 @@ const job = async () => {
   Email amount: ${emailAmount}
   Emails found already in DB: ${emailsAlreadyInDB}
   Amount of emails that fulfill conditions and are not in DB yet: ${emailsWithConditions}
-  Users with payments: ${paymentsAddedForUser} 
-  Payments created ${paymentsCreated}`;
+  Users with payments: ${paymentsAddedForUser}`;
 };
 
 export const cronjobForPayments = createScheduledFunction(
@@ -157,12 +157,10 @@ const getPaypalEmails = async () => {
 
 const AMOUNT_LIST = [4.5, 5, 10, 11];
 
-const isInAmountRangeAndEventBookingDate = async (
+const isInAmountRangeAndEventBookingDate = (
   paymentMail: gmail_v1.Schema$Message,
   events: Event[] | undefined
-): Promise<
-  { conditionFulfilled: boolean; event: Event | undefined } | undefined
-> => {
+): { conditionFulfilled: boolean; event: Event | undefined } | undefined => {
   if (!paymentMail.internalDate) return undefined;
   if (!paymentMail.snippet) return undefined;
   if (!events) return undefined;
