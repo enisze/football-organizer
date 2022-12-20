@@ -1,10 +1,11 @@
+import {} from "@trpc/server";
 import type { OAuth2ClientOptions } from "google-auth-library";
 import { OAuth2Client } from "google-auth-library";
 import type { gmail_v1 } from "googleapis";
 import { google } from "googleapis";
 import { createScheduledFunction } from "inngest";
-import { filter, find, forEach, map } from "lodash";
-import type { Event } from "../prisma/generated/client";
+import { filter, find, forEach, map, omit } from "lodash";
+import type { Event, Payment } from "../prisma/generated/client";
 import { PrismaClient } from "../prisma/generated/client";
 import { getEuroAmount } from "../src/helpers/getEuroAmount";
 import { isDateInCertainRange } from "../src/helpers/isDateInCertainRange";
@@ -22,11 +23,18 @@ const job = async () => {
   const users = await prisma.user.findMany();
   const payments = await prisma.payment.findMany();
 
-  const paymentsAddedForUser: any[] = [];
+  const paymentsAddedForUser: {
+    eventId: string;
+    amount: number;
+    paymentDate: Date;
+    gmailMailId: string;
+    userId: string;
+    name: string;
+  }[] = [];
 
   let emailAmount = 0;
 
-  const emailsAlreadyInDB: any[] = [];
+  const emailsAlreadyInDB: (Payment | undefined)[] = [];
 
   let emailsWithConditions = 0;
 
@@ -73,36 +81,41 @@ const job = async () => {
 
         const amount = getEuroAmount(email.snippet);
 
-        paymentsAddedForUser.push([
-          {
-            eventId: event.id,
-            amount,
-            paymentDate: new Date(Number(email.internalDate)),
-            gmailMailId: email.id,
-            userId: user.id,
-            name: user.name,
-          },
-        ]);
+        paymentsAddedForUser.push({
+          eventId: event.id,
+          amount,
+          paymentDate: new Date(Number(email.internalDate)),
+          gmailMailId: email.id,
+          userId: user.id,
+          name: user.name,
+        });
       });
     }
   );
 
-  await Promise.all(
-    map(paymentsAddedForUser, (payment) =>
-      prisma.payment.create({
-        data: {
-          ...payment,
-        },
-      })
-    )
-  );
+  try {
+    await Promise.all(
+      map(paymentsAddedForUser, (payment) =>
+        prisma.payment.create({
+          data: {
+            ...omit(payment, "name"),
+          },
+        })
+      )
+    );
+  } catch (error) {
+    console.log(error);
+  }
   //TODO: Delete all events older than a week
 
   return `
   Email amount: ${emailAmount}
-  Emails found already in DB: ${emailsAlreadyInDB}
+  Emails found already in DB: ${map(
+    emailsAlreadyInDB,
+    (mail) => mail?.gmailMailId
+  )}
   Amount of emails that fulfill conditions and are not in DB yet: ${emailsWithConditions}
-  Users with payments: ${paymentsAddedForUser}`;
+  Users with payments: ${map(paymentsAddedForUser, (payment) => payment.name)}`;
 };
 
 export const cronjobForPayments = createScheduledFunction(
