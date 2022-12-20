@@ -34,7 +34,7 @@ const job = async () => {
 
   let emailAmount = 0;
 
-  const emailsAlreadyInDB: (Payment | undefined)[] = [];
+  const emailsAlreadyInDB: Payment[] = [];
 
   let emailsWithConditions = 0;
 
@@ -58,8 +58,9 @@ const job = async () => {
           payments,
           (payment) => payment.gmailMailId === email.id
         );
-        emailsAlreadyInDB.push(res);
+
         if (res) {
+          emailsAlreadyInDB.push(res);
           console.log("payment already exists");
           return;
         }
@@ -110,12 +111,15 @@ const job = async () => {
 
   return `
   Email amount: ${emailAmount}
-  Emails found already in DB: ${map(
+  Emails found already in DB: ${emailsAlreadyInDB.length} ${map(
     emailsAlreadyInDB,
-    (mail) => mail?.gmailMailId
+    (mail) => mail.gmailMailId
   )}
   Amount of emails that fulfill conditions and are not in DB yet: ${emailsWithConditions}
-  Users with payments: ${map(paymentsAddedForUser, (payment) => payment.name)}`;
+  Users with payments: ${paymentsAddedForUser.length} ${map(
+    paymentsAddedForUser,
+    (user) => user.name
+  )}`;
 };
 
 export const cronjobForPayments = createScheduledFunction(
