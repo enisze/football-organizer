@@ -124,7 +124,7 @@ const job = async () => {
 
 export const cronjobForPayments = createScheduledFunction(
   "Cronjob for emails to payments",
-  "0 11 * * *", // The cron syntax for the function
+  "0 23 * * *", // The cron syntax for the function
   job
 );
 
