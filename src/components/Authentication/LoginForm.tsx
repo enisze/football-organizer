@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, TextField, Typography } from "@mui/joy";
 import { signIn, useSession } from "next-auth/react";
-import type { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import type { FieldValues } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -38,35 +38,39 @@ export const LoginForm: FunctionComponent = () => {
 
   return (
     <>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col justify-center"
-      >
-        <TextField
-          label="Email"
-          {...register("email")}
-          error={Boolean(errors.email)}
-          helperText={errors.email?.message as string}
-        />
+      <LoadingWrapper isLoading={status === "loading"}>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col justify-center gap-y-2"
+        >
+          <TextField
+            label="Email"
+            {...register("email")}
+            error={Boolean(errors.email)}
+            helperText={errors.email?.message as string}
+          />
 
-        <TextField
-          label="Passwort"
-          type="password"
-          {...register("password")}
-          error={Boolean(errors.password)}
-          helperText={errors.password?.message as string}
-        />
+          <TextField
+            label="Passwort"
+            type="password"
+            {...register("password")}
+            error={Boolean(errors.password)}
+            helperText={errors.password?.message as string}
+          />
 
-        {errors.authentication?.message && (
-          <Typography color="danger">
-            {errors.authentication?.message as string}
-          </Typography>
-        )}
+          {errors.authentication?.message && (
+            <Typography color="danger">
+              {errors.authentication?.message as string}
+            </Typography>
+          )}
 
-        <LoadingWrapper isLoading={status === "loading"}>
-          <Button type="submit">Login</Button>
-        </LoadingWrapper>
-      </form>
+          <LoadingWrapper isLoading={status === "loading"}>
+            <Button type="submit" color="primary" variant="outlined">
+              Login
+            </Button>
+          </LoadingWrapper>
+        </form>
+      </LoadingWrapper>
     </>
   );
 };

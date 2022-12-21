@@ -45,7 +45,7 @@ const Home: NextPage = () => {
         ) : (
           <div className="flex flex-col pb-2">
             <Navbar />
-            <div className="p-4" />
+            <div className="p-8" />
             <Dashboard />
           </div>
         )}

@@ -109,7 +109,7 @@ const EventList: FunctionComponent<{
   isLoading: boolean;
 }> = ({ events, isLoading }) => {
   return (
-    <LoadingWrapper isLoading={isLoading}>
+    <LoadingWrapper isLoading={isLoading} className="flex justify-center">
       <List>
         {events && events?.length > 0 ? (
           map(events, (event) => {
@@ -121,7 +121,9 @@ const EventList: FunctionComponent<{
             );
           })
         ) : (
-          <Typography>Keine Events</Typography>
+          <div className="flex justify-center">
+            <Typography>Keine Events</Typography>
+          </div>
         )}
       </List>
     </LoadingWrapper>

@@ -19,17 +19,16 @@ export const SignInAndSignOutButton: FunctionComponent = () => {
 const SignInButton: FunctionComponent = () => {
   return (
     <Link href={`${process.env.NEXT_PUBLIC_BASE_URL}/signUp`}>
-      <Button className="px-4 py-2 shadow-lg">Registrieren</Button>
+      <Button className="px-4 py-2" variant="outlined">
+        Registrieren
+      </Button>
     </Link>
   );
 };
 
 const LogoutButton: FunctionComponent = () => {
   return (
-    <Button
-      className="px-4 py-2 shadow-lg"
-      onClick={async () => await signOut()}
-    >
+    <Button className="px-4 py-2" onClick={async () => await signOut()}>
       Ausloggen
     </Button>
   );
