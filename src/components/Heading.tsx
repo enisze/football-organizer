@@ -6,7 +6,7 @@ export const Heading: FunctionComponent<{
 }> = ({ size = "lg" }) => {
   return (
     <Typography
-      className="text-center font-extrabold leading-normal text-gray-700"
+      className="text-center font-extrabold leading-normal text-white"
       fontSize={size === "lg" ? 80 : size === "md" ? 48 : 20}
     >
       Football <span className="text-purple-300">Organizer</span> App
