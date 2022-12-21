@@ -4,6 +4,7 @@ import { generateEventReminderTemplate } from "../../inngest/emailTemplates/even
 import { generateNewEventTemplate } from "../../inngest/emailTemplates/newEventTemplate";
 import { generatePaidButCanceledTemplate } from "../../inngest/emailTemplates/paidButCanceledTemplate";
 import { generatePaymentReminderTemplate } from "../../inngest/emailTemplates/paymentReminderTemplate";
+import { generateWelcomeTemplate } from "../../inngest/emailTemplates/welcomeTemplate";
 import type { Event } from "../../prisma/generated/client";
 
 const EmailPage: FunctionComponent<{ emails: string[] }> = ({ emails }) => {
@@ -49,10 +50,12 @@ export async function getServerSideProps() {
     event: dummyEvent,
     userName: "Testname",
   });
+  const welcome = generateWelcomeTemplate({ userName: "Test" });
 
   return {
     props: {
       emails: [
+        welcome.html,
         paidButCanceled.html,
         newEvent.html,
         paymentReminder.html,

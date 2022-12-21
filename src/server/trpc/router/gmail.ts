@@ -7,6 +7,7 @@ import { google } from "googleapis";
 import { filter, map } from "lodash";
 import { z } from "zod";
 import { sendPaidButCanceledMail } from "../../../../inngest/sendPaidButCanceledMail";
+import { sendWelcomeMail } from "../../../../inngest/sendWelcomeMail";
 
 import { protectedProcedure, router } from "../trpc";
 
@@ -102,4 +103,14 @@ export const gmailRouter = router({
 
       return await sendPaidButCanceledMail(event, user);
     }),
+
+  sendWelcomeMail: protectedProcedure.mutation(
+    async ({ ctx: { prisma, session } }) => {
+      const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+      });
+
+      return await sendWelcomeMail(user);
+    }
+  ),
 });

@@ -7,6 +7,7 @@ import { Button, TextField, Typography } from "@mui/joy";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { z } from "zod";
+import { trpc } from "../utils/trpc";
 
 const signUpSchema = z.object({
   email: z.string().email({ message: "Bitte gib eine gültige Email ein." }),
@@ -27,6 +28,8 @@ const SignUp: FunctionComponent = () => {
 
   const router = useRouter();
 
+  const { mutate: sendWelcomeMail } = trpc.gmail.sendWelcomeMail.useMutation();
+
   const onSubmit = async (values: FieldValues) => {
     const res = await signIn("credentials", {
       redirect: false,
@@ -43,6 +46,7 @@ const SignUp: FunctionComponent = () => {
           "Registrierung hat nicht funktioniert, bitte überprüfe deine Eingaben.",
       });
     } else {
+      await sendWelcomeMail();
       if (res?.url) router.push(res.url);
     }
   };
