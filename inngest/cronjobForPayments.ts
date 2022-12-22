@@ -141,7 +141,6 @@ const oAuth2Client = new OAuth2Client(credentials);
 
 const getPaypalEmails = async () => {
   try {
-    throw new Error("");
     oAuth2Client.setCredentials({
       refresh_token: process.env.GMAIL_REFRESH_TOKEN,
     });
