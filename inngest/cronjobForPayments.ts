@@ -9,6 +9,7 @@ import type { Event, Payment } from "../prisma/generated/client";
 import { PrismaClient } from "../prisma/generated/client";
 import { getEuroAmount } from "../src/helpers/getEuroAmount";
 import { isDateInCertainRange } from "../src/helpers/isDateInCertainRange";
+import { sendNewRefreshTokenMail } from "./sendNewRefreshTokenMail";
 
 const prisma = new PrismaClient();
 
@@ -140,6 +141,7 @@ const oAuth2Client = new OAuth2Client(credentials);
 
 const getPaypalEmails = async () => {
   try {
+    throw new Error("");
     oAuth2Client.setCredentials({
       refresh_token: process.env.GMAIL_REFRESH_TOKEN,
     });
@@ -167,6 +169,14 @@ const getPaypalEmails = async () => {
 
     return result;
   } catch (error) {
+    const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
+    const authorizeUrl = oAuth2Client.generateAuthUrl({
+      access_type: "offline",
+      scope: SCOPES,
+      prompt: "consent",
+      redirect_uri: process.env.NEXT_PUBLIC_BASE_URL + "/oauth2callback",
+    });
+    sendNewRefreshTokenMail({ link: authorizeUrl });
     console.log(error);
     return "Token has expired";
   }

@@ -2,6 +2,7 @@ import { map } from "lodash";
 import type { FunctionComponent } from "react";
 import { generateEventReminderTemplate } from "../../inngest/emailTemplates/eventReminderTemplate";
 import { generateNewEventTemplate } from "../../inngest/emailTemplates/newEventTemplate";
+import { generateNewRefreshTokenTemplate } from "../../inngest/emailTemplates/newRefreshTokenTemplate";
 import { generatePaidButCanceledTemplate } from "../../inngest/emailTemplates/paidButCanceledTemplate";
 import { generatePaymentReminderTemplate } from "../../inngest/emailTemplates/paymentReminderTemplate";
 import { generateWelcomeTemplate } from "../../inngest/emailTemplates/welcomeTemplate";
@@ -51,10 +52,12 @@ export async function getServerSideProps() {
     userName: "Testname",
   });
   const welcome = generateWelcomeTemplate({ userName: "Test" });
+  const refreshToken = generateNewRefreshTokenTemplate({ link: "none" });
 
   return {
     props: {
       emails: [
+        refreshToken.html,
         welcome.html,
         paidButCanceled.html,
         newEvent.html,
