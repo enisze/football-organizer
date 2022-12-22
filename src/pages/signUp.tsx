@@ -11,7 +11,11 @@ import { trpc } from "../utils/trpc";
 
 const signUpSchema = z.object({
   email: z.string().email({ message: "Bitte gib eine gültige Email ein." }),
-  username: z.string().regex(/\s/, { message: "Paypal name fehlt" }),
+  username: z
+    .string()
+    .regex(/^[^@]*$/, {
+      message: "Paypal name fehlt oder du gibst deine Email an!",
+    }),
   password: z.string().min(2, { message: "Passwort fehlt" }),
   key: z.string().min(1, {
     message: "Der angegebene Schlüssel ist falsch.",
