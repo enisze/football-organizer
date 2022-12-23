@@ -24,11 +24,7 @@ export const BookEventButton: FunctionComponent<{ id: string }> = ({ id }) => {
 
   return (
     <>
-      <Button
-        variant="outlined"
-        color="primary"
-        onClick={() => setShowBookModal(true)}
-      >
+      <Button variant="outlined" onClick={() => setShowBookModal(true)}>
         Book
       </Button>
 

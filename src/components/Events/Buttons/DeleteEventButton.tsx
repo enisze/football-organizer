@@ -16,7 +16,6 @@ export const DeleteEventButton: FunctionComponent<{ id: string }> = ({
     <LoadingWrapper isLoading={isLoading}>
       <Button
         variant="outlined"
-        color="primary"
         onClick={async () => await deleteEvent({ id })}
       >
         Delete

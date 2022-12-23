@@ -66,7 +66,7 @@ const EventPage: FunctionComponent = () => {
                 </Typography>
               )}
               <Link href={link}>
-                <Typography color="primary">Zur Startseite</Typography>
+                <Typography>Zur Startseite</Typography>
               </Link>
             </Sheet>
             <EventCard event={event} participants={participants} />

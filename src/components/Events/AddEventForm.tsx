@@ -108,12 +108,7 @@ export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
               value={values.maxParticipants}
               helperText={errors.maxParticipants && touched.maxParticipants}
             />
-            <Button
-              color="primary"
-              variant="outlined"
-              type="submit"
-              disabled={isSubmitting}
-            >
+            <Button variant="outlined" type="submit" disabled={isSubmitting}>
               Submit
             </Button>
           </form>

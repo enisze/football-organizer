@@ -28,9 +28,9 @@ export const ParticipantsArea: FunctionComponent<{
     <>
       <Button
         variant="soft"
-        color={"info"}
-        className="bg-purple-300"
+        color="info"
         onClick={() => setShowParticipants(!showParticipants)}
+        className="bg-[#89A6FB]"
       >
         {participantsString}
       </Button>

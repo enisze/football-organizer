@@ -56,7 +56,7 @@ export const JoinOrLeaveEventButton: FunctionComponent<{
   return (
     <>
       <LoadingWrapper isLoading={loading} className="self-center">
-        <Button variant="outlined" color="primary" onClick={joinOrLeave}>
+        <Button variant="outlined" onClick={joinOrLeave}>
           {isUserParticipating ? "Absagen" : "Zusagen"}
         </Button>
       </LoadingWrapper>
@@ -102,7 +102,6 @@ export const JoinOrLeaveEventButton: FunctionComponent<{
 
             <Button
               variant="outlined"
-              color="primary"
               onClick={() => {
                 setShowLeaveModal(false);
               }}

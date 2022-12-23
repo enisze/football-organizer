@@ -15,19 +15,57 @@ const theme = extendTheme({
     light: {
       palette: {
         primary: {
-          outlinedBg: "#73C8A9",
           outlinedHoverBg: "#373B44",
-          outlinedColor: "#73C8A9",
+          outlinedColor: "#FFFFFF",
           outlinedHoverBorder: "#73C8A9",
           outlinedActiveBg: "#1E293B",
-          outlinedActiveBorder: "#1E293B",
-          plainHoverBg: "#373B44",
-          plainColor: "#73C8A9",
-          plainActiveBorder: "#73C8A9",
+          outlinedActiveBorder: "#73C8A9",
+
+          softBg: "#73C8A9",
+          softColor: "#FFFFFF",
+          softHoverBg: "#73C8A9",
+
+          plainHoverBg: "#1E293B",
+          plainColor: "#FFFFFF",
+          plainActiveBorder: "#1E293B",
+          plainHoverBorder: "#FFFFFF",
+          plainActiveBg: "#1E293B",
 
           solidBg: "#373B44",
           solidHoverBg: "#1E293B",
-          solidColor: "#73C8A9",
+          solidHoverColor: "#73C8A9",
+          solidColor: "#FFFFFF",
+          solidActiveColor: "#73C8A9",
+          solidActiveBg: "#1E293B",
+          solidActiveBorder: "#73C8A9",
+        },
+        success: {
+          solidColor: "#373B44",
+          solidBg: "#73C8A9",
+
+          plainColor: "#73C8A9",
+          plainBg: "#1E293B",
+          plainHoverBg: "#1E293B",
+          plainActiveBg: "#1E293B",
+        },
+        neutral: {
+          solidColor: "#FFFFFF",
+          solidBg: "#1E293B",
+        },
+        info: {
+          solidColor: "#FFFFFF",
+          solidBg: "#89A6FB",
+          outlinedColor: "#FFFFFF",
+          outlinedBg: "#FFFFFF",
+          outlinedHoverBg: "#89A6FB",
+          outlinedHoverBorder: "#73C8A9",
+
+          softColor: "#FFFFFF",
+          softBg: "#89A6FB",
+        },
+        danger: {
+          solidColor: "#C96480",
+          solidBg: "#1E293B",
         },
       },
     },

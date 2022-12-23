@@ -148,7 +148,6 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
       {userStatus && !isMyTab && (
         <Typography
-          color="primary"
           className="cursor-pointer self-center"
           onClick={() => setTab(1)}
         >

@@ -44,7 +44,6 @@ export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
     <>
       <Button
         variant="outlined"
-        color="primary"
         onClick={() => {
           setOpen(true);
         }}
@@ -76,8 +75,8 @@ export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
 
           <Sheet className="flex flex-col gap-y-2">
             <Button
-              variant="outlined"
-              color="primary"
+              variant="soft"
+              className="bg-[#73C8A9]"
               onClick={() => {
                 icalendar.download();
               }}
@@ -85,8 +84,8 @@ export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
               ICal Kalendar
             </Button>
             <Button
-              variant="outlined"
-              color="primary"
+              variant="soft"
+              className="bg-[#73C8A9]"
               onClick={() => {
                 window.open(googleLink);
               }}
@@ -95,8 +94,8 @@ export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
             </Button>
 
             <Button
-              variant="outlined"
-              color="primary"
+              variant="soft"
+              className="bg-[#73C8A9]"
               onClick={() => {
                 window.open(outlookLink);
               }}

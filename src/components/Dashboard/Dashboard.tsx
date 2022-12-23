@@ -2,15 +2,7 @@ import type { FunctionComponent } from "react";
 import { useMemo, useState } from "react";
 import { trpc } from "../../utils/trpc";
 
-import {
-  List,
-  ListItem,
-  Tab,
-  TabList,
-  TabPanel,
-  Tabs,
-  Typography,
-} from "@mui/joy";
+import { List, ListItem, TabPanel, Tabs, Typography } from "@mui/joy";
 import { isAfter } from "date-fns";
 import { find, forEach, map, orderBy } from "lodash";
 import { useSession } from "next-auth/react";
@@ -68,22 +60,6 @@ export const Dashboard: FunctionComponent = () => {
         value={tab}
         onChange={(event, value) => setTab(value as number)}
       >
-        <TabList variant="plain">
-          <Tab color="primary" variant={tab === 0 ? "outlined" : "plain"}>
-            Kommende Events
-          </Tab>
-          <Tab color="primary" variant={tab === 1 ? "outlined" : "plain"}>
-            Deine Events
-          </Tab>
-          <Tab
-            color="primary"
-            hidden={!isAdmin}
-            variant={tab === 2 ? "outlined" : "plain"}
-          >
-            Vergangene Events
-          </Tab>
-        </TabList>
-
         <TabPanel value={0} className="flex justify-center">
           <EventList events={upcomingEvents} isLoading={isLoading} />
         </TabPanel>
@@ -96,7 +72,7 @@ export const Dashboard: FunctionComponent = () => {
             <EventList events={filteredEvents} isLoading={isLoading} />
           </div>
         </TabPanel>
-        <TabPanel value={2} className="flex justify-center bg-transparent">
+        <TabPanel value={2} className="flex justify-center">
           <EventList events={previousEvents} isLoading={isLoading} />
         </TabPanel>
       </Tabs>

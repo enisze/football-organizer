@@ -1,4 +1,4 @@
-import { Chip, Typography } from "@mui/joy";
+import { Chip } from "@mui/joy";
 import { differenceInDays } from "date-fns";
 import type { FunctionComponent } from "react";
 
@@ -11,11 +11,5 @@ export const EventDateChip: FunctionComponent<{
   const isPastEvent = days < 0;
 
   const eventString = isPastEvent ? "Vergangenes Event" : `In ${days} Tagen`;
-  return (
-    <Chip>
-      <Typography className={isPastEvent ? "text-red-400" : "text-white"}>
-        {eventString}
-      </Typography>
-    </Chip>
-  );
+  return <Chip color={isPastEvent ? "danger" : "info"}>{eventString}</Chip>;
 };

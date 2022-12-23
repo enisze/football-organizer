@@ -17,7 +17,6 @@ export const OGRadioGroup: FunctionComponent<{
         value="all"
         name="radio-buttons"
         label="Alle"
-        sx={{ color: "#1E293B" }}
       />
       <Radio
         checked={selectedValue === "joined"}
@@ -25,7 +24,6 @@ export const OGRadioGroup: FunctionComponent<{
         value="joined"
         name="radio-buttons"
         label="Zugesagt"
-        sx={{ color: "#1E293B" }}
       />
       <Radio
         checked={selectedValue === "canceled"}
@@ -33,7 +31,6 @@ export const OGRadioGroup: FunctionComponent<{
         value="canceled"
         name="radio-buttons"
         label="Abgesagt"
-        sx={{ color: "#1E293B" }}
       />
     </RadioGroup>
   );

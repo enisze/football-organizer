@@ -11,11 +11,9 @@ import { trpc } from "../utils/trpc";
 
 const signUpSchema = z.object({
   email: z.string().email({ message: "Bitte gib eine gültige Email ein." }),
-  username: z
-    .string()
-    .regex(/^[^@]*$/, {
-      message: "Paypal name fehlt oder du gibst deine Email an!",
-    }),
+  username: z.string().regex(/^[^@]*$/, {
+    message: "Paypal name fehlt oder du gibst deine Email an!",
+  }),
   password: z.string().min(2, { message: "Passwort fehlt" }),
   key: z.string().min(1, {
     message: "Der angegebene Schlüssel ist falsch.",
@@ -60,6 +58,12 @@ const SignUp: FunctionComponent = () => {
       onSubmit={handleSubmit(onSubmit)}
       className="absolute flex h-full w-full flex-col items-center justify-center gap-y-2"
     >
+      <div
+        style={{
+          background: "linear-gradient(to bottom, #373B44, #73C8A9)",
+        }}
+        className="fixed -z-10 flex h-full w-full"
+      />
       {/* register your input into the hook by invoking the "register" function */}
       <TextField
         label="Email"
@@ -95,7 +99,9 @@ const SignUp: FunctionComponent = () => {
         </Typography>
       )}
 
-      <Button type="submit">Registrieren</Button>
+      <Button type="submit" variant="outlined">
+        Registrieren
+      </Button>
     </form>
   );
 };

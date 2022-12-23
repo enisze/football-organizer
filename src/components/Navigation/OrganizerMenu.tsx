@@ -10,8 +10,10 @@ import { signOut } from "next-auth/react";
 import Link from "next/link";
 import type { FunctionComponent } from "react";
 import { useState } from "react";
+import { useRecoilState } from "recoil";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { trpc } from "../../utils/trpc";
+import { currentTabState } from "../Dashboard/tabState";
 import { AddEventForm } from "../Events/AddEventForm";
 
 export const OrganizerMenu: FunctionComponent<{
@@ -27,6 +29,8 @@ export const OrganizerMenu: FunctionComponent<{
   });
 
   const { data: balance } = trpc.payment.getUserBalance.useQuery();
+
+  const [tab, setTab] = useRecoilState(currentTabState);
   return (
     <>
       <Menu
@@ -36,7 +40,9 @@ export const OrganizerMenu: FunctionComponent<{
         sx={{ marginTop: "8px", margin: "8px" }}
         onClose={() => setShowDropdown(false)}
       >
-        <MenuItem className="text-white">Kontostand: {balance}€</MenuItem>
+        <MenuItem className="cursor-text text-white">
+          Kontostand: {balance}€
+        </MenuItem>
         <Divider />
         <MenuItem
           hidden={!isAdmin}
@@ -46,6 +52,23 @@ export const OrganizerMenu: FunctionComponent<{
           Add Event
         </MenuItem>
         <Divider hidden={!isAdmin} />
+        <MenuItem
+          hidden={!isAdmin}
+          className="text-white"
+          onClick={() => setTab(2)}
+        >
+          Vergangene Events
+        </MenuItem>
+        <Divider hidden={!isAdmin} />
+        <MenuItem className="text-white" onClick={() => setTab(1)}>
+          Deine Events
+        </MenuItem>
+        <Divider />
+        <MenuItem className="text-white" onClick={() => setTab(0)}>
+          Kommende Events
+        </MenuItem>
+        <Divider />
+
         <MenuItem hidden={!isAdmin} className="text-white">
           {link && <Link href={link}>New gmail token</Link>}
         </MenuItem>
