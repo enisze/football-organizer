@@ -6,7 +6,7 @@ import { SignInAndSignOutButton } from "../components/Authentication/SignInAndSi
 import { Dashboard } from "../components/Dashboard/Dashboard";
 import { Heading } from "../components/Heading";
 import { LoadingWrapper } from "../components/LoadingWrapper";
-import { Navbar } from "../components/Navbar";
+import { Navbar } from "../components/Navigation/Navbar";
 import { useWindowSize } from "../hooks/useWindowSize";
 
 const Home: NextPage = () => {
