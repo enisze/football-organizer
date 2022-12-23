@@ -2,7 +2,15 @@ import type { FunctionComponent } from "react";
 import { useMemo, useState } from "react";
 import { trpc } from "../../utils/trpc";
 
-import { List, ListItem, TabPanel, Tabs, Typography } from "@mui/joy";
+import {
+  List,
+  ListItem,
+  Tab,
+  TabList,
+  TabPanel,
+  Tabs,
+  Typography,
+} from "@mui/joy";
 import { isAfter } from "date-fns";
 import { find, forEach, map, orderBy } from "lodash";
 import { useSession } from "next-auth/react";
@@ -12,6 +20,7 @@ import type {
   ParticipantsOnEvents,
 } from "../../../prisma/generated/client";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
+import { useWindowSize } from "../../hooks/useWindowSize";
 import { EventCard } from "../Events/EventCard";
 import { LoadingWrapper } from "../LoadingWrapper";
 import { OGRadioGroup } from "./OGRadioGroup";
@@ -52,6 +61,8 @@ export const Dashboard: FunctionComponent = () => {
       ? joinedEvents
       : leftEvents;
 
+  const { width } = useWindowSize();
+
   return (
     <div className="m-8 flex flex-col items-center justify-center">
       <Tabs
@@ -60,6 +71,23 @@ export const Dashboard: FunctionComponent = () => {
         value={tab}
         onChange={(event, value) => setTab(value as number)}
       >
+        {width && width < 768 && (
+          <TabList variant="plain">
+            <Tab color="primary" variant={tab === 0 ? "outlined" : "plain"}>
+              Kommende Events
+            </Tab>
+            <Tab color="primary" variant={tab === 1 ? "outlined" : "plain"}>
+              Deine Events
+            </Tab>
+            <Tab
+              color="primary"
+              hidden={!isAdmin}
+              variant={tab === 2 ? "outlined" : "plain"}
+            >
+              Vergangene Events
+            </Tab>
+          </TabList>
+        )}
         <TabPanel value={0} className="flex justify-center">
           <EventList events={upcomingEvents} isLoading={isLoading} />
         </TabPanel>

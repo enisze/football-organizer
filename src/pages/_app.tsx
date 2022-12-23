@@ -16,6 +16,7 @@ const theme = extendTheme({
       palette: {
         primary: {
           outlinedHoverBg: "#373B44",
+          outlinedHoverColor: "#373B44",
           outlinedColor: "#FFFFFF",
           outlinedHoverBorder: "#73C8A9",
           outlinedActiveBg: "#1E293B",
@@ -51,6 +52,8 @@ const theme = extendTheme({
         neutral: {
           solidColor: "#FFFFFF",
           solidBg: "#1E293B",
+          outlinedColor: "#FFFFFF",
+          outlinedHoverBg: "#1E293B",
         },
         info: {
           solidColor: "#FFFFFF",
