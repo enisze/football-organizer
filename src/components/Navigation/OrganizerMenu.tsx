@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { trpc } from "../../utils/trpc";
 import { AddEventForm } from "../Events/AddEventForm";
+import { LoadingWrapper } from "../LoadingWrapper";
 
 export const OrganizerMenu: FunctionComponent<{
   showDropdown: boolean;
@@ -28,7 +29,7 @@ export const OrganizerMenu: FunctionComponent<{
     enabled: isAdmin,
   });
 
-  const { data } = trpc.user.getNotificationStatus.useQuery();
+  const { data, isLoading } = trpc.user.getNotificationStatus.useQuery();
 
   const { mutate: updateNotificationsEnabled } =
     trpc.user.updateNotifications.useMutation({
@@ -77,12 +78,14 @@ export const OrganizerMenu: FunctionComponent<{
         >
           <div className="flex gap-x-2">
             Notifications
-            <Switch
-              checked={data?.notificationsEnabled}
-              color={data?.notificationsEnabled ? "success" : "primary"}
-              variant={data?.notificationsEnabled ? "outlined" : "solid"}
-              endDecorator={data?.notificationsEnabled ? "On" : "Off"}
-            />
+            <LoadingWrapper isLoading={isLoading}>
+              <Switch
+                checked={data?.notificationsEnabled}
+                color={data?.notificationsEnabled ? "success" : "primary"}
+                variant={data?.notificationsEnabled ? "outlined" : "solid"}
+                endDecorator={data?.notificationsEnabled ? "On" : "Off"}
+              />
+            </LoadingWrapper>
           </div>
         </MenuItem>
         <Divider />

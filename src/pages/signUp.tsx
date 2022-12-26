@@ -1,10 +1,12 @@
 import type { FunctionComponent } from "react";
+import { useState } from "react";
 import type { FieldValues } from "react-hook-form";
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, TextField, Typography } from "@mui/joy";
+import { Button, Link, TextField, Typography } from "@mui/joy";
 import { signIn } from "next-auth/react";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { z } from "zod";
 import { trpc } from "../utils/trpc";
@@ -29,6 +31,8 @@ const SignUp: FunctionComponent = () => {
   } = useForm({ resolver: zodResolver(signUpSchema), mode: "onBlur" });
 
   const router = useRouter();
+
+  const [showExample, setShowExample] = useState(false);
 
   const { mutate: sendWelcomeMail } = trpc.gmail.sendWelcomeMail.useMutation();
 
@@ -79,6 +83,28 @@ const SignUp: FunctionComponent = () => {
         helperText={errors.username?.message as string}
         {...register("username")}
       />
+      <Link
+        onClick={() => setShowExample(!showExample)}
+        className="text-black decoration-black"
+      >
+        Beispiel
+      </Link>
+
+      {showExample && (
+        <div className="flex max-w-[300px] flex-col gap-y-2">
+          <Image
+            src="/Paypal.jpg"
+            alt="Paypal example"
+            className="rounded"
+            width="300"
+            height="140"
+          />
+          <Typography>
+            Der einzugebene Paypal Name wäre hier{" "}
+            <span className="font-bold">Max Mustermann</span>
+          </Typography>
+        </div>
+      )}
       <TextField
         label="Passwort"
         {...register("password")}
