@@ -5,6 +5,7 @@ import {
   Modal,
   ModalClose,
   ModalDialog,
+  Switch,
 } from "@mui/joy";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
@@ -21,10 +22,24 @@ export const OrganizerMenu: FunctionComponent<{
 }> = ({ showDropdown, setShowDropdown, anchorEl }) => {
   const isAdmin = useIsAdmin();
   const [open, setOpen] = useState(false);
+  const trpcContext = trpc.useContext();
 
   const { data: link } = trpc.gmail.generateAuthLink.useQuery(undefined, {
     enabled: isAdmin,
   });
+
+  const { data } = trpc.user.getNotificationStatus.useQuery();
+
+  const { mutate: updateNotificationsEnabled } =
+    trpc.user.updateNotifications.useMutation({
+      onSuccess: () => {
+        trpcContext.invalidate();
+      },
+    });
+
+  // const [notificationsLocal, setNotificationsLocal] = useState(
+  //   data?.notificationsEnabled
+  // );
 
   const { data: balance } = trpc.payment.getUserBalance.useQuery();
   return (
@@ -52,6 +67,25 @@ export const OrganizerMenu: FunctionComponent<{
           {link && <Link href={link}>New gmail token</Link>}
         </MenuItem>
         <Divider hidden={!isAdmin} />
+        <MenuItem
+          className="text-white"
+          onClick={() =>
+            updateNotificationsEnabled({
+              notificationsEnabled: !data?.notificationsEnabled,
+            })
+          }
+        >
+          <div className="flex gap-x-2">
+            Notifications
+            <Switch
+              checked={data?.notificationsEnabled}
+              color={data?.notificationsEnabled ? "success" : "primary"}
+              variant={data?.notificationsEnabled ? "outlined" : "solid"}
+              endDecorator={data?.notificationsEnabled ? "On" : "Off"}
+            />
+          </div>
+        </MenuItem>
+        <Divider />
         <MenuItem className="text-white" onClick={() => signOut()}>
           Ausloggen
         </MenuItem>

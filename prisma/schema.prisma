@@ -110,6 +110,7 @@ model User {
   sessions      Session[]
   payments      Payment[]
   events        ParticipantsOnEvents[]
+  notificationsEnabled Boolean @default(true)
 }
 
 model VerificationToken {

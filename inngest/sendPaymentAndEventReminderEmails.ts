@@ -1,5 +1,5 @@
 import { createFunction } from "inngest";
-import { find, map, reduce } from "lodash";
+import { filter, find, map, reduce } from "lodash";
 import type {
   ParticipantsOnEvents,
   UserEventStatus,
@@ -45,47 +45,20 @@ const job = async ({ event }: { event: Event__Reminder }) => {
   const usersEventReminder: string[] = [];
   const usersPaymentReminder: string[] = [];
 
-  const promises = map(allUsers, async (user) => {
-    if (
-      !joinedParticipantIds.includes(user.id) &&
-      !canceledParticipantIds.includes(user.id) &&
-      participants.length < footballEvent.maxParticipants
-    ) {
-      //Send event reminder
+  const promises = map(
+    filter(allUsers, (user) => user.notificationsEnabled),
+    async (user) => {
+      if (
+        !joinedParticipantIds.includes(user.id) &&
+        !canceledParticipantIds.includes(user.id) &&
+        participants.length < footballEvent.maxParticipants
+      ) {
+        //Send event reminder
 
-      const html = generateEventReminderTemplate({
-        event: footballEvent,
-        userName: user.name,
-        participantsAmount: participants.length,
-      }).html;
-
-      const sendSmptMail = new SendSmtpEmail();
-
-      sendSmptMail.to = [{ email: user.email }];
-      sendSmptMail.htmlContent = html;
-      sendSmptMail.sender = {
-        email: "eniszej@gmail.com",
-        name: "Football Organizer",
-      };
-      sendSmptMail.subject = `ERINNERUNG: FUSSBALL FINDET STATT ${participants.length}/${footballEvent.maxParticipants} TEILNEHMER!`;
-
-      usersEventReminder.push(user.email);
-
-      return apiInstance.sendTransacEmail(sendSmptMail);
-    }
-
-    if (joinedParticipantIds.includes(user.id)) {
-      const payment = find(
-        footballEvent.payments,
-        (payment) => payment.userId === user.id
-      );
-
-      if (!payment) {
-        //Send payment reminder
-
-        const html = generatePaymentReminderTemplate({
+        const html = generateEventReminderTemplate({
           event: footballEvent,
           userName: user.name,
+          participantsAmount: participants.length,
         }).html;
 
         const sendSmptMail = new SendSmtpEmail();
@@ -96,15 +69,45 @@ const job = async ({ event }: { event: Event__Reminder }) => {
           email: "eniszej@gmail.com",
           name: "Football Organizer",
         };
-        sendSmptMail.subject =
-          "ERINNERUNG: DU HAST FUSSBALL NOCH NICHT BEZAHLT!";
+        sendSmptMail.subject = `ERINNERUNG: FUSSBALL FINDET STATT ${participants.length}/${footballEvent.maxParticipants} TEILNEHMER!`;
 
-        usersPaymentReminder.push(user.email);
+        usersEventReminder.push(user.email);
 
         return apiInstance.sendTransacEmail(sendSmptMail);
       }
+
+      if (joinedParticipantIds.includes(user.id)) {
+        const payment = find(
+          footballEvent.payments,
+          (payment) => payment.userId === user.id
+        );
+
+        if (!payment) {
+          //Send payment reminder
+
+          const html = generatePaymentReminderTemplate({
+            event: footballEvent,
+            userName: user.name,
+          }).html;
+
+          const sendSmptMail = new SendSmtpEmail();
+
+          sendSmptMail.to = [{ email: user.email }];
+          sendSmptMail.htmlContent = html;
+          sendSmptMail.sender = {
+            email: "eniszej@gmail.com",
+            name: "Football Organizer",
+          };
+          sendSmptMail.subject =
+            "ERINNERUNG: DU HAST FUSSBALL NOCH NICHT BEZAHLT!";
+
+          usersPaymentReminder.push(user.email);
+
+          return apiInstance.sendTransacEmail(sendSmptMail);
+        }
+      }
     }
-  });
+  );
 
   const responses = await Promise.all(promises);
 

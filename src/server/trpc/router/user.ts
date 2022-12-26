@@ -34,8 +34,27 @@ export const userRouter = router({
       );
       return res;
     }),
-
   deleteAll: protectedProcedure.query(async ({ ctx: { prisma } }) => {
     await prisma.user.deleteMany();
   }),
+  updateNotifications: protectedProcedure
+    .input(z.object({ notificationsEnabled: z.boolean() }))
+    .mutation(async ({ ctx: { session, prisma }, input }) => {
+      const { notificationsEnabled } = input;
+      const id = session.user.id;
+      return await prisma.user.update({
+        where: { id },
+        data: { notificationsEnabled },
+        select: { notificationsEnabled: true },
+      });
+    }),
+  getNotificationStatus: protectedProcedure.query(
+    async ({ ctx: { session, prisma } }) => {
+      const id = session.user.id;
+      return await prisma.user.findUnique({
+        where: { id },
+        select: { notificationsEnabled: true },
+      });
+    }
+  ),
 });

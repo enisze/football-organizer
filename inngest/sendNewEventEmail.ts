@@ -1,6 +1,6 @@
 import { SendSmtpEmail } from "@sendinblue/client";
 import { createFunction } from "inngest";
-import { map } from "lodash";
+import { filter, map } from "lodash";
 import { PrismaClient } from "../prisma/generated/client";
 import apiInstance from "../src/emails/transporter";
 import { generateNewEventTemplate } from "./emailTemplates/newEventTemplate";
@@ -19,25 +19,28 @@ const job = async ({ event }: { event: Event__New }) => {
 
     const usersWhoGotMails: string[] = [];
 
-    const promises = map(allUsers, async (user) => {
-      const html = generateNewEventTemplate({
-        event: { ...event.data, date: new Date(event.data.date) },
-        userName: user.name,
-      }).html;
+    const promises = map(
+      filter(allUsers, (user) => user.notificationsEnabled),
+      async (user) => {
+        const html = generateNewEventTemplate({
+          event: { ...event.data, date: new Date(event.data.date) },
+          userName: user.name,
+        }).html;
 
-      const sendSmptMail = new SendSmtpEmail();
+        const sendSmptMail = new SendSmtpEmail();
 
-      sendSmptMail.to = [{ email: user.email }];
-      sendSmptMail.htmlContent = html;
-      sendSmptMail.sender = {
-        email: "eniszej@gmail.com",
-        name: "Football Organizer",
-      };
-      sendSmptMail.subject = "EIN NEUES FUSSBALL EVENT WURDE ERSTELLT";
+        sendSmptMail.to = [{ email: user.email }];
+        sendSmptMail.htmlContent = html;
+        sendSmptMail.sender = {
+          email: "eniszej@gmail.com",
+          name: "Football Organizer",
+        };
+        sendSmptMail.subject = "EIN NEUES FUSSBALL EVENT WURDE ERSTELLT";
 
-      usersWhoGotMails.push(user.email);
-      return apiInstance.sendTransacEmail(sendSmptMail);
-    });
+        usersWhoGotMails.push(user.email);
+        return apiInstance.sendTransacEmail(sendSmptMail);
+      }
+    );
 
     const responses = await Promise.all(promises);
 

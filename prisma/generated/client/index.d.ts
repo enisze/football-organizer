@@ -99,6 +99,7 @@ export type User = {
   image: string | null
   role: string
   password: string
+  notificationsEnabled: boolean
 }
 
 /**
@@ -5994,6 +5995,7 @@ export namespace Prisma {
     image: string | null
     role: string | null
     password: string | null
+    notificationsEnabled: boolean | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -6005,6 +6007,7 @@ export namespace Prisma {
     image: string | null
     role: string | null
     password: string | null
+    notificationsEnabled: boolean | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -6016,6 +6019,7 @@ export namespace Prisma {
     image: number
     role: number
     password: number
+    notificationsEnabled: number
     _all: number
   }
 
@@ -6029,6 +6033,7 @@ export namespace Prisma {
     image?: true
     role?: true
     password?: true
+    notificationsEnabled?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -6040,6 +6045,7 @@ export namespace Prisma {
     image?: true
     role?: true
     password?: true
+    notificationsEnabled?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -6051,6 +6057,7 @@ export namespace Prisma {
     image?: true
     role?: true
     password?: true
+    notificationsEnabled?: true
     _all?: true
   }
 
@@ -6141,6 +6148,7 @@ export namespace Prisma {
     image: string | null
     role: string
     password: string
+    notificationsEnabled: boolean
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -6173,6 +6181,7 @@ export namespace Prisma {
     sessions?: boolean | SessionFindManyArgs
     payments?: boolean | PaymentFindManyArgs
     events?: boolean | ParticipantsOnEventsFindManyArgs
+    notificationsEnabled?: boolean
     _count?: boolean | UserCountOutputTypeArgs
   }
 
@@ -7907,7 +7916,8 @@ export namespace Prisma {
     emailVerified: 'emailVerified',
     image: 'image',
     role: 'role',
-    password: 'password'
+    password: 'password',
+    notificationsEnabled: 'notificationsEnabled'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -8248,6 +8258,7 @@ export namespace Prisma {
     sessions?: SessionListRelationFilter
     payments?: PaymentListRelationFilter
     events?: ParticipantsOnEventsListRelationFilter
+    notificationsEnabled?: BoolFilter | boolean
   }
 
   export type UserOrderByWithRelationInput = {
@@ -8263,6 +8274,7 @@ export namespace Prisma {
     sessions?: SessionOrderByRelationAggregateInput
     payments?: PaymentOrderByRelationAggregateInput
     events?: ParticipantsOnEventsOrderByRelationAggregateInput
+    notificationsEnabled?: SortOrder
   }
 
   export type UserWhereUniqueInput = {
@@ -8280,6 +8292,7 @@ export namespace Prisma {
     image?: SortOrder
     role?: SortOrder
     password?: SortOrder
+    notificationsEnabled?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -8297,6 +8310,7 @@ export namespace Prisma {
     image?: StringNullableWithAggregatesFilter | string | null
     role?: StringWithAggregatesFilter | string
     password?: StringWithAggregatesFilter | string
+    notificationsEnabled?: BoolWithAggregatesFilter | boolean
   }
 
   export type VerificationTokenWhereInput = {
@@ -8730,6 +8744,7 @@ export namespace Prisma {
     sessions?: SessionCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
+    notificationsEnabled?: boolean
   }
 
   export type UserUncheckedCreateInput = {
@@ -8745,6 +8760,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
+    notificationsEnabled?: boolean
   }
 
   export type UserUpdateInput = {
@@ -8760,6 +8776,7 @@ export namespace Prisma {
     sessions?: SessionUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateInput = {
@@ -8775,6 +8792,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserCreateManyInput = {
@@ -8786,6 +8804,7 @@ export namespace Prisma {
     image?: string | null
     role: string
     password: string
+    notificationsEnabled?: boolean
   }
 
   export type UserUpdateManyMutationInput = {
@@ -8797,6 +8816,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -8808,6 +8828,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type VerificationTokenCreateInput = {
@@ -9319,6 +9340,11 @@ export namespace Prisma {
     none?: SessionWhereInput
   }
 
+  export type BoolFilter = {
+    equals?: boolean
+    not?: NestedBoolFilter | boolean
+  }
+
   export type AccountOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -9336,6 +9362,7 @@ export namespace Prisma {
     image?: SortOrder
     role?: SortOrder
     password?: SortOrder
+    notificationsEnabled?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -9347,6 +9374,7 @@ export namespace Prisma {
     image?: SortOrder
     role?: SortOrder
     password?: SortOrder
+    notificationsEnabled?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -9358,6 +9386,15 @@ export namespace Prisma {
     image?: SortOrder
     role?: SortOrder
     password?: SortOrder
+    notificationsEnabled?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter = {
+    equals?: boolean
+    not?: NestedBoolWithAggregatesFilter | boolean
+    _count?: NestedIntFilter
+    _min?: NestedBoolFilter
+    _max?: NestedBoolFilter
   }
 
   export type VerificationTokenIdentifierTokenCompoundUniqueInput = {
@@ -9711,6 +9748,10 @@ export namespace Prisma {
     deleteMany?: Enumerable<ParticipantsOnEventsScalarWhereInput>
   }
 
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<Enumerable<AccountCreateWithoutUserInput>, Enumerable<AccountUncheckedCreateWithoutUserInput>>
     connectOrCreate?: Enumerable<AccountCreateOrConnectWithoutUserInput>
@@ -10005,6 +10046,19 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter | number | null
   }
 
+  export type NestedBoolFilter = {
+    equals?: boolean
+    not?: NestedBoolFilter | boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter = {
+    equals?: boolean
+    not?: NestedBoolWithAggregatesFilter | boolean
+    _count?: NestedIntFilter
+    _min?: NestedBoolFilter
+    _max?: NestedBoolFilter
+  }
+
   export type PaymentCreateWithoutEventInput = {
     id?: string
     createdAt?: Date | string
@@ -10125,6 +10179,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
+    notificationsEnabled?: boolean
   }
 
   export type UserUncheckedCreateWithoutEventsInput = {
@@ -10139,6 +10194,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
+    notificationsEnabled?: boolean
   }
 
   export type UserCreateOrConnectWithoutEventsInput = {
@@ -10198,6 +10254,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateWithoutEventsInput = {
@@ -10212,6 +10269,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type EventUpsertWithoutParticipantsInput = {
@@ -10296,6 +10354,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
+    notificationsEnabled?: boolean
   }
 
   export type UserUncheckedCreateWithoutPaymentsInput = {
@@ -10310,6 +10369,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
+    notificationsEnabled?: boolean
   }
 
   export type UserCreateOrConnectWithoutPaymentsInput = {
@@ -10369,6 +10429,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateWithoutPaymentsInput = {
@@ -10383,6 +10444,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -10397,6 +10459,7 @@ export namespace Prisma {
     sessions?: SessionCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
+    notificationsEnabled?: boolean
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -10411,6 +10474,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
+    notificationsEnabled?: boolean
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -10435,6 +10499,7 @@ export namespace Prisma {
     sessions?: SessionUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -10449,6 +10514,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -10463,6 +10529,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
+    notificationsEnabled?: boolean
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -10477,6 +10544,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
+    notificationsEnabled?: boolean
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -10501,6 +10569,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -10515,6 +10584,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type AccountCreateWithoutUserInput = {
