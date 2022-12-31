@@ -73,16 +73,25 @@ export const Dashboard: FunctionComponent = () => {
       >
         {width && width < 768 && (
           <TabList variant="plain">
-            <Tab color="primary" variant={tab === 0 ? "outlined" : "plain"}>
+            <Tab
+              color="primary"
+              variant={tab === 0 ? "outlined" : "plain"}
+              className={tab === 0 ? "hover:text-black" : ""}
+            >
               Kommende Events
             </Tab>
-            <Tab color="primary" variant={tab === 1 ? "outlined" : "plain"}>
+            <Tab
+              color="primary"
+              variant={tab === 1 ? "outlined" : "plain"}
+              className={tab === 1 ? "hover:text-black" : ""}
+            >
               Deine Events
             </Tab>
             <Tab
               color="primary"
               hidden={!isAdmin}
               variant={tab === 2 ? "outlined" : "plain"}
+              className="hover:text-black"
             >
               Vergangene Events
             </Tab>
