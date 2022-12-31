@@ -159,31 +159,6 @@ export class PrismaClient<
     ? T['rejectOnNotFound']
     : false
       > {
-      /**
-       * @private
-       */
-      private fetcher;
-      /**
-       * @private
-       */
-      private readonly dmmf;
-      /**
-       * @private
-       */
-      private connectionPromise?;
-      /**
-       * @private
-       */
-      private disconnectionPromise?;
-      /**
-       * @private
-       */
-      private readonly engineConfig;
-      /**
-       * @private
-       */
-      private readonly measurePerformance;
-
     /**
    * ##  Prisma Client ʲˢ
    * 
@@ -277,6 +252,8 @@ export class PrismaClient<
    * Read more in our [docs](https://www.prisma.io/docs/concepts/components/prisma-client/transactions).
    */
   $transaction<P extends PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): Promise<UnwrapTuple<P>>;
+
+  $transaction<R>(fn: (prisma: Prisma.TransactionClient) => Promise<R>, options?: {maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel}): Promise<R>;
 
       /**
    * `prisma.event`: Exposes CRUD operations for the **Event** model.
@@ -381,19 +358,15 @@ export namespace Prisma {
   /**
    * Metrics 
    */
-  export import Metrics = runtime.Metrics
-  export import Metric = runtime.Metric
-  export import MetricHistogram = runtime.MetricHistogram
-  export import MetricHistogramBucket = runtime.MetricHistogramBucket
+  export type Metrics = runtime.Metrics
+  export type Metric<T> = runtime.Metric<T>
+  export type MetricHistogram = runtime.MetricHistogram
+  export type MetricHistogramBucket = runtime.MetricHistogramBucket
+
 
   /**
-   * Extensions
-   */
-  export type Extension = runtime.Extension 
-
-  /**
-   * Prisma Client JS version: 4.5.0
-   * Query Engine version: 0362da9eebca54d94c8ef5edd3b2e90af99ba452
+   * Prisma Client JS version: 4.8.0
+   * Query Engine version: d6e67a83f971b175a593ccc12e15c4a757f93ffe
    */
   export type PrismaVersion = {
     client: string
@@ -557,9 +530,9 @@ export namespace Prisma {
     [K in keyof T]-?: {} extends Prisma__Pick<T, K> ? never : K
   }[keyof T]
 
-  export type TruthyKeys<T> = {
-    [key in keyof T]: T[key] extends false | undefined | null ? never : key
-  }[keyof T]
+  export type TruthyKeys<T> = keyof {
+    [K in keyof T as T[K] extends false | undefined | null ? never : K]: K
+  }
 
   export type TrueKeys<T> = TruthyKeys<Prisma__Pick<T, RequiredKeys<T>>>
 
@@ -820,7 +793,7 @@ export namespace Prisma {
   type ExcludeUnderscoreKeys<T extends string> = T extends `_${string}` ? never : T
 
 
-  export import FieldRef = runtime.FieldRef
+  export type FieldRef<Model, FieldType> = runtime.FieldRef<Model, FieldType>
 
   type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRef<Model, FieldType>
 
@@ -851,6 +824,7 @@ export namespace Prisma {
     db?: Datasource
   }
 
+  export type DefaultPrismaClient = PrismaClient
   export type RejectOnNotFound = boolean | ((error: Error) => Error)
   export type RejectPerModel = { [P in ModelName]?: RejectOnNotFound }
   export type RejectPerOperation =  { [P in "findUnique" | "findFirst"]?: RejectPerModel | RejectOnNotFound } 
@@ -991,6 +965,11 @@ export namespace Prisma {
   // tested in getLogLevel.test.ts
   export function getLogLevel(log: Array<LogLevel | LogDefinition>): LogLevel | undefined;
 
+  /**
+   * `PrismaClient` proxy available in interactive transactions.
+   */
+  export type TransactionClient = Omit<Prisma.DefaultPrismaClient, '$connect' | '$disconnect' | '$on' | '$transaction' | '$use'>
+
   export type Datasource = {
     url?: string
   }
@@ -1015,23 +994,18 @@ export namespace Prisma {
     participants?: boolean
   }
 
-  export type EventCountOutputTypeGetPayload<
-    S extends boolean | null | undefined | EventCountOutputTypeArgs,
-    U = keyof S
-      > = S extends true
-        ? EventCountOutputType
-    : S extends undefined
-    ? never
-    : S extends EventCountOutputTypeArgs
-    ?'include' extends U
+  export type EventCountOutputTypeGetPayload<S extends boolean | null | undefined | EventCountOutputTypeArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? EventCountOutputType :
+    S extends undefined ? never :
+    S extends { include: any } & (EventCountOutputTypeArgs)
     ? EventCountOutputType 
-    : 'select' extends U
-    ? {
-    [P in TrueKeys<S['select']>]:
+    : S extends { select: any } & (EventCountOutputTypeArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
     P extends keyof EventCountOutputType ? EventCountOutputType[P] : never
   } 
-    : EventCountOutputType
-  : EventCountOutputType
+      : EventCountOutputType
 
 
 
@@ -1070,23 +1044,18 @@ export namespace Prisma {
     events?: boolean
   }
 
-  export type UserCountOutputTypeGetPayload<
-    S extends boolean | null | undefined | UserCountOutputTypeArgs,
-    U = keyof S
-      > = S extends true
-        ? UserCountOutputType
-    : S extends undefined
-    ? never
-    : S extends UserCountOutputTypeArgs
-    ?'include' extends U
+  export type UserCountOutputTypeGetPayload<S extends boolean | null | undefined | UserCountOutputTypeArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? UserCountOutputType :
+    S extends undefined ? never :
+    S extends { include: any } & (UserCountOutputTypeArgs)
     ? UserCountOutputType 
-    : 'select' extends U
-    ? {
-    [P in TrueKeys<S['select']>]:
+    : S extends { select: any } & (UserCountOutputTypeArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
     P extends keyof UserCountOutputType ? UserCountOutputType[P] : never
   } 
-    : UserCountOutputType
-  : UserCountOutputType
+      : UserCountOutputType
 
 
 
@@ -1367,41 +1336,37 @@ export namespace Prisma {
     bookingDate?: boolean
     address?: boolean
     maxParticipants?: boolean
-    payments?: boolean | PaymentFindManyArgs
-    participants?: boolean | ParticipantsOnEventsFindManyArgs
+    payments?: boolean | EventPaymentsArgs
+    participants?: boolean | EventParticipantsArgs
     _count?: boolean | EventCountOutputTypeArgs
   }
+
 
   export type EventInclude = {
-    payments?: boolean | PaymentFindManyArgs
-    participants?: boolean | ParticipantsOnEventsFindManyArgs
+    payments?: boolean | EventPaymentsArgs
+    participants?: boolean | EventParticipantsArgs
     _count?: boolean | EventCountOutputTypeArgs
-  }
+  } 
 
-  export type EventGetPayload<
-    S extends boolean | null | undefined | EventArgs,
-    U = keyof S
-      > = S extends true
-        ? Event
-    : S extends undefined
-    ? never
-    : S extends EventArgs | EventFindManyArgs
-    ?'include' extends U
+  export type EventGetPayload<S extends boolean | null | undefined | EventArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? Event :
+    S extends undefined ? never :
+    S extends { include: any } & (EventArgs | EventFindManyArgs)
     ? Event  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'payments' ? Array < PaymentGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends 'participants' ? Array < ParticipantsOnEventsGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends '_count' ? EventCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+    [P in TruthyKeys<S['include']>]:
+        P extends 'payments' ? Array < PaymentGetPayload<S['include'][P]>>  :
+        P extends 'participants' ? Array < ParticipantsOnEventsGetPayload<S['include'][P]>>  :
+        P extends '_count' ? EventCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
-    : 'select' extends U
-    ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'payments' ? Array < PaymentGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends 'participants' ? Array < ParticipantsOnEventsGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends '_count' ? EventCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Event ? Event[P] : never
+    : S extends { select: any } & (EventArgs | EventFindManyArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+        P extends 'payments' ? Array < PaymentGetPayload<S['select'][P]>>  :
+        P extends 'participants' ? Array < ParticipantsOnEventsGetPayload<S['select'][P]>>  :
+        P extends '_count' ? EventCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Event ? Event[P] : never
   } 
-    : Event
-  : Event
+      : Event
 
 
   type EventCountArgs = Merge<
@@ -1424,7 +1389,23 @@ export namespace Prisma {
     **/
     findUnique<T extends EventFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, EventFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Event'> extends True ? CheckSelect<T, Prisma__EventClient<Event>, Prisma__EventClient<EventGetPayload<T>>> : CheckSelect<T, Prisma__EventClient<Event | null, null>, Prisma__EventClient<EventGetPayload<T> | null, null>>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Event'> extends True ? Prisma__EventClient<EventGetPayload<T>> : Prisma__EventClient<EventGetPayload<T> | null, null>
+
+    /**
+     * Find one Event that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {EventFindUniqueOrThrowArgs} args - Arguments to find a Event
+     * @example
+     * // Get one Event
+     * const event = await prisma.event.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends EventFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, EventFindUniqueOrThrowArgs>
+    ): Prisma__EventClient<EventGetPayload<T>>
 
     /**
      * Find the first Event that matches the filter.
@@ -1441,7 +1422,25 @@ export namespace Prisma {
     **/
     findFirst<T extends EventFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, EventFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Event'> extends True ? CheckSelect<T, Prisma__EventClient<Event>, Prisma__EventClient<EventGetPayload<T>>> : CheckSelect<T, Prisma__EventClient<Event | null, null>, Prisma__EventClient<EventGetPayload<T> | null, null>>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Event'> extends True ? Prisma__EventClient<EventGetPayload<T>> : Prisma__EventClient<EventGetPayload<T> | null, null>
+
+    /**
+     * Find the first Event that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventFindFirstOrThrowArgs} args - Arguments to find a Event
+     * @example
+     * // Get one Event
+     * const event = await prisma.event.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends EventFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, EventFindFirstOrThrowArgs>
+    ): Prisma__EventClient<EventGetPayload<T>>
 
     /**
      * Find zero or more Events that matches the filter.
@@ -1461,7 +1460,7 @@ export namespace Prisma {
     **/
     findMany<T extends EventFindManyArgs>(
       args?: SelectSubset<T, EventFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<Event>>, PrismaPromise<Array<EventGetPayload<T>>>>
+    ): PrismaPromise<Array<EventGetPayload<T>>>
 
     /**
      * Create a Event.
@@ -1477,7 +1476,7 @@ export namespace Prisma {
     **/
     create<T extends EventCreateArgs>(
       args: SelectSubset<T, EventCreateArgs>
-    ): CheckSelect<T, Prisma__EventClient<Event>, Prisma__EventClient<EventGetPayload<T>>>
+    ): Prisma__EventClient<EventGetPayload<T>>
 
     /**
      * Create many Events.
@@ -1509,7 +1508,7 @@ export namespace Prisma {
     **/
     delete<T extends EventDeleteArgs>(
       args: SelectSubset<T, EventDeleteArgs>
-    ): CheckSelect<T, Prisma__EventClient<Event>, Prisma__EventClient<EventGetPayload<T>>>
+    ): Prisma__EventClient<EventGetPayload<T>>
 
     /**
      * Update one Event.
@@ -1528,7 +1527,7 @@ export namespace Prisma {
     **/
     update<T extends EventUpdateArgs>(
       args: SelectSubset<T, EventUpdateArgs>
-    ): CheckSelect<T, Prisma__EventClient<Event>, Prisma__EventClient<EventGetPayload<T>>>
+    ): Prisma__EventClient<EventGetPayload<T>>
 
     /**
      * Delete zero or more Events.
@@ -1586,41 +1585,7 @@ export namespace Prisma {
     **/
     upsert<T extends EventUpsertArgs>(
       args: SelectSubset<T, EventUpsertArgs>
-    ): CheckSelect<T, Prisma__EventClient<Event>, Prisma__EventClient<EventGetPayload<T>>>
-
-    /**
-     * Find one Event that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {EventFindUniqueOrThrowArgs} args - Arguments to find a Event
-     * @example
-     * // Get one Event
-     * const event = await prisma.event.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends EventFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, EventFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__EventClient<Event>, Prisma__EventClient<EventGetPayload<T>>>
-
-    /**
-     * Find the first Event that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {EventFindFirstOrThrowArgs} args - Arguments to find a Event
-     * @example
-     * // Get one Event
-     * const event = await prisma.event.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends EventFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, EventFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__EventClient<Event>, Prisma__EventClient<EventGetPayload<T>>>
+    ): Prisma__EventClient<EventGetPayload<T>>
 
     /**
      * Count the number of Events.
@@ -1773,9 +1738,9 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    payments<T extends PaymentFindManyArgs = {}>(args?: Subset<T, PaymentFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Payment>| Null>, PrismaPromise<Array<PaymentGetPayload<T>>| Null>>;
+    payments<T extends EventPaymentsArgs= {}>(args?: Subset<T, EventPaymentsArgs>): PrismaPromise<Array<PaymentGetPayload<T>>| Null>;
 
-    participants<T extends ParticipantsOnEventsFindManyArgs = {}>(args?: Subset<T, ParticipantsOnEventsFindManyArgs>): CheckSelect<T, PrismaPromise<Array<ParticipantsOnEvents>| Null>, PrismaPromise<Array<ParticipantsOnEventsGetPayload<T>>| Null>>;
+    participants<T extends EventParticipantsArgs= {}>(args?: Subset<T, EventParticipantsArgs>): PrismaPromise<Array<ParticipantsOnEventsGetPayload<T>>| Null>;
 
     private get _document();
     /**
@@ -1826,7 +1791,7 @@ export namespace Prisma {
   }
 
   /**
-   * Event: findUnique
+   * Event findUnique
    */
   export interface EventFindUniqueArgs extends EventFindUniqueArgsBase {
    /**
@@ -1836,6 +1801,28 @@ export namespace Prisma {
     rejectOnNotFound?: RejectOnNotFound
   }
       
+
+  /**
+   * Event findUniqueOrThrow
+   */
+  export type EventFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the Event
+     * 
+    **/
+    select?: EventSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: EventInclude | null
+    /**
+     * Filter, which Event to fetch.
+     * 
+    **/
+    where: EventWhereUniqueInput
+  }
+
 
   /**
    * Event base type for findFirst actions
@@ -1894,7 +1881,7 @@ export namespace Prisma {
   }
 
   /**
-   * Event: findFirst
+   * Event findFirst
    */
   export interface EventFindFirstArgs extends EventFindFirstArgsBase {
    /**
@@ -1904,6 +1891,63 @@ export namespace Prisma {
     rejectOnNotFound?: RejectOnNotFound
   }
       
+
+  /**
+   * Event findFirstOrThrow
+   */
+  export type EventFindFirstOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the Event
+     * 
+    **/
+    select?: EventSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: EventInclude | null
+    /**
+     * Filter, which Event to fetch.
+     * 
+    **/
+    where?: EventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Events to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<EventOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Events.
+     * 
+    **/
+    cursor?: EventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Events from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Events.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Events.
+     * 
+    **/
+    distinct?: Enumerable<EventScalarFieldEnum>
+  }
+
 
   /**
    * Event findMany
@@ -2102,16 +2146,50 @@ export namespace Prisma {
 
 
   /**
-   * Event: findUniqueOrThrow
+   * Event.payments
    */
-  export type EventFindUniqueOrThrowArgs = EventFindUniqueArgsBase
-      
+  export type EventPaymentsArgs = {
+    /**
+     * Select specific fields to fetch from the Payment
+     * 
+    **/
+    select?: PaymentSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: PaymentInclude | null
+    where?: PaymentWhereInput
+    orderBy?: Enumerable<PaymentOrderByWithRelationInput>
+    cursor?: PaymentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<PaymentScalarFieldEnum>
+  }
+
 
   /**
-   * Event: findFirstOrThrow
+   * Event.participants
    */
-  export type EventFindFirstOrThrowArgs = EventFindFirstArgsBase
-      
+  export type EventParticipantsArgs = {
+    /**
+     * Select specific fields to fetch from the ParticipantsOnEvents
+     * 
+    **/
+    select?: ParticipantsOnEventsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ParticipantsOnEventsInclude | null
+    where?: ParticipantsOnEventsWhereInput
+    orderBy?: Enumerable<ParticipantsOnEventsOrderByWithRelationInput>
+    cursor?: ParticipantsOnEventsWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<ParticipantsOnEventsScalarFieldEnum>
+  }
+
 
   /**
    * Event without action
@@ -2298,33 +2376,29 @@ export namespace Prisma {
     userEventStatus?: boolean
   }
 
+
   export type ParticipantsOnEventsInclude = {
     user?: boolean | UserArgs
     event?: boolean | EventArgs
-  }
+  } 
 
-  export type ParticipantsOnEventsGetPayload<
-    S extends boolean | null | undefined | ParticipantsOnEventsArgs,
-    U = keyof S
-      > = S extends true
-        ? ParticipantsOnEvents
-    : S extends undefined
-    ? never
-    : S extends ParticipantsOnEventsArgs | ParticipantsOnEventsFindManyArgs
-    ?'include' extends U
+  export type ParticipantsOnEventsGetPayload<S extends boolean | null | undefined | ParticipantsOnEventsArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? ParticipantsOnEvents :
+    S extends undefined ? never :
+    S extends { include: any } & (ParticipantsOnEventsArgs | ParticipantsOnEventsFindManyArgs)
     ? ParticipantsOnEvents  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'user' ? UserGetPayload<Exclude<S['include'], undefined | null>[P]> :
-        P extends 'event' ? EventGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+    [P in TruthyKeys<S['include']>]:
+        P extends 'user' ? UserGetPayload<S['include'][P]> :
+        P extends 'event' ? EventGetPayload<S['include'][P]> :  never
   } 
-    : 'select' extends U
-    ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'user' ? UserGetPayload<Exclude<S['select'], undefined | null>[P]> :
-        P extends 'event' ? EventGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof ParticipantsOnEvents ? ParticipantsOnEvents[P] : never
+    : S extends { select: any } & (ParticipantsOnEventsArgs | ParticipantsOnEventsFindManyArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+        P extends 'user' ? UserGetPayload<S['select'][P]> :
+        P extends 'event' ? EventGetPayload<S['select'][P]> :  P extends keyof ParticipantsOnEvents ? ParticipantsOnEvents[P] : never
   } 
-    : ParticipantsOnEvents
-  : ParticipantsOnEvents
+      : ParticipantsOnEvents
 
 
   type ParticipantsOnEventsCountArgs = Merge<
@@ -2347,7 +2421,23 @@ export namespace Prisma {
     **/
     findUnique<T extends ParticipantsOnEventsFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, ParticipantsOnEventsFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'ParticipantsOnEvents'> extends True ? CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>> : CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents | null, null>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T> | null, null>>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'ParticipantsOnEvents'> extends True ? Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>> : Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T> | null, null>
+
+    /**
+     * Find one ParticipantsOnEvents that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {ParticipantsOnEventsFindUniqueOrThrowArgs} args - Arguments to find a ParticipantsOnEvents
+     * @example
+     * // Get one ParticipantsOnEvents
+     * const participantsOnEvents = await prisma.participantsOnEvents.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends ParticipantsOnEventsFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, ParticipantsOnEventsFindUniqueOrThrowArgs>
+    ): Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>
 
     /**
      * Find the first ParticipantsOnEvents that matches the filter.
@@ -2364,7 +2454,25 @@ export namespace Prisma {
     **/
     findFirst<T extends ParticipantsOnEventsFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, ParticipantsOnEventsFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'ParticipantsOnEvents'> extends True ? CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>> : CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents | null, null>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T> | null, null>>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'ParticipantsOnEvents'> extends True ? Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>> : Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T> | null, null>
+
+    /**
+     * Find the first ParticipantsOnEvents that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParticipantsOnEventsFindFirstOrThrowArgs} args - Arguments to find a ParticipantsOnEvents
+     * @example
+     * // Get one ParticipantsOnEvents
+     * const participantsOnEvents = await prisma.participantsOnEvents.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends ParticipantsOnEventsFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, ParticipantsOnEventsFindFirstOrThrowArgs>
+    ): Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>
 
     /**
      * Find zero or more ParticipantsOnEvents that matches the filter.
@@ -2384,7 +2492,7 @@ export namespace Prisma {
     **/
     findMany<T extends ParticipantsOnEventsFindManyArgs>(
       args?: SelectSubset<T, ParticipantsOnEventsFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<ParticipantsOnEvents>>, PrismaPromise<Array<ParticipantsOnEventsGetPayload<T>>>>
+    ): PrismaPromise<Array<ParticipantsOnEventsGetPayload<T>>>
 
     /**
      * Create a ParticipantsOnEvents.
@@ -2400,7 +2508,7 @@ export namespace Prisma {
     **/
     create<T extends ParticipantsOnEventsCreateArgs>(
       args: SelectSubset<T, ParticipantsOnEventsCreateArgs>
-    ): CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>>
+    ): Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>
 
     /**
      * Create many ParticipantsOnEvents.
@@ -2432,7 +2540,7 @@ export namespace Prisma {
     **/
     delete<T extends ParticipantsOnEventsDeleteArgs>(
       args: SelectSubset<T, ParticipantsOnEventsDeleteArgs>
-    ): CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>>
+    ): Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>
 
     /**
      * Update one ParticipantsOnEvents.
@@ -2451,7 +2559,7 @@ export namespace Prisma {
     **/
     update<T extends ParticipantsOnEventsUpdateArgs>(
       args: SelectSubset<T, ParticipantsOnEventsUpdateArgs>
-    ): CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>>
+    ): Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>
 
     /**
      * Delete zero or more ParticipantsOnEvents.
@@ -2509,41 +2617,7 @@ export namespace Prisma {
     **/
     upsert<T extends ParticipantsOnEventsUpsertArgs>(
       args: SelectSubset<T, ParticipantsOnEventsUpsertArgs>
-    ): CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>>
-
-    /**
-     * Find one ParticipantsOnEvents that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {ParticipantsOnEventsFindUniqueOrThrowArgs} args - Arguments to find a ParticipantsOnEvents
-     * @example
-     * // Get one ParticipantsOnEvents
-     * const participantsOnEvents = await prisma.participantsOnEvents.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends ParticipantsOnEventsFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, ParticipantsOnEventsFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>>
-
-    /**
-     * Find the first ParticipantsOnEvents that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ParticipantsOnEventsFindFirstOrThrowArgs} args - Arguments to find a ParticipantsOnEvents
-     * @example
-     * // Get one ParticipantsOnEvents
-     * const participantsOnEvents = await prisma.participantsOnEvents.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends ParticipantsOnEventsFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, ParticipantsOnEventsFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__ParticipantsOnEventsClient<ParticipantsOnEvents>, Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>>
+    ): Prisma__ParticipantsOnEventsClient<ParticipantsOnEventsGetPayload<T>>
 
     /**
      * Count the number of ParticipantsOnEvents.
@@ -2696,9 +2770,9 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    user<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | Null>, Prisma__UserClient<UserGetPayload<T> | Null>>;
+    user<T extends UserArgs= {}>(args?: Subset<T, UserArgs>): Prisma__UserClient<UserGetPayload<T> | Null>;
 
-    event<T extends EventArgs = {}>(args?: Subset<T, EventArgs>): CheckSelect<T, Prisma__EventClient<Event | Null>, Prisma__EventClient<EventGetPayload<T> | Null>>;
+    event<T extends EventArgs= {}>(args?: Subset<T, EventArgs>): Prisma__EventClient<EventGetPayload<T> | Null>;
 
     private get _document();
     /**
@@ -2749,7 +2823,7 @@ export namespace Prisma {
   }
 
   /**
-   * ParticipantsOnEvents: findUnique
+   * ParticipantsOnEvents findUnique
    */
   export interface ParticipantsOnEventsFindUniqueArgs extends ParticipantsOnEventsFindUniqueArgsBase {
    /**
@@ -2759,6 +2833,28 @@ export namespace Prisma {
     rejectOnNotFound?: RejectOnNotFound
   }
       
+
+  /**
+   * ParticipantsOnEvents findUniqueOrThrow
+   */
+  export type ParticipantsOnEventsFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the ParticipantsOnEvents
+     * 
+    **/
+    select?: ParticipantsOnEventsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ParticipantsOnEventsInclude | null
+    /**
+     * Filter, which ParticipantsOnEvents to fetch.
+     * 
+    **/
+    where: ParticipantsOnEventsWhereUniqueInput
+  }
+
 
   /**
    * ParticipantsOnEvents base type for findFirst actions
@@ -2817,7 +2913,7 @@ export namespace Prisma {
   }
 
   /**
-   * ParticipantsOnEvents: findFirst
+   * ParticipantsOnEvents findFirst
    */
   export interface ParticipantsOnEventsFindFirstArgs extends ParticipantsOnEventsFindFirstArgsBase {
    /**
@@ -2827,6 +2923,63 @@ export namespace Prisma {
     rejectOnNotFound?: RejectOnNotFound
   }
       
+
+  /**
+   * ParticipantsOnEvents findFirstOrThrow
+   */
+  export type ParticipantsOnEventsFindFirstOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the ParticipantsOnEvents
+     * 
+    **/
+    select?: ParticipantsOnEventsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ParticipantsOnEventsInclude | null
+    /**
+     * Filter, which ParticipantsOnEvents to fetch.
+     * 
+    **/
+    where?: ParticipantsOnEventsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ParticipantsOnEvents to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<ParticipantsOnEventsOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ParticipantsOnEvents.
+     * 
+    **/
+    cursor?: ParticipantsOnEventsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ParticipantsOnEvents from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ParticipantsOnEvents.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ParticipantsOnEvents.
+     * 
+    **/
+    distinct?: Enumerable<ParticipantsOnEventsScalarFieldEnum>
+  }
+
 
   /**
    * ParticipantsOnEvents findMany
@@ -3023,18 +3176,6 @@ export namespace Prisma {
     where?: ParticipantsOnEventsWhereInput
   }
 
-
-  /**
-   * ParticipantsOnEvents: findUniqueOrThrow
-   */
-  export type ParticipantsOnEventsFindUniqueOrThrowArgs = ParticipantsOnEventsFindUniqueArgsBase
-      
-
-  /**
-   * ParticipantsOnEvents: findFirstOrThrow
-   */
-  export type ParticipantsOnEventsFindFirstOrThrowArgs = ParticipantsOnEventsFindFirstArgsBase
-      
 
   /**
    * ParticipantsOnEvents without action
@@ -3287,33 +3428,29 @@ export namespace Prisma {
     userId?: boolean
   }
 
+
   export type PaymentInclude = {
     event?: boolean | EventArgs
     user?: boolean | UserArgs
-  }
+  } 
 
-  export type PaymentGetPayload<
-    S extends boolean | null | undefined | PaymentArgs,
-    U = keyof S
-      > = S extends true
-        ? Payment
-    : S extends undefined
-    ? never
-    : S extends PaymentArgs | PaymentFindManyArgs
-    ?'include' extends U
+  export type PaymentGetPayload<S extends boolean | null | undefined | PaymentArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? Payment :
+    S extends undefined ? never :
+    S extends { include: any } & (PaymentArgs | PaymentFindManyArgs)
     ? Payment  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'event' ? EventGetPayload<Exclude<S['include'], undefined | null>[P]> :
-        P extends 'user' ? UserGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+    [P in TruthyKeys<S['include']>]:
+        P extends 'event' ? EventGetPayload<S['include'][P]> :
+        P extends 'user' ? UserGetPayload<S['include'][P]> :  never
   } 
-    : 'select' extends U
-    ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'event' ? EventGetPayload<Exclude<S['select'], undefined | null>[P]> :
-        P extends 'user' ? UserGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Payment ? Payment[P] : never
+    : S extends { select: any } & (PaymentArgs | PaymentFindManyArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+        P extends 'event' ? EventGetPayload<S['select'][P]> :
+        P extends 'user' ? UserGetPayload<S['select'][P]> :  P extends keyof Payment ? Payment[P] : never
   } 
-    : Payment
-  : Payment
+      : Payment
 
 
   type PaymentCountArgs = Merge<
@@ -3336,7 +3473,23 @@ export namespace Prisma {
     **/
     findUnique<T extends PaymentFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, PaymentFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Payment'> extends True ? CheckSelect<T, Prisma__PaymentClient<Payment>, Prisma__PaymentClient<PaymentGetPayload<T>>> : CheckSelect<T, Prisma__PaymentClient<Payment | null, null>, Prisma__PaymentClient<PaymentGetPayload<T> | null, null>>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Payment'> extends True ? Prisma__PaymentClient<PaymentGetPayload<T>> : Prisma__PaymentClient<PaymentGetPayload<T> | null, null>
+
+    /**
+     * Find one Payment that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {PaymentFindUniqueOrThrowArgs} args - Arguments to find a Payment
+     * @example
+     * // Get one Payment
+     * const payment = await prisma.payment.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends PaymentFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, PaymentFindUniqueOrThrowArgs>
+    ): Prisma__PaymentClient<PaymentGetPayload<T>>
 
     /**
      * Find the first Payment that matches the filter.
@@ -3353,7 +3506,25 @@ export namespace Prisma {
     **/
     findFirst<T extends PaymentFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, PaymentFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Payment'> extends True ? CheckSelect<T, Prisma__PaymentClient<Payment>, Prisma__PaymentClient<PaymentGetPayload<T>>> : CheckSelect<T, Prisma__PaymentClient<Payment | null, null>, Prisma__PaymentClient<PaymentGetPayload<T> | null, null>>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Payment'> extends True ? Prisma__PaymentClient<PaymentGetPayload<T>> : Prisma__PaymentClient<PaymentGetPayload<T> | null, null>
+
+    /**
+     * Find the first Payment that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentFindFirstOrThrowArgs} args - Arguments to find a Payment
+     * @example
+     * // Get one Payment
+     * const payment = await prisma.payment.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends PaymentFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, PaymentFindFirstOrThrowArgs>
+    ): Prisma__PaymentClient<PaymentGetPayload<T>>
 
     /**
      * Find zero or more Payments that matches the filter.
@@ -3373,7 +3544,7 @@ export namespace Prisma {
     **/
     findMany<T extends PaymentFindManyArgs>(
       args?: SelectSubset<T, PaymentFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<Payment>>, PrismaPromise<Array<PaymentGetPayload<T>>>>
+    ): PrismaPromise<Array<PaymentGetPayload<T>>>
 
     /**
      * Create a Payment.
@@ -3389,7 +3560,7 @@ export namespace Prisma {
     **/
     create<T extends PaymentCreateArgs>(
       args: SelectSubset<T, PaymentCreateArgs>
-    ): CheckSelect<T, Prisma__PaymentClient<Payment>, Prisma__PaymentClient<PaymentGetPayload<T>>>
+    ): Prisma__PaymentClient<PaymentGetPayload<T>>
 
     /**
      * Create many Payments.
@@ -3421,7 +3592,7 @@ export namespace Prisma {
     **/
     delete<T extends PaymentDeleteArgs>(
       args: SelectSubset<T, PaymentDeleteArgs>
-    ): CheckSelect<T, Prisma__PaymentClient<Payment>, Prisma__PaymentClient<PaymentGetPayload<T>>>
+    ): Prisma__PaymentClient<PaymentGetPayload<T>>
 
     /**
      * Update one Payment.
@@ -3440,7 +3611,7 @@ export namespace Prisma {
     **/
     update<T extends PaymentUpdateArgs>(
       args: SelectSubset<T, PaymentUpdateArgs>
-    ): CheckSelect<T, Prisma__PaymentClient<Payment>, Prisma__PaymentClient<PaymentGetPayload<T>>>
+    ): Prisma__PaymentClient<PaymentGetPayload<T>>
 
     /**
      * Delete zero or more Payments.
@@ -3498,41 +3669,7 @@ export namespace Prisma {
     **/
     upsert<T extends PaymentUpsertArgs>(
       args: SelectSubset<T, PaymentUpsertArgs>
-    ): CheckSelect<T, Prisma__PaymentClient<Payment>, Prisma__PaymentClient<PaymentGetPayload<T>>>
-
-    /**
-     * Find one Payment that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {PaymentFindUniqueOrThrowArgs} args - Arguments to find a Payment
-     * @example
-     * // Get one Payment
-     * const payment = await prisma.payment.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends PaymentFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, PaymentFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__PaymentClient<Payment>, Prisma__PaymentClient<PaymentGetPayload<T>>>
-
-    /**
-     * Find the first Payment that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PaymentFindFirstOrThrowArgs} args - Arguments to find a Payment
-     * @example
-     * // Get one Payment
-     * const payment = await prisma.payment.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends PaymentFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, PaymentFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__PaymentClient<Payment>, Prisma__PaymentClient<PaymentGetPayload<T>>>
+    ): Prisma__PaymentClient<PaymentGetPayload<T>>
 
     /**
      * Count the number of Payments.
@@ -3685,9 +3822,9 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    event<T extends EventArgs = {}>(args?: Subset<T, EventArgs>): CheckSelect<T, Prisma__EventClient<Event | Null>, Prisma__EventClient<EventGetPayload<T> | Null>>;
+    event<T extends EventArgs= {}>(args?: Subset<T, EventArgs>): Prisma__EventClient<EventGetPayload<T> | Null>;
 
-    user<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | Null>, Prisma__UserClient<UserGetPayload<T> | Null>>;
+    user<T extends UserArgs= {}>(args?: Subset<T, UserArgs>): Prisma__UserClient<UserGetPayload<T> | Null>;
 
     private get _document();
     /**
@@ -3738,7 +3875,7 @@ export namespace Prisma {
   }
 
   /**
-   * Payment: findUnique
+   * Payment findUnique
    */
   export interface PaymentFindUniqueArgs extends PaymentFindUniqueArgsBase {
    /**
@@ -3748,6 +3885,28 @@ export namespace Prisma {
     rejectOnNotFound?: RejectOnNotFound
   }
       
+
+  /**
+   * Payment findUniqueOrThrow
+   */
+  export type PaymentFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the Payment
+     * 
+    **/
+    select?: PaymentSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: PaymentInclude | null
+    /**
+     * Filter, which Payment to fetch.
+     * 
+    **/
+    where: PaymentWhereUniqueInput
+  }
+
 
   /**
    * Payment base type for findFirst actions
@@ -3806,7 +3965,7 @@ export namespace Prisma {
   }
 
   /**
-   * Payment: findFirst
+   * Payment findFirst
    */
   export interface PaymentFindFirstArgs extends PaymentFindFirstArgsBase {
    /**
@@ -3816,6 +3975,63 @@ export namespace Prisma {
     rejectOnNotFound?: RejectOnNotFound
   }
       
+
+  /**
+   * Payment findFirstOrThrow
+   */
+  export type PaymentFindFirstOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the Payment
+     * 
+    **/
+    select?: PaymentSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: PaymentInclude | null
+    /**
+     * Filter, which Payment to fetch.
+     * 
+    **/
+    where?: PaymentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Payments to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<PaymentOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Payments.
+     * 
+    **/
+    cursor?: PaymentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Payments from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Payments.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Payments.
+     * 
+    **/
+    distinct?: Enumerable<PaymentScalarFieldEnum>
+  }
+
 
   /**
    * Payment findMany
@@ -4012,18 +4228,6 @@ export namespace Prisma {
     where?: PaymentWhereInput
   }
 
-
-  /**
-   * Payment: findUniqueOrThrow
-   */
-  export type PaymentFindUniqueOrThrowArgs = PaymentFindUniqueArgsBase
-      
-
-  /**
-   * Payment: findFirstOrThrow
-   */
-  export type PaymentFindFirstOrThrowArgs = PaymentFindFirstArgsBase
-      
 
   /**
    * Payment without action
@@ -4307,30 +4511,26 @@ export namespace Prisma {
     user?: boolean | UserArgs
   }
 
+
   export type AccountInclude = {
     user?: boolean | UserArgs
-  }
+  } 
 
-  export type AccountGetPayload<
-    S extends boolean | null | undefined | AccountArgs,
-    U = keyof S
-      > = S extends true
-        ? Account
-    : S extends undefined
-    ? never
-    : S extends AccountArgs | AccountFindManyArgs
-    ?'include' extends U
+  export type AccountGetPayload<S extends boolean | null | undefined | AccountArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? Account :
+    S extends undefined ? never :
+    S extends { include: any } & (AccountArgs | AccountFindManyArgs)
     ? Account  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'user' ? UserGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+    [P in TruthyKeys<S['include']>]:
+        P extends 'user' ? UserGetPayload<S['include'][P]> :  never
   } 
-    : 'select' extends U
-    ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'user' ? UserGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Account ? Account[P] : never
+    : S extends { select: any } & (AccountArgs | AccountFindManyArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+        P extends 'user' ? UserGetPayload<S['select'][P]> :  P extends keyof Account ? Account[P] : never
   } 
-    : Account
-  : Account
+      : Account
 
 
   type AccountCountArgs = Merge<
@@ -4353,7 +4553,23 @@ export namespace Prisma {
     **/
     findUnique<T extends AccountFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, AccountFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Account'> extends True ? CheckSelect<T, Prisma__AccountClient<Account>, Prisma__AccountClient<AccountGetPayload<T>>> : CheckSelect<T, Prisma__AccountClient<Account | null, null>, Prisma__AccountClient<AccountGetPayload<T> | null, null>>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Account'> extends True ? Prisma__AccountClient<AccountGetPayload<T>> : Prisma__AccountClient<AccountGetPayload<T> | null, null>
+
+    /**
+     * Find one Account that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {AccountFindUniqueOrThrowArgs} args - Arguments to find a Account
+     * @example
+     * // Get one Account
+     * const account = await prisma.account.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends AccountFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, AccountFindUniqueOrThrowArgs>
+    ): Prisma__AccountClient<AccountGetPayload<T>>
 
     /**
      * Find the first Account that matches the filter.
@@ -4370,7 +4586,25 @@ export namespace Prisma {
     **/
     findFirst<T extends AccountFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, AccountFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Account'> extends True ? CheckSelect<T, Prisma__AccountClient<Account>, Prisma__AccountClient<AccountGetPayload<T>>> : CheckSelect<T, Prisma__AccountClient<Account | null, null>, Prisma__AccountClient<AccountGetPayload<T> | null, null>>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Account'> extends True ? Prisma__AccountClient<AccountGetPayload<T>> : Prisma__AccountClient<AccountGetPayload<T> | null, null>
+
+    /**
+     * Find the first Account that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AccountFindFirstOrThrowArgs} args - Arguments to find a Account
+     * @example
+     * // Get one Account
+     * const account = await prisma.account.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends AccountFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, AccountFindFirstOrThrowArgs>
+    ): Prisma__AccountClient<AccountGetPayload<T>>
 
     /**
      * Find zero or more Accounts that matches the filter.
@@ -4390,7 +4624,7 @@ export namespace Prisma {
     **/
     findMany<T extends AccountFindManyArgs>(
       args?: SelectSubset<T, AccountFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<Account>>, PrismaPromise<Array<AccountGetPayload<T>>>>
+    ): PrismaPromise<Array<AccountGetPayload<T>>>
 
     /**
      * Create a Account.
@@ -4406,7 +4640,7 @@ export namespace Prisma {
     **/
     create<T extends AccountCreateArgs>(
       args: SelectSubset<T, AccountCreateArgs>
-    ): CheckSelect<T, Prisma__AccountClient<Account>, Prisma__AccountClient<AccountGetPayload<T>>>
+    ): Prisma__AccountClient<AccountGetPayload<T>>
 
     /**
      * Create many Accounts.
@@ -4438,7 +4672,7 @@ export namespace Prisma {
     **/
     delete<T extends AccountDeleteArgs>(
       args: SelectSubset<T, AccountDeleteArgs>
-    ): CheckSelect<T, Prisma__AccountClient<Account>, Prisma__AccountClient<AccountGetPayload<T>>>
+    ): Prisma__AccountClient<AccountGetPayload<T>>
 
     /**
      * Update one Account.
@@ -4457,7 +4691,7 @@ export namespace Prisma {
     **/
     update<T extends AccountUpdateArgs>(
       args: SelectSubset<T, AccountUpdateArgs>
-    ): CheckSelect<T, Prisma__AccountClient<Account>, Prisma__AccountClient<AccountGetPayload<T>>>
+    ): Prisma__AccountClient<AccountGetPayload<T>>
 
     /**
      * Delete zero or more Accounts.
@@ -4515,41 +4749,7 @@ export namespace Prisma {
     **/
     upsert<T extends AccountUpsertArgs>(
       args: SelectSubset<T, AccountUpsertArgs>
-    ): CheckSelect<T, Prisma__AccountClient<Account>, Prisma__AccountClient<AccountGetPayload<T>>>
-
-    /**
-     * Find one Account that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {AccountFindUniqueOrThrowArgs} args - Arguments to find a Account
-     * @example
-     * // Get one Account
-     * const account = await prisma.account.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends AccountFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, AccountFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__AccountClient<Account>, Prisma__AccountClient<AccountGetPayload<T>>>
-
-    /**
-     * Find the first Account that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AccountFindFirstOrThrowArgs} args - Arguments to find a Account
-     * @example
-     * // Get one Account
-     * const account = await prisma.account.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends AccountFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, AccountFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__AccountClient<Account>, Prisma__AccountClient<AccountGetPayload<T>>>
+    ): Prisma__AccountClient<AccountGetPayload<T>>
 
     /**
      * Count the number of Accounts.
@@ -4702,7 +4902,7 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    user<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | Null>, Prisma__UserClient<UserGetPayload<T> | Null>>;
+    user<T extends UserArgs= {}>(args?: Subset<T, UserArgs>): Prisma__UserClient<UserGetPayload<T> | Null>;
 
     private get _document();
     /**
@@ -4753,7 +4953,7 @@ export namespace Prisma {
   }
 
   /**
-   * Account: findUnique
+   * Account findUnique
    */
   export interface AccountFindUniqueArgs extends AccountFindUniqueArgsBase {
    /**
@@ -4763,6 +4963,28 @@ export namespace Prisma {
     rejectOnNotFound?: RejectOnNotFound
   }
       
+
+  /**
+   * Account findUniqueOrThrow
+   */
+  export type AccountFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the Account
+     * 
+    **/
+    select?: AccountSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: AccountInclude | null
+    /**
+     * Filter, which Account to fetch.
+     * 
+    **/
+    where: AccountWhereUniqueInput
+  }
+
 
   /**
    * Account base type for findFirst actions
@@ -4821,7 +5043,7 @@ export namespace Prisma {
   }
 
   /**
-   * Account: findFirst
+   * Account findFirst
    */
   export interface AccountFindFirstArgs extends AccountFindFirstArgsBase {
    /**
@@ -4831,6 +5053,63 @@ export namespace Prisma {
     rejectOnNotFound?: RejectOnNotFound
   }
       
+
+  /**
+   * Account findFirstOrThrow
+   */
+  export type AccountFindFirstOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the Account
+     * 
+    **/
+    select?: AccountSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: AccountInclude | null
+    /**
+     * Filter, which Account to fetch.
+     * 
+    **/
+    where?: AccountWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Accounts to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<AccountOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Accounts.
+     * 
+    **/
+    cursor?: AccountWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Accounts from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Accounts.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Accounts.
+     * 
+    **/
+    distinct?: Enumerable<AccountScalarFieldEnum>
+  }
+
 
   /**
    * Account findMany
@@ -5029,18 +5308,6 @@ export namespace Prisma {
 
 
   /**
-   * Account: findUniqueOrThrow
-   */
-  export type AccountFindUniqueOrThrowArgs = AccountFindUniqueArgsBase
-      
-
-  /**
-   * Account: findFirstOrThrow
-   */
-  export type AccountFindFirstOrThrowArgs = AccountFindFirstArgsBase
-      
-
-  /**
    * Account without action
    */
   export type AccountArgs = {
@@ -5224,30 +5491,26 @@ export namespace Prisma {
     user?: boolean | UserArgs
   }
 
+
   export type SessionInclude = {
     user?: boolean | UserArgs
-  }
+  } 
 
-  export type SessionGetPayload<
-    S extends boolean | null | undefined | SessionArgs,
-    U = keyof S
-      > = S extends true
-        ? Session
-    : S extends undefined
-    ? never
-    : S extends SessionArgs | SessionFindManyArgs
-    ?'include' extends U
+  export type SessionGetPayload<S extends boolean | null | undefined | SessionArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? Session :
+    S extends undefined ? never :
+    S extends { include: any } & (SessionArgs | SessionFindManyArgs)
     ? Session  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'user' ? UserGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+    [P in TruthyKeys<S['include']>]:
+        P extends 'user' ? UserGetPayload<S['include'][P]> :  never
   } 
-    : 'select' extends U
-    ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'user' ? UserGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof Session ? Session[P] : never
+    : S extends { select: any } & (SessionArgs | SessionFindManyArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+        P extends 'user' ? UserGetPayload<S['select'][P]> :  P extends keyof Session ? Session[P] : never
   } 
-    : Session
-  : Session
+      : Session
 
 
   type SessionCountArgs = Merge<
@@ -5270,7 +5533,23 @@ export namespace Prisma {
     **/
     findUnique<T extends SessionFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, SessionFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Session'> extends True ? CheckSelect<T, Prisma__SessionClient<Session>, Prisma__SessionClient<SessionGetPayload<T>>> : CheckSelect<T, Prisma__SessionClient<Session | null, null>, Prisma__SessionClient<SessionGetPayload<T> | null, null>>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Session'> extends True ? Prisma__SessionClient<SessionGetPayload<T>> : Prisma__SessionClient<SessionGetPayload<T> | null, null>
+
+    /**
+     * Find one Session that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {SessionFindUniqueOrThrowArgs} args - Arguments to find a Session
+     * @example
+     * // Get one Session
+     * const session = await prisma.session.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends SessionFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, SessionFindUniqueOrThrowArgs>
+    ): Prisma__SessionClient<SessionGetPayload<T>>
 
     /**
      * Find the first Session that matches the filter.
@@ -5287,7 +5566,25 @@ export namespace Prisma {
     **/
     findFirst<T extends SessionFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, SessionFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Session'> extends True ? CheckSelect<T, Prisma__SessionClient<Session>, Prisma__SessionClient<SessionGetPayload<T>>> : CheckSelect<T, Prisma__SessionClient<Session | null, null>, Prisma__SessionClient<SessionGetPayload<T> | null, null>>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Session'> extends True ? Prisma__SessionClient<SessionGetPayload<T>> : Prisma__SessionClient<SessionGetPayload<T> | null, null>
+
+    /**
+     * Find the first Session that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SessionFindFirstOrThrowArgs} args - Arguments to find a Session
+     * @example
+     * // Get one Session
+     * const session = await prisma.session.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends SessionFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, SessionFindFirstOrThrowArgs>
+    ): Prisma__SessionClient<SessionGetPayload<T>>
 
     /**
      * Find zero or more Sessions that matches the filter.
@@ -5307,7 +5604,7 @@ export namespace Prisma {
     **/
     findMany<T extends SessionFindManyArgs>(
       args?: SelectSubset<T, SessionFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<Session>>, PrismaPromise<Array<SessionGetPayload<T>>>>
+    ): PrismaPromise<Array<SessionGetPayload<T>>>
 
     /**
      * Create a Session.
@@ -5323,7 +5620,7 @@ export namespace Prisma {
     **/
     create<T extends SessionCreateArgs>(
       args: SelectSubset<T, SessionCreateArgs>
-    ): CheckSelect<T, Prisma__SessionClient<Session>, Prisma__SessionClient<SessionGetPayload<T>>>
+    ): Prisma__SessionClient<SessionGetPayload<T>>
 
     /**
      * Create many Sessions.
@@ -5355,7 +5652,7 @@ export namespace Prisma {
     **/
     delete<T extends SessionDeleteArgs>(
       args: SelectSubset<T, SessionDeleteArgs>
-    ): CheckSelect<T, Prisma__SessionClient<Session>, Prisma__SessionClient<SessionGetPayload<T>>>
+    ): Prisma__SessionClient<SessionGetPayload<T>>
 
     /**
      * Update one Session.
@@ -5374,7 +5671,7 @@ export namespace Prisma {
     **/
     update<T extends SessionUpdateArgs>(
       args: SelectSubset<T, SessionUpdateArgs>
-    ): CheckSelect<T, Prisma__SessionClient<Session>, Prisma__SessionClient<SessionGetPayload<T>>>
+    ): Prisma__SessionClient<SessionGetPayload<T>>
 
     /**
      * Delete zero or more Sessions.
@@ -5432,41 +5729,7 @@ export namespace Prisma {
     **/
     upsert<T extends SessionUpsertArgs>(
       args: SelectSubset<T, SessionUpsertArgs>
-    ): CheckSelect<T, Prisma__SessionClient<Session>, Prisma__SessionClient<SessionGetPayload<T>>>
-
-    /**
-     * Find one Session that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {SessionFindUniqueOrThrowArgs} args - Arguments to find a Session
-     * @example
-     * // Get one Session
-     * const session = await prisma.session.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends SessionFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, SessionFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__SessionClient<Session>, Prisma__SessionClient<SessionGetPayload<T>>>
-
-    /**
-     * Find the first Session that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SessionFindFirstOrThrowArgs} args - Arguments to find a Session
-     * @example
-     * // Get one Session
-     * const session = await prisma.session.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends SessionFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, SessionFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__SessionClient<Session>, Prisma__SessionClient<SessionGetPayload<T>>>
+    ): Prisma__SessionClient<SessionGetPayload<T>>
 
     /**
      * Count the number of Sessions.
@@ -5619,7 +5882,7 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    user<T extends UserArgs = {}>(args?: Subset<T, UserArgs>): CheckSelect<T, Prisma__UserClient<User | Null>, Prisma__UserClient<UserGetPayload<T> | Null>>;
+    user<T extends UserArgs= {}>(args?: Subset<T, UserArgs>): Prisma__UserClient<UserGetPayload<T> | Null>;
 
     private get _document();
     /**
@@ -5670,7 +5933,7 @@ export namespace Prisma {
   }
 
   /**
-   * Session: findUnique
+   * Session findUnique
    */
   export interface SessionFindUniqueArgs extends SessionFindUniqueArgsBase {
    /**
@@ -5680,6 +5943,28 @@ export namespace Prisma {
     rejectOnNotFound?: RejectOnNotFound
   }
       
+
+  /**
+   * Session findUniqueOrThrow
+   */
+  export type SessionFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the Session
+     * 
+    **/
+    select?: SessionSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: SessionInclude | null
+    /**
+     * Filter, which Session to fetch.
+     * 
+    **/
+    where: SessionWhereUniqueInput
+  }
+
 
   /**
    * Session base type for findFirst actions
@@ -5738,7 +6023,7 @@ export namespace Prisma {
   }
 
   /**
-   * Session: findFirst
+   * Session findFirst
    */
   export interface SessionFindFirstArgs extends SessionFindFirstArgsBase {
    /**
@@ -5748,6 +6033,63 @@ export namespace Prisma {
     rejectOnNotFound?: RejectOnNotFound
   }
       
+
+  /**
+   * Session findFirstOrThrow
+   */
+  export type SessionFindFirstOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the Session
+     * 
+    **/
+    select?: SessionSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: SessionInclude | null
+    /**
+     * Filter, which Session to fetch.
+     * 
+    **/
+    where?: SessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Sessions to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<SessionOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Sessions.
+     * 
+    **/
+    cursor?: SessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Sessions from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Sessions.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Sessions.
+     * 
+    **/
+    distinct?: Enumerable<SessionScalarFieldEnum>
+  }
+
 
   /**
    * Session findMany
@@ -5944,18 +6286,6 @@ export namespace Prisma {
     where?: SessionWhereInput
   }
 
-
-  /**
-   * Session: findUniqueOrThrow
-   */
-  export type SessionFindUniqueOrThrowArgs = SessionFindUniqueArgsBase
-      
-
-  /**
-   * Session: findFirstOrThrow
-   */
-  export type SessionFindFirstOrThrowArgs = SessionFindFirstArgsBase
-      
 
   /**
    * Session without action
@@ -6177,50 +6507,46 @@ export namespace Prisma {
     image?: boolean
     role?: boolean
     password?: boolean
-    accounts?: boolean | AccountFindManyArgs
-    sessions?: boolean | SessionFindManyArgs
-    payments?: boolean | PaymentFindManyArgs
-    events?: boolean | ParticipantsOnEventsFindManyArgs
+    accounts?: boolean | UserAccountsArgs
+    sessions?: boolean | UserSessionsArgs
+    payments?: boolean | UserPaymentsArgs
+    events?: boolean | UserEventsArgs
     notificationsEnabled?: boolean
     _count?: boolean | UserCountOutputTypeArgs
   }
 
-  export type UserInclude = {
-    accounts?: boolean | AccountFindManyArgs
-    sessions?: boolean | SessionFindManyArgs
-    payments?: boolean | PaymentFindManyArgs
-    events?: boolean | ParticipantsOnEventsFindManyArgs
-    _count?: boolean | UserCountOutputTypeArgs
-  }
 
-  export type UserGetPayload<
-    S extends boolean | null | undefined | UserArgs,
-    U = keyof S
-      > = S extends true
-        ? User
-    : S extends undefined
-    ? never
-    : S extends UserArgs | UserFindManyArgs
-    ?'include' extends U
+  export type UserInclude = {
+    accounts?: boolean | UserAccountsArgs
+    sessions?: boolean | UserSessionsArgs
+    payments?: boolean | UserPaymentsArgs
+    events?: boolean | UserEventsArgs
+    _count?: boolean | UserCountOutputTypeArgs
+  } 
+
+  export type UserGetPayload<S extends boolean | null | undefined | UserArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? User :
+    S extends undefined ? never :
+    S extends { include: any } & (UserArgs | UserFindManyArgs)
     ? User  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'accounts' ? Array < AccountGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends 'sessions' ? Array < SessionGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends 'payments' ? Array < PaymentGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends 'events' ? Array < ParticipantsOnEventsGetPayload<Exclude<S['include'], undefined | null>[P]>>  :
-        P extends '_count' ? UserCountOutputTypeGetPayload<Exclude<S['include'], undefined | null>[P]> :  never
+    [P in TruthyKeys<S['include']>]:
+        P extends 'accounts' ? Array < AccountGetPayload<S['include'][P]>>  :
+        P extends 'sessions' ? Array < SessionGetPayload<S['include'][P]>>  :
+        P extends 'payments' ? Array < PaymentGetPayload<S['include'][P]>>  :
+        P extends 'events' ? Array < ParticipantsOnEventsGetPayload<S['include'][P]>>  :
+        P extends '_count' ? UserCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
-    : 'select' extends U
-    ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'accounts' ? Array < AccountGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends 'sessions' ? Array < SessionGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends 'payments' ? Array < PaymentGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends 'events' ? Array < ParticipantsOnEventsGetPayload<Exclude<S['select'], undefined | null>[P]>>  :
-        P extends '_count' ? UserCountOutputTypeGetPayload<Exclude<S['select'], undefined | null>[P]> :  P extends keyof User ? User[P] : never
+    : S extends { select: any } & (UserArgs | UserFindManyArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+        P extends 'accounts' ? Array < AccountGetPayload<S['select'][P]>>  :
+        P extends 'sessions' ? Array < SessionGetPayload<S['select'][P]>>  :
+        P extends 'payments' ? Array < PaymentGetPayload<S['select'][P]>>  :
+        P extends 'events' ? Array < ParticipantsOnEventsGetPayload<S['select'][P]>>  :
+        P extends '_count' ? UserCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof User ? User[P] : never
   } 
-    : User
-  : User
+      : User
 
 
   type UserCountArgs = Merge<
@@ -6243,7 +6569,23 @@ export namespace Prisma {
     **/
     findUnique<T extends UserFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, UserFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'User'> extends True ? CheckSelect<T, Prisma__UserClient<User>, Prisma__UserClient<UserGetPayload<T>>> : CheckSelect<T, Prisma__UserClient<User | null, null>, Prisma__UserClient<UserGetPayload<T> | null, null>>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'User'> extends True ? Prisma__UserClient<UserGetPayload<T>> : Prisma__UserClient<UserGetPayload<T> | null, null>
+
+    /**
+     * Find one User that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {UserFindUniqueOrThrowArgs} args - Arguments to find a User
+     * @example
+     * // Get one User
+     * const user = await prisma.user.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends UserFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, UserFindUniqueOrThrowArgs>
+    ): Prisma__UserClient<UserGetPayload<T>>
 
     /**
      * Find the first User that matches the filter.
@@ -6260,7 +6602,25 @@ export namespace Prisma {
     **/
     findFirst<T extends UserFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, UserFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'User'> extends True ? CheckSelect<T, Prisma__UserClient<User>, Prisma__UserClient<UserGetPayload<T>>> : CheckSelect<T, Prisma__UserClient<User | null, null>, Prisma__UserClient<UserGetPayload<T> | null, null>>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'User'> extends True ? Prisma__UserClient<UserGetPayload<T>> : Prisma__UserClient<UserGetPayload<T> | null, null>
+
+    /**
+     * Find the first User that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserFindFirstOrThrowArgs} args - Arguments to find a User
+     * @example
+     * // Get one User
+     * const user = await prisma.user.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends UserFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, UserFindFirstOrThrowArgs>
+    ): Prisma__UserClient<UserGetPayload<T>>
 
     /**
      * Find zero or more Users that matches the filter.
@@ -6280,7 +6640,7 @@ export namespace Prisma {
     **/
     findMany<T extends UserFindManyArgs>(
       args?: SelectSubset<T, UserFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<User>>, PrismaPromise<Array<UserGetPayload<T>>>>
+    ): PrismaPromise<Array<UserGetPayload<T>>>
 
     /**
      * Create a User.
@@ -6296,7 +6656,7 @@ export namespace Prisma {
     **/
     create<T extends UserCreateArgs>(
       args: SelectSubset<T, UserCreateArgs>
-    ): CheckSelect<T, Prisma__UserClient<User>, Prisma__UserClient<UserGetPayload<T>>>
+    ): Prisma__UserClient<UserGetPayload<T>>
 
     /**
      * Create many Users.
@@ -6328,7 +6688,7 @@ export namespace Prisma {
     **/
     delete<T extends UserDeleteArgs>(
       args: SelectSubset<T, UserDeleteArgs>
-    ): CheckSelect<T, Prisma__UserClient<User>, Prisma__UserClient<UserGetPayload<T>>>
+    ): Prisma__UserClient<UserGetPayload<T>>
 
     /**
      * Update one User.
@@ -6347,7 +6707,7 @@ export namespace Prisma {
     **/
     update<T extends UserUpdateArgs>(
       args: SelectSubset<T, UserUpdateArgs>
-    ): CheckSelect<T, Prisma__UserClient<User>, Prisma__UserClient<UserGetPayload<T>>>
+    ): Prisma__UserClient<UserGetPayload<T>>
 
     /**
      * Delete zero or more Users.
@@ -6405,41 +6765,7 @@ export namespace Prisma {
     **/
     upsert<T extends UserUpsertArgs>(
       args: SelectSubset<T, UserUpsertArgs>
-    ): CheckSelect<T, Prisma__UserClient<User>, Prisma__UserClient<UserGetPayload<T>>>
-
-    /**
-     * Find one User that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {UserFindUniqueOrThrowArgs} args - Arguments to find a User
-     * @example
-     * // Get one User
-     * const user = await prisma.user.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends UserFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, UserFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__UserClient<User>, Prisma__UserClient<UserGetPayload<T>>>
-
-    /**
-     * Find the first User that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UserFindFirstOrThrowArgs} args - Arguments to find a User
-     * @example
-     * // Get one User
-     * const user = await prisma.user.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends UserFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, UserFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__UserClient<User>, Prisma__UserClient<UserGetPayload<T>>>
+    ): Prisma__UserClient<UserGetPayload<T>>
 
     /**
      * Count the number of Users.
@@ -6592,13 +6918,13 @@ export namespace Prisma {
     constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
     readonly [Symbol.toStringTag]: 'PrismaClientPromise';
 
-    accounts<T extends AccountFindManyArgs = {}>(args?: Subset<T, AccountFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Account>| Null>, PrismaPromise<Array<AccountGetPayload<T>>| Null>>;
+    accounts<T extends UserAccountsArgs= {}>(args?: Subset<T, UserAccountsArgs>): PrismaPromise<Array<AccountGetPayload<T>>| Null>;
 
-    sessions<T extends SessionFindManyArgs = {}>(args?: Subset<T, SessionFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Session>| Null>, PrismaPromise<Array<SessionGetPayload<T>>| Null>>;
+    sessions<T extends UserSessionsArgs= {}>(args?: Subset<T, UserSessionsArgs>): PrismaPromise<Array<SessionGetPayload<T>>| Null>;
 
-    payments<T extends PaymentFindManyArgs = {}>(args?: Subset<T, PaymentFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Payment>| Null>, PrismaPromise<Array<PaymentGetPayload<T>>| Null>>;
+    payments<T extends UserPaymentsArgs= {}>(args?: Subset<T, UserPaymentsArgs>): PrismaPromise<Array<PaymentGetPayload<T>>| Null>;
 
-    events<T extends ParticipantsOnEventsFindManyArgs = {}>(args?: Subset<T, ParticipantsOnEventsFindManyArgs>): CheckSelect<T, PrismaPromise<Array<ParticipantsOnEvents>| Null>, PrismaPromise<Array<ParticipantsOnEventsGetPayload<T>>| Null>>;
+    events<T extends UserEventsArgs= {}>(args?: Subset<T, UserEventsArgs>): PrismaPromise<Array<ParticipantsOnEventsGetPayload<T>>| Null>;
 
     private get _document();
     /**
@@ -6649,7 +6975,7 @@ export namespace Prisma {
   }
 
   /**
-   * User: findUnique
+   * User findUnique
    */
   export interface UserFindUniqueArgs extends UserFindUniqueArgsBase {
    /**
@@ -6659,6 +6985,28 @@ export namespace Prisma {
     rejectOnNotFound?: RejectOnNotFound
   }
       
+
+  /**
+   * User findUniqueOrThrow
+   */
+  export type UserFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the User
+     * 
+    **/
+    select?: UserSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UserInclude | null
+    /**
+     * Filter, which User to fetch.
+     * 
+    **/
+    where: UserWhereUniqueInput
+  }
+
 
   /**
    * User base type for findFirst actions
@@ -6717,7 +7065,7 @@ export namespace Prisma {
   }
 
   /**
-   * User: findFirst
+   * User findFirst
    */
   export interface UserFindFirstArgs extends UserFindFirstArgsBase {
    /**
@@ -6727,6 +7075,63 @@ export namespace Prisma {
     rejectOnNotFound?: RejectOnNotFound
   }
       
+
+  /**
+   * User findFirstOrThrow
+   */
+  export type UserFindFirstOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the User
+     * 
+    **/
+    select?: UserSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: UserInclude | null
+    /**
+     * Filter, which User to fetch.
+     * 
+    **/
+    where?: UserWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Users to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<UserOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Users.
+     * 
+    **/
+    cursor?: UserWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Users from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Users.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Users.
+     * 
+    **/
+    distinct?: Enumerable<UserScalarFieldEnum>
+  }
+
 
   /**
    * User findMany
@@ -6925,16 +7330,96 @@ export namespace Prisma {
 
 
   /**
-   * User: findUniqueOrThrow
+   * User.accounts
    */
-  export type UserFindUniqueOrThrowArgs = UserFindUniqueArgsBase
-      
+  export type UserAccountsArgs = {
+    /**
+     * Select specific fields to fetch from the Account
+     * 
+    **/
+    select?: AccountSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: AccountInclude | null
+    where?: AccountWhereInput
+    orderBy?: Enumerable<AccountOrderByWithRelationInput>
+    cursor?: AccountWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<AccountScalarFieldEnum>
+  }
+
 
   /**
-   * User: findFirstOrThrow
+   * User.sessions
    */
-  export type UserFindFirstOrThrowArgs = UserFindFirstArgsBase
-      
+  export type UserSessionsArgs = {
+    /**
+     * Select specific fields to fetch from the Session
+     * 
+    **/
+    select?: SessionSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: SessionInclude | null
+    where?: SessionWhereInput
+    orderBy?: Enumerable<SessionOrderByWithRelationInput>
+    cursor?: SessionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<SessionScalarFieldEnum>
+  }
+
+
+  /**
+   * User.payments
+   */
+  export type UserPaymentsArgs = {
+    /**
+     * Select specific fields to fetch from the Payment
+     * 
+    **/
+    select?: PaymentSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: PaymentInclude | null
+    where?: PaymentWhereInput
+    orderBy?: Enumerable<PaymentOrderByWithRelationInput>
+    cursor?: PaymentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<PaymentScalarFieldEnum>
+  }
+
+
+  /**
+   * User.events
+   */
+  export type UserEventsArgs = {
+    /**
+     * Select specific fields to fetch from the ParticipantsOnEvents
+     * 
+    **/
+    select?: ParticipantsOnEventsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: ParticipantsOnEventsInclude | null
+    where?: ParticipantsOnEventsWhereInput
+    orderBy?: Enumerable<ParticipantsOnEventsOrderByWithRelationInput>
+    cursor?: ParticipantsOnEventsWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<ParticipantsOnEventsScalarFieldEnum>
+  }
+
 
   /**
    * User without action
@@ -7111,23 +7596,19 @@ export namespace Prisma {
     expires?: boolean
   }
 
-  export type VerificationTokenGetPayload<
-    S extends boolean | null | undefined | VerificationTokenArgs,
-    U = keyof S
-      > = S extends true
-        ? VerificationToken
-    : S extends undefined
-    ? never
-    : S extends VerificationTokenArgs | VerificationTokenFindManyArgs
-    ?'include' extends U
+
+  export type VerificationTokenGetPayload<S extends boolean | null | undefined | VerificationTokenArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? VerificationToken :
+    S extends undefined ? never :
+    S extends { include: any } & (VerificationTokenArgs | VerificationTokenFindManyArgs)
     ? VerificationToken 
-    : 'select' extends U
-    ? {
-    [P in TrueKeys<S['select']>]:
+    : S extends { select: any } & (VerificationTokenArgs | VerificationTokenFindManyArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
     P extends keyof VerificationToken ? VerificationToken[P] : never
   } 
-    : VerificationToken
-  : VerificationToken
+      : VerificationToken
 
 
   type VerificationTokenCountArgs = Merge<
@@ -7150,7 +7631,23 @@ export namespace Prisma {
     **/
     findUnique<T extends VerificationTokenFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args: SelectSubset<T, VerificationTokenFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'VerificationToken'> extends True ? CheckSelect<T, Prisma__VerificationTokenClient<VerificationToken>, Prisma__VerificationTokenClient<VerificationTokenGetPayload<T>>> : CheckSelect<T, Prisma__VerificationTokenClient<VerificationToken | null, null>, Prisma__VerificationTokenClient<VerificationTokenGetPayload<T> | null, null>>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'VerificationToken'> extends True ? Prisma__VerificationTokenClient<VerificationTokenGetPayload<T>> : Prisma__VerificationTokenClient<VerificationTokenGetPayload<T> | null, null>
+
+    /**
+     * Find one VerificationToken that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {VerificationTokenFindUniqueOrThrowArgs} args - Arguments to find a VerificationToken
+     * @example
+     * // Get one VerificationToken
+     * const verificationToken = await prisma.verificationToken.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends VerificationTokenFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, VerificationTokenFindUniqueOrThrowArgs>
+    ): Prisma__VerificationTokenClient<VerificationTokenGetPayload<T>>
 
     /**
      * Find the first VerificationToken that matches the filter.
@@ -7167,7 +7664,25 @@ export namespace Prisma {
     **/
     findFirst<T extends VerificationTokenFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
       args?: SelectSubset<T, VerificationTokenFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'VerificationToken'> extends True ? CheckSelect<T, Prisma__VerificationTokenClient<VerificationToken>, Prisma__VerificationTokenClient<VerificationTokenGetPayload<T>>> : CheckSelect<T, Prisma__VerificationTokenClient<VerificationToken | null, null>, Prisma__VerificationTokenClient<VerificationTokenGetPayload<T> | null, null>>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'VerificationToken'> extends True ? Prisma__VerificationTokenClient<VerificationTokenGetPayload<T>> : Prisma__VerificationTokenClient<VerificationTokenGetPayload<T> | null, null>
+
+    /**
+     * Find the first VerificationToken that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VerificationTokenFindFirstOrThrowArgs} args - Arguments to find a VerificationToken
+     * @example
+     * // Get one VerificationToken
+     * const verificationToken = await prisma.verificationToken.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends VerificationTokenFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, VerificationTokenFindFirstOrThrowArgs>
+    ): Prisma__VerificationTokenClient<VerificationTokenGetPayload<T>>
 
     /**
      * Find zero or more VerificationTokens that matches the filter.
@@ -7187,7 +7702,7 @@ export namespace Prisma {
     **/
     findMany<T extends VerificationTokenFindManyArgs>(
       args?: SelectSubset<T, VerificationTokenFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<VerificationToken>>, PrismaPromise<Array<VerificationTokenGetPayload<T>>>>
+    ): PrismaPromise<Array<VerificationTokenGetPayload<T>>>
 
     /**
      * Create a VerificationToken.
@@ -7203,7 +7718,7 @@ export namespace Prisma {
     **/
     create<T extends VerificationTokenCreateArgs>(
       args: SelectSubset<T, VerificationTokenCreateArgs>
-    ): CheckSelect<T, Prisma__VerificationTokenClient<VerificationToken>, Prisma__VerificationTokenClient<VerificationTokenGetPayload<T>>>
+    ): Prisma__VerificationTokenClient<VerificationTokenGetPayload<T>>
 
     /**
      * Create many VerificationTokens.
@@ -7235,7 +7750,7 @@ export namespace Prisma {
     **/
     delete<T extends VerificationTokenDeleteArgs>(
       args: SelectSubset<T, VerificationTokenDeleteArgs>
-    ): CheckSelect<T, Prisma__VerificationTokenClient<VerificationToken>, Prisma__VerificationTokenClient<VerificationTokenGetPayload<T>>>
+    ): Prisma__VerificationTokenClient<VerificationTokenGetPayload<T>>
 
     /**
      * Update one VerificationToken.
@@ -7254,7 +7769,7 @@ export namespace Prisma {
     **/
     update<T extends VerificationTokenUpdateArgs>(
       args: SelectSubset<T, VerificationTokenUpdateArgs>
-    ): CheckSelect<T, Prisma__VerificationTokenClient<VerificationToken>, Prisma__VerificationTokenClient<VerificationTokenGetPayload<T>>>
+    ): Prisma__VerificationTokenClient<VerificationTokenGetPayload<T>>
 
     /**
      * Delete zero or more VerificationTokens.
@@ -7312,41 +7827,7 @@ export namespace Prisma {
     **/
     upsert<T extends VerificationTokenUpsertArgs>(
       args: SelectSubset<T, VerificationTokenUpsertArgs>
-    ): CheckSelect<T, Prisma__VerificationTokenClient<VerificationToken>, Prisma__VerificationTokenClient<VerificationTokenGetPayload<T>>>
-
-    /**
-     * Find one VerificationToken that matches the filter or throw
-     * `NotFoundError` if no matches were found.
-     * @param {VerificationTokenFindUniqueOrThrowArgs} args - Arguments to find a VerificationToken
-     * @example
-     * // Get one VerificationToken
-     * const verificationToken = await prisma.verificationToken.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUniqueOrThrow<T extends VerificationTokenFindUniqueOrThrowArgs>(
-      args?: SelectSubset<T, VerificationTokenFindUniqueOrThrowArgs>
-    ): CheckSelect<T, Prisma__VerificationTokenClient<VerificationToken>, Prisma__VerificationTokenClient<VerificationTokenGetPayload<T>>>
-
-    /**
-     * Find the first VerificationToken that matches the filter or
-     * throw `NotFoundError` if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {VerificationTokenFindFirstOrThrowArgs} args - Arguments to find a VerificationToken
-     * @example
-     * // Get one VerificationToken
-     * const verificationToken = await prisma.verificationToken.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirstOrThrow<T extends VerificationTokenFindFirstOrThrowArgs>(
-      args?: SelectSubset<T, VerificationTokenFindFirstOrThrowArgs>
-    ): CheckSelect<T, Prisma__VerificationTokenClient<VerificationToken>, Prisma__VerificationTokenClient<VerificationTokenGetPayload<T>>>
+    ): Prisma__VerificationTokenClient<VerificationTokenGetPayload<T>>
 
     /**
      * Count the number of VerificationTokens.
@@ -7544,7 +8025,7 @@ export namespace Prisma {
   }
 
   /**
-   * VerificationToken: findUnique
+   * VerificationToken findUnique
    */
   export interface VerificationTokenFindUniqueArgs extends VerificationTokenFindUniqueArgsBase {
    /**
@@ -7554,6 +8035,23 @@ export namespace Prisma {
     rejectOnNotFound?: RejectOnNotFound
   }
       
+
+  /**
+   * VerificationToken findUniqueOrThrow
+   */
+  export type VerificationTokenFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the VerificationToken
+     * 
+    **/
+    select?: VerificationTokenSelect | null
+    /**
+     * Filter, which VerificationToken to fetch.
+     * 
+    **/
+    where: VerificationTokenWhereUniqueInput
+  }
+
 
   /**
    * VerificationToken base type for findFirst actions
@@ -7607,7 +8105,7 @@ export namespace Prisma {
   }
 
   /**
-   * VerificationToken: findFirst
+   * VerificationToken findFirst
    */
   export interface VerificationTokenFindFirstArgs extends VerificationTokenFindFirstArgsBase {
    /**
@@ -7617,6 +8115,58 @@ export namespace Prisma {
     rejectOnNotFound?: RejectOnNotFound
   }
       
+
+  /**
+   * VerificationToken findFirstOrThrow
+   */
+  export type VerificationTokenFindFirstOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the VerificationToken
+     * 
+    **/
+    select?: VerificationTokenSelect | null
+    /**
+     * Filter, which VerificationToken to fetch.
+     * 
+    **/
+    where?: VerificationTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VerificationTokens to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<VerificationTokenOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for VerificationTokens.
+     * 
+    **/
+    cursor?: VerificationTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VerificationTokens from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VerificationTokens.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of VerificationTokens.
+     * 
+    **/
+    distinct?: Enumerable<VerificationTokenScalarFieldEnum>
+  }
+
 
   /**
    * VerificationToken findMany
@@ -7788,18 +8338,6 @@ export namespace Prisma {
     where?: VerificationTokenWhereInput
   }
 
-
-  /**
-   * VerificationToken: findUniqueOrThrow
-   */
-  export type VerificationTokenFindUniqueOrThrowArgs = VerificationTokenFindUniqueArgsBase
-      
-
-  /**
-   * VerificationToken: findFirstOrThrow
-   */
-  export type VerificationTokenFindFirstOrThrowArgs = VerificationTokenFindFirstArgsBase
-      
 
   /**
    * VerificationToken without action
