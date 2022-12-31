@@ -83,7 +83,7 @@ export const Navbar: FunctionComponent = () => {
           </>
         )}
         <div
-          className={`flex cursor-pointer items-center text-white decoration-[#73C8A9] hover:underline ${noUnderline} active:no-underline`}
+          className={`flex cursor-pointer items-center decoration-[#73C8A9] hover:underline ${noUnderline} active:no-underline`}
           onClick={handleClick}
         >
           <Avatar
@@ -91,7 +91,9 @@ export const Navbar: FunctionComponent = () => {
             size="sm"
             className="mr-2 "
           />
-          <Typography color="primary">{data?.user?.name}</Typography>
+          <Typography variant="plain" color="primary">
+            {data?.user?.name}
+          </Typography>
           <OrganizerMenu
             anchorEl={anchorEl}
             setShowDropdown={setShowDropdown}
