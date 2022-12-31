@@ -83,7 +83,7 @@ export const Navbar: FunctionComponent = () => {
           </>
         )}
         <div
-          className={`flex cursor-pointer items-center decoration-[#73C8A9] hover:underline ${noUnderline} active:no-underline`}
+          className={`flex cursor-pointer items-center text-white decoration-[#73C8A9] hover:underline ${noUnderline} active:no-underline`}
           onClick={handleClick}
         >
           <Avatar
