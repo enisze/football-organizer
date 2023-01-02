@@ -1,6 +1,5 @@
 import compileMjml from "mjml";
 import type { Event } from "../../prisma/generated/client";
-import { paypalLink } from "./helpers/constants";
 import { getButton } from "./helpers/getButton";
 import { getEventTemplate } from "./helpers/getEventTemplate";
 
@@ -42,10 +41,7 @@ Ein neues Event wurde erstellt.
     ${eventTemplate}
     </mj-section>
     <mj-section background-color="#1E293B" padding-bottom="20px" padding-top="20px">
-      <mj-column width="50%">
-      ${getButton(paypalLink, "Bei Paypal bezahlen")}
-      </mj-column>
-      <mj-column width="50%">
+      <mj-column width="100%">
       ${getButton(eventLink, "Zusagen / Absagen")}
       </mj-column>
     </mj-section>

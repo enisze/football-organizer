@@ -18,7 +18,7 @@ export const ParticipantsArea: FunctionComponent<{
     ids: map(participants, (user) => user.id),
   });
 
-  const amountOfParticipants = users?.length;
+  const amountOfParticipants = users?.length ?? 0;
 
   const participantsString =
     heading === "Teilnehmer"

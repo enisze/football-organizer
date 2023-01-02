@@ -149,6 +149,8 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
       {userStatus && !isMyTab && (
         <Typography
           className="cursor-pointer self-center"
+          variant="plain"
+          color="primary"
           onClick={() => setTab(1)}
         >
           Bereits zu-/abgesagt
