@@ -76,7 +76,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
         return apiInstance.sendTransacEmail(sendSmptMail);
       }
 
-      if (joinedParticipantIds.includes(user.id)) {
+      if (footballEvent.bookingDate && joinedParticipantIds.includes(user.id)) {
         const payment = find(
           footballEvent.payments,
           (payment) => payment.userId === user.id
