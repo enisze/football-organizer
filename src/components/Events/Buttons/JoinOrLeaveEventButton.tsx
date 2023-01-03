@@ -17,13 +17,13 @@ export const JoinOrLeaveEventButton: FunctionComponent<{
 
   const { mutate: sendEmail } = trpc.gmail.sendPaidButCancledMail.useMutation();
 
-  const { mutateAsync: joinEvent, isLoading: loadingJoin } =
+  const { mutate: joinEvent, isLoading: loadingJoin } =
     trpc.event.join.useMutation({
       onSuccess: () => {
         trpcContext.invalidate();
       },
     });
-  const { mutateAsync: leaveEvent, isLoading: loadingLeave } =
+  const { mutate: leaveEvent, isLoading: loadingLeave } =
     trpc.event.leave.useMutation({
       onSuccess: () => {
         trpcContext.invalidate();
@@ -32,16 +32,16 @@ export const JoinOrLeaveEventButton: FunctionComponent<{
 
   const { data: payment } = trpc.payment.getByEventId.useQuery({ eventId: id });
 
-  const joinOrLeave = async () => {
+  const joinOrLeave = () => {
     if (isUserParticipating) {
       if (!payment) {
-        await leaveEvent({ eventId: id });
+        leaveEvent({ eventId: id });
       } else {
         setShowLeaveModal(true);
       }
     } else {
       try {
-        await joinEvent({ eventId: id });
+        joinEvent({ eventId: id });
       } catch (error) {
         if (error instanceof TRPCError) {
           error.code === "PRECONDITION_FAILED";
@@ -89,8 +89,8 @@ export const JoinOrLeaveEventButton: FunctionComponent<{
             <Button
               variant="outlined"
               color="info"
-              onClick={async () => {
-                await leaveEvent({ eventId: id });
+              onClick={() => {
+                leaveEvent({ eventId: id });
 
                 sendEmail({ eventId: id });
 

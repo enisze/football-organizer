@@ -7,17 +7,12 @@ export const DeleteEventButton: FunctionComponent<{ id: string }> = ({
   id,
 }) => {
   const trpcContext = trpc.useContext();
-  const { mutateAsync: deleteEvent, isLoading } = trpc.event.delete.useMutation(
-    {
-      onSuccess: () => trpcContext.invalidate(),
-    }
-  );
+  const { mutate: deleteEvent, isLoading } = trpc.event.delete.useMutation({
+    onSuccess: () => trpcContext.invalidate(),
+  });
   return (
     <LoadingWrapper isLoading={isLoading}>
-      <Button
-        variant="outlined"
-        onClick={async () => await deleteEvent({ id })}
-      >
+      <Button variant="outlined" onClick={() => deleteEvent({ id })}>
         Delete
       </Button>
     </LoadingWrapper>

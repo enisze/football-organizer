@@ -13,7 +13,7 @@ import { trpc } from "../../../utils/trpc";
 
 export const BookEventButton: FunctionComponent<{ id: string }> = ({ id }) => {
   const trpcContext = trpc.useContext();
-  const { mutateAsync: bookEvent } = trpc.event.book.useMutation({
+  const { mutate: bookEvent } = trpc.event.book.useMutation({
     onSuccess: () => trpcContext.invalidate(),
   });
 
@@ -69,8 +69,8 @@ export const BookEventButton: FunctionComponent<{ id: string }> = ({ id }) => {
             <Button
               variant="outlined"
               color="info"
-              onClick={async () => {
-                await bookEvent({ id, date: new Date(bookingDate) });
+              onClick={() => {
+                bookEvent({ id, date: new Date(bookingDate) });
 
                 setShowBookModal(false);
               }}

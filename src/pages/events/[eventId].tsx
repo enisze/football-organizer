@@ -22,7 +22,7 @@ const EventPage: FunctionComponent = () => {
 
   const trpcContext = trpc.useContext();
 
-  const { mutateAsync: leaveEvent, isSuccess } = trpc.event.leave.useMutation({
+  const { mutate: leaveEvent, isSuccess } = trpc.event.leave.useMutation({
     onSuccess: () => {
       trpcContext.invalidate();
     },
@@ -54,7 +54,7 @@ const EventPage: FunctionComponent = () => {
           <div className="flex flex-col items-center">
             <Sheet className="my-5 flex flex-col items-center justify-center gap-y-2 rounded bg-[#1E293B] p-5">
               <Button
-                onClick={async () => await leaveEvent({ eventId: event.id })}
+                onClick={() => leaveEvent({ eventId: event.id })}
                 variant="outlined"
               >
                 Keine Emails mehr erhalten

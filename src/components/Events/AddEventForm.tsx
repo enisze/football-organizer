@@ -7,7 +7,7 @@ export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
   onSubmit,
 }) => {
   const trpcContext = trpc.useContext();
-  const { mutateAsync: createEvent } = trpc.event.create.useMutation({
+  const { mutate: createEvent } = trpc.event.create.useMutation({
     onSuccess: () => {
       trpcContext.invalidate();
     },
@@ -24,9 +24,9 @@ export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
           cost: 45,
           maxParticipants: 10,
         }}
-        onSubmit={async (values, { setSubmitting }) => {
+        onSubmit={(values, { setSubmitting }) => {
           const date = new Date(values.date);
-          await createEvent({
+          createEvent({
             ...values,
             date,
           });

@@ -17,11 +17,11 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
   const isAdmin = useIsAdmin();
   const trpcContext = trpc.useContext();
 
-  const { mutateAsync: remind, isLoading: loadingRemind } =
+  const { mutate: remind, isLoading: loadingRemind } =
     trpc.event.remind.useMutation({
       onSuccess: () => trpcContext.invalidate(),
     });
-  const { mutateAsync: cancel, isLoading: loadingCancel } =
+  const { mutate: cancel, isLoading: loadingCancel } =
     trpc.event.cancel.useMutation({
       onSuccess: () => trpcContext.invalidate(),
     });
@@ -64,19 +64,13 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
       <DeleteEventButton id={eventId} />
 
       <LoadingWrapper isLoading={loadingRemind}>
-        <Button
-          variant="outlined"
-          onClick={async () => await remind({ eventId })}
-        >
+        <Button variant="outlined" onClick={() => remind({ eventId })}>
           Remind
         </Button>
       </LoadingWrapper>
       <BookEventButton id={eventId} />
       <LoadingWrapper isLoading={loadingCancel}>
-        <Button
-          variant="outlined"
-          onClick={async () => await cancel({ id: eventId })}
-        >
+        <Button variant="outlined" onClick={() => cancel({ id: eventId })}>
           Cancel Event
         </Button>
       </LoadingWrapper>
