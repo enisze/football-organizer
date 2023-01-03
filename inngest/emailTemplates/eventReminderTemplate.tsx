@@ -13,7 +13,7 @@ export const generateEventReminderTemplate = ({
   userName: string;
   participantsAmount: number;
 }) => {
-  const { id } = event;
+  const { id, bookingDate } = event;
 
   const eventLink = process.env.NEXT_PUBLIC_BASE_URL + "/events/" + id;
 
@@ -52,9 +52,9 @@ Ein Event zu dem du weder zu- noch abgesagt hast steht noch an.
         Hier kannst du bezahlen und für das Event zusagen oder absagen
         </mj-text>
       <mj-column width="50%">
-      ${getButton(paypalLink, "Bei Paypal bezahlen")}
+      ${bookingDate && getButton(paypalLink, "Bei Paypal bezahlen")}
       </mj-column>
-      <mj-column width="50%">
+      <mj-column width="${bookingDate ? "50%" : "100%"}">
       ${getButton(eventLink, "Hier gehts zum Event")}
       </mj-column>
     </mj-section>
