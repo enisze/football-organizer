@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { subDays } from "date-fns";
+import { filter } from "lodash";
 import { z } from "zod";
 import { inngest } from "../../../../inngest/inngestClient";
 import { getAddressAndCoordinatesRedisKeys } from "../../../helpers/getAddressAndCoordinatesRedisKeys";
@@ -89,7 +90,12 @@ export const eventRouter = router({
         include: { participants: true },
       });
 
-      if (event?.participants.length === 10)
+      if (
+        filter(
+          event?.participants,
+          (participant) => participant.userEventStatus === "JOINED"
+        ).length === 10
+      )
         throw new TRPCError({ code: "PRECONDITION_FAILED" });
 
       return await prisma.participantsOnEvents.upsert({
