@@ -175,7 +175,7 @@ const getPaypalEmails = async () => {
       prompt: "consent",
       redirect_uri: process.env.NEXT_PUBLIC_BASE_URL + "/oauth2callback",
     });
-    sendNewRefreshTokenMail({ link: authorizeUrl });
+    await sendNewRefreshTokenMail({ link: authorizeUrl });
     console.log(error);
     return "Token has expired";
   }
