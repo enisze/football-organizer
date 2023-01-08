@@ -30,6 +30,12 @@ enum UserEventStatus {
   CANCELED
 }
 
+model Tokens {
+  access_token String @db.Text
+  refresh_token String @id 
+  expiry_date DateTime
+}
+
 model Event {
   id           String                 @id @default(cuid())
   createdAt    DateTime               @default(now())

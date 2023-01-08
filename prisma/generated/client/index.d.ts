@@ -13,6 +13,16 @@ type UnwrapTuple<Tuple extends readonly unknown[]> = {
 
 
 /**
+ * Model Tokens
+ * 
+ */
+export type Tokens = {
+  access_token: string
+  refresh_token: string
+  expiry_date: Date
+}
+
+/**
  * Model Event
  * 
  */
@@ -145,8 +155,8 @@ export type UserEventStatus = (typeof UserEventStatus)[keyof typeof UserEventSta
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Events
- * const events = await prisma.event.findMany()
+ * // Fetch zero or more Tokens
+ * const tokens = await prisma.tokens.findMany()
  * ```
  *
  * 
@@ -166,8 +176,8 @@ export class PrismaClient<
    * @example
    * ```
    * const prisma = new PrismaClient()
-   * // Fetch zero or more Events
-   * const events = await prisma.event.findMany()
+   * // Fetch zero or more Tokens
+   * const tokens = await prisma.tokens.findMany()
    * ```
    *
    * 
@@ -256,6 +266,16 @@ export class PrismaClient<
   $transaction<R>(fn: (prisma: Prisma.TransactionClient) => Promise<R>, options?: {maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel}): Promise<R>;
 
       /**
+   * `prisma.tokens`: Exposes CRUD operations for the **Tokens** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Tokens
+    * const tokens = await prisma.tokens.findMany()
+    * ```
+    */
+  get tokens(): Prisma.TokensDelegate<GlobalReject>;
+
+  /**
    * `prisma.event`: Exposes CRUD operations for the **Event** model.
     * Example usage:
     * ```ts
@@ -808,6 +828,7 @@ export namespace Prisma {
   }
 
   export const ModelName: {
+    Tokens: 'Tokens',
     Event: 'Event',
     ParticipantsOnEvents: 'ParticipantsOnEvents',
     Payment: 'Payment',
@@ -1078,6 +1099,919 @@ export namespace Prisma {
   /**
    * Models
    */
+
+  /**
+   * Model Tokens
+   */
+
+
+  export type AggregateTokens = {
+    _count: TokensCountAggregateOutputType | null
+    _min: TokensMinAggregateOutputType | null
+    _max: TokensMaxAggregateOutputType | null
+  }
+
+  export type TokensMinAggregateOutputType = {
+    access_token: string | null
+    refresh_token: string | null
+    expiry_date: Date | null
+  }
+
+  export type TokensMaxAggregateOutputType = {
+    access_token: string | null
+    refresh_token: string | null
+    expiry_date: Date | null
+  }
+
+  export type TokensCountAggregateOutputType = {
+    access_token: number
+    refresh_token: number
+    expiry_date: number
+    _all: number
+  }
+
+
+  export type TokensMinAggregateInputType = {
+    access_token?: true
+    refresh_token?: true
+    expiry_date?: true
+  }
+
+  export type TokensMaxAggregateInputType = {
+    access_token?: true
+    refresh_token?: true
+    expiry_date?: true
+  }
+
+  export type TokensCountAggregateInputType = {
+    access_token?: true
+    refresh_token?: true
+    expiry_date?: true
+    _all?: true
+  }
+
+  export type TokensAggregateArgs = {
+    /**
+     * Filter which Tokens to aggregate.
+     * 
+    **/
+    where?: TokensWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tokens to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<TokensOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     * 
+    **/
+    cursor?: TokensWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tokens from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tokens.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Tokens
+    **/
+    _count?: true | TokensCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TokensMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TokensMaxAggregateInputType
+  }
+
+  export type GetTokensAggregateType<T extends TokensAggregateArgs> = {
+        [P in keyof T & keyof AggregateTokens]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTokens[P]>
+      : GetScalarType<T[P], AggregateTokens[P]>
+  }
+
+
+
+
+  export type TokensGroupByArgs = {
+    where?: TokensWhereInput
+    orderBy?: Enumerable<TokensOrderByWithAggregationInput>
+    by: Array<TokensScalarFieldEnum>
+    having?: TokensScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TokensCountAggregateInputType | true
+    _min?: TokensMinAggregateInputType
+    _max?: TokensMaxAggregateInputType
+  }
+
+
+  export type TokensGroupByOutputType = {
+    access_token: string
+    refresh_token: string
+    expiry_date: Date
+    _count: TokensCountAggregateOutputType | null
+    _min: TokensMinAggregateOutputType | null
+    _max: TokensMaxAggregateOutputType | null
+  }
+
+  type GetTokensGroupByPayload<T extends TokensGroupByArgs> = PrismaPromise<
+    Array<
+      PickArray<TokensGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TokensGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TokensGroupByOutputType[P]>
+            : GetScalarType<T[P], TokensGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TokensSelect = {
+    access_token?: boolean
+    refresh_token?: boolean
+    expiry_date?: boolean
+  }
+
+
+  export type TokensGetPayload<S extends boolean | null | undefined | TokensArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? Tokens :
+    S extends undefined ? never :
+    S extends { include: any } & (TokensArgs | TokensFindManyArgs)
+    ? Tokens 
+    : S extends { select: any } & (TokensArgs | TokensFindManyArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+    P extends keyof Tokens ? Tokens[P] : never
+  } 
+      : Tokens
+
+
+  type TokensCountArgs = Merge<
+    Omit<TokensFindManyArgs, 'select' | 'include'> & {
+      select?: TokensCountAggregateInputType | true
+    }
+  >
+
+  export interface TokensDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+    /**
+     * Find zero or one Tokens that matches the filter.
+     * @param {TokensFindUniqueArgs} args - Arguments to find a Tokens
+     * @example
+     * // Get one Tokens
+     * const tokens = await prisma.tokens.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends TokensFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, TokensFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'Tokens'> extends True ? Prisma__TokensClient<TokensGetPayload<T>> : Prisma__TokensClient<TokensGetPayload<T> | null, null>
+
+    /**
+     * Find one Tokens that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {TokensFindUniqueOrThrowArgs} args - Arguments to find a Tokens
+     * @example
+     * // Get one Tokens
+     * const tokens = await prisma.tokens.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends TokensFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, TokensFindUniqueOrThrowArgs>
+    ): Prisma__TokensClient<TokensGetPayload<T>>
+
+    /**
+     * Find the first Tokens that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokensFindFirstArgs} args - Arguments to find a Tokens
+     * @example
+     * // Get one Tokens
+     * const tokens = await prisma.tokens.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends TokensFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, TokensFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'Tokens'> extends True ? Prisma__TokensClient<TokensGetPayload<T>> : Prisma__TokensClient<TokensGetPayload<T> | null, null>
+
+    /**
+     * Find the first Tokens that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokensFindFirstOrThrowArgs} args - Arguments to find a Tokens
+     * @example
+     * // Get one Tokens
+     * const tokens = await prisma.tokens.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends TokensFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, TokensFindFirstOrThrowArgs>
+    ): Prisma__TokensClient<TokensGetPayload<T>>
+
+    /**
+     * Find zero or more Tokens that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokensFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Tokens
+     * const tokens = await prisma.tokens.findMany()
+     * 
+     * // Get first 10 Tokens
+     * const tokens = await prisma.tokens.findMany({ take: 10 })
+     * 
+     * // Only select the `access_token`
+     * const tokensWithAccess_tokenOnly = await prisma.tokens.findMany({ select: { access_token: true } })
+     * 
+    **/
+    findMany<T extends TokensFindManyArgs>(
+      args?: SelectSubset<T, TokensFindManyArgs>
+    ): PrismaPromise<Array<TokensGetPayload<T>>>
+
+    /**
+     * Create a Tokens.
+     * @param {TokensCreateArgs} args - Arguments to create a Tokens.
+     * @example
+     * // Create one Tokens
+     * const Tokens = await prisma.tokens.create({
+     *   data: {
+     *     // ... data to create a Tokens
+     *   }
+     * })
+     * 
+    **/
+    create<T extends TokensCreateArgs>(
+      args: SelectSubset<T, TokensCreateArgs>
+    ): Prisma__TokensClient<TokensGetPayload<T>>
+
+    /**
+     * Create many Tokens.
+     *     @param {TokensCreateManyArgs} args - Arguments to create many Tokens.
+     *     @example
+     *     // Create many Tokens
+     *     const tokens = await prisma.tokens.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends TokensCreateManyArgs>(
+      args?: SelectSubset<T, TokensCreateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Tokens.
+     * @param {TokensDeleteArgs} args - Arguments to delete one Tokens.
+     * @example
+     * // Delete one Tokens
+     * const Tokens = await prisma.tokens.delete({
+     *   where: {
+     *     // ... filter to delete one Tokens
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends TokensDeleteArgs>(
+      args: SelectSubset<T, TokensDeleteArgs>
+    ): Prisma__TokensClient<TokensGetPayload<T>>
+
+    /**
+     * Update one Tokens.
+     * @param {TokensUpdateArgs} args - Arguments to update one Tokens.
+     * @example
+     * // Update one Tokens
+     * const tokens = await prisma.tokens.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends TokensUpdateArgs>(
+      args: SelectSubset<T, TokensUpdateArgs>
+    ): Prisma__TokensClient<TokensGetPayload<T>>
+
+    /**
+     * Delete zero or more Tokens.
+     * @param {TokensDeleteManyArgs} args - Arguments to filter Tokens to delete.
+     * @example
+     * // Delete a few Tokens
+     * const { count } = await prisma.tokens.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends TokensDeleteManyArgs>(
+      args?: SelectSubset<T, TokensDeleteManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Tokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokensUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Tokens
+     * const tokens = await prisma.tokens.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends TokensUpdateManyArgs>(
+      args: SelectSubset<T, TokensUpdateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Tokens.
+     * @param {TokensUpsertArgs} args - Arguments to update or create a Tokens.
+     * @example
+     * // Update or create a Tokens
+     * const tokens = await prisma.tokens.upsert({
+     *   create: {
+     *     // ... data to create a Tokens
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Tokens we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends TokensUpsertArgs>(
+      args: SelectSubset<T, TokensUpsertArgs>
+    ): Prisma__TokensClient<TokensGetPayload<T>>
+
+    /**
+     * Count the number of Tokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokensCountArgs} args - Arguments to filter Tokens to count.
+     * @example
+     * // Count the number of Tokens
+     * const count = await prisma.tokens.count({
+     *   where: {
+     *     // ... the filter for the Tokens we want to count
+     *   }
+     * })
+    **/
+    count<T extends TokensCountArgs>(
+      args?: Subset<T, TokensCountArgs>,
+    ): PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TokensCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Tokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokensAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TokensAggregateArgs>(args: Subset<T, TokensAggregateArgs>): PrismaPromise<GetTokensAggregateType<T>>
+
+    /**
+     * Group by Tokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokensGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TokensGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TokensGroupByArgs['orderBy'] }
+        : { orderBy?: TokensGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TokensGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTokensGroupByPayload<T> : PrismaPromise<InputErrors>
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Tokens.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__TokensClient<T, Null = never> implements PrismaPromise<T> {
+    [prisma]: true;
+    private readonly _dmmf;
+    private readonly _fetcher;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * Tokens base type for findUnique actions
+   */
+  export type TokensFindUniqueArgsBase = {
+    /**
+     * Select specific fields to fetch from the Tokens
+     * 
+    **/
+    select?: TokensSelect | null
+    /**
+     * Filter, which Tokens to fetch.
+     * 
+    **/
+    where: TokensWhereUniqueInput
+  }
+
+  /**
+   * Tokens findUnique
+   */
+  export interface TokensFindUniqueArgs extends TokensFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Tokens findUniqueOrThrow
+   */
+  export type TokensFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the Tokens
+     * 
+    **/
+    select?: TokensSelect | null
+    /**
+     * Filter, which Tokens to fetch.
+     * 
+    **/
+    where: TokensWhereUniqueInput
+  }
+
+
+  /**
+   * Tokens base type for findFirst actions
+   */
+  export type TokensFindFirstArgsBase = {
+    /**
+     * Select specific fields to fetch from the Tokens
+     * 
+    **/
+    select?: TokensSelect | null
+    /**
+     * Filter, which Tokens to fetch.
+     * 
+    **/
+    where?: TokensWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tokens to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<TokensOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Tokens.
+     * 
+    **/
+    cursor?: TokensWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tokens from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tokens.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Tokens.
+     * 
+    **/
+    distinct?: Enumerable<TokensScalarFieldEnum>
+  }
+
+  /**
+   * Tokens findFirst
+   */
+  export interface TokensFindFirstArgs extends TokensFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * Tokens findFirstOrThrow
+   */
+  export type TokensFindFirstOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the Tokens
+     * 
+    **/
+    select?: TokensSelect | null
+    /**
+     * Filter, which Tokens to fetch.
+     * 
+    **/
+    where?: TokensWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tokens to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<TokensOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Tokens.
+     * 
+    **/
+    cursor?: TokensWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tokens from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tokens.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Tokens.
+     * 
+    **/
+    distinct?: Enumerable<TokensScalarFieldEnum>
+  }
+
+
+  /**
+   * Tokens findMany
+   */
+  export type TokensFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the Tokens
+     * 
+    **/
+    select?: TokensSelect | null
+    /**
+     * Filter, which Tokens to fetch.
+     * 
+    **/
+    where?: TokensWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tokens to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<TokensOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Tokens.
+     * 
+    **/
+    cursor?: TokensWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tokens from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tokens.
+     * 
+    **/
+    skip?: number
+    distinct?: Enumerable<TokensScalarFieldEnum>
+  }
+
+
+  /**
+   * Tokens create
+   */
+  export type TokensCreateArgs = {
+    /**
+     * Select specific fields to fetch from the Tokens
+     * 
+    **/
+    select?: TokensSelect | null
+    /**
+     * The data needed to create a Tokens.
+     * 
+    **/
+    data: XOR<TokensCreateInput, TokensUncheckedCreateInput>
+  }
+
+
+  /**
+   * Tokens createMany
+   */
+  export type TokensCreateManyArgs = {
+    /**
+     * The data used to create many Tokens.
+     * 
+    **/
+    data: Enumerable<TokensCreateManyInput>
+    skipDuplicates?: boolean
+  }
+
+
+  /**
+   * Tokens update
+   */
+  export type TokensUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the Tokens
+     * 
+    **/
+    select?: TokensSelect | null
+    /**
+     * The data needed to update a Tokens.
+     * 
+    **/
+    data: XOR<TokensUpdateInput, TokensUncheckedUpdateInput>
+    /**
+     * Choose, which Tokens to update.
+     * 
+    **/
+    where: TokensWhereUniqueInput
+  }
+
+
+  /**
+   * Tokens updateMany
+   */
+  export type TokensUpdateManyArgs = {
+    /**
+     * The data used to update Tokens.
+     * 
+    **/
+    data: XOR<TokensUpdateManyMutationInput, TokensUncheckedUpdateManyInput>
+    /**
+     * Filter which Tokens to update
+     * 
+    **/
+    where?: TokensWhereInput
+  }
+
+
+  /**
+   * Tokens upsert
+   */
+  export type TokensUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the Tokens
+     * 
+    **/
+    select?: TokensSelect | null
+    /**
+     * The filter to search for the Tokens to update in case it exists.
+     * 
+    **/
+    where: TokensWhereUniqueInput
+    /**
+     * In case the Tokens found by the `where` argument doesn't exist, create a new Tokens with this data.
+     * 
+    **/
+    create: XOR<TokensCreateInput, TokensUncheckedCreateInput>
+    /**
+     * In case the Tokens was found with the provided `where` argument, update it with this data.
+     * 
+    **/
+    update: XOR<TokensUpdateInput, TokensUncheckedUpdateInput>
+  }
+
+
+  /**
+   * Tokens delete
+   */
+  export type TokensDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the Tokens
+     * 
+    **/
+    select?: TokensSelect | null
+    /**
+     * Filter which Tokens to delete.
+     * 
+    **/
+    where: TokensWhereUniqueInput
+  }
+
+
+  /**
+   * Tokens deleteMany
+   */
+  export type TokensDeleteManyArgs = {
+    /**
+     * Filter which Tokens to delete
+     * 
+    **/
+    where?: TokensWhereInput
+  }
+
+
+  /**
+   * Tokens without action
+   */
+  export type TokensArgs = {
+    /**
+     * Select specific fields to fetch from the Tokens
+     * 
+    **/
+    select?: TokensSelect | null
+  }
+
+
 
   /**
    * Model Event
@@ -8436,6 +9370,15 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const TokensScalarFieldEnum: {
+    access_token: 'access_token',
+    refresh_token: 'refresh_token',
+    expiry_date: 'expiry_date'
+  };
+
+  export type TokensScalarFieldEnum = (typeof TokensScalarFieldEnum)[keyof typeof TokensScalarFieldEnum]
+
+
   export const TransactionIsolationLevel: {
     ReadUncommitted: 'ReadUncommitted',
     ReadCommitted: 'ReadCommitted',
@@ -8474,6 +9417,43 @@ export namespace Prisma {
    * Deep Input Types
    */
 
+
+  export type TokensWhereInput = {
+    AND?: Enumerable<TokensWhereInput>
+    OR?: Enumerable<TokensWhereInput>
+    NOT?: Enumerable<TokensWhereInput>
+    access_token?: StringFilter | string
+    refresh_token?: StringFilter | string
+    expiry_date?: DateTimeFilter | Date | string
+  }
+
+  export type TokensOrderByWithRelationInput = {
+    access_token?: SortOrder
+    refresh_token?: SortOrder
+    expiry_date?: SortOrder
+  }
+
+  export type TokensWhereUniqueInput = {
+    refresh_token?: string
+  }
+
+  export type TokensOrderByWithAggregationInput = {
+    access_token?: SortOrder
+    refresh_token?: SortOrder
+    expiry_date?: SortOrder
+    _count?: TokensCountOrderByAggregateInput
+    _max?: TokensMaxOrderByAggregateInput
+    _min?: TokensMinOrderByAggregateInput
+  }
+
+  export type TokensScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<TokensScalarWhereWithAggregatesInput>
+    OR?: Enumerable<TokensScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<TokensScalarWhereWithAggregatesInput>
+    access_token?: StringWithAggregatesFilter | string
+    refresh_token?: StringWithAggregatesFilter | string
+    expiry_date?: DateTimeWithAggregatesFilter | Date | string
+  }
 
   export type EventWhereInput = {
     AND?: Enumerable<EventWhereInput>
@@ -8887,6 +9867,48 @@ export namespace Prisma {
     identifier?: StringWithAggregatesFilter | string
     token?: StringWithAggregatesFilter | string
     expires?: DateTimeWithAggregatesFilter | Date | string
+  }
+
+  export type TokensCreateInput = {
+    access_token: string
+    refresh_token: string
+    expiry_date: Date | string
+  }
+
+  export type TokensUncheckedCreateInput = {
+    access_token: string
+    refresh_token: string
+    expiry_date: Date | string
+  }
+
+  export type TokensUpdateInput = {
+    access_token?: StringFieldUpdateOperationsInput | string
+    refresh_token?: StringFieldUpdateOperationsInput | string
+    expiry_date?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TokensUncheckedUpdateInput = {
+    access_token?: StringFieldUpdateOperationsInput | string
+    refresh_token?: StringFieldUpdateOperationsInput | string
+    expiry_date?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TokensCreateManyInput = {
+    access_token: string
+    refresh_token: string
+    expiry_date: Date | string
+  }
+
+  export type TokensUpdateManyMutationInput = {
+    access_token?: StringFieldUpdateOperationsInput | string
+    refresh_token?: StringFieldUpdateOperationsInput | string
+    expiry_date?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TokensUncheckedUpdateManyInput = {
+    access_token?: StringFieldUpdateOperationsInput | string
+    refresh_token?: StringFieldUpdateOperationsInput | string
+    expiry_date?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type EventCreateInput = {
@@ -9436,6 +10458,55 @@ export namespace Prisma {
     not?: NestedDateTimeFilter | Date | string
   }
 
+  export type TokensCountOrderByAggregateInput = {
+    access_token?: SortOrder
+    refresh_token?: SortOrder
+    expiry_date?: SortOrder
+  }
+
+  export type TokensMaxOrderByAggregateInput = {
+    access_token?: SortOrder
+    refresh_token?: SortOrder
+    expiry_date?: SortOrder
+  }
+
+  export type TokensMinOrderByAggregateInput = {
+    access_token?: SortOrder
+    refresh_token?: SortOrder
+    expiry_date?: SortOrder
+  }
+
+  export type StringWithAggregatesFilter = {
+    equals?: string
+    in?: Enumerable<string>
+    notIn?: Enumerable<string>
+    lt?: string
+    lte?: string
+    gt?: string
+    gte?: string
+    contains?: string
+    startsWith?: string
+    endsWith?: string
+    not?: NestedStringWithAggregatesFilter | string
+    _count?: NestedIntFilter
+    _min?: NestedStringFilter
+    _max?: NestedStringFilter
+  }
+
+  export type DateTimeWithAggregatesFilter = {
+    equals?: Date | string
+    in?: Enumerable<Date> | Enumerable<string>
+    notIn?: Enumerable<Date> | Enumerable<string>
+    lt?: Date | string
+    lte?: Date | string
+    gt?: Date | string
+    gte?: Date | string
+    not?: NestedDateTimeWithAggregatesFilter | Date | string
+    _count?: NestedIntFilter
+    _min?: NestedDateTimeFilter
+    _max?: NestedDateTimeFilter
+  }
+
   export type FloatFilter = {
     equals?: number
     in?: Enumerable<number>
@@ -9546,37 +10617,6 @@ export namespace Prisma {
   export type EventSumOrderByAggregateInput = {
     cost?: SortOrder
     maxParticipants?: SortOrder
-  }
-
-  export type StringWithAggregatesFilter = {
-    equals?: string
-    in?: Enumerable<string>
-    notIn?: Enumerable<string>
-    lt?: string
-    lte?: string
-    gt?: string
-    gte?: string
-    contains?: string
-    startsWith?: string
-    endsWith?: string
-    not?: NestedStringWithAggregatesFilter | string
-    _count?: NestedIntFilter
-    _min?: NestedStringFilter
-    _max?: NestedStringFilter
-  }
-
-  export type DateTimeWithAggregatesFilter = {
-    equals?: Date | string
-    in?: Enumerable<Date> | Enumerable<string>
-    notIn?: Enumerable<Date> | Enumerable<string>
-    lt?: Date | string
-    lte?: Date | string
-    gt?: Date | string
-    gte?: Date | string
-    not?: NestedDateTimeWithAggregatesFilter | Date | string
-    _count?: NestedIntFilter
-    _min?: NestedDateTimeFilter
-    _max?: NestedDateTimeFilter
   }
 
   export type FloatWithAggregatesFilter = {
@@ -9958,6 +10998,14 @@ export namespace Prisma {
     expires?: SortOrder
   }
 
+  export type StringFieldUpdateOperationsInput = {
+    set?: string
+  }
+
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
+  }
+
   export type PaymentCreateNestedManyWithoutEventInput = {
     create?: XOR<Enumerable<PaymentCreateWithoutEventInput>, Enumerable<PaymentUncheckedCreateWithoutEventInput>>
     connectOrCreate?: Enumerable<PaymentCreateOrConnectWithoutEventInput>
@@ -9984,14 +11032,6 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<ParticipantsOnEventsCreateOrConnectWithoutEventInput>
     createMany?: ParticipantsOnEventsCreateManyEventInputEnvelope
     connect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
-  }
-
-  export type StringFieldUpdateOperationsInput = {
-    set?: string
-  }
-
-  export type DateTimeFieldUpdateOperationsInput = {
-    set?: Date | string
   }
 
   export type FloatFieldUpdateOperationsInput = {
@@ -10371,6 +11411,48 @@ export namespace Prisma {
     not?: NestedDateTimeFilter | Date | string
   }
 
+  export type NestedStringWithAggregatesFilter = {
+    equals?: string
+    in?: Enumerable<string>
+    notIn?: Enumerable<string>
+    lt?: string
+    lte?: string
+    gt?: string
+    gte?: string
+    contains?: string
+    startsWith?: string
+    endsWith?: string
+    not?: NestedStringWithAggregatesFilter | string
+    _count?: NestedIntFilter
+    _min?: NestedStringFilter
+    _max?: NestedStringFilter
+  }
+
+  export type NestedIntFilter = {
+    equals?: number
+    in?: Enumerable<number>
+    notIn?: Enumerable<number>
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntFilter | number
+  }
+
+  export type NestedDateTimeWithAggregatesFilter = {
+    equals?: Date | string
+    in?: Enumerable<Date> | Enumerable<string>
+    notIn?: Enumerable<Date> | Enumerable<string>
+    lt?: Date | string
+    lte?: Date | string
+    gt?: Date | string
+    gte?: Date | string
+    not?: NestedDateTimeWithAggregatesFilter | Date | string
+    _count?: NestedIntFilter
+    _min?: NestedDateTimeFilter
+    _max?: NestedDateTimeFilter
+  }
+
   export type NestedFloatFilter = {
     equals?: number
     in?: Enumerable<number>
@@ -10398,48 +11480,6 @@ export namespace Prisma {
     gt?: Date | string
     gte?: Date | string
     not?: NestedDateTimeNullableFilter | Date | string | null
-  }
-
-  export type NestedIntFilter = {
-    equals?: number
-    in?: Enumerable<number>
-    notIn?: Enumerable<number>
-    lt?: number
-    lte?: number
-    gt?: number
-    gte?: number
-    not?: NestedIntFilter | number
-  }
-
-  export type NestedStringWithAggregatesFilter = {
-    equals?: string
-    in?: Enumerable<string>
-    notIn?: Enumerable<string>
-    lt?: string
-    lte?: string
-    gt?: string
-    gte?: string
-    contains?: string
-    startsWith?: string
-    endsWith?: string
-    not?: NestedStringWithAggregatesFilter | string
-    _count?: NestedIntFilter
-    _min?: NestedStringFilter
-    _max?: NestedStringFilter
-  }
-
-  export type NestedDateTimeWithAggregatesFilter = {
-    equals?: Date | string
-    in?: Enumerable<Date> | Enumerable<string>
-    notIn?: Enumerable<Date> | Enumerable<string>
-    lt?: Date | string
-    lte?: Date | string
-    gt?: Date | string
-    gte?: Date | string
-    not?: NestedDateTimeWithAggregatesFilter | Date | string
-    _count?: NestedIntFilter
-    _min?: NestedDateTimeFilter
-    _max?: NestedDateTimeFilter
   }
 
   export type NestedFloatWithAggregatesFilter = {

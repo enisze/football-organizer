@@ -4,7 +4,7 @@ import type { OAuth2ClientOptions } from "google-auth-library";
 import { OAuth2Client } from "google-auth-library";
 import type { gmail_v1 } from "googleapis";
 import { google } from "googleapis";
-import { filter, map } from "lodash";
+import { filter, first, map } from "lodash";
 import { z } from "zod";
 import { sendPaidButCanceledMail } from "../../../../inngest/sendPaidButCanceledMail";
 import { sendWelcomeMail } from "../../../../inngest/sendWelcomeMail";
@@ -34,11 +34,28 @@ export const gmailRouter = router({
     return authorizeUrl;
   }),
 
-  getToken: protectedProcedure
+  setToken: protectedProcedure
     .input(z.object({ code: z.string() }))
-    .query(async ({ input: { code } }) => {
+    .query(async ({ input: { code }, ctx: { prisma } }) => {
       const { tokens } = await oAuth2Client.getToken(code);
-      return tokens;
+
+      const { expiry_date, access_token, refresh_token } = tokens;
+
+      if (!expiry_date || !refresh_token || !access_token)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Access revoked",
+        });
+
+      await prisma.tokens.deleteMany();
+
+      return await prisma.tokens.create({
+        data: {
+          expiry_date: new Date(expiry_date),
+          access_token,
+          refresh_token,
+        },
+      });
     }),
   paypalEmails: protectedProcedure.query(
     async ({
@@ -46,14 +63,29 @@ export const gmailRouter = router({
         session: {
           user: { name },
         },
+        prisma,
       },
     }) => {
+      const tokens = await prisma.tokens.findMany();
+
+      const token = first(tokens);
+
+      if (!token)
+        throw new TRPCError({ code: "NOT_FOUND", message: "No tokens found" });
+
+      const { access_token, expiry_date } = token;
+
       try {
         oAuth2Client.setCredentials({
-          refresh_token: process.env.GMAIL_REFRESH_TOKEN,
+          access_token,
+          expiry_date: expiry_date.getTime(),
+          token_type: "access_token",
         });
 
+        console.log("here");
+
         const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
+
         const { data } = await gmail.users.messages.list({
           userId: "me",
           labelIds: [PAYPAL_LABEL],

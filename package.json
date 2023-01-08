@@ -9,7 +9,7 @@
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start",
-    "test": "ts-node -r dotenv-flow/config ./src/server/gmail.sample.ts"
+    "cronjob": "ts-node -r dotenv-flow/config ./inngest/cronjobForPayments.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",

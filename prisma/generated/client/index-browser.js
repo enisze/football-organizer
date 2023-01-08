@@ -148,6 +148,12 @@ exports.Prisma.SortOrder = makeEnum({
   desc: 'desc'
 });
 
+exports.Prisma.TokensScalarFieldEnum = makeEnum({
+  access_token: 'access_token',
+  refresh_token: 'refresh_token',
+  expiry_date: 'expiry_date'
+});
+
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   ReadUncommitted: 'ReadUncommitted',
   ReadCommitted: 'ReadCommitted',
@@ -185,6 +191,7 @@ exports.UserEventStatus = makeEnum({
 });
 
 exports.Prisma.ModelName = makeEnum({
+  Tokens: 'Tokens',
   Event: 'Event',
   ParticipantsOnEvents: 'ParticipantsOnEvents',
   Payment: 'Payment',

@@ -1,10 +1,9 @@
-import {} from "@trpc/server";
 import type { OAuth2ClientOptions } from "google-auth-library";
 import { OAuth2Client } from "google-auth-library";
 import type { gmail_v1 } from "googleapis";
 import { google } from "googleapis";
 import { createScheduledFunction } from "inngest";
-import { filter, find, forEach, map, omit } from "lodash";
+import { filter, find, first, forEach, map, omit } from "lodash";
 import type { Event, Payment } from "../prisma/generated/client";
 import { PrismaClient } from "../prisma/generated/client";
 import { getEuroAmount } from "../src/helpers/getEuroAmount";
@@ -14,7 +13,10 @@ import { sendNewRefreshTokenMail } from "./sendNewRefreshTokenMail";
 const prisma = new PrismaClient();
 
 const job = async () => {
+  console.log("here1");
   const result = await getPaypalEmails();
+
+  console.log("here2");
 
   if (!result) return { message: "No paypal emails" };
 
@@ -140,9 +142,18 @@ const PAYPAL_LABEL = "Label_3926228921657449356";
 const oAuth2Client = new OAuth2Client(credentials);
 
 const getPaypalEmails = async () => {
+  const tokens = await prisma.tokens.findMany();
+
+  const token = first(tokens);
+
+  if (!token) throw new Error("No token found");
+
+  const { access_token, expiry_date, refresh_token } = token;
+
   try {
     oAuth2Client.setCredentials({
-      refresh_token: process.env.GMAIL_REFRESH_TOKEN,
+      access_token,
+      expiry_date: expiry_date.getTime(),
     });
 
     const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
