@@ -11,7 +11,7 @@ import {
   Tabs,
   Typography,
 } from "@mui/joy";
-import { isAfter } from "date-fns";
+import { addDays, isAfter } from "date-fns";
 import { find, forEach, map, orderBy } from "lodash";
 import { useSession } from "next-auth/react";
 import { useRecoilState } from "recoil";
@@ -150,7 +150,7 @@ const getPreviousAndUpcomingEvents = (events: EventsWithparticipants) => {
   const currentDate = new Date();
 
   forEach(events, (event) => {
-    if (isAfter(event.date, currentDate)) {
+    if (isAfter(event.date, addDays(currentDate, 1))) {
       upcomingEvents.push(event);
     } else {
       previousEvents.push(event);
