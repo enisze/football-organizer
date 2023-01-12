@@ -154,6 +154,7 @@ const getPaypalEmails = async () => {
     oAuth2Client.setCredentials({
       access_token,
       expiry_date: expiry_date.getTime(),
+      refresh_token,
     });
 
     const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
