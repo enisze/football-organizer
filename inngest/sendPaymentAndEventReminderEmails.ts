@@ -48,6 +48,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
   const promises = map(
     filter(allUsers, (user) => user.notificationsEnabled),
     async (user) => {
+      //Did not interact with the event at all
       if (
         !joinedParticipantIds.includes(user.id) &&
         !canceledParticipantIds.includes(user.id) &&
@@ -58,7 +59,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
         const html = generateEventReminderTemplate({
           event: footballEvent,
           userName: user.name,
-          participantsAmount: participants.length,
+          participantsAmount: joinedParticipantIds.length,
         }).html;
 
         const sendSmptMail = new SendSmtpEmail();
@@ -69,7 +70,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
           email: "eniszej@gmail.com",
           name: "Football Organizer",
         };
-        sendSmptMail.subject = `ERINNERUNG: FUSSBALL FINDET STATT ${participants.length}/${footballEvent.maxParticipants} TEILNEHMER!`;
+        sendSmptMail.subject = `ERINNERUNG: FUSSBALL FINDET STATT ${joinedParticipantIds.length}/${footballEvent.maxParticipants} TEILNEHMER!`;
 
         usersEventReminder.push(user.email);
 
