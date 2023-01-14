@@ -47,6 +47,13 @@ Hier kannst du den fehlenden Betrag von ${
       <mj-column width="50%">
       ${getButton(paypalLink, "Bei Paypal bezahlen")}
       </mj-column>
+
+        <mj-text align="center" color="#FFF" font-family="Helvetica" padding-left="25px" padding-right="25px" padding-bottom="28px" padding-top="28px"><span style="font-size:14px">
+        Es kann bis zu 24 Stunden dauern, bis die Zahlung registriert wird. 
+        <br/>
+        Falls du schon bezahlt hast, kannst du diese Mail ignorieren :)
+        </mj-text>
+        <mj-text align="center" color="#FFF" font-family="Helvetica" padding-left="25px" padding-right="25px" padding-bottom="28px" padding-top="28px"><span style="font-size:14px">
     </mj-section>
     <mj-section background-color="#1E293B" padding-bottom="5px" padding-top="0">
       <mj-column width="100%">
