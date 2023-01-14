@@ -40,8 +40,6 @@ export const Dashboard: FunctionComponent = () => {
   const [selectedValue, setSelectedValue] = useState<Filter>("all");
   const { data } = useSession();
 
-  // const a = trpc.event.deleteAll.useQuery();
-  // const b = trpc.user.deleteAll.useQuery();
   const isAdmin = useIsAdmin();
 
   const { previousEvents, upcomingEvents } = useMemo(

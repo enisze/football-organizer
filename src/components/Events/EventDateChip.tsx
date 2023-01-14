@@ -1,12 +1,12 @@
 import { Chip } from "@mui/joy";
-import { differenceInDays } from "date-fns";
+import { differenceInCalendarDays } from "date-fns";
 import type { FunctionComponent } from "react";
 
 export const EventDateChip: FunctionComponent<{
   eventDate: Date;
 }> = ({ eventDate }) => {
   const currentDate = new Date();
-  const days = differenceInDays(eventDate, currentDate);
+  const days = differenceInCalendarDays(eventDate, currentDate);
 
   const isPastEvent = days < 0;
 
