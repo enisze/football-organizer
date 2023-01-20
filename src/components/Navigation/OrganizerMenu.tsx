@@ -46,10 +46,10 @@ export const OrganizerMenu: FunctionComponent<{
   return (
     <>
       <Menu
-        className="m-2 mt-2 w-40 bg-slate-800 "
+        className="m-2 mt-2 w-44 bg-slate-800"
         open={showDropdown}
         anchorEl={anchorEl}
-        sx={{ marginTop: "8px", margin: "8px" }}
+        sx={{ margin: "8px" }}
         onClose={() => setShowDropdown(false)}
       >
         <MenuItem className="cursor-text text-white">
@@ -83,7 +83,6 @@ export const OrganizerMenu: FunctionComponent<{
                 checked={data?.notificationsEnabled}
                 color={data?.notificationsEnabled ? "success" : "primary"}
                 variant={data?.notificationsEnabled ? "outlined" : "solid"}
-                endDecorator={data?.notificationsEnabled ? "On" : "Off"}
               />
             </LoadingWrapper>
           </div>
