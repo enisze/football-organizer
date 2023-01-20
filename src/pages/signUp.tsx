@@ -49,10 +49,10 @@ const SignUp: FunctionComponent = () => {
     if (res?.error) {
       setError("authentication", {
         message:
-          "Registrierung hat nicht funktioniert, bitte überprüfe deine Eingaben.",
+          "Bitte überprüfe deine Eingaben, inklusive Schlüssel. Achte auf Gross- und Kleinschreibung.",
       });
     } else {
-      await sendWelcomeMail();
+      sendWelcomeMail();
       if (res?.url) router.push(res.url);
     }
   };
@@ -85,9 +85,9 @@ const SignUp: FunctionComponent = () => {
       />
       <Link
         onClick={() => setShowExample(!showExample)}
-        className="text-black decoration-black"
+        className="max-w-[300px] text-center text-black underline decoration-black"
       >
-        Beispiel
+        Klicke hier für ein Beispiel wie der Paypal Name aussehen sollte.
       </Link>
 
       {showExample && (
@@ -120,9 +120,11 @@ const SignUp: FunctionComponent = () => {
       />
 
       {errors.authentication?.message && (
-        <Typography color="danger">
-          {errors.authentication?.message as string}
-        </Typography>
+        <div className="max-w-[300px]">
+          <Typography color="danger">
+            {errors.authentication?.message as string}
+          </Typography>
+        </div>
       )}
 
       <Button type="submit" variant="outlined">
