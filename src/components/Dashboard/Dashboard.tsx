@@ -63,54 +63,57 @@ export const Dashboard: FunctionComponent = () => {
 
   return (
     <div className="m-8 flex flex-col items-center justify-center">
-      <Tabs
-        className="flex w-full items-center justify-center rounded bg-transparent"
-        size="lg"
-        value={tab}
-        onChange={(event, value) => setTab(value as number)}
-      >
-        {width && width < 768 && (
-          <TabList variant="plain">
-            <Tab
-              color="primary"
-              variant={tab === 0 ? "outlined" : "plain"}
-              className={tab === 0 ? "hover:text-black" : ""}
-            >
-              Kommende Events
-            </Tab>
-            <Tab
-              color="primary"
-              variant={tab === 1 ? "outlined" : "plain"}
-              className={tab === 1 ? "hover:text-black" : ""}
-            >
-              Deine Events
-            </Tab>
-            <Tab
-              color="primary"
-              hidden={!isAdmin}
-              variant={tab === 2 ? "outlined" : "plain"}
-              className="hover:text-black"
-            >
-              Vergangene Events
-            </Tab>
-          </TabList>
-        )}
-        <TabPanel value={0} className="flex justify-center">
-          <EventList events={upcomingEvents} isLoading={isLoading} />
-        </TabPanel>
-        <TabPanel value={1} className="flex justify-center">
-          <div className="flex flex-col">
-            <OGRadioGroup
-              selectedValue={selectedValue}
-              setSelectedValue={setSelectedValue}
-            />
-            <EventList events={filteredEvents} isLoading={isLoading} />
-          </div>
-        </TabPanel>
-        <TabPanel value={2} className="flex justify-center">
-          <EventList events={previousEvents} isLoading={isLoading} />
-        </TabPanel>
-      </Tabs>
+      {false && (
+        <Tabs
+          className="flex w-full items-center justify-center rounded bg-transparent"
+          size="lg"
+          value={tab}
+          onChange={(event, value) => setTab(value as number)}
+        >
+          {width && (
+            <TabList variant="plain">
+              <Tab
+                color="primary"
+                variant={tab === 0 ? "outlined" : "plain"}
+                className={tab === 0 ? "hover:text-black" : ""}
+              >
+                Kommende Events
+              </Tab>
+              <Tab
+                color="primary"
+                variant={tab === 1 ? "outlined" : "plain"}
+                className={tab === 1 ? "hover:text-black" : ""}
+              >
+                Deine Events
+              </Tab>
+              <Tab
+                color="primary"
+                hidden={!isAdmin}
+                variant={tab === 2 ? "outlined" : "plain"}
+                className="hover:text-black"
+              >
+                Vergangene Events
+              </Tab>
+            </TabList>
+          )}
+          <TabPanel value={0} className="flex justify-center">
+            <EventList events={upcomingEvents} isLoading={isLoading} />
+          </TabPanel>
+          <TabPanel value={1} className="flex justify-center">
+            <div className="flex flex-col">
+              <OGRadioGroup
+                selectedValue={selectedValue}
+                setSelectedValue={setSelectedValue}
+              />
+              <EventList events={filteredEvents} isLoading={isLoading} />
+            </div>
+          </TabPanel>
+          <TabPanel value={2} className="flex justify-center">
+            <EventList events={previousEvents} isLoading={isLoading} />
+          </TabPanel>
+        </Tabs>
+      )}
+      <EventList events={events} isLoading={isLoading} />
     </div>
   );
 };

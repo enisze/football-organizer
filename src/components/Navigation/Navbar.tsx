@@ -1,19 +1,13 @@
 import { Avatar, Link, Typography } from "@mui/joy";
 import { useSession } from "next-auth/react";
-import dynamic from "next/dynamic";
 import type { FunctionComponent, MouseEventHandler } from "react";
 import { useState } from "react";
-import type { SnowfallProps } from "react-snowfall";
 import { useRecoilState } from "recoil";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import { currentTabState } from "../Dashboard/tabState";
 import { Heading } from "../Heading";
 import { OrganizerMenu } from "./OrganizerMenu";
-
-const Snowfall = dynamic<SnowfallProps>(() => import("react-snowfall"), {
-  ssr: false,
-});
 
 export const Navbar: FunctionComponent = () => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -36,14 +30,9 @@ export const Navbar: FunctionComponent = () => {
   return (
     <nav className="from-dark-green to-dark-gray fixed z-10 flex w-full items-center justify-between bg-slate-800 bg-gradient-to-r px-4 py-3">
       <Heading size="sm" color="white" />
-      <Snowfall
-        snowflakeCount={80}
-        speed={[0.2, 0.5]}
-        rotationSpeed={[-0.5, 0.5]}
-      />
 
       <div className="flex gap-x-2 ">
-        {width && width > 768 && (
+        {false && width && (
           <>
             <Link
               component="button"

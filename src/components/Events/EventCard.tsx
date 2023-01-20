@@ -15,7 +15,8 @@ import { LoadingWrapper } from "../LoadingWrapper";
 import type { OrganizerMapProps } from "../Map/OrganizerMap";
 import { PaymentArea } from "../PaymentArea";
 import { AddToCalendarButton } from "./Buttons/AddToCalendarButton";
-import { JoinOrLeaveEventButton } from "./Buttons/JoinOrLeaveEventButton";
+import { JoinEventButton } from "./Buttons/JoinEventButton";
+import { LeaveEventButton } from "./Buttons/LeaveEventButton";
 import { EventCardAdminArea } from "./EventCardAdminArea";
 import { EventDateChip } from "./EventDateChip";
 import { ParticipantsArea } from "./ParticipantsArea";
@@ -128,7 +129,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         </Typography>
 
         <Typography className="text-gray-600 md:text-lg">
-          Preis pro Person:{" "}
+          Preis pro Person:
           <Typography className="font-bold">
             {`${event.cost / maxParticipants} €`}
           </Typography>
@@ -146,20 +147,15 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         heading="Absagen"
       />
 
-      {userStatus && !isMyTab && (
-        <Typography
-          className="cursor-pointer self-center"
-          variant="plain"
-          color="primary"
-          onClick={() => setTab(1)}
-        >
-          Bereits zu-/abgesagt
-        </Typography>
-      )}
       <EventCardAdminArea eventId={id} />
       <PaymentArea eventId={event.id} bookingDate={event.bookingDate} />
       {(!isMyTab && Boolean(userStatus)) ||
-        (showActions && <JoinOrLeaveEventButton id={id} />)}
+        (showActions && (
+          <>
+            <JoinEventButton id={id} />
+            <LeaveEventButton id={id} />
+          </>
+        ))}
 
       <AddToCalendarButton event={event} />
     </Card>
