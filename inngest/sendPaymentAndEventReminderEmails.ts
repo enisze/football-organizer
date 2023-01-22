@@ -11,6 +11,7 @@ import { generatePaymentReminderTemplate } from "./emailTemplates/paymentReminde
 import type { Event__Reminder } from "./__generated__/types";
 
 import { SendSmtpEmail } from "@sendinblue/client";
+import { differenceInDays } from "date-fns";
 
 const prisma = new PrismaClient();
 
@@ -64,13 +65,15 @@ const job = async ({ event }: { event: Event__Reminder }) => {
 
         const sendSmptMail = new SendSmtpEmail();
 
+        const days = differenceInDays(new Date(), footballEvent.date);
+
         sendSmptMail.to = [{ email: user.email }];
         sendSmptMail.htmlContent = html;
         sendSmptMail.sender = {
           email: "eniszej@gmail.com",
           name: "Football Organizer",
         };
-        sendSmptMail.subject = `ERINNERUNG: FUSSBALL FINDET STATT ${joinedParticipantIds.length}/${footballEvent.maxParticipants} TEILNEHMER!`;
+        sendSmptMail.subject = `Erinnerung: Fussball in ${days} Tagen, ${joinedParticipantIds.length}/${footballEvent.maxParticipants} Teilnehmer!`;
 
         usersEventReminder.push(user.email);
 
@@ -99,8 +102,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
             email: "eniszej@gmail.com",
             name: "Football Organizer",
           };
-          sendSmptMail.subject =
-            "ERINNERUNG: DU HAST FUSSBALL NOCH NICHT BEZAHLT!";
+          sendSmptMail.subject = "Erinnerung: Fussball bezahlen";
 
           usersPaymentReminder.push(user.email);
 
