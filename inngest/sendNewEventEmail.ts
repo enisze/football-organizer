@@ -1,5 +1,5 @@
 import { SendSmtpEmail } from "@sendinblue/client";
-import { differenceInDays } from "date-fns";
+import { differenceInCalendarDays } from "date-fns";
 import { createFunction } from "inngest";
 import { filter, map } from "lodash";
 import { PrismaClient } from "../prisma/generated/client";
@@ -20,7 +20,10 @@ const job = async ({ event }: { event: Event__New }) => {
 
     const usersWhoGotMails: string[] = [];
 
-    const days = differenceInDays(new Date(), new Date(event.data.date));
+    const days = differenceInCalendarDays(
+      new Date(),
+      new Date(event.data.date)
+    );
 
     const promises = map(
       filter(allUsers, (user) => user.notificationsEnabled),

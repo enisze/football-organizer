@@ -11,7 +11,7 @@ import { generatePaymentReminderTemplate } from "./emailTemplates/paymentReminde
 import type { Event__Reminder } from "./__generated__/types";
 
 import { SendSmtpEmail } from "@sendinblue/client";
-import { differenceInDays } from "date-fns";
+import { differenceInCalendarDays } from "date-fns";
 
 const prisma = new PrismaClient();
 
@@ -65,7 +65,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
 
         const sendSmptMail = new SendSmtpEmail();
 
-        const days = differenceInDays(new Date(), footballEvent.date);
+        const days = differenceInCalendarDays(new Date(), footballEvent.date);
 
         sendSmptMail.to = [{ email: user.email }];
         sendSmptMail.htmlContent = html;
