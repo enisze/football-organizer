@@ -41,19 +41,6 @@ export const eventRouter = router({
       include: { participants: true },
     });
   }),
-  isUserParticipating: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-      })
-    )
-    .query(async ({ ctx: { session, prisma }, input }) => {
-      const user = await prisma.participantsOnEvents.findUnique({
-        where: { id_eventId: { eventId: input.id, id: session.user.id } },
-      });
-
-      return user?.userEventStatus === "JOINED";
-    }),
   getById: protectedProcedure
     .input(
       z.object({

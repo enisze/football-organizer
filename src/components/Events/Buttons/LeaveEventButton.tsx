@@ -12,10 +12,6 @@ export const LeaveEventButton: FunctionComponent<{
 
   const { mutate: sendEmail } = trpc.gmail.sendPaidButCancledMail.useMutation();
 
-  const { data: isUserParticipating } = trpc.event.isUserParticipating.useQuery(
-    { id }
-  );
-
   const { mutate: leaveEvent, isLoading: loadingLeave } =
     trpc.event.leave.useMutation({
       onSuccess: () => {
@@ -26,12 +22,10 @@ export const LeaveEventButton: FunctionComponent<{
   const { data: payment } = trpc.payment.getByEventId.useQuery({ eventId: id });
 
   const leave = async () => {
-    if (isUserParticipating) {
-      if (!payment) {
-        leaveEvent({ eventId: id });
-      } else {
-        setShowLeaveModal(true);
-      }
+    if (!payment) {
+      leaveEvent({ eventId: id });
+    } else {
+      setShowLeaveModal(true);
     }
   };
 

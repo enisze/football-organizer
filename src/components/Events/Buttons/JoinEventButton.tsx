@@ -9,10 +9,6 @@ export const JoinEventButton: FunctionComponent<{
 }> = ({ id }) => {
   const trpcContext = trpc.useContext();
 
-  const { data: isUserParticipating } = trpc.event.isUserParticipating.useQuery(
-    { id }
-  );
-
   const { mutateAsync: joinEvent, isLoading: loadingJoin } =
     trpc.event.join.useMutation({
       onSuccess: () => {
@@ -21,15 +17,13 @@ export const JoinEventButton: FunctionComponent<{
     });
 
   const join = async () => {
-    if (!isUserParticipating) {
-      try {
-        await joinEvent({ eventId: id });
-      } catch (error) {
-        if (error instanceof TRPCError) {
-          error.code === "PRECONDITION_FAILED";
-        }
-        alert("Leider ist kein Platz mehr frei :( ");
+    try {
+      await joinEvent({ eventId: id });
+    } catch (error) {
+      if (error instanceof TRPCError) {
+        error.code === "PRECONDITION_FAILED";
       }
+      alert("Leider ist kein Platz mehr frei :( ");
     }
   };
 
