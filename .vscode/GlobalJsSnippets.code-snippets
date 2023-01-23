@@ -1,0 +1,43 @@
+{
+  "New Function": {
+    "scope": "typescript",
+    "prefix": "func",
+    "body": [
+      "export type ${TM_FILENAME_BASE/(.*)/${1:/capitalize}/g}Options = {",
+      "  $1",
+      "}",
+      "",
+      "export const $TM_FILENAME_BASE = ({$1}: ${TM_FILENAME_BASE/(.*)/${1:/capitalize}/g}Options) => {",
+      "  $2",
+      "}"
+    ]
+  },
+  "New React Component": {
+    "scope": "typescriptreact,typescript",
+    "prefix": "comp",
+    "body": [
+      "import { FunctionComponent } from 'react'",
+      "",
+      "export type ${TM_FILENAME_BASE/(.*)/${1:/capitalize}/g}Props = {",
+      "  $1",
+      "}",
+      "",
+      "export const $TM_FILENAME_BASE: FunctionComponent<${TM_FILENAME_BASE/(.*)/${1:/capitalize}/g}Props> = ({$2}) => {",
+      "  $3",
+      "  return <>$4</>",
+      "}"
+    ]
+  },
+  "New React Hook": {
+    "scope": "typescript,typescriptreact,javascriptreact",
+    "prefix": "hook",
+    "body": [
+      "import { useCallback } from 'react'",
+      "",
+      "export const $TM_FILENAME_BASE = () => {",
+      "$0",
+      "return useCallback(async () => {}, [])",
+      "}"
+    ]
+  }
+}
