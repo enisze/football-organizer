@@ -65,7 +65,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
 
         const sendSmptMail = new SendSmtpEmail();
 
-        const days = differenceInCalendarDays(new Date(), footballEvent.date);
+        const days = differenceInCalendarDays(footballEvent.date, new Date());
 
         sendSmptMail.to = [{ email: user.email }];
         sendSmptMail.htmlContent = html;

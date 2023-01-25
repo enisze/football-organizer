@@ -21,8 +21,8 @@ const job = async ({ event }: { event: Event__New }) => {
     const usersWhoGotMails: string[] = [];
 
     const days = differenceInCalendarDays(
-      new Date(),
-      new Date(event.data.date)
+      new Date(event.data.date),
+      new Date()
     );
 
     const promises = map(
