@@ -1,3 +1,4 @@
+import { ThemeToggle } from "@/ui/theme-toggle";
 import { Avatar, Link, Typography } from "@mui/joy";
 import { useSession } from "next-auth/react";
 import type { FunctionComponent, MouseEventHandler } from "react";
@@ -88,6 +89,9 @@ export const Navbar: FunctionComponent = () => {
             setShowDropdown={setShowDropdown}
             showDropdown={showDropdown}
           />
+          <div className="pl-2">
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </nav>

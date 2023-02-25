@@ -16,12 +16,6 @@ const Home: NextPage = () => {
 
   return (
     <div>
-      <div
-        style={{
-          background: "linear-gradient(to bottom, #373B44, #73C8A9)",
-        }}
-        className="fixed -z-10 flex h-full w-full"
-      />
       <Head>
         <title>Football Organizer</title>
         <link rel="icon" href="/favicon.ico?v=2" />
