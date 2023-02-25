@@ -1,8 +1,9 @@
-import { Button, Chip, Typography } from "@mui/joy";
+import { trpc } from "@/src/utils/trpc";
+import { Button } from "@/ui/base/Button";
+import { Chip, Typography } from "@mui/joy";
 import { map } from "lodash";
 import type { FunctionComponent } from "react";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
-import { trpc } from "../../utils/trpc";
 import { LoadingWrapper } from "../LoadingWrapper";
 import { BookEventButton } from "./Buttons/BookEventButton";
 import { DeleteEventButton } from "./Buttons/DeleteEventButton";
@@ -64,13 +65,13 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
       <DeleteEventButton id={eventId} />
 
       <LoadingWrapper isLoading={loadingRemind}>
-        <Button variant="outlined" onClick={() => remind({ eventId })}>
+        <Button variant="outline" onClick={() => remind({ eventId })}>
           Remind
         </Button>
       </LoadingWrapper>
       <BookEventButton id={eventId} />
       <LoadingWrapper isLoading={loadingCancel}>
-        <Button variant="outlined" onClick={() => cancel({ id: eventId })}>
+        <Button variant="outline" onClick={() => cancel({ id: eventId })}>
           Cancel Event
         </Button>
       </LoadingWrapper>

@@ -3148,6 +3148,11 @@ json5@^1.0.1:
   dependencies:
     minimist "^1.2.0"
 
+json5@^2.2.0:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/json5/-/json5-2.2.3.tgz#78cd6f1a19bdc12b73db5ad0c61efd66c1e29283"
+  integrity sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==
+
 jsprim@^1.2.2:
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/jsprim/-/jsprim-1.4.2.tgz#712c65533a15c878ba59e9ed5f0e26d5b77c5feb"
@@ -4828,6 +4833,11 @@ tailwind-merge@^1.10.0:
   resolved "https://registry.yarnpkg.com/tailwind-merge/-/tailwind-merge-1.10.0.tgz#535541c7373d8a31afa81a4267e2ab9b4afa9429"
   integrity sha512-WFnDXSS4kFTZwjKg5/oZSGzBRU/l+qcbv5NVTzLUQvJ9yovDAP05h0F2+ZFW0Lw9EcgRoc2AfURUdZvnEFrXKg==
 
+tailwindcss-animate@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/tailwindcss-animate/-/tailwindcss-animate-1.0.5.tgz#a6720e3b0616e1ff922b32846729881c626a069d"
+  integrity sha512-UU3qrOJ4lFQABY+MVADmBm+0KW3xZyhMdRvejwtXqYOL7YjHYxmuREFAZdmVG5LPe5E9CAst846SLC4j5I3dcw==
+
 tailwindcss@^3.2.7:
   version "3.2.7"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.2.7.tgz#5936dd08c250b05180f0944500c01dce19188c07"
@@ -4920,6 +4930,13 @@ trpc-panel@^1.2.3:
     path "^0.12.7"
     url "^0.11.0"
     zod-to-json-schema "^3.20.0"
+
+ts-alias@^0.0.7:
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/ts-alias/-/ts-alias-0.0.7.tgz#fd47d1ec8f7de6a6fd33a193788263823c53e8e6"
+  integrity sha512-N4lWQLgmb873yQWqWIdHM+CMRIq+bfqFyme+CZ324RSL7hKOfVrg7GtUgkBSJyIEw8w+byN+ZI0mkB7PRp6XwA==
+  dependencies:
+    json5 "^2.2.0"
 
 tsconfig-paths@^3.14.1:
   version "3.14.1"

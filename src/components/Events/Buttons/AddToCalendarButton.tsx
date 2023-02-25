@@ -1,16 +1,10 @@
-import {
-  Button,
-  Modal,
-  ModalClose,
-  ModalDialog,
-  Sheet,
-  Typography,
-} from "@mui/joy";
+import type { Event } from "@/prisma/generated/client";
+import { Button } from "@/ui/base/Button";
+import { Modal, ModalClose, ModalDialog, Sheet, Typography } from "@mui/joy";
 import type { CalendarOptions } from "datebook";
 import { GoogleCalendar, ICalendar, OutlookCalendar } from "datebook";
 import type { FunctionComponent } from "react";
 import { useState } from "react";
-import type { Event } from "../../../../prisma/generated/client";
 
 export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
   event,
@@ -43,7 +37,7 @@ export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
   return (
     <>
       <Button
-        variant="outlined"
+        variant="outline"
         onClick={() => {
           setOpen(true);
         }}
@@ -75,7 +69,7 @@ export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
 
           <Sheet className="flex flex-col gap-y-2">
             <Button
-              variant="soft"
+              variant="subtle"
               className="bg-[#73C8A9]"
               onClick={() => {
                 icalendar.download();
@@ -84,7 +78,7 @@ export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
               ICal Kalendar
             </Button>
             <Button
-              variant="soft"
+              variant="subtle"
               className="bg-[#73C8A9]"
               onClick={() => {
                 window.open(googleLink);
@@ -94,7 +88,7 @@ export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
             </Button>
 
             <Button
-              variant="soft"
+              variant="subtle"
               className="bg-[#73C8A9]"
               onClick={() => {
                 window.open(outlookLink);

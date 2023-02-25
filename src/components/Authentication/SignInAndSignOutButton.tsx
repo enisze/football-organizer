@@ -1,4 +1,4 @@
-import { Button } from "@mui/joy";
+import { Button } from "@/ui/base/Button";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import type { FunctionComponent } from "react";
@@ -19,7 +19,7 @@ export const SignInAndSignOutButton: FunctionComponent = () => {
 const SignInButton: FunctionComponent = () => {
   return (
     <Link href={`${process.env.NEXT_PUBLIC_BASE_URL}/signUp`}>
-      <Button className="px-4 py-2" variant="outlined">
+      <Button className="px-4 py-2" variant="outline">
         Registrieren
       </Button>
     </Link>

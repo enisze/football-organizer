@@ -3,8 +3,10 @@ import { useState } from "react";
 import type { FieldValues } from "react-hook-form";
 import { useForm } from "react-hook-form";
 
+import { Button } from "@/ui/base/Button";
+import { TextField } from "@/ui/base/TextField";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Link, TextField, Typography } from "@mui/joy";
+import { Link, Typography } from "@mui/joy";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -72,15 +74,13 @@ const SignUp: FunctionComponent = () => {
       <TextField
         label="Email"
         {...register("email")}
-        error={Boolean(errors.email)}
-        helperText={errors.email?.message as string}
+        text={errors.email?.message as string}
       />
 
       <TextField
         label="Username"
         placeholder="Dein Paypal Name"
-        error={Boolean(errors.username)}
-        helperText={errors.username?.message as string}
+        text={errors.username?.message as string}
         {...register("username")}
       />
       <Link
@@ -109,14 +109,12 @@ const SignUp: FunctionComponent = () => {
         label="Passwort"
         {...register("password")}
         type="password"
-        error={Boolean(errors.password)}
-        helperText={errors.password?.message as string}
+        text={errors.password?.message as string}
       />
       <TextField
         label="Schlüssel"
         {...register("key")}
-        error={Boolean(errors.key)}
-        helperText={errors.key?.message as string}
+        text={errors.key?.message as string}
       />
 
       {errors.authentication?.message && (
@@ -127,7 +125,7 @@ const SignUp: FunctionComponent = () => {
         </div>
       )}
 
-      <Button type="submit" variant="outlined">
+      <Button type="submit" variant="outline">
         Registrieren
       </Button>
     </form>

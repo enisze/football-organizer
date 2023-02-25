@@ -1,7 +1,9 @@
+import { Button } from "@/ui/base/Button";
+import { TextField } from "@/ui/base/TextField";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, TextField, Typography } from "@mui/joy";
+import { Typography } from "@mui/joy";
 import { signIn, useSession } from "next-auth/react";
-import { FunctionComponent } from "react";
+import type { FunctionComponent } from "react";
 import type { FieldValues } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -44,18 +46,19 @@ export const LoginForm: FunctionComponent = () => {
           className="flex flex-col justify-center gap-y-2"
         >
           <TextField
+            placeholder="Email"
             label="Email"
+            type="email"
             {...register("email")}
-            error={Boolean(errors.email)}
-            helperText={errors.email?.message as string}
+            text={errors.email?.message as string}
           />
 
           <TextField
             label="Passwort"
+            placeholder="Passwort"
             type="password"
             {...register("password")}
-            error={Boolean(errors.password)}
-            helperText={errors.password?.message as string}
+            text={errors.password?.message as string}
           />
 
           {errors.authentication?.message && (
@@ -65,7 +68,7 @@ export const LoginForm: FunctionComponent = () => {
           )}
 
           <LoadingWrapper isLoading={status === "loading"}>
-            <Button type="submit" color="primary" variant="outlined">
+            <Button type="submit" color="primary" variant="outline">
               Login
             </Button>
           </LoadingWrapper>

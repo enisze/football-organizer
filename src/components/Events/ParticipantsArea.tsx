@@ -1,9 +1,10 @@
-import { Avatar, Button } from "@mui/joy";
+import type { ParticipantsOnEvents } from "@/prisma/generated/client";
+import { trpc } from "@/src/utils/trpc";
+import { Button } from "@/ui/base/Button";
+import { Avatar } from "@mui/joy";
 import { map } from "lodash";
 import type { FunctionComponent } from "react";
 import { useState } from "react";
-import type { ParticipantsOnEvents } from "../../../prisma/generated/client";
-import { trpc } from "../../utils/trpc";
 import { EventCardAdminPaymentArea } from "./EventCardAdminPaymentArea";
 
 export const ParticipantsArea: FunctionComponent<{
@@ -27,7 +28,7 @@ export const ParticipantsArea: FunctionComponent<{
   return (
     <>
       <Button
-        variant="soft"
+        variant="ghost"
         color="info"
         onClick={() => setShowParticipants(!showParticipants)}
         className="bg-[#89A6FB]"

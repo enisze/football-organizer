@@ -1,7 +1,7 @@
-import { Button } from "@mui/joy";
+import { trpc } from "@/src/utils/trpc";
+import { Button } from "@/ui/base/Button";
 import { TRPCError } from "@trpc/server";
 import type { FunctionComponent } from "react";
-import { trpc } from "../../../utils/trpc";
 import { LoadingWrapper } from "../../LoadingWrapper";
 
 export const JoinEventButton: FunctionComponent<{
@@ -30,7 +30,7 @@ export const JoinEventButton: FunctionComponent<{
   return (
     <>
       <LoadingWrapper isLoading={loadingJoin} className="self-center">
-        <Button variant="outlined" onClick={join}>
+        <Button variant="outline" onClick={join}>
           Zusagen
         </Button>
       </LoadingWrapper>

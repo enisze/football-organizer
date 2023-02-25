@@ -1,6 +1,6 @@
-import { Button } from "@mui/joy";
+import { trpc } from "@/src/utils/trpc";
+import { Button } from "@/ui/base/Button";
 import type { FunctionComponent } from "react";
-import { trpc } from "../../../utils/trpc";
 import { LoadingWrapper } from "../../LoadingWrapper";
 
 export const DeleteEventButton: FunctionComponent<{ id: string }> = ({
@@ -12,7 +12,7 @@ export const DeleteEventButton: FunctionComponent<{ id: string }> = ({
   });
   return (
     <LoadingWrapper isLoading={isLoading}>
-      <Button variant="outlined" onClick={() => deleteEvent({ id })}>
+      <Button variant="outline" onClick={() => deleteEvent({ id })}>
         Delete
       </Button>
     </LoadingWrapper>
