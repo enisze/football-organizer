@@ -30,13 +30,13 @@ export type Event = {
   id: string
   createdAt: Date
   updatedAt: Date
+  address: string
   date: Date
-  startTime: string
   endTime: string
+  startTime: string
+  bookingDate: Date | null
   cost: number
   status: EventStatus
-  bookingDate: Date | null
-  address: string
   maxParticipants: number
 }
 
@@ -45,9 +45,9 @@ export type Event = {
  * 
  */
 export type ParticipantsOnEvents = {
-  id: string
   eventId: string
   date: Date
+  id: string
   userEventStatus: UserEventStatus
 }
 
@@ -59,11 +59,11 @@ export type Payment = {
   id: string
   createdAt: Date
   updatedAt: Date
+  eventId: string
+  userId: string
   amount: number
   paymentDate: Date
   gmailMailId: string
-  eventId: string
-  userId: string
 }
 
 /**
@@ -102,12 +102,12 @@ export type Session = {
  */
 export type User = {
   id: string
-  createdAt: Date
   name: string
   email: string
   emailVerified: Date | null
   image: string | null
   role: string
+  createdAt: Date
   password: string
   notificationsEnabled: boolean
 }
@@ -120,6 +120,34 @@ export type VerificationToken = {
   identifier: string
   token: string
   expires: Date
+}
+
+/**
+ * Model d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+ * 
+ */
+export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl = {
+  id: string
+  createdAt: Date
+  updatedAt: Date
+  eventId: string
+  userId: string
+  amount: number
+  paymentDate: Date
+}
+
+/**
+ * Model edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+ * 
+ */
+export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl = {
+  id: string
+  createdAt: Date
+  updatedAt: Date
+  eventId: string
+  userId: string
+  amount: number
+  paymentDate: Date
 }
 
 
@@ -344,6 +372,26 @@ export class PrismaClient<
     * ```
     */
   get verificationToken(): Prisma.VerificationTokenDelegate<GlobalReject>;
+
+  /**
+   * `prisma.d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl`: Exposes CRUD operations for the **d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls
+    * const d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls = await prisma.d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.findMany()
+    * ```
+    */
+  get d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl(): Prisma.d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplDelegate<GlobalReject>;
+
+  /**
+   * `prisma.edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl`: Exposes CRUD operations for the **edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls
+    * const edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls = await prisma.edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.findMany()
+    * ```
+    */
+  get edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl(): Prisma.edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplDelegate<GlobalReject>;
 }
 
 export namespace Prisma {
@@ -835,7 +883,9 @@ export namespace Prisma {
     Account: 'Account',
     Session: 'Session',
     User: 'User',
-    VerificationToken: 'VerificationToken'
+    VerificationToken: 'VerificationToken',
+    d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl: 'd6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl',
+    edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl: 'edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -2040,13 +2090,13 @@ export namespace Prisma {
     id: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    address: string | null
     date: Date | null
-    startTime: string | null
     endTime: string | null
+    startTime: string | null
+    bookingDate: Date | null
     cost: number | null
     status: EventStatus | null
-    bookingDate: Date | null
-    address: string | null
     maxParticipants: number | null
   }
 
@@ -2054,13 +2104,13 @@ export namespace Prisma {
     id: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    address: string | null
     date: Date | null
-    startTime: string | null
     endTime: string | null
+    startTime: string | null
+    bookingDate: Date | null
     cost: number | null
     status: EventStatus | null
-    bookingDate: Date | null
-    address: string | null
     maxParticipants: number | null
   }
 
@@ -2068,13 +2118,13 @@ export namespace Prisma {
     id: number
     createdAt: number
     updatedAt: number
+    address: number
     date: number
-    startTime: number
     endTime: number
+    startTime: number
+    bookingDate: number
     cost: number
     status: number
-    bookingDate: number
-    address: number
     maxParticipants: number
     _all: number
   }
@@ -2094,13 +2144,13 @@ export namespace Prisma {
     id?: true
     createdAt?: true
     updatedAt?: true
+    address?: true
     date?: true
-    startTime?: true
     endTime?: true
+    startTime?: true
+    bookingDate?: true
     cost?: true
     status?: true
-    bookingDate?: true
-    address?: true
     maxParticipants?: true
   }
 
@@ -2108,13 +2158,13 @@ export namespace Prisma {
     id?: true
     createdAt?: true
     updatedAt?: true
+    address?: true
     date?: true
-    startTime?: true
     endTime?: true
+    startTime?: true
+    bookingDate?: true
     cost?: true
     status?: true
-    bookingDate?: true
-    address?: true
     maxParticipants?: true
   }
 
@@ -2122,13 +2172,13 @@ export namespace Prisma {
     id?: true
     createdAt?: true
     updatedAt?: true
+    address?: true
     date?: true
-    startTime?: true
     endTime?: true
+    startTime?: true
+    bookingDate?: true
     cost?: true
     status?: true
-    bookingDate?: true
-    address?: true
     maxParticipants?: true
     _all?: true
   }
@@ -2229,13 +2279,13 @@ export namespace Prisma {
     id: string
     createdAt: Date
     updatedAt: Date
+    address: string
     date: Date
-    startTime: string
     endTime: string
+    startTime: string
+    bookingDate: Date | null
     cost: number
     status: EventStatus
-    bookingDate: Date | null
-    address: string
     maxParticipants: number
     _count: EventCountAggregateOutputType | null
     _avg: EventAvgAggregateOutputType | null
@@ -2262,13 +2312,13 @@ export namespace Prisma {
     id?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    address?: boolean
     date?: boolean
-    startTime?: boolean
     endTime?: boolean
+    startTime?: boolean
+    bookingDate?: boolean
     cost?: boolean
     status?: boolean
-    bookingDate?: boolean
-    address?: boolean
     maxParticipants?: boolean
     payments?: boolean | EventPaymentsArgs
     participants?: boolean | EventParticipantsArgs
@@ -3155,46 +3205,46 @@ export namespace Prisma {
   }
 
   export type ParticipantsOnEventsMinAggregateOutputType = {
-    id: string | null
     eventId: string | null
     date: Date | null
+    id: string | null
     userEventStatus: UserEventStatus | null
   }
 
   export type ParticipantsOnEventsMaxAggregateOutputType = {
-    id: string | null
     eventId: string | null
     date: Date | null
+    id: string | null
     userEventStatus: UserEventStatus | null
   }
 
   export type ParticipantsOnEventsCountAggregateOutputType = {
-    id: number
     eventId: number
     date: number
+    id: number
     userEventStatus: number
     _all: number
   }
 
 
   export type ParticipantsOnEventsMinAggregateInputType = {
-    id?: true
     eventId?: true
     date?: true
+    id?: true
     userEventStatus?: true
   }
 
   export type ParticipantsOnEventsMaxAggregateInputType = {
-    id?: true
     eventId?: true
     date?: true
+    id?: true
     userEventStatus?: true
   }
 
   export type ParticipantsOnEventsCountAggregateInputType = {
-    id?: true
     eventId?: true
     date?: true
+    id?: true
     userEventStatus?: true
     _all?: true
   }
@@ -3278,9 +3328,9 @@ export namespace Prisma {
 
 
   export type ParticipantsOnEventsGroupByOutputType = {
-    id: string
     eventId: string
     date: Date
+    id: string
     userEventStatus: UserEventStatus
     _count: ParticipantsOnEventsCountAggregateOutputType | null
     _min: ParticipantsOnEventsMinAggregateOutputType | null
@@ -3302,12 +3352,12 @@ export namespace Prisma {
 
 
   export type ParticipantsOnEventsSelect = {
-    user?: boolean | UserArgs
-    id?: boolean
-    event?: boolean | EventArgs
     eventId?: boolean
     date?: boolean
+    id?: boolean
     userEventStatus?: boolean
+    user?: boolean | UserArgs
+    event?: boolean | EventArgs
   }
 
 
@@ -3420,8 +3470,8 @@ export namespace Prisma {
      * // Get first 10 ParticipantsOnEvents
      * const participantsOnEvents = await prisma.participantsOnEvents.findMany({ take: 10 })
      * 
-     * // Only select the `id`
-     * const participantsOnEventsWithIdOnly = await prisma.participantsOnEvents.findMany({ select: { id: true } })
+     * // Only select the `eventId`
+     * const participantsOnEventsWithEventIdOnly = await prisma.participantsOnEvents.findMany({ select: { eventId: true } })
      * 
     **/
     findMany<T extends ParticipantsOnEventsFindManyArgs>(
@@ -4154,33 +4204,33 @@ export namespace Prisma {
     id: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    eventId: string | null
+    userId: string | null
     amount: number | null
     paymentDate: Date | null
     gmailMailId: string | null
-    eventId: string | null
-    userId: string | null
   }
 
   export type PaymentMaxAggregateOutputType = {
     id: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    eventId: string | null
+    userId: string | null
     amount: number | null
     paymentDate: Date | null
     gmailMailId: string | null
-    eventId: string | null
-    userId: string | null
   }
 
   export type PaymentCountAggregateOutputType = {
     id: number
     createdAt: number
     updatedAt: number
+    eventId: number
+    userId: number
     amount: number
     paymentDate: number
     gmailMailId: number
-    eventId: number
-    userId: number
     _all: number
   }
 
@@ -4197,33 +4247,33 @@ export namespace Prisma {
     id?: true
     createdAt?: true
     updatedAt?: true
+    eventId?: true
+    userId?: true
     amount?: true
     paymentDate?: true
     gmailMailId?: true
-    eventId?: true
-    userId?: true
   }
 
   export type PaymentMaxAggregateInputType = {
     id?: true
     createdAt?: true
     updatedAt?: true
+    eventId?: true
+    userId?: true
     amount?: true
     paymentDate?: true
     gmailMailId?: true
-    eventId?: true
-    userId?: true
   }
 
   export type PaymentCountAggregateInputType = {
     id?: true
     createdAt?: true
     updatedAt?: true
+    eventId?: true
+    userId?: true
     amount?: true
     paymentDate?: true
     gmailMailId?: true
-    eventId?: true
-    userId?: true
     _all?: true
   }
 
@@ -4323,11 +4373,11 @@ export namespace Prisma {
     id: string
     createdAt: Date
     updatedAt: Date
+    eventId: string
+    userId: string
     amount: number
     paymentDate: Date
     gmailMailId: string
-    eventId: string
-    userId: string
     _count: PaymentCountAggregateOutputType | null
     _avg: PaymentAvgAggregateOutputType | null
     _sum: PaymentSumAggregateOutputType | null
@@ -4353,13 +4403,13 @@ export namespace Prisma {
     id?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    eventId?: boolean
+    userId?: boolean
     amount?: boolean
     paymentDate?: boolean
     gmailMailId?: boolean
     event?: boolean | EventArgs
-    eventId?: boolean
     user?: boolean | UserArgs
-    userId?: boolean
   }
 
 
@@ -7252,36 +7302,36 @@ export namespace Prisma {
 
   export type UserMinAggregateOutputType = {
     id: string | null
-    createdAt: Date | null
     name: string | null
     email: string | null
     emailVerified: Date | null
     image: string | null
     role: string | null
+    createdAt: Date | null
     password: string | null
     notificationsEnabled: boolean | null
   }
 
   export type UserMaxAggregateOutputType = {
     id: string | null
-    createdAt: Date | null
     name: string | null
     email: string | null
     emailVerified: Date | null
     image: string | null
     role: string | null
+    createdAt: Date | null
     password: string | null
     notificationsEnabled: boolean | null
   }
 
   export type UserCountAggregateOutputType = {
     id: number
-    createdAt: number
     name: number
     email: number
     emailVerified: number
     image: number
     role: number
+    createdAt: number
     password: number
     notificationsEnabled: number
     _all: number
@@ -7290,36 +7340,36 @@ export namespace Prisma {
 
   export type UserMinAggregateInputType = {
     id?: true
-    createdAt?: true
     name?: true
     email?: true
     emailVerified?: true
     image?: true
     role?: true
+    createdAt?: true
     password?: true
     notificationsEnabled?: true
   }
 
   export type UserMaxAggregateInputType = {
     id?: true
-    createdAt?: true
     name?: true
     email?: true
     emailVerified?: true
     image?: true
     role?: true
+    createdAt?: true
     password?: true
     notificationsEnabled?: true
   }
 
   export type UserCountAggregateInputType = {
     id?: true
-    createdAt?: true
     name?: true
     email?: true
     emailVerified?: true
     image?: true
     role?: true
+    createdAt?: true
     password?: true
     notificationsEnabled?: true
     _all?: true
@@ -7405,12 +7455,12 @@ export namespace Prisma {
 
   export type UserGroupByOutputType = {
     id: string
-    createdAt: Date
     name: string
     email: string
     emailVerified: Date | null
     image: string | null
     role: string
+    createdAt: Date
     password: string
     notificationsEnabled: boolean
     _count: UserCountAggregateOutputType | null
@@ -7434,18 +7484,18 @@ export namespace Prisma {
 
   export type UserSelect = {
     id?: boolean
-    createdAt?: boolean
     name?: boolean
     email?: boolean
     emailVerified?: boolean
     image?: boolean
     role?: boolean
+    createdAt?: boolean
     password?: boolean
+    notificationsEnabled?: boolean
     accounts?: boolean | UserAccountsArgs
     sessions?: boolean | UserSessionsArgs
     payments?: boolean | UserPaymentsArgs
     events?: boolean | UserEventsArgs
-    notificationsEnabled?: boolean
     _count?: boolean | UserCountOutputTypeArgs
   }
 
@@ -9287,6 +9337,1964 @@ export namespace Prisma {
 
 
   /**
+   * Model d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+   */
+
+
+  export type AggregateD6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl = {
+    _count: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCountAggregateOutputType | null
+    _avg: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplAvgAggregateOutputType | null
+    _sum: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplSumAggregateOutputType | null
+    _min: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplMinAggregateOutputType | null
+    _max: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplMaxAggregateOutputType | null
+  }
+
+  export type D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplAvgAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplSumAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplMinAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    eventId: string | null
+    userId: string | null
+    amount: number | null
+    paymentDate: Date | null
+  }
+
+  export type D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplMaxAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    eventId: string | null
+    userId: string | null
+    amount: number | null
+    paymentDate: Date | null
+  }
+
+  export type D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCountAggregateOutputType = {
+    id: number
+    createdAt: number
+    updatedAt: number
+    eventId: number
+    userId: number
+    amount: number
+    paymentDate: number
+    _all: number
+  }
+
+
+  export type D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplAvgAggregateInputType = {
+    amount?: true
+  }
+
+  export type D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplSumAggregateInputType = {
+    amount?: true
+  }
+
+  export type D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplMinAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    eventId?: true
+    userId?: true
+    amount?: true
+    paymentDate?: true
+  }
+
+  export type D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplMaxAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    eventId?: true
+    userId?: true
+    amount?: true
+    paymentDate?: true
+  }
+
+  export type D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCountAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    eventId?: true
+    userId?: true
+    amount?: true
+    paymentDate?: true
+    _all?: true
+  }
+
+  export type D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplAggregateArgs = {
+    /**
+     * Filter which d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl to aggregate.
+     * 
+    **/
+    where?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     * 
+    **/
+    cursor?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls
+    **/
+    _count?: true | D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplMaxAggregateInputType
+  }
+
+  export type GetD6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplAggregateType<T extends D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplAggregateArgs> = {
+        [P in keyof T & keyof AggregateD6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateD6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl[P]>
+      : GetScalarType<T[P], AggregateD6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl[P]>
+  }
+
+
+
+
+  export type D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGroupByArgs = {
+    where?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereInput
+    orderBy?: Enumerable<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplOrderByWithAggregationInput>
+    by: Array<D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplScalarFieldEnum>
+    having?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCountAggregateInputType | true
+    _avg?: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplAvgAggregateInputType
+    _sum?: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplSumAggregateInputType
+    _min?: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplMinAggregateInputType
+    _max?: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplMaxAggregateInputType
+  }
+
+
+  export type D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGroupByOutputType = {
+    id: string
+    createdAt: Date
+    updatedAt: Date
+    eventId: string
+    userId: string
+    amount: number
+    paymentDate: Date
+    _count: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCountAggregateOutputType | null
+    _avg: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplAvgAggregateOutputType | null
+    _sum: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplSumAggregateOutputType | null
+    _min: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplMinAggregateOutputType | null
+    _max: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplMaxAggregateOutputType | null
+  }
+
+  type GetD6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGroupByPayload<T extends D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGroupByArgs> = PrismaPromise<
+    Array<
+      PickArray<D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGroupByOutputType[P]>
+            : GetScalarType<T[P], D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplSelect = {
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    eventId?: boolean
+    userId?: boolean
+    amount?: boolean
+    paymentDate?: boolean
+  }
+
+
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGetPayload<S extends boolean | null | undefined | d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl :
+    S extends undefined ? never :
+    S extends { include: any } & (d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplArgs | d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindManyArgs)
+    ? d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl 
+    : S extends { select: any } & (d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplArgs | d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindManyArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+    P extends keyof d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl ? d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl[P] : never
+  } 
+      : d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+
+
+  type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCountArgs = Merge<
+    Omit<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindManyArgs, 'select' | 'include'> & {
+      select?: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCountAggregateInputType | true
+    }
+  >
+
+  export interface d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+    /**
+     * Find zero or one D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl that matches the filter.
+     * @param {d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindUniqueArgs} args - Arguments to find a D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * @example
+     * // Get one D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * const d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl = await prisma.d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'd6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl'> extends True ? Prisma__d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplClient<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGetPayload<T>> : Prisma__d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplClient<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGetPayload<T> | null, null>
+
+    /**
+     * Find one D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindUniqueOrThrowArgs} args - Arguments to find a D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * @example
+     * // Get one D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * const d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl = await prisma.d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindUniqueOrThrowArgs>
+    ): Prisma__d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplClient<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGetPayload<T>>
+
+    /**
+     * Find the first D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindFirstArgs} args - Arguments to find a D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * @example
+     * // Get one D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * const d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl = await prisma.d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'd6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl'> extends True ? Prisma__d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplClient<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGetPayload<T>> : Prisma__d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplClient<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGetPayload<T> | null, null>
+
+    /**
+     * Find the first D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindFirstOrThrowArgs} args - Arguments to find a D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * @example
+     * // Get one D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * const d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl = await prisma.d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindFirstOrThrowArgs>
+    ): Prisma__d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplClient<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGetPayload<T>>
+
+    /**
+     * Find zero or more D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls
+     * const d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls = await prisma.d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.findMany()
+     * 
+     * // Get first 10 D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls
+     * const d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls = await prisma.d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWithIdOnly = await prisma.d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindManyArgs>(
+      args?: SelectSubset<T, d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindManyArgs>
+    ): PrismaPromise<Array<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGetPayload<T>>>
+
+    /**
+     * Create a D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.
+     * @param {d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCreateArgs} args - Arguments to create a D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.
+     * @example
+     * // Create one D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * const D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl = await prisma.d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.create({
+     *   data: {
+     *     // ... data to create a D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     *   }
+     * })
+     * 
+    **/
+    create<T extends d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCreateArgs>(
+      args: SelectSubset<T, d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCreateArgs>
+    ): Prisma__d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplClient<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGetPayload<T>>
+
+    /**
+     * Create many D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls.
+     *     @param {d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCreateManyArgs} args - Arguments to create many D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls.
+     *     @example
+     *     // Create many D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls
+     *     const d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl = await prisma.d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCreateManyArgs>(
+      args?: SelectSubset<T, d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCreateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.
+     * @param {d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplDeleteArgs} args - Arguments to delete one D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.
+     * @example
+     * // Delete one D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * const D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl = await prisma.d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.delete({
+     *   where: {
+     *     // ... filter to delete one D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplDeleteArgs>(
+      args: SelectSubset<T, d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplDeleteArgs>
+    ): Prisma__d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplClient<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGetPayload<T>>
+
+    /**
+     * Update one D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.
+     * @param {d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUpdateArgs} args - Arguments to update one D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.
+     * @example
+     * // Update one D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * const d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl = await prisma.d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUpdateArgs>(
+      args: SelectSubset<T, d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUpdateArgs>
+    ): Prisma__d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplClient<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGetPayload<T>>
+
+    /**
+     * Delete zero or more D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls.
+     * @param {d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplDeleteManyArgs} args - Arguments to filter D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls to delete.
+     * @example
+     * // Delete a few D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls
+     * const { count } = await prisma.d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplDeleteManyArgs>(
+      args?: SelectSubset<T, d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplDeleteManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls
+     * const d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl = await prisma.d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUpdateManyArgs>(
+      args: SelectSubset<T, d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUpdateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.
+     * @param {d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUpsertArgs} args - Arguments to update or create a D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.
+     * @example
+     * // Update or create a D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * const d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl = await prisma.d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.upsert({
+     *   create: {
+     *     // ... data to create a D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUpsertArgs>(
+      args: SelectSubset<T, d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUpsertArgs>
+    ): Prisma__d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplClient<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGetPayload<T>>
+
+    /**
+     * Count the number of D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCountArgs} args - Arguments to filter D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls to count.
+     * @example
+     * // Count the number of D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls
+     * const count = await prisma.d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.count({
+     *   where: {
+     *     // ... the filter for the D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls we want to count
+     *   }
+     * })
+    **/
+    count<T extends d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCountArgs>(
+      args?: Subset<T, d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCountArgs>,
+    ): PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplAggregateArgs>(args: Subset<T, D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplAggregateArgs>): PrismaPromise<GetD6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplAggregateType<T>>
+
+    /**
+     * Group by D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGroupByArgs['orderBy'] }
+        : { orderBy?: D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetD6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplGroupByPayload<T> : PrismaPromise<InputErrors>
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplClient<T, Null = never> implements PrismaPromise<T> {
+    [prisma]: true;
+    private readonly _dmmf;
+    private readonly _fetcher;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl base type for findUnique actions
+   */
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindUniqueArgsBase = {
+    /**
+     * Select specific fields to fetch from the d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * 
+    **/
+    select?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplSelect | null
+    /**
+     * Filter, which d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl to fetch.
+     * 
+    **/
+    where: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereUniqueInput
+  }
+
+  /**
+   * d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl findUnique
+   */
+  export interface d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindUniqueArgs extends d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl findUniqueOrThrow
+   */
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * 
+    **/
+    select?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplSelect | null
+    /**
+     * Filter, which d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl to fetch.
+     * 
+    **/
+    where: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereUniqueInput
+  }
+
+
+  /**
+   * d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl base type for findFirst actions
+   */
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindFirstArgsBase = {
+    /**
+     * Select specific fields to fetch from the d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * 
+    **/
+    select?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplSelect | null
+    /**
+     * Filter, which d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl to fetch.
+     * 
+    **/
+    where?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls.
+     * 
+    **/
+    cursor?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls.
+     * 
+    **/
+    distinct?: Enumerable<D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplScalarFieldEnum>
+  }
+
+  /**
+   * d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl findFirst
+   */
+  export interface d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindFirstArgs extends d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl findFirstOrThrow
+   */
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindFirstOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * 
+    **/
+    select?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplSelect | null
+    /**
+     * Filter, which d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl to fetch.
+     * 
+    **/
+    where?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls.
+     * 
+    **/
+    cursor?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls.
+     * 
+    **/
+    distinct?: Enumerable<D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplScalarFieldEnum>
+  }
+
+
+  /**
+   * d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl findMany
+   */
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * 
+    **/
+    select?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplSelect | null
+    /**
+     * Filter, which d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls to fetch.
+     * 
+    **/
+    where?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls.
+     * 
+    **/
+    cursor?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls.
+     * 
+    **/
+    skip?: number
+    distinct?: Enumerable<D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplScalarFieldEnum>
+  }
+
+
+  /**
+   * d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl create
+   */
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCreateArgs = {
+    /**
+     * Select specific fields to fetch from the d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * 
+    **/
+    select?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplSelect | null
+    /**
+     * The data needed to create a d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.
+     * 
+    **/
+    data: XOR<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCreateInput, d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUncheckedCreateInput>
+  }
+
+
+  /**
+   * d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl createMany
+   */
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCreateManyArgs = {
+    /**
+     * The data used to create many d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls.
+     * 
+    **/
+    data: Enumerable<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCreateManyInput>
+    skipDuplicates?: boolean
+  }
+
+
+  /**
+   * d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl update
+   */
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * 
+    **/
+    select?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplSelect | null
+    /**
+     * The data needed to update a d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl.
+     * 
+    **/
+    data: XOR<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUpdateInput, d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUncheckedUpdateInput>
+    /**
+     * Choose, which d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl to update.
+     * 
+    **/
+    where: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereUniqueInput
+  }
+
+
+  /**
+   * d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl updateMany
+   */
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUpdateManyArgs = {
+    /**
+     * The data used to update d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls.
+     * 
+    **/
+    data: XOR<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUpdateManyMutationInput, d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUncheckedUpdateManyInput>
+    /**
+     * Filter which d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls to update
+     * 
+    **/
+    where?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereInput
+  }
+
+
+  /**
+   * d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl upsert
+   */
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * 
+    **/
+    select?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplSelect | null
+    /**
+     * The filter to search for the d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl to update in case it exists.
+     * 
+    **/
+    where: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereUniqueInput
+    /**
+     * In case the d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl found by the `where` argument doesn't exist, create a new d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl with this data.
+     * 
+    **/
+    create: XOR<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCreateInput, d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUncheckedCreateInput>
+    /**
+     * In case the d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl was found with the provided `where` argument, update it with this data.
+     * 
+    **/
+    update: XOR<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUpdateInput, d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUncheckedUpdateInput>
+  }
+
+
+  /**
+   * d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl delete
+   */
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * 
+    **/
+    select?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplSelect | null
+    /**
+     * Filter which d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl to delete.
+     * 
+    **/
+    where: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereUniqueInput
+  }
+
+
+  /**
+   * d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl deleteMany
+   */
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplDeleteManyArgs = {
+    /**
+     * Filter which d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepls to delete
+     * 
+    **/
+    where?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereInput
+  }
+
+
+  /**
+   * d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl without action
+   */
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplArgs = {
+    /**
+     * Select specific fields to fetch from the d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl
+     * 
+    **/
+    select?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplSelect | null
+  }
+
+
+
+  /**
+   * Model edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+   */
+
+
+  export type AggregateEdd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl = {
+    _count: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCountAggregateOutputType | null
+    _avg: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplAvgAggregateOutputType | null
+    _sum: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplSumAggregateOutputType | null
+    _min: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplMinAggregateOutputType | null
+    _max: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplMaxAggregateOutputType | null
+  }
+
+  export type Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplAvgAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplSumAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplMinAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    eventId: string | null
+    userId: string | null
+    amount: number | null
+    paymentDate: Date | null
+  }
+
+  export type Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplMaxAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    eventId: string | null
+    userId: string | null
+    amount: number | null
+    paymentDate: Date | null
+  }
+
+  export type Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCountAggregateOutputType = {
+    id: number
+    createdAt: number
+    updatedAt: number
+    eventId: number
+    userId: number
+    amount: number
+    paymentDate: number
+    _all: number
+  }
+
+
+  export type Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplAvgAggregateInputType = {
+    amount?: true
+  }
+
+  export type Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplSumAggregateInputType = {
+    amount?: true
+  }
+
+  export type Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplMinAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    eventId?: true
+    userId?: true
+    amount?: true
+    paymentDate?: true
+  }
+
+  export type Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplMaxAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    eventId?: true
+    userId?: true
+    amount?: true
+    paymentDate?: true
+  }
+
+  export type Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCountAggregateInputType = {
+    id?: true
+    createdAt?: true
+    updatedAt?: true
+    eventId?: true
+    userId?: true
+    amount?: true
+    paymentDate?: true
+    _all?: true
+  }
+
+  export type Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplAggregateArgs = {
+    /**
+     * Filter which edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl to aggregate.
+     * 
+    **/
+    where?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     * 
+    **/
+    cursor?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls
+    **/
+    _count?: true | Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplMaxAggregateInputType
+  }
+
+  export type GetEdd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplAggregateType<T extends Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplAggregateArgs> = {
+        [P in keyof T & keyof AggregateEdd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEdd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl[P]>
+      : GetScalarType<T[P], AggregateEdd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl[P]>
+  }
+
+
+
+
+  export type Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGroupByArgs = {
+    where?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereInput
+    orderBy?: Enumerable<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplOrderByWithAggregationInput>
+    by: Array<Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplScalarFieldEnum>
+    having?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCountAggregateInputType | true
+    _avg?: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplAvgAggregateInputType
+    _sum?: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplSumAggregateInputType
+    _min?: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplMinAggregateInputType
+    _max?: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplMaxAggregateInputType
+  }
+
+
+  export type Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGroupByOutputType = {
+    id: string
+    createdAt: Date
+    updatedAt: Date
+    eventId: string
+    userId: string
+    amount: number
+    paymentDate: Date
+    _count: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCountAggregateOutputType | null
+    _avg: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplAvgAggregateOutputType | null
+    _sum: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplSumAggregateOutputType | null
+    _min: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplMinAggregateOutputType | null
+    _max: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplMaxAggregateOutputType | null
+  }
+
+  type GetEdd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGroupByPayload<T extends Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGroupByArgs> = PrismaPromise<
+    Array<
+      PickArray<Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGroupByOutputType[P]>
+            : GetScalarType<T[P], Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplSelect = {
+    id?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    eventId?: boolean
+    userId?: boolean
+    amount?: boolean
+    paymentDate?: boolean
+  }
+
+
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGetPayload<S extends boolean | null | undefined | edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl :
+    S extends undefined ? never :
+    S extends { include: any } & (edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplArgs | edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindManyArgs)
+    ? edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl 
+    : S extends { select: any } & (edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplArgs | edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindManyArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+    P extends keyof edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl ? edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl[P] : never
+  } 
+      : edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+
+
+  type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCountArgs = Merge<
+    Omit<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindManyArgs, 'select' | 'include'> & {
+      select?: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCountAggregateInputType | true
+    }
+  >
+
+  export interface edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplDelegate<GlobalRejectSettings extends Prisma.RejectOnNotFound | Prisma.RejectPerOperation | false | undefined> {
+    /**
+     * Find zero or one Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl that matches the filter.
+     * @param {edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindUniqueArgs} args - Arguments to find a Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * @example
+     * // Get one Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * const edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl = await prisma.edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUnique<T extends edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args: SelectSubset<T, edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindUniqueArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl'> extends True ? Prisma__edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplClient<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGetPayload<T>> : Prisma__edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplClient<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGetPayload<T> | null, null>
+
+    /**
+     * Find one Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl that matches the filter or throw an error  with `error.code='P2025'` 
+     *     if no matches were found.
+     * @param {edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindUniqueOrThrowArgs} args - Arguments to find a Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * @example
+     * // Get one Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * const edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl = await prisma.edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findUniqueOrThrow<T extends edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindUniqueOrThrowArgs>(
+      args?: SelectSubset<T, edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindUniqueOrThrowArgs>
+    ): Prisma__edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplClient<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGetPayload<T>>
+
+    /**
+     * Find the first Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindFirstArgs} args - Arguments to find a Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * @example
+     * // Get one Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * const edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl = await prisma.edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirst<T extends edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
+      args?: SelectSubset<T, edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindFirstArgs>
+    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl'> extends True ? Prisma__edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplClient<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGetPayload<T>> : Prisma__edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplClient<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGetPayload<T> | null, null>
+
+    /**
+     * Find the first Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl that matches the filter or
+     * throw `NotFoundError` if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindFirstOrThrowArgs} args - Arguments to find a Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * @example
+     * // Get one Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * const edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl = await prisma.edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+    **/
+    findFirstOrThrow<T extends edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindFirstOrThrowArgs>
+    ): Prisma__edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplClient<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGetPayload<T>>
+
+    /**
+     * Find zero or more Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindManyArgs=} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls
+     * const edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls = await prisma.edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.findMany()
+     * 
+     * // Get first 10 Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls
+     * const edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls = await prisma.edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWithIdOnly = await prisma.edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.findMany({ select: { id: true } })
+     * 
+    **/
+    findMany<T extends edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindManyArgs>(
+      args?: SelectSubset<T, edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindManyArgs>
+    ): PrismaPromise<Array<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGetPayload<T>>>
+
+    /**
+     * Create a Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.
+     * @param {edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCreateArgs} args - Arguments to create a Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.
+     * @example
+     * // Create one Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * const Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl = await prisma.edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.create({
+     *   data: {
+     *     // ... data to create a Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     *   }
+     * })
+     * 
+    **/
+    create<T extends edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCreateArgs>(
+      args: SelectSubset<T, edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCreateArgs>
+    ): Prisma__edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplClient<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGetPayload<T>>
+
+    /**
+     * Create many Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls.
+     *     @param {edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCreateManyArgs} args - Arguments to create many Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls.
+     *     @example
+     *     // Create many Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls
+     *     const edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl = await prisma.edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.createMany({
+     *       data: {
+     *         // ... provide data here
+     *       }
+     *     })
+     *     
+    **/
+    createMany<T extends edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCreateManyArgs>(
+      args?: SelectSubset<T, edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCreateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.
+     * @param {edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplDeleteArgs} args - Arguments to delete one Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.
+     * @example
+     * // Delete one Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * const Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl = await prisma.edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.delete({
+     *   where: {
+     *     // ... filter to delete one Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     *   }
+     * })
+     * 
+    **/
+    delete<T extends edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplDeleteArgs>(
+      args: SelectSubset<T, edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplDeleteArgs>
+    ): Prisma__edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplClient<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGetPayload<T>>
+
+    /**
+     * Update one Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.
+     * @param {edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUpdateArgs} args - Arguments to update one Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.
+     * @example
+     * // Update one Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * const edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl = await prisma.edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    update<T extends edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUpdateArgs>(
+      args: SelectSubset<T, edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUpdateArgs>
+    ): Prisma__edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplClient<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGetPayload<T>>
+
+    /**
+     * Delete zero or more Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls.
+     * @param {edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplDeleteManyArgs} args - Arguments to filter Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls to delete.
+     * @example
+     * // Delete a few Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls
+     * const { count } = await prisma.edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+    **/
+    deleteMany<T extends edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplDeleteManyArgs>(
+      args?: SelectSubset<T, edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplDeleteManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls
+     * const edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl = await prisma.edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+    **/
+    updateMany<T extends edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUpdateManyArgs>(
+      args: SelectSubset<T, edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUpdateManyArgs>
+    ): PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.
+     * @param {edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUpsertArgs} args - Arguments to update or create a Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.
+     * @example
+     * // Update or create a Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * const edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl = await prisma.edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.upsert({
+     *   create: {
+     *     // ... data to create a Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl we want to update
+     *   }
+     * })
+    **/
+    upsert<T extends edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUpsertArgs>(
+      args: SelectSubset<T, edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUpsertArgs>
+    ): Prisma__edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplClient<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGetPayload<T>>
+
+    /**
+     * Count the number of Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCountArgs} args - Arguments to filter Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls to count.
+     * @example
+     * // Count the number of Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls
+     * const count = await prisma.edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.count({
+     *   where: {
+     *     // ... the filter for the Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls we want to count
+     *   }
+     * })
+    **/
+    count<T extends edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCountArgs>(
+      args?: Subset<T, edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCountArgs>,
+    ): PrismaPromise<
+      T extends _Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplAggregateArgs>(args: Subset<T, Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplAggregateArgs>): PrismaPromise<GetEdd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplAggregateType<T>>
+
+    /**
+     * Group by Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGroupByArgs['orderBy'] }
+        : { orderBy?: Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends TupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEdd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplGroupByPayload<T> : PrismaPromise<InputErrors>
+
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export class Prisma__edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplClient<T, Null = never> implements PrismaPromise<T> {
+    [prisma]: true;
+    private readonly _dmmf;
+    private readonly _fetcher;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
+    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
+
+
+    private get _document();
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+  }
+
+
+
+  // Custom InputTypes
+
+  /**
+   * edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl base type for findUnique actions
+   */
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindUniqueArgsBase = {
+    /**
+     * Select specific fields to fetch from the edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * 
+    **/
+    select?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplSelect | null
+    /**
+     * Filter, which edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl to fetch.
+     * 
+    **/
+    where: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereUniqueInput
+  }
+
+  /**
+   * edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl findUnique
+   */
+  export interface edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindUniqueArgs extends edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindUniqueArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findUniqueOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl findUniqueOrThrow
+   */
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindUniqueOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * 
+    **/
+    select?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplSelect | null
+    /**
+     * Filter, which edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl to fetch.
+     * 
+    **/
+    where: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereUniqueInput
+  }
+
+
+  /**
+   * edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl base type for findFirst actions
+   */
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindFirstArgsBase = {
+    /**
+     * Select specific fields to fetch from the edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * 
+    **/
+    select?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplSelect | null
+    /**
+     * Filter, which edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl to fetch.
+     * 
+    **/
+    where?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls.
+     * 
+    **/
+    cursor?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls.
+     * 
+    **/
+    distinct?: Enumerable<Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplScalarFieldEnum>
+  }
+
+  /**
+   * edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl findFirst
+   */
+  export interface edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindFirstArgs extends edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindFirstArgsBase {
+   /**
+    * Throw an Error if query returns no results
+    * @deprecated since 4.0.0: use `findFirstOrThrow` method instead
+    */
+    rejectOnNotFound?: RejectOnNotFound
+  }
+      
+
+  /**
+   * edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl findFirstOrThrow
+   */
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindFirstOrThrowArgs = {
+    /**
+     * Select specific fields to fetch from the edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * 
+    **/
+    select?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplSelect | null
+    /**
+     * Filter, which edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl to fetch.
+     * 
+    **/
+    where?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls.
+     * 
+    **/
+    cursor?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls.
+     * 
+    **/
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls.
+     * 
+    **/
+    distinct?: Enumerable<Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplScalarFieldEnum>
+  }
+
+
+  /**
+   * edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl findMany
+   */
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplFindManyArgs = {
+    /**
+     * Select specific fields to fetch from the edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * 
+    **/
+    select?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplSelect | null
+    /**
+     * Filter, which edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls to fetch.
+     * 
+    **/
+    where?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls to fetch.
+     * 
+    **/
+    orderBy?: Enumerable<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplOrderByWithRelationInput>
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls.
+     * 
+    **/
+    cursor?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls from the position of the cursor.
+     * 
+    **/
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls.
+     * 
+    **/
+    skip?: number
+    distinct?: Enumerable<Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplScalarFieldEnum>
+  }
+
+
+  /**
+   * edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl create
+   */
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCreateArgs = {
+    /**
+     * Select specific fields to fetch from the edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * 
+    **/
+    select?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplSelect | null
+    /**
+     * The data needed to create a edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.
+     * 
+    **/
+    data: XOR<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCreateInput, edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUncheckedCreateInput>
+  }
+
+
+  /**
+   * edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl createMany
+   */
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCreateManyArgs = {
+    /**
+     * The data used to create many edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls.
+     * 
+    **/
+    data: Enumerable<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCreateManyInput>
+    skipDuplicates?: boolean
+  }
+
+
+  /**
+   * edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl update
+   */
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUpdateArgs = {
+    /**
+     * Select specific fields to fetch from the edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * 
+    **/
+    select?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplSelect | null
+    /**
+     * The data needed to update a edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl.
+     * 
+    **/
+    data: XOR<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUpdateInput, edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUncheckedUpdateInput>
+    /**
+     * Choose, which edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl to update.
+     * 
+    **/
+    where: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereUniqueInput
+  }
+
+
+  /**
+   * edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl updateMany
+   */
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUpdateManyArgs = {
+    /**
+     * The data used to update edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls.
+     * 
+    **/
+    data: XOR<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUpdateManyMutationInput, edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUncheckedUpdateManyInput>
+    /**
+     * Filter which edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls to update
+     * 
+    **/
+    where?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereInput
+  }
+
+
+  /**
+   * edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl upsert
+   */
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUpsertArgs = {
+    /**
+     * Select specific fields to fetch from the edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * 
+    **/
+    select?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplSelect | null
+    /**
+     * The filter to search for the edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl to update in case it exists.
+     * 
+    **/
+    where: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereUniqueInput
+    /**
+     * In case the edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl found by the `where` argument doesn't exist, create a new edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl with this data.
+     * 
+    **/
+    create: XOR<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCreateInput, edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUncheckedCreateInput>
+    /**
+     * In case the edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl was found with the provided `where` argument, update it with this data.
+     * 
+    **/
+    update: XOR<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUpdateInput, edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUncheckedUpdateInput>
+  }
+
+
+  /**
+   * edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl delete
+   */
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplDeleteArgs = {
+    /**
+     * Select specific fields to fetch from the edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * 
+    **/
+    select?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplSelect | null
+    /**
+     * Filter which edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl to delete.
+     * 
+    **/
+    where: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereUniqueInput
+  }
+
+
+  /**
+   * edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl deleteMany
+   */
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplDeleteManyArgs = {
+    /**
+     * Filter which edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepls to delete
+     * 
+    **/
+    where?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereInput
+  }
+
+
+  /**
+   * edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl without action
+   */
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplArgs = {
+    /**
+     * Select specific fields to fetch from the edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl
+     * 
+    **/
+    select?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplSelect | null
+  }
+
+
+
+  /**
    * Enums
    */
 
@@ -9311,17 +11319,43 @@ export namespace Prisma {
   export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeof AccountScalarFieldEnum]
 
 
+  export const D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplScalarFieldEnum: {
+    id: 'id',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    eventId: 'eventId',
+    userId: 'userId',
+    amount: 'amount',
+    paymentDate: 'paymentDate'
+  };
+
+  export type D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplScalarFieldEnum = (typeof D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplScalarFieldEnum)[keyof typeof D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplScalarFieldEnum]
+
+
+  export const Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplScalarFieldEnum: {
+    id: 'id',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    eventId: 'eventId',
+    userId: 'userId',
+    amount: 'amount',
+    paymentDate: 'paymentDate'
+  };
+
+  export type Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplScalarFieldEnum = (typeof Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplScalarFieldEnum)[keyof typeof Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplScalarFieldEnum]
+
+
   export const EventScalarFieldEnum: {
     id: 'id',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
+    address: 'address',
     date: 'date',
-    startTime: 'startTime',
     endTime: 'endTime',
+    startTime: 'startTime',
+    bookingDate: 'bookingDate',
     cost: 'cost',
     status: 'status',
-    bookingDate: 'bookingDate',
-    address: 'address',
     maxParticipants: 'maxParticipants'
   };
 
@@ -9329,9 +11363,9 @@ export namespace Prisma {
 
 
   export const ParticipantsOnEventsScalarFieldEnum: {
-    id: 'id',
     eventId: 'eventId',
     date: 'date',
+    id: 'id',
     userEventStatus: 'userEventStatus'
   };
 
@@ -9342,11 +11376,11 @@ export namespace Prisma {
     id: 'id',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
+    eventId: 'eventId',
+    userId: 'userId',
     amount: 'amount',
     paymentDate: 'paymentDate',
-    gmailMailId: 'gmailMailId',
-    eventId: 'eventId',
-    userId: 'userId'
+    gmailMailId: 'gmailMailId'
   };
 
   export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
@@ -9391,12 +11425,12 @@ export namespace Prisma {
 
   export const UserScalarFieldEnum: {
     id: 'id',
-    createdAt: 'createdAt',
     name: 'name',
     email: 'email',
     emailVerified: 'emailVerified',
     image: 'image',
     role: 'role',
+    createdAt: 'createdAt',
     password: 'password',
     notificationsEnabled: 'notificationsEnabled'
   };
@@ -9462,13 +11496,13 @@ export namespace Prisma {
     id?: StringFilter | string
     createdAt?: DateTimeFilter | Date | string
     updatedAt?: DateTimeFilter | Date | string
+    address?: StringFilter | string
     date?: DateTimeFilter | Date | string
-    startTime?: StringFilter | string
     endTime?: StringFilter | string
+    startTime?: StringFilter | string
+    bookingDate?: DateTimeNullableFilter | Date | string | null
     cost?: FloatFilter | number
     status?: EnumEventStatusFilter | EventStatus
-    bookingDate?: DateTimeNullableFilter | Date | string | null
-    address?: StringFilter | string
     maxParticipants?: IntFilter | number
     payments?: PaymentListRelationFilter
     participants?: ParticipantsOnEventsListRelationFilter
@@ -9478,13 +11512,13 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    address?: SortOrder
     date?: SortOrder
-    startTime?: SortOrder
     endTime?: SortOrder
+    startTime?: SortOrder
+    bookingDate?: SortOrder
     cost?: SortOrder
     status?: SortOrder
-    bookingDate?: SortOrder
-    address?: SortOrder
     maxParticipants?: SortOrder
     payments?: PaymentOrderByRelationAggregateInput
     participants?: ParticipantsOnEventsOrderByRelationAggregateInput
@@ -9498,13 +11532,13 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    address?: SortOrder
     date?: SortOrder
-    startTime?: SortOrder
     endTime?: SortOrder
+    startTime?: SortOrder
+    bookingDate?: SortOrder
     cost?: SortOrder
     status?: SortOrder
-    bookingDate?: SortOrder
-    address?: SortOrder
     maxParticipants?: SortOrder
     _count?: EventCountOrderByAggregateInput
     _avg?: EventAvgOrderByAggregateInput
@@ -9520,13 +11554,13 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter | string
     createdAt?: DateTimeWithAggregatesFilter | Date | string
     updatedAt?: DateTimeWithAggregatesFilter | Date | string
+    address?: StringWithAggregatesFilter | string
     date?: DateTimeWithAggregatesFilter | Date | string
-    startTime?: StringWithAggregatesFilter | string
     endTime?: StringWithAggregatesFilter | string
+    startTime?: StringWithAggregatesFilter | string
+    bookingDate?: DateTimeNullableWithAggregatesFilter | Date | string | null
     cost?: FloatWithAggregatesFilter | number
     status?: EnumEventStatusWithAggregatesFilter | EventStatus
-    bookingDate?: DateTimeNullableWithAggregatesFilter | Date | string | null
-    address?: StringWithAggregatesFilter | string
     maxParticipants?: IntWithAggregatesFilter | number
   }
 
@@ -9534,21 +11568,21 @@ export namespace Prisma {
     AND?: Enumerable<ParticipantsOnEventsWhereInput>
     OR?: Enumerable<ParticipantsOnEventsWhereInput>
     NOT?: Enumerable<ParticipantsOnEventsWhereInput>
-    user?: XOR<UserRelationFilter, UserWhereInput>
-    id?: StringFilter | string
-    event?: XOR<EventRelationFilter, EventWhereInput>
     eventId?: StringFilter | string
     date?: DateTimeFilter | Date | string
+    id?: StringFilter | string
     userEventStatus?: EnumUserEventStatusFilter | UserEventStatus
+    user?: XOR<UserRelationFilter, UserWhereInput>
+    event?: XOR<EventRelationFilter, EventWhereInput>
   }
 
   export type ParticipantsOnEventsOrderByWithRelationInput = {
-    user?: UserOrderByWithRelationInput
-    id?: SortOrder
-    event?: EventOrderByWithRelationInput
     eventId?: SortOrder
     date?: SortOrder
+    id?: SortOrder
     userEventStatus?: SortOrder
+    user?: UserOrderByWithRelationInput
+    event?: EventOrderByWithRelationInput
   }
 
   export type ParticipantsOnEventsWhereUniqueInput = {
@@ -9556,9 +11590,9 @@ export namespace Prisma {
   }
 
   export type ParticipantsOnEventsOrderByWithAggregationInput = {
-    id?: SortOrder
     eventId?: SortOrder
     date?: SortOrder
+    id?: SortOrder
     userEventStatus?: SortOrder
     _count?: ParticipantsOnEventsCountOrderByAggregateInput
     _max?: ParticipantsOnEventsMaxOrderByAggregateInput
@@ -9569,9 +11603,9 @@ export namespace Prisma {
     AND?: Enumerable<ParticipantsOnEventsScalarWhereWithAggregatesInput>
     OR?: Enumerable<ParticipantsOnEventsScalarWhereWithAggregatesInput>
     NOT?: Enumerable<ParticipantsOnEventsScalarWhereWithAggregatesInput>
-    id?: StringWithAggregatesFilter | string
     eventId?: StringWithAggregatesFilter | string
     date?: DateTimeWithAggregatesFilter | Date | string
+    id?: StringWithAggregatesFilter | string
     userEventStatus?: EnumUserEventStatusWithAggregatesFilter | UserEventStatus
   }
 
@@ -9582,26 +11616,26 @@ export namespace Prisma {
     id?: StringFilter | string
     createdAt?: DateTimeFilter | Date | string
     updatedAt?: DateTimeFilter | Date | string
+    eventId?: StringFilter | string
+    userId?: StringFilter | string
     amount?: FloatFilter | number
     paymentDate?: DateTimeFilter | Date | string
     gmailMailId?: StringFilter | string
     event?: XOR<EventRelationFilter, EventWhereInput>
-    eventId?: StringFilter | string
     user?: XOR<UserRelationFilter, UserWhereInput>
-    userId?: StringFilter | string
   }
 
   export type PaymentOrderByWithRelationInput = {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    eventId?: SortOrder
+    userId?: SortOrder
     amount?: SortOrder
     paymentDate?: SortOrder
     gmailMailId?: SortOrder
     event?: EventOrderByWithRelationInput
-    eventId?: SortOrder
     user?: UserOrderByWithRelationInput
-    userId?: SortOrder
   }
 
   export type PaymentWhereUniqueInput = {
@@ -9612,11 +11646,11 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    eventId?: SortOrder
+    userId?: SortOrder
     amount?: SortOrder
     paymentDate?: SortOrder
     gmailMailId?: SortOrder
-    eventId?: SortOrder
-    userId?: SortOrder
     _count?: PaymentCountOrderByAggregateInput
     _avg?: PaymentAvgOrderByAggregateInput
     _max?: PaymentMaxOrderByAggregateInput
@@ -9631,11 +11665,11 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter | string
     createdAt?: DateTimeWithAggregatesFilter | Date | string
     updatedAt?: DateTimeWithAggregatesFilter | Date | string
+    eventId?: StringWithAggregatesFilter | string
+    userId?: StringWithAggregatesFilter | string
     amount?: FloatWithAggregatesFilter | number
     paymentDate?: DateTimeWithAggregatesFilter | Date | string
     gmailMailId?: StringWithAggregatesFilter | string
-    eventId?: StringWithAggregatesFilter | string
-    userId?: StringWithAggregatesFilter | string
   }
 
   export type AccountWhereInput = {
@@ -9765,34 +11799,34 @@ export namespace Prisma {
     OR?: Enumerable<UserWhereInput>
     NOT?: Enumerable<UserWhereInput>
     id?: StringFilter | string
-    createdAt?: DateTimeFilter | Date | string
     name?: StringFilter | string
     email?: StringFilter | string
     emailVerified?: DateTimeNullableFilter | Date | string | null
     image?: StringNullableFilter | string | null
     role?: StringFilter | string
+    createdAt?: DateTimeFilter | Date | string
     password?: StringFilter | string
+    notificationsEnabled?: BoolFilter | boolean
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
     payments?: PaymentListRelationFilter
     events?: ParticipantsOnEventsListRelationFilter
-    notificationsEnabled?: BoolFilter | boolean
   }
 
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
-    createdAt?: SortOrder
     name?: SortOrder
     email?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
     role?: SortOrder
+    createdAt?: SortOrder
     password?: SortOrder
+    notificationsEnabled?: SortOrder
     accounts?: AccountOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
     payments?: PaymentOrderByRelationAggregateInput
     events?: ParticipantsOnEventsOrderByRelationAggregateInput
-    notificationsEnabled?: SortOrder
   }
 
   export type UserWhereUniqueInput = {
@@ -9803,12 +11837,12 @@ export namespace Prisma {
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
-    createdAt?: SortOrder
     name?: SortOrder
     email?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
     role?: SortOrder
+    createdAt?: SortOrder
     password?: SortOrder
     notificationsEnabled?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -9821,12 +11855,12 @@ export namespace Prisma {
     OR?: Enumerable<UserScalarWhereWithAggregatesInput>
     NOT?: Enumerable<UserScalarWhereWithAggregatesInput>
     id?: StringWithAggregatesFilter | string
-    createdAt?: DateTimeWithAggregatesFilter | Date | string
     name?: StringWithAggregatesFilter | string
     email?: StringWithAggregatesFilter | string
     emailVerified?: DateTimeNullableWithAggregatesFilter | Date | string | null
     image?: StringNullableWithAggregatesFilter | string | null
     role?: StringWithAggregatesFilter | string
+    createdAt?: DateTimeWithAggregatesFilter | Date | string
     password?: StringWithAggregatesFilter | string
     notificationsEnabled?: BoolWithAggregatesFilter | boolean
   }
@@ -9867,6 +11901,116 @@ export namespace Prisma {
     identifier?: StringWithAggregatesFilter | string
     token?: StringWithAggregatesFilter | string
     expires?: DateTimeWithAggregatesFilter | Date | string
+  }
+
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereInput = {
+    AND?: Enumerable<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereInput>
+    OR?: Enumerable<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereInput>
+    NOT?: Enumerable<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereInput>
+    id?: StringFilter | string
+    createdAt?: DateTimeFilter | Date | string
+    updatedAt?: DateTimeFilter | Date | string
+    eventId?: StringFilter | string
+    userId?: StringFilter | string
+    amount?: FloatFilter | number
+    paymentDate?: DateTimeFilter | Date | string
+  }
+
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplOrderByWithRelationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    eventId?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    paymentDate?: SortOrder
+  }
+
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplWhereUniqueInput = {
+    id?: string
+  }
+
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplOrderByWithAggregationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    eventId?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    paymentDate?: SortOrder
+    _count?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCountOrderByAggregateInput
+    _avg?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplAvgOrderByAggregateInput
+    _max?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplMaxOrderByAggregateInput
+    _min?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplMinOrderByAggregateInput
+    _sum?: d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplSumOrderByAggregateInput
+  }
+
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplScalarWhereWithAggregatesInput>
+    OR?: Enumerable<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplScalarWhereWithAggregatesInput>
+    id?: StringWithAggregatesFilter | string
+    createdAt?: DateTimeWithAggregatesFilter | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter | Date | string
+    eventId?: StringWithAggregatesFilter | string
+    userId?: StringWithAggregatesFilter | string
+    amount?: FloatWithAggregatesFilter | number
+    paymentDate?: DateTimeWithAggregatesFilter | Date | string
+  }
+
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereInput = {
+    AND?: Enumerable<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereInput>
+    OR?: Enumerable<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereInput>
+    NOT?: Enumerable<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereInput>
+    id?: StringFilter | string
+    createdAt?: DateTimeFilter | Date | string
+    updatedAt?: DateTimeFilter | Date | string
+    eventId?: StringFilter | string
+    userId?: StringFilter | string
+    amount?: FloatFilter | number
+    paymentDate?: DateTimeFilter | Date | string
+  }
+
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplOrderByWithRelationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    eventId?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    paymentDate?: SortOrder
+  }
+
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplWhereUniqueInput = {
+    id?: string
+  }
+
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplOrderByWithAggregationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    eventId?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    paymentDate?: SortOrder
+    _count?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCountOrderByAggregateInput
+    _avg?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplAvgOrderByAggregateInput
+    _max?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplMaxOrderByAggregateInput
+    _min?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplMinOrderByAggregateInput
+    _sum?: edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplSumOrderByAggregateInput
+  }
+
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplScalarWhereWithAggregatesInput = {
+    AND?: Enumerable<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplScalarWhereWithAggregatesInput>
+    OR?: Enumerable<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplScalarWhereWithAggregatesInput>
+    NOT?: Enumerable<edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplScalarWhereWithAggregatesInput>
+    id?: StringWithAggregatesFilter | string
+    createdAt?: DateTimeWithAggregatesFilter | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter | Date | string
+    eventId?: StringWithAggregatesFilter | string
+    userId?: StringWithAggregatesFilter | string
+    amount?: FloatWithAggregatesFilter | number
+    paymentDate?: DateTimeWithAggregatesFilter | Date | string
   }
 
   export type TokensCreateInput = {
@@ -9915,13 +12059,13 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    address: string
     date: Date | string
-    startTime: string
     endTime: string
+    startTime: string
+    bookingDate?: Date | string | null
     cost: number
     status?: EventStatus
-    bookingDate?: Date | string | null
-    address: string
     maxParticipants?: number
     payments?: PaymentCreateNestedManyWithoutEventInput
     participants?: ParticipantsOnEventsCreateNestedManyWithoutEventInput
@@ -9931,13 +12075,13 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    address: string
     date: Date | string
-    startTime: string
     endTime: string
+    startTime: string
+    bookingDate?: Date | string | null
     cost: number
     status?: EventStatus
-    bookingDate?: Date | string | null
-    address: string
     maxParticipants?: number
     payments?: PaymentUncheckedCreateNestedManyWithoutEventInput
     participants?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutEventInput
@@ -9947,13 +12091,13 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    address?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost?: FloatFieldUpdateOperationsInput | number
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
-    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    address?: StringFieldUpdateOperationsInput | string
     maxParticipants?: IntFieldUpdateOperationsInput | number
     payments?: PaymentUpdateManyWithoutEventNestedInput
     participants?: ParticipantsOnEventsUpdateManyWithoutEventNestedInput
@@ -9963,13 +12107,13 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    address?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost?: FloatFieldUpdateOperationsInput | number
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
-    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    address?: StringFieldUpdateOperationsInput | string
     maxParticipants?: IntFieldUpdateOperationsInput | number
     payments?: PaymentUncheckedUpdateManyWithoutEventNestedInput
     participants?: ParticipantsOnEventsUncheckedUpdateManyWithoutEventNestedInput
@@ -9979,13 +12123,13 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    address: string
     date: Date | string
-    startTime: string
     endTime: string
+    startTime: string
+    bookingDate?: Date | string | null
     cost: number
     status?: EventStatus
-    bookingDate?: Date | string | null
-    address: string
     maxParticipants?: number
   }
 
@@ -9993,13 +12137,13 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    address?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost?: FloatFieldUpdateOperationsInput | number
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
-    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    address?: StringFieldUpdateOperationsInput | string
     maxParticipants?: IntFieldUpdateOperationsInput | number
   }
 
@@ -10007,48 +12151,48 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    address?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost?: FloatFieldUpdateOperationsInput | number
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
-    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    address?: StringFieldUpdateOperationsInput | string
     maxParticipants?: IntFieldUpdateOperationsInput | number
   }
 
   export type ParticipantsOnEventsCreateInput = {
-    user: UserCreateNestedOneWithoutEventsInput
-    event: EventCreateNestedOneWithoutParticipantsInput
     date?: Date | string
     userEventStatus?: UserEventStatus
+    user: UserCreateNestedOneWithoutEventsInput
+    event: EventCreateNestedOneWithoutParticipantsInput
   }
 
   export type ParticipantsOnEventsUncheckedCreateInput = {
-    id: string
     eventId: string
     date?: Date | string
+    id: string
     userEventStatus?: UserEventStatus
   }
 
   export type ParticipantsOnEventsUpdateInput = {
-    user?: UserUpdateOneRequiredWithoutEventsNestedInput
-    event?: EventUpdateOneRequiredWithoutParticipantsNestedInput
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+    user?: UserUpdateOneRequiredWithoutEventsNestedInput
+    event?: EventUpdateOneRequiredWithoutParticipantsNestedInput
   }
 
   export type ParticipantsOnEventsUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
     eventId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    id?: StringFieldUpdateOperationsInput | string
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsCreateManyInput = {
-    id: string
     eventId: string
     date?: Date | string
+    id: string
     userEventStatus?: UserEventStatus
   }
 
@@ -10058,9 +12202,9 @@ export namespace Prisma {
   }
 
   export type ParticipantsOnEventsUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
     eventId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    id?: StringFieldUpdateOperationsInput | string
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
@@ -10079,11 +12223,11 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    eventId: string
+    userId: string
     amount: number
     paymentDate: Date | string
     gmailMailId: string
-    eventId: string
-    userId: string
   }
 
   export type PaymentUpdateInput = {
@@ -10101,22 +12245,22 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     gmailMailId?: StringFieldUpdateOperationsInput | string
-    eventId?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type PaymentCreateManyInput = {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    eventId: string
+    userId: string
     amount: number
     paymentDate: Date | string
     gmailMailId: string
-    eventId: string
-    userId: string
   }
 
   export type PaymentUpdateManyMutationInput = {
@@ -10132,11 +12276,11 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     gmailMailId?: StringFieldUpdateOperationsInput | string
-    eventId?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type AccountCreateInput = {
@@ -10293,100 +12437,100 @@ export namespace Prisma {
 
   export type UserCreateInput = {
     id?: string
-    createdAt?: Date | string
     name: string
     email: string
     emailVerified?: Date | string | null
     image?: string | null
     role: string
+    createdAt?: Date | string
     password: string
+    notificationsEnabled?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
-    notificationsEnabled?: boolean
   }
 
   export type UserUncheckedCreateInput = {
     id?: string
-    createdAt?: Date | string
     name: string
     email: string
     emailVerified?: Date | string | null
     image?: string | null
     role: string
+    createdAt?: Date | string
     password: string
+    notificationsEnabled?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
-    notificationsEnabled?: boolean
   }
 
   export type UserUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: StringFieldUpdateOperationsInput | string
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
-    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: StringFieldUpdateOperationsInput | string
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
-    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserCreateManyInput = {
     id?: string
-    createdAt?: Date | string
     name: string
     email: string
     emailVerified?: Date | string | null
     image?: string | null
     role: string
+    createdAt?: Date | string
     password: string
     notificationsEnabled?: boolean
   }
 
   export type UserUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: StringFieldUpdateOperationsInput | string
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: StringFieldUpdateOperationsInput | string
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
@@ -10431,6 +12575,146 @@ export namespace Prisma {
     identifier?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     expires?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCreateInput = {
+    id: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+    eventId: string
+    userId: string
+    amount: number
+    paymentDate: Date | string
+  }
+
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUncheckedCreateInput = {
+    id: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+    eventId: string
+    userId: string
+    amount: number
+    paymentDate: Date | string
+  }
+
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCreateManyInput = {
+    id: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+    eventId: string
+    userId: string
+    amount: number
+    paymentDate: Date | string
+  }
+
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCreateInput = {
+    id: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+    eventId: string
+    userId: string
+    amount: number
+    paymentDate: Date | string
+  }
+
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUncheckedCreateInput = {
+    id: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+    eventId: string
+    userId: string
+    amount: number
+    paymentDate: Date | string
+  }
+
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCreateManyInput = {
+    id: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+    eventId: string
+    userId: string
+    amount: number
+    paymentDate: Date | string
+  }
+
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter = {
@@ -10507,6 +12791,17 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter
   }
 
+  export type DateTimeNullableFilter = {
+    equals?: Date | string | null
+    in?: Enumerable<Date> | Enumerable<string> | null
+    notIn?: Enumerable<Date> | Enumerable<string> | null
+    lt?: Date | string
+    lte?: Date | string
+    gt?: Date | string
+    gte?: Date | string
+    not?: NestedDateTimeNullableFilter | Date | string | null
+  }
+
   export type FloatFilter = {
     equals?: number
     in?: Enumerable<number>
@@ -10523,17 +12818,6 @@ export namespace Prisma {
     in?: Enumerable<EventStatus>
     notIn?: Enumerable<EventStatus>
     not?: NestedEnumEventStatusFilter | EventStatus
-  }
-
-  export type DateTimeNullableFilter = {
-    equals?: Date | string | null
-    in?: Enumerable<Date> | Enumerable<string> | null
-    notIn?: Enumerable<Date> | Enumerable<string> | null
-    lt?: Date | string
-    lte?: Date | string
-    gt?: Date | string
-    gte?: Date | string
-    not?: NestedDateTimeNullableFilter | Date | string | null
   }
 
   export type IntFilter = {
@@ -10571,13 +12855,13 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    address?: SortOrder
     date?: SortOrder
-    startTime?: SortOrder
     endTime?: SortOrder
+    startTime?: SortOrder
+    bookingDate?: SortOrder
     cost?: SortOrder
     status?: SortOrder
-    bookingDate?: SortOrder
-    address?: SortOrder
     maxParticipants?: SortOrder
   }
 
@@ -10590,13 +12874,13 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    address?: SortOrder
     date?: SortOrder
-    startTime?: SortOrder
     endTime?: SortOrder
+    startTime?: SortOrder
+    bookingDate?: SortOrder
     cost?: SortOrder
     status?: SortOrder
-    bookingDate?: SortOrder
-    address?: SortOrder
     maxParticipants?: SortOrder
   }
 
@@ -10604,19 +12888,33 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    address?: SortOrder
     date?: SortOrder
-    startTime?: SortOrder
     endTime?: SortOrder
+    startTime?: SortOrder
+    bookingDate?: SortOrder
     cost?: SortOrder
     status?: SortOrder
-    bookingDate?: SortOrder
-    address?: SortOrder
     maxParticipants?: SortOrder
   }
 
   export type EventSumOrderByAggregateInput = {
     cost?: SortOrder
     maxParticipants?: SortOrder
+  }
+
+  export type DateTimeNullableWithAggregatesFilter = {
+    equals?: Date | string | null
+    in?: Enumerable<Date> | Enumerable<string> | null
+    notIn?: Enumerable<Date> | Enumerable<string> | null
+    lt?: Date | string
+    lte?: Date | string
+    gt?: Date | string
+    gte?: Date | string
+    not?: NestedDateTimeNullableWithAggregatesFilter | Date | string | null
+    _count?: NestedIntNullableFilter
+    _min?: NestedDateTimeNullableFilter
+    _max?: NestedDateTimeNullableFilter
   }
 
   export type FloatWithAggregatesFilter = {
@@ -10645,20 +12943,6 @@ export namespace Prisma {
     _max?: NestedEnumEventStatusFilter
   }
 
-  export type DateTimeNullableWithAggregatesFilter = {
-    equals?: Date | string | null
-    in?: Enumerable<Date> | Enumerable<string> | null
-    notIn?: Enumerable<Date> | Enumerable<string> | null
-    lt?: Date | string
-    lte?: Date | string
-    gt?: Date | string
-    gte?: Date | string
-    not?: NestedDateTimeNullableWithAggregatesFilter | Date | string | null
-    _count?: NestedIntNullableFilter
-    _min?: NestedDateTimeNullableFilter
-    _max?: NestedDateTimeNullableFilter
-  }
-
   export type IntWithAggregatesFilter = {
     equals?: number
     in?: Enumerable<number>
@@ -10675,6 +12959,13 @@ export namespace Prisma {
     _max?: NestedIntFilter
   }
 
+  export type EnumUserEventStatusFilter = {
+    equals?: UserEventStatus
+    in?: Enumerable<UserEventStatus>
+    notIn?: Enumerable<UserEventStatus>
+    not?: NestedEnumUserEventStatusFilter | UserEventStatus
+  }
+
   export type UserRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
@@ -10685,36 +12976,29 @@ export namespace Prisma {
     isNot?: EventWhereInput
   }
 
-  export type EnumUserEventStatusFilter = {
-    equals?: UserEventStatus
-    in?: Enumerable<UserEventStatus>
-    notIn?: Enumerable<UserEventStatus>
-    not?: NestedEnumUserEventStatusFilter | UserEventStatus
-  }
-
   export type ParticipantsOnEventsIdEventIdCompoundUniqueInput = {
     id: string
     eventId: string
   }
 
   export type ParticipantsOnEventsCountOrderByAggregateInput = {
-    id?: SortOrder
     eventId?: SortOrder
     date?: SortOrder
+    id?: SortOrder
     userEventStatus?: SortOrder
   }
 
   export type ParticipantsOnEventsMaxOrderByAggregateInput = {
-    id?: SortOrder
     eventId?: SortOrder
     date?: SortOrder
+    id?: SortOrder
     userEventStatus?: SortOrder
   }
 
   export type ParticipantsOnEventsMinOrderByAggregateInput = {
-    id?: SortOrder
     eventId?: SortOrder
     date?: SortOrder
+    id?: SortOrder
     userEventStatus?: SortOrder
   }
 
@@ -10732,11 +13016,11 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    eventId?: SortOrder
+    userId?: SortOrder
     amount?: SortOrder
     paymentDate?: SortOrder
     gmailMailId?: SortOrder
-    eventId?: SortOrder
-    userId?: SortOrder
   }
 
   export type PaymentAvgOrderByAggregateInput = {
@@ -10747,22 +13031,22 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    eventId?: SortOrder
+    userId?: SortOrder
     amount?: SortOrder
     paymentDate?: SortOrder
     gmailMailId?: SortOrder
-    eventId?: SortOrder
-    userId?: SortOrder
   }
 
   export type PaymentMinOrderByAggregateInput = {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    eventId?: SortOrder
+    userId?: SortOrder
     amount?: SortOrder
     paymentDate?: SortOrder
     gmailMailId?: SortOrder
-    eventId?: SortOrder
-    userId?: SortOrder
   }
 
   export type PaymentSumOrderByAggregateInput = {
@@ -10906,6 +13190,11 @@ export namespace Prisma {
     expires?: SortOrder
   }
 
+  export type BoolFilter = {
+    equals?: boolean
+    not?: NestedBoolFilter | boolean
+  }
+
   export type AccountListRelationFilter = {
     every?: AccountWhereInput
     some?: AccountWhereInput
@@ -10918,11 +13207,6 @@ export namespace Prisma {
     none?: SessionWhereInput
   }
 
-  export type BoolFilter = {
-    equals?: boolean
-    not?: NestedBoolFilter | boolean
-  }
-
   export type AccountOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -10933,36 +13217,36 @@ export namespace Prisma {
 
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
-    createdAt?: SortOrder
     name?: SortOrder
     email?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
     role?: SortOrder
+    createdAt?: SortOrder
     password?: SortOrder
     notificationsEnabled?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
-    createdAt?: SortOrder
     name?: SortOrder
     email?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
     role?: SortOrder
+    createdAt?: SortOrder
     password?: SortOrder
     notificationsEnabled?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
-    createdAt?: SortOrder
     name?: SortOrder
     email?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
     role?: SortOrder
+    createdAt?: SortOrder
     password?: SortOrder
     notificationsEnabled?: SortOrder
   }
@@ -10996,6 +13280,82 @@ export namespace Prisma {
     identifier?: SortOrder
     token?: SortOrder
     expires?: SortOrder
+  }
+
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplCountOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    eventId?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    paymentDate?: SortOrder
+  }
+
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplAvgOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplMaxOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    eventId?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    paymentDate?: SortOrder
+  }
+
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplMinOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    eventId?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    paymentDate?: SortOrder
+  }
+
+  export type d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplSumOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplCountOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    eventId?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    paymentDate?: SortOrder
+  }
+
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplAvgOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplMaxOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    eventId?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    paymentDate?: SortOrder
+  }
+
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplMinOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    eventId?: SortOrder
+    userId?: SortOrder
+    amount?: SortOrder
+    paymentDate?: SortOrder
+  }
+
+  export type edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplSumOrderByAggregateInput = {
+    amount?: SortOrder
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -11034,6 +13394,10 @@ export namespace Prisma {
     connect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
   }
 
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
   export type FloatFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -11044,10 +13408,6 @@ export namespace Prisma {
 
   export type EnumEventStatusFieldUpdateOperationsInput = {
     set?: EventStatus
-  }
-
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -11126,6 +13486,10 @@ export namespace Prisma {
     connect?: EventWhereUniqueInput
   }
 
+  export type EnumUserEventStatusFieldUpdateOperationsInput = {
+    set?: UserEventStatus
+  }
+
   export type UserUpdateOneRequiredWithoutEventsNestedInput = {
     create?: XOR<UserCreateWithoutEventsInput, UserUncheckedCreateWithoutEventsInput>
     connectOrCreate?: UserCreateOrConnectWithoutEventsInput
@@ -11140,10 +13504,6 @@ export namespace Prisma {
     upsert?: EventUpsertWithoutParticipantsInput
     connect?: EventWhereUniqueInput
     update?: XOR<EventUpdateWithoutParticipantsInput, EventUncheckedUpdateWithoutParticipantsInput>
-  }
-
-  export type EnumUserEventStatusFieldUpdateOperationsInput = {
-    set?: UserEventStatus
   }
 
   export type EventCreateNestedOneWithoutPaymentsInput = {
@@ -11270,6 +13630,10 @@ export namespace Prisma {
     connect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
   }
 
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
   export type AccountUpdateManyWithoutUserNestedInput = {
     create?: XOR<Enumerable<AccountCreateWithoutUserInput>, Enumerable<AccountUncheckedCreateWithoutUserInput>>
     connectOrCreate?: Enumerable<AccountCreateOrConnectWithoutUserInput>
@@ -11324,10 +13688,6 @@ export namespace Prisma {
     update?: Enumerable<ParticipantsOnEventsUpdateWithWhereUniqueWithoutUserInput>
     updateMany?: Enumerable<ParticipantsOnEventsUpdateManyWithWhereWithoutUserInput>
     deleteMany?: Enumerable<ParticipantsOnEventsScalarWhereInput>
-  }
-
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
   }
 
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
@@ -11453,6 +13813,17 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter
   }
 
+  export type NestedDateTimeNullableFilter = {
+    equals?: Date | string | null
+    in?: Enumerable<Date> | Enumerable<string> | null
+    notIn?: Enumerable<Date> | Enumerable<string> | null
+    lt?: Date | string
+    lte?: Date | string
+    gt?: Date | string
+    gte?: Date | string
+    not?: NestedDateTimeNullableFilter | Date | string | null
+  }
+
   export type NestedFloatFilter = {
     equals?: number
     in?: Enumerable<number>
@@ -11471,7 +13842,7 @@ export namespace Prisma {
     not?: NestedEnumEventStatusFilter | EventStatus
   }
 
-  export type NestedDateTimeNullableFilter = {
+  export type NestedDateTimeNullableWithAggregatesFilter = {
     equals?: Date | string | null
     in?: Enumerable<Date> | Enumerable<string> | null
     notIn?: Enumerable<Date> | Enumerable<string> | null
@@ -11479,7 +13850,21 @@ export namespace Prisma {
     lte?: Date | string
     gt?: Date | string
     gte?: Date | string
-    not?: NestedDateTimeNullableFilter | Date | string | null
+    not?: NestedDateTimeNullableWithAggregatesFilter | Date | string | null
+    _count?: NestedIntNullableFilter
+    _min?: NestedDateTimeNullableFilter
+    _max?: NestedDateTimeNullableFilter
+  }
+
+  export type NestedIntNullableFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntNullableFilter | number | null
   }
 
   export type NestedFloatWithAggregatesFilter = {
@@ -11506,31 +13891,6 @@ export namespace Prisma {
     _count?: NestedIntFilter
     _min?: NestedEnumEventStatusFilter
     _max?: NestedEnumEventStatusFilter
-  }
-
-  export type NestedDateTimeNullableWithAggregatesFilter = {
-    equals?: Date | string | null
-    in?: Enumerable<Date> | Enumerable<string> | null
-    notIn?: Enumerable<Date> | Enumerable<string> | null
-    lt?: Date | string
-    lte?: Date | string
-    gt?: Date | string
-    gte?: Date | string
-    not?: NestedDateTimeNullableWithAggregatesFilter | Date | string | null
-    _count?: NestedIntNullableFilter
-    _min?: NestedDateTimeNullableFilter
-    _max?: NestedDateTimeNullableFilter
-  }
-
-  export type NestedIntNullableFilter = {
-    equals?: number | null
-    in?: Enumerable<number> | null
-    notIn?: Enumerable<number> | null
-    lt?: number
-    lte?: number
-    gt?: number
-    gte?: number
-    not?: NestedIntNullableFilter | number | null
   }
 
   export type NestedIntWithAggregatesFilter = {
@@ -11651,10 +14011,10 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    userId: string
     amount: number
     paymentDate: Date | string
     gmailMailId: string
-    userId: string
   }
 
   export type PaymentCreateOrConnectWithoutEventInput = {
@@ -11668,14 +14028,14 @@ export namespace Prisma {
   }
 
   export type ParticipantsOnEventsCreateWithoutEventInput = {
-    user: UserCreateNestedOneWithoutEventsInput
     date?: Date | string
     userEventStatus?: UserEventStatus
+    user: UserCreateNestedOneWithoutEventsInput
   }
 
   export type ParticipantsOnEventsUncheckedCreateWithoutEventInput = {
-    id: string
     date?: Date | string
+    id: string
     userEventStatus?: UserEventStatus
   }
 
@@ -11712,11 +14072,11 @@ export namespace Prisma {
     id?: StringFilter | string
     createdAt?: DateTimeFilter | Date | string
     updatedAt?: DateTimeFilter | Date | string
+    eventId?: StringFilter | string
+    userId?: StringFilter | string
     amount?: FloatFilter | number
     paymentDate?: DateTimeFilter | Date | string
     gmailMailId?: StringFilter | string
-    eventId?: StringFilter | string
-    userId?: StringFilter | string
   }
 
   export type ParticipantsOnEventsUpsertWithWhereUniqueWithoutEventInput = {
@@ -11739,40 +14099,40 @@ export namespace Prisma {
     AND?: Enumerable<ParticipantsOnEventsScalarWhereInput>
     OR?: Enumerable<ParticipantsOnEventsScalarWhereInput>
     NOT?: Enumerable<ParticipantsOnEventsScalarWhereInput>
-    id?: StringFilter | string
     eventId?: StringFilter | string
     date?: DateTimeFilter | Date | string
+    id?: StringFilter | string
     userEventStatus?: EnumUserEventStatusFilter | UserEventStatus
   }
 
   export type UserCreateWithoutEventsInput = {
     id?: string
-    createdAt?: Date | string
     name: string
     email: string
     emailVerified?: Date | string | null
     image?: string | null
     role: string
+    createdAt?: Date | string
     password: string
+    notificationsEnabled?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
-    notificationsEnabled?: boolean
   }
 
   export type UserUncheckedCreateWithoutEventsInput = {
     id?: string
-    createdAt?: Date | string
     name: string
     email: string
     emailVerified?: Date | string | null
     image?: string | null
     role: string
+    createdAt?: Date | string
     password: string
+    notificationsEnabled?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
-    notificationsEnabled?: boolean
   }
 
   export type UserCreateOrConnectWithoutEventsInput = {
@@ -11784,13 +14144,13 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    address: string
     date: Date | string
-    startTime: string
     endTime: string
+    startTime: string
+    bookingDate?: Date | string | null
     cost: number
     status?: EventStatus
-    bookingDate?: Date | string | null
-    address: string
     maxParticipants?: number
     payments?: PaymentCreateNestedManyWithoutEventInput
   }
@@ -11799,13 +14159,13 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    address: string
     date: Date | string
-    startTime: string
     endTime: string
+    startTime: string
+    bookingDate?: Date | string | null
     cost: number
     status?: EventStatus
-    bookingDate?: Date | string | null
-    address: string
     maxParticipants?: number
     payments?: PaymentUncheckedCreateNestedManyWithoutEventInput
   }
@@ -11822,32 +14182,32 @@ export namespace Prisma {
 
   export type UserUpdateWithoutEventsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: StringFieldUpdateOperationsInput | string
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
-    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateWithoutEventsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: StringFieldUpdateOperationsInput | string
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
-    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type EventUpsertWithoutParticipantsInput = {
@@ -11859,13 +14219,13 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    address?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost?: FloatFieldUpdateOperationsInput | number
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
-    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    address?: StringFieldUpdateOperationsInput | string
     maxParticipants?: IntFieldUpdateOperationsInput | number
     payments?: PaymentUpdateManyWithoutEventNestedInput
   }
@@ -11874,13 +14234,13 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    address?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost?: FloatFieldUpdateOperationsInput | number
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
-    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    address?: StringFieldUpdateOperationsInput | string
     maxParticipants?: IntFieldUpdateOperationsInput | number
     payments?: PaymentUncheckedUpdateManyWithoutEventNestedInput
   }
@@ -11889,13 +14249,13 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    address: string
     date: Date | string
-    startTime: string
     endTime: string
+    startTime: string
+    bookingDate?: Date | string | null
     cost: number
     status?: EventStatus
-    bookingDate?: Date | string | null
-    address: string
     maxParticipants?: number
     participants?: ParticipantsOnEventsCreateNestedManyWithoutEventInput
   }
@@ -11904,13 +14264,13 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    address: string
     date: Date | string
-    startTime: string
     endTime: string
+    startTime: string
+    bookingDate?: Date | string | null
     cost: number
     status?: EventStatus
-    bookingDate?: Date | string | null
-    address: string
     maxParticipants?: number
     participants?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutEventInput
   }
@@ -11922,32 +14282,32 @@ export namespace Prisma {
 
   export type UserCreateWithoutPaymentsInput = {
     id?: string
-    createdAt?: Date | string
     name: string
     email: string
     emailVerified?: Date | string | null
     image?: string | null
     role: string
+    createdAt?: Date | string
     password: string
+    notificationsEnabled?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
-    notificationsEnabled?: boolean
   }
 
   export type UserUncheckedCreateWithoutPaymentsInput = {
     id?: string
-    createdAt?: Date | string
     name: string
     email: string
     emailVerified?: Date | string | null
     image?: string | null
     role: string
+    createdAt?: Date | string
     password: string
+    notificationsEnabled?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
-    notificationsEnabled?: boolean
   }
 
   export type UserCreateOrConnectWithoutPaymentsInput = {
@@ -11964,13 +14324,13 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    address?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost?: FloatFieldUpdateOperationsInput | number
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
-    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    address?: StringFieldUpdateOperationsInput | string
     maxParticipants?: IntFieldUpdateOperationsInput | number
     participants?: ParticipantsOnEventsUpdateManyWithoutEventNestedInput
   }
@@ -11979,13 +14339,13 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    address?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    startTime?: StringFieldUpdateOperationsInput | string
     endTime?: StringFieldUpdateOperationsInput | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost?: FloatFieldUpdateOperationsInput | number
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
-    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    address?: StringFieldUpdateOperationsInput | string
     maxParticipants?: IntFieldUpdateOperationsInput | number
     participants?: ParticipantsOnEventsUncheckedUpdateManyWithoutEventNestedInput
   }
@@ -11997,62 +14357,62 @@ export namespace Prisma {
 
   export type UserUpdateWithoutPaymentsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: StringFieldUpdateOperationsInput | string
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
-    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateWithoutPaymentsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: StringFieldUpdateOperationsInput | string
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
-    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserCreateWithoutAccountsInput = {
     id?: string
-    createdAt?: Date | string
     name: string
     email: string
     emailVerified?: Date | string | null
     image?: string | null
     role: string
+    createdAt?: Date | string
     password: string
+    notificationsEnabled?: boolean
     sessions?: SessionCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
-    notificationsEnabled?: boolean
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
     id?: string
-    createdAt?: Date | string
     name: string
     email: string
     emailVerified?: Date | string | null
     image?: string | null
     role: string
+    createdAt?: Date | string
     password: string
+    notificationsEnabled?: boolean
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
-    notificationsEnabled?: boolean
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -12067,62 +14427,62 @@ export namespace Prisma {
 
   export type UserUpdateWithoutAccountsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: StringFieldUpdateOperationsInput | string
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     sessions?: SessionUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
-    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: StringFieldUpdateOperationsInput | string
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
-    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserCreateWithoutSessionsInput = {
     id?: string
-    createdAt?: Date | string
     name: string
     email: string
     emailVerified?: Date | string | null
     image?: string | null
     role: string
+    createdAt?: Date | string
     password: string
+    notificationsEnabled?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
-    notificationsEnabled?: boolean
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
     id?: string
-    createdAt?: Date | string
     name: string
     email: string
     emailVerified?: Date | string | null
     image?: string | null
     role: string
+    createdAt?: Date | string
     password: string
+    notificationsEnabled?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
-    notificationsEnabled?: boolean
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -12137,32 +14497,32 @@ export namespace Prisma {
 
   export type UserUpdateWithoutSessionsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: StringFieldUpdateOperationsInput | string
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
-    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: StringFieldUpdateOperationsInput | string
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
-    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -12239,10 +14599,10 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    eventId: string
     amount: number
     paymentDate: Date | string
     gmailMailId: string
-    eventId: string
   }
 
   export type PaymentCreateOrConnectWithoutUserInput = {
@@ -12256,9 +14616,9 @@ export namespace Prisma {
   }
 
   export type ParticipantsOnEventsCreateWithoutUserInput = {
-    event: EventCreateNestedOneWithoutParticipantsInput
     date?: Date | string
     userEventStatus?: UserEventStatus
+    event: EventCreateNestedOneWithoutParticipantsInput
   }
 
   export type ParticipantsOnEventsUncheckedCreateWithoutUserInput = {
@@ -12373,15 +14733,15 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    userId: string
     amount: number
     paymentDate: Date | string
     gmailMailId: string
-    userId: string
   }
 
   export type ParticipantsOnEventsCreateManyEventInput = {
-    id: string
     date?: Date | string
+    id: string
     userEventStatus?: UserEventStatus
   }
 
@@ -12399,37 +14759,37 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     gmailMailId?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type PaymentUncheckedUpdateManyWithoutPaymentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     gmailMailId?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ParticipantsOnEventsUpdateWithoutEventInput = {
-    user?: UserUpdateOneRequiredWithoutEventsNestedInput
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+    user?: UserUpdateOneRequiredWithoutEventsNestedInput
   }
 
   export type ParticipantsOnEventsUncheckedUpdateWithoutEventInput = {
-    id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    id?: StringFieldUpdateOperationsInput | string
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsUncheckedUpdateManyWithoutParticipantsInput = {
-    id?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    id?: StringFieldUpdateOperationsInput | string
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
@@ -12457,10 +14817,10 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    eventId: string
     amount: number
     paymentDate: Date | string
     gmailMailId: string
-    eventId: string
   }
 
   export type ParticipantsOnEventsCreateManyUserInput = {
@@ -12543,16 +14903,16 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     gmailMailId?: StringFieldUpdateOperationsInput | string
-    eventId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ParticipantsOnEventsUpdateWithoutUserInput = {
-    event?: EventUpdateOneRequiredWithoutParticipantsNestedInput
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+    event?: EventUpdateOneRequiredWithoutParticipantsNestedInput
   }
 
   export type ParticipantsOnEventsUncheckedUpdateWithoutUserInput = {

@@ -1,64 +1,45 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider        = "prisma-client-js"
+  output          = "./generated/client"
   previewFeatures = ["referentialIntegrity"]
-  // We want the output to be included within ./src/generated, as
-  // this is bundled into the final sent image.
-  //
-  // This is different to installing the generated client in node_modules.
-   output          = "./generated/client"
   binaryTargets   = ["native"]
 }
 
 datasource db {
-  provider             = "mysql"
-  url                  = env("DATABASE_URL")
-  referentialIntegrity = "prisma"
-}
-
-enum EventStatus {
-  CANCELED
-  CREATED
-  BOOKED
-}
-
-enum UserEventStatus {
-  AVAILABLE
-  JOINED
-  CANCELED
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model Tokens {
-  access_token String @db.Text
-  refresh_token String @id 
-  expiry_date DateTime
+  access_token  String   @db.Text
+  refresh_token String   @id
+  expiry_date   DateTime
 }
 
 model Event {
-  id           String                 @id @default(cuid())
-  createdAt    DateTime               @default(now())
-  updatedAt    DateTime               @updatedAt
-  date         DateTime
-  startTime    String
-  endTime      String
-  cost         Float
-  status       EventStatus            @default(CREATED)
-  bookingDate  DateTime?
-  address      String
-  maxParticipants Int                @default(10)
-  payments     Payment[]
-  participants ParticipantsOnEvents[]
+  id              String                 @id @default(cuid())
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  address         String
+  date            DateTime
+  endTime         String
+  startTime       String
+  bookingDate     DateTime?
+  cost            Float
+  status          EventStatus            @default(CREATED)
+  maxParticipants Int                    @default(10)
+  payments        Payment[]
+  participants    ParticipantsOnEvents[]
 }
 
 model ParticipantsOnEvents {
-  user            User            @relation(fields: [id], references: [id], onDelete: Cascade)
-  id              String
-  event           Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId         String
   date            DateTime        @default(now())
+  id              String
   userEventStatus UserEventStatus @default(AVAILABLE)
+  user            User            @relation(fields: [id], references: [id], onDelete: Cascade)
+  event           Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@id([id, eventId])
 }
@@ -67,28 +48,27 @@ model Payment {
   id          String   @id @default(cuid())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  eventId     String
+  userId      String
   amount      Float
   paymentDate DateTime
   gmailMailId String
   event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  eventId     String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String
 }
 
-// Necessary for Next auth
 model Account {
   id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? // @db.Text
-  access_token      String? // @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? // @db.Text
+  id_token          String?
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -104,19 +84,19 @@ model Session {
 }
 
 model User {
-  id            String                 @id @default(cuid())
-  createdAt     DateTime               @default(now())
-  name          String                 @unique
-  email         String                 @unique
-  emailVerified DateTime?
-  image         String?
-  role          String
-  password      String
-  accounts      Account[]
-  sessions      Session[]
-  payments      Payment[]
-  events        ParticipantsOnEvents[]
-  notificationsEnabled Boolean @default(true)
+  id                   String                 @id @default(cuid())
+  name                 String                 @unique
+  email                String                 @unique
+  emailVerified        DateTime?
+  image                String?
+  role                 String
+  createdAt            DateTime               @default(now())
+  password             String
+  notificationsEnabled Boolean                @default(true)
+  accounts             Account[]
+  sessions             Session[]
+  payments             Payment[]
+  events               ParticipantsOnEvents[]
 }
 
 model VerificationToken {
@@ -125,4 +105,40 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl {
+  id          String   @id
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  eventId     String
+  userId      String
+  amount      Float
+  paymentDate DateTime
+
+  @@map("_05d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl")
+}
+
+model edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl {
+  id          String   @id
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  eventId     String
+  userId      String
+  amount      Float
+  paymentDate DateTime
+
+  @@map("_4edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl")
+}
+
+enum EventStatus {
+  CANCELED
+  CREATED
+  BOOKED
+}
+
+enum UserEventStatus {
+  AVAILABLE
+  JOINED
+  CANCELED
 }

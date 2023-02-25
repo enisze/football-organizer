@@ -104,24 +104,44 @@ exports.Prisma.AccountScalarFieldEnum = makeEnum({
   session_state: 'session_state'
 });
 
+exports.Prisma.D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  eventId: 'eventId',
+  userId: 'userId',
+  amount: 'amount',
+  paymentDate: 'paymentDate'
+});
+
+exports.Prisma.Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  eventId: 'eventId',
+  userId: 'userId',
+  amount: 'amount',
+  paymentDate: 'paymentDate'
+});
+
 exports.Prisma.EventScalarFieldEnum = makeEnum({
   id: 'id',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
+  address: 'address',
   date: 'date',
-  startTime: 'startTime',
   endTime: 'endTime',
+  startTime: 'startTime',
+  bookingDate: 'bookingDate',
   cost: 'cost',
   status: 'status',
-  bookingDate: 'bookingDate',
-  address: 'address',
   maxParticipants: 'maxParticipants'
 });
 
 exports.Prisma.ParticipantsOnEventsScalarFieldEnum = makeEnum({
-  id: 'id',
   eventId: 'eventId',
   date: 'date',
+  id: 'id',
   userEventStatus: 'userEventStatus'
 });
 
@@ -129,11 +149,11 @@ exports.Prisma.PaymentScalarFieldEnum = makeEnum({
   id: 'id',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
+  eventId: 'eventId',
+  userId: 'userId',
   amount: 'amount',
   paymentDate: 'paymentDate',
-  gmailMailId: 'gmailMailId',
-  eventId: 'eventId',
-  userId: 'userId'
+  gmailMailId: 'gmailMailId'
 });
 
 exports.Prisma.SessionScalarFieldEnum = makeEnum({
@@ -163,12 +183,12 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.UserScalarFieldEnum = makeEnum({
   id: 'id',
-  createdAt: 'createdAt',
   name: 'name',
   email: 'email',
   emailVerified: 'emailVerified',
   image: 'image',
   role: 'role',
+  createdAt: 'createdAt',
   password: 'password',
   notificationsEnabled: 'notificationsEnabled'
 });
@@ -198,7 +218,9 @@ exports.Prisma.ModelName = makeEnum({
   Account: 'Account',
   Session: 'Session',
   User: 'User',
-  VerificationToken: 'VerificationToken'
+  VerificationToken: 'VerificationToken',
+  d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl: 'd6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl',
+  edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl: 'edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl'
 });
 
 /**
