@@ -3,10 +3,16 @@ import { useState } from "react";
 import type { FieldValues } from "react-hook-form";
 import { useForm } from "react-hook-form";
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/ui/base/Accordion";
 import { Button } from "@/ui/base/Button";
 import { TextField } from "@/ui/base/TextField";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, Typography } from "@mui/joy";
+import { Typography } from "@mui/joy";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -64,12 +70,6 @@ const SignUp: FunctionComponent = () => {
       onSubmit={handleSubmit(onSubmit)}
       className="absolute flex h-full w-full flex-col items-center justify-center gap-y-2"
     >
-      <div
-        style={{
-          background: "linear-gradient(to bottom, #373B44, #73C8A9)",
-        }}
-        className="fixed -z-10 flex h-full w-full"
-      />
       {/* register your input into the hook by invoking the "register" function */}
       <TextField
         label="Email"
@@ -83,28 +83,30 @@ const SignUp: FunctionComponent = () => {
         text={errors.username?.message as string}
         {...register("username")}
       />
-      <Link
-        onClick={() => setShowExample(!showExample)}
-        className="max-w-[300px] text-center text-black underline decoration-black"
-      >
-        Klicke hier für ein Beispiel wie der Paypal Name aussehen sollte.
-      </Link>
 
-      {showExample && (
-        <div className="flex max-w-[300px] flex-col gap-y-2">
-          <Image
-            src="/Paypal.jpg"
-            alt="Paypal example"
-            className="rounded"
-            width="300"
-            height="140"
-          />
-          <Typography>
-            Der einzugebene Paypal Name wäre hier{" "}
-            <span className="font-bold">Max Mustermann</span>
-          </Typography>
-        </div>
-      )}
+      <Accordion type="single" collapsible>
+        <AccordionItem value="item-1">
+          <AccordionTrigger>
+            Klicke hier für ein Beispiel wie der Paypal Name aussehen sollte.
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="flex max-w-[300px] flex-col gap-y-2">
+              <Image
+                src="/Paypal.jpg"
+                alt="Paypal example"
+                className="rounded"
+                width="300"
+                height="140"
+              />
+              <Typography>
+                Der einzugebene Paypal Name wäre hier{" "}
+                <span className="font-bold">Max Mustermann</span>
+              </Typography>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+
       <TextField
         label="Passwort"
         {...register("password")}

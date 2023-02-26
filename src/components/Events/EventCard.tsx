@@ -1,5 +1,11 @@
 import type { Event, ParticipantsOnEvents } from "@/prisma/generated/client";
 import { trpc } from "@/src/utils/trpc";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/ui/base/Accordion";
 import { Card, Chip, Sheet, Typography } from "@mui/joy";
 import { filter, find } from "lodash";
 import { useSession } from "next-auth/react";
@@ -73,31 +79,43 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
       </div>
       <Sheet variant="outlined" className="rounded border p-4">
         {data && (
-          <div className="relative h-[200px] w-[250px] md:h-[250px] md:w-[350px]">
-            <LoadingWrapper isLoading={isLoading}>
-              <div className="flex">
-                <DynamicOrganizerMap coordinates={data} />
-                <div className="absolute top-1 right-1">
-                  <EventDateChip eventDate={event.date} />
-                </div>
-              </div>
+          <>
+            <Accordion type="single" collapsible>
+              <AccordionItem value="item-1">
+                <AccordionTrigger>Ort: {event.address}</AccordionTrigger>
+                <AccordionContent>
+                  <div className="relative h-[200px] w-[250px] md:h-[250px] md:w-[350px]">
+                    <LoadingWrapper isLoading={isLoading}>
+                      <div className="flex">
+                        <DynamicOrganizerMap coordinates={data} />
+                        <div className="absolute top-1 right-1">
+                          <EventDateChip eventDate={event.date} />
+                        </div>
+                      </div>
 
-              {userStatus && (
-                <div className="absolute bottom-1 right-1">
-                  <Chip color={userStatus === "JOINED" ? "success" : "danger"}>
-                    <Typography className="text-white">
-                      Du hast{" "}
-                      {userStatus === "JOINED" ? "Zugesagt" : "Abgesagt"}
-                    </Typography>
-                  </Chip>
-                </div>
-              )}
-            </LoadingWrapper>
-          </div>
+                      {userStatus && (
+                        <div className="absolute bottom-1 right-1">
+                          <Chip
+                            color={
+                              userStatus === "JOINED" ? "success" : "danger"
+                            }
+                          >
+                            <Typography className="text-white">
+                              Du hast{" "}
+                              {userStatus === "JOINED"
+                                ? "Zugesagt"
+                                : "Abgesagt"}
+                            </Typography>
+                          </Chip>
+                        </div>
+                      )}
+                    </LoadingWrapper>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </>
         )}
-        <Typography className="text-sm text-gray-700 md:text-lg">
-          Ort: <span className="font-bold">{address}</span>
-        </Typography>
         <Typography className="text-sm text-gray-600 md:text-lg">
           Datum: <span className="font-bold">{transformDate(date)}</span>
         </Typography>
