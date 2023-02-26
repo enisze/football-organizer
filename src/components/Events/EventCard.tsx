@@ -6,8 +6,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/ui/base/Accordion";
-import { Card, Chip, Sheet, Typography } from "@mui/joy";
+import { Card, Chip, Typography } from "@mui/joy";
 import { filter, find } from "lodash";
+import { CalendarClock, CalendarDays, Euro, MapPin } from "lucide-react";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import type { FunctionComponent } from "react";
@@ -69,7 +70,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
   );
 
   return (
-    <Card className="flex w-max flex-col justify-center gap-2 rounded border-2 bg-gray-400  p-6 text-white shadow-xl duration-500 motion-safe:hover:scale-105">
+    <Card className="flex w-max flex-col justify-center gap-2 rounded border-2 bg-gray-400 from-gray-400 to-gray-600 p-6 text-white shadow-xl ">
       <div className="flex flex-col items-center gap-y-2">
         <StatusChip
           status={status}
@@ -77,12 +78,21 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
           maxParticipants={maxParticipants}
         />
       </div>
-      <Sheet variant="outlined" className="rounded border p-4">
+      <div>
         {data && (
           <>
-            <Accordion type="single" collapsible>
-              <AccordionItem value="item-1">
-                <AccordionTrigger>Ort: {event.address}</AccordionTrigger>
+            <Accordion type="single" collapsible className="p-0">
+              <AccordionItem
+                value="item-1"
+                className="border-b-0 "
+                style={{ padding: 0 }}
+              >
+                <AccordionTrigger className="p-0">
+                  <div className="flex items-center">
+                    <MapPin className="mr-2 h-4 w-4 opacity-70" />
+                    {event.address}
+                  </div>
+                </AccordionTrigger>
                 <AccordionContent>
                   <div className="relative h-[200px] w-[250px] md:h-[250px] md:w-[350px]">
                     <LoadingWrapper isLoading={isLoading}>
@@ -116,21 +126,21 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
             </Accordion>
           </>
         )}
-        <Typography className="text-sm text-gray-600 md:text-lg">
-          Datum: <span className="font-bold">{transformDate(date)}</span>
-        </Typography>
-        <Typography className="text-sm text-gray-600 md:text-lg">
-          Uhrzeit:{" "}
+        <div className="flex items-center">
+          <CalendarDays className="mr-2 h-4 w-4 opacity-70" />
+          <span className="font-bold">{transformDate(date)}</span>
+        </div>
+        <div className="flex items-center">
+          <CalendarClock className="mr-2 h-4 w-4 opacity-70" />
           <span className="font-bold">{[startTime, endTime].join("-")}</span>
-        </Typography>
-
-        <Typography className="text-gray-600 md:text-lg">
-          Preis pro Person:
-          <Typography className="font-bold">
-            {`${event.cost / maxParticipants} €`}
-          </Typography>
-        </Typography>
-      </Sheet>
+        </div>
+        <div className="flex items-center">
+          <Euro className="mr-2 h-4 w-4 opacity-70" />
+          <span className="font-bold">{`${
+            event.cost / maxParticipants
+          } € p.P.`}</span>
+        </div>
+      </div>
       <ParticipantsArea
         eventId={event.id}
         participants={joinedUsers}

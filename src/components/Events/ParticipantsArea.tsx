@@ -1,7 +1,7 @@
 import type { ParticipantsOnEvents } from "@/prisma/generated/client";
 import { trpc } from "@/src/utils/trpc";
+import { Avatar, AvatarImage } from "@/ui/base/Avatar";
 import { Button } from "@/ui/base/Button";
-import { Avatar } from "@mui/joy";
 import { map } from "lodash";
 import type { FunctionComponent } from "react";
 import { useState } from "react";
@@ -39,7 +39,9 @@ export const ParticipantsArea: FunctionComponent<{
         map(users, (participant) => {
           return (
             <div key={participant?.id} className="flex items-center gap-x-2">
-              <Avatar />
+              <Avatar>
+                <AvatarImage />
+              </Avatar>
               <div>{participant?.name}</div>
               <EventCardAdminPaymentArea
                 eventId={eventId}

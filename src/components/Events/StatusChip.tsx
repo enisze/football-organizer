@@ -1,4 +1,3 @@
-import { Chip } from "@mui/joy";
 import type { FunctionComponent } from "react";
 import type { EventStatus } from "../../../prisma/generated/client";
 
@@ -10,20 +9,12 @@ export const StatusChip: FunctionComponent<{
   const label = `${numberOfParticipants}/${maxParticipants}`;
 
   return (
-    <Chip
-      color={
-        status === "BOOKED"
-          ? "success"
-          : status === "CANCELED"
-          ? "danger"
-          : "info"
-      }
-    >
+    <div className="rounded text-white">
       {status === "BOOKED"
         ? `GEBUCHT: ${label}`
         : status === "CANCELED"
         ? "ABGESAGT"
         : `NOCH NICHT GEBUCHT ${label}`}
-    </Chip>
+    </div>
   );
 };

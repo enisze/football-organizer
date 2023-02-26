@@ -1,5 +1,10 @@
-import { CircularProgress } from "@mui/joy";
-import type { FunctionComponent, PropsWithChildren } from "react";
+import { Progress } from "@/ui/base/Progress";
+import {
+  FunctionComponent,
+  PropsWithChildren,
+  useEffect,
+  useState,
+} from "react";
 
 export const LoadingWrapper: FunctionComponent<
   PropsWithChildren<{
@@ -13,12 +18,18 @@ export const LoadingWrapper: FunctionComponent<
     : center
     ? "absolute top-1/2 left-1/2 "
     : "";
+  const [progress, setProgress] = useState(13);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setProgress(66), 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <>
       {isLoading ? (
         <div className={classNameStyling}>
-          <CircularProgress className="p-3" />
+          <Progress className="w-[60%] p-3" value={progress} />
         </div>
       ) : (
         children

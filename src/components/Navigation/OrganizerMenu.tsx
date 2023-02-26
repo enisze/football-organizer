@@ -1,3 +1,4 @@
+import { Avatar, AvatarImage } from "@/ui/base/Avatar";
 import { Button } from "@/ui/base/Button";
 import {
   Dialog,
@@ -14,14 +15,14 @@ import {
   DropdownMenuTrigger,
 } from "@/ui/base/DropDownMenu";
 import { Label } from "@/ui/base/Label";
+import { Separator } from "@/ui/base/Separator";
 import { Switch } from "@/ui/base/Switch";
-import { Avatar, Divider, Typography } from "@mui/joy";
+import { Typography } from "@mui/joy";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import type { FunctionComponent } from "react";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { trpc } from "../../utils/trpc";
-import { AddEventForm } from "../Events/AddEventForm";
 import { LoadingWrapper } from "../LoadingWrapper";
 
 export const OrganizerMenu: FunctionComponent = () => {
@@ -52,11 +53,9 @@ export const OrganizerMenu: FunctionComponent = () => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="sm">
-            <Avatar
-              src="https://avatars2.githubusercontent.com/u/24394388?s=460&u=e7c1b6ab09c60a65a6a84ca6edcc46d5b35bcc60&v=4"
-              size="sm"
-              className="mr-2 "
-            />
+            <Avatar className="mr-2">
+              <AvatarImage src="https://avatars2.githubusercontent.com/u/24394388?s=460&u=e7c1b6ab09c60a65a6a84ca6edcc46d5b35bcc60&v=4" />
+            </Avatar>
             <Typography variant="plain" color="primary">
               {userData?.user?.name}
             </Typography>
@@ -64,15 +63,19 @@ export const OrganizerMenu: FunctionComponent = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" forceMount>
           <DropdownMenuItem>Kontostand: {balance}€</DropdownMenuItem>
-          <Divider />
+          <Separator />
           <DialogTrigger asChild>
             <DropdownMenuItem hidden={!isAdmin}>Add Event</DropdownMenuItem>
           </DialogTrigger>
-          <Divider hidden={!isAdmin} />
+          <Separator hidden={!isAdmin} />
           <DropdownMenuItem hidden={!isAdmin}>
-            {link && <Link href={link}>New gmail token</Link>}
+            {link ? (
+              <Link href={link}>New gmail token</Link>
+            ) : (
+              <div>No link</div>
+            )}
           </DropdownMenuItem>
-          <Divider hidden={!isAdmin} />
+          <Separator hidden={!isAdmin} />
           <DropdownMenuItem
             onClick={() =>
               updateNotificationsEnabled({
@@ -90,7 +93,7 @@ export const OrganizerMenu: FunctionComponent = () => {
               </LoadingWrapper>
             </div>
           </DropdownMenuItem>
-          <Divider />
+          <Separator />
           <DropdownMenuItem onClick={() => signOut()}>
             Ausloggen
           </DropdownMenuItem>
@@ -102,11 +105,11 @@ export const OrganizerMenu: FunctionComponent = () => {
           <DialogTitle>Add Event</DialogTitle>
           <DialogDescription>Add a new event</DialogDescription>
         </DialogHeader>
-        <AddEventForm
+        {/* <AddEventForm
           onSubmit={() => {
             return;
           }}
-        />
+        /> */}
       </DialogContent>
     </Dialog>
   );
