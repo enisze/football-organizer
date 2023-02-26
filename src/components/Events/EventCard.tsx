@@ -1,16 +1,11 @@
+import type { Event, ParticipantsOnEvents } from "@/prisma/generated/client";
+import { trpc } from "@/src/utils/trpc";
 import { Card, Chip, Sheet, Typography } from "@mui/joy";
 import { filter, find } from "lodash";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import type { FunctionComponent } from "react";
-import { useRecoilState } from "recoil";
-import type {
-  Event,
-  ParticipantsOnEvents,
-} from "../../../prisma/generated/client";
 import { transformDate } from "../../helpers/transformDate";
-import { trpc } from "../../utils/trpc";
-import { currentTabState } from "../Dashboard/tabState";
 import { LoadingWrapper } from "../LoadingWrapper";
 import type { OrganizerMapProps } from "../Map/OrganizerMap";
 import { PaymentArea } from "../PaymentArea";
@@ -38,19 +33,6 @@ type EventCardProps = {
 //TODO: Adjust schema event thingy -> Warteliste status?
 //TODO: Show Warteliste, if we have participants which are on the waiting list too?
 
-const cardClassname = (upcoming?: boolean) => {
-  const className =
-    "flex flex-col w-max justify-center gap-2 rounded border-2  p-6 text-white shadow-xl duration-500 motion-safe:hover:scale-105";
-
-  const previousColors = " border-gray-500 bg-gray-800";
-  const upcomingColors = " border-gray-500 bg-gray-600";
-
-  const colors = upcoming ? upcomingColors : previousColors;
-
-  const result = className + colors;
-  return result;
-};
-
 export const EventCard: FunctionComponent<EventCardProps> = ({
   event,
   participants,
@@ -58,10 +40,6 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 }) => {
   const { address, startTime, endTime, date, id, status, maxParticipants } =
     event;
-
-  const [tab, setTab] = useRecoilState(currentTabState);
-
-  const isMyTab = tab === 1;
 
   const { data: session } = useSession();
 
@@ -85,7 +63,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
   );
 
   return (
-    <Card className={cardClassname(isMyTab)}>
+    <Card className="flex w-max flex-col justify-center gap-2 rounded border-2 bg-gray-400  p-6 text-white shadow-xl duration-500 motion-safe:hover:scale-105">
       <div className="flex flex-col items-center gap-y-2">
         <StatusChip
           status={status}
@@ -149,7 +127,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
       <EventCardAdminArea eventId={id} />
       <PaymentArea eventId={event.id} bookingDate={event.bookingDate} />
-      {(!isMyTab && Boolean(userStatus)) ||
+      {Boolean(userStatus) ||
         (showActions && (
           <>
             <JoinEventButton id={id} />
