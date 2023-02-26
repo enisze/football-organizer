@@ -68,7 +68,7 @@ export const LoginForm: FunctionComponent = () => {
           )}
 
           <LoadingWrapper isLoading={status === "loading"}>
-            <Button type="submit" color="primary" variant="outline">
+            <Button type="submit" variant="outline">
               Login
             </Button>
           </LoadingWrapper>
