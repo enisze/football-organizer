@@ -1,8 +1,6 @@
 import { ThemeToggle } from "@/ui/theme-toggle";
-import { Avatar, Link, Typography } from "@mui/joy";
-import { useSession } from "next-auth/react";
-import type { FunctionComponent, MouseEventHandler } from "react";
-import { useState } from "react";
+import { Link } from "@mui/joy";
+import type { FunctionComponent } from "react";
 import { useRecoilState } from "recoil";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { useWindowSize } from "../../hooks/useWindowSize";
@@ -11,21 +9,9 @@ import { Heading } from "../Heading";
 import { OrganizerMenu } from "./OrganizerMenu";
 
 export const Navbar: FunctionComponent = () => {
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
-
   const isAdmin = useIsAdmin();
 
-  const { data } = useSession();
-
-  const handleClick: MouseEventHandler<HTMLDivElement> = (event) => {
-    setAnchorEl(event.currentTarget);
-    setShowDropdown(!showDropdown);
-  };
-
   const [tab, setTab] = useRecoilState(currentTabState);
-
-  const noUnderline = showDropdown ? "hover:no-underline" : "";
 
   const { width } = useWindowSize();
   return (
@@ -73,22 +59,9 @@ export const Navbar: FunctionComponent = () => {
           </>
         )}
         <div
-          className={`flex cursor-pointer items-center decoration-[#73C8A9] hover:underline ${noUnderline} active:no-underline`}
-          onClick={handleClick}
+          className={`flex cursor-pointer items-center decoration-[#73C8A9] hover:underline active:no-underline`}
         >
-          <Avatar
-            src="https://avatars2.githubusercontent.com/u/24394388?s=460&u=e7c1b6ab09c60a65a6a84ca6edcc46d5b35bcc60&v=4"
-            size="sm"
-            className="mr-2 "
-          />
-          <Typography variant="plain" color="primary">
-            {data?.user?.name}
-          </Typography>
-          <OrganizerMenu
-            anchorEl={anchorEl}
-            setShowDropdown={setShowDropdown}
-            showDropdown={showDropdown}
-          />
+          <OrganizerMenu />
           <div className="pl-2">
             <ThemeToggle />
           </div>
