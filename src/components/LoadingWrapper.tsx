@@ -1,10 +1,6 @@
 import { Progress } from "@/ui/base/Progress";
-import {
-  FunctionComponent,
-  PropsWithChildren,
-  useEffect,
-  useState,
-} from "react";
+import type { FunctionComponent, PropsWithChildren } from "react";
+import { useEffect, useState } from "react";
 
 export const LoadingWrapper: FunctionComponent<
   PropsWithChildren<{
