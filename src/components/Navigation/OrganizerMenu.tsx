@@ -52,7 +52,7 @@ export const OrganizerMenu: FunctionComponent = () => {
   return (
     <Dialog>
       <DropdownMenu>
-        <DropdownMenuTrigger className="flex items-center gap-x-2">
+        <DropdownMenuTrigger className="flex items-center justify-between gap-x-2">
           <Avatar className="flex items-center justify-center border-[1px]">
             <AvatarFallback>{first + second}</AvatarFallback>
           </Avatar>
