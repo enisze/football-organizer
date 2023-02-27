@@ -58,9 +58,9 @@ export const OrganizerMenu: FunctionComponent = () => {
               {first + second}
             </AvatarFallback>
           </Avatar>
-          <span>{userData?.user?.name}</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          <DropdownMenuItem>{userData?.user?.name}</DropdownMenuItem>
           <DropdownMenuItem>Kontostand: {balance}€</DropdownMenuItem>
           <Separator />
           {isAdmin && (

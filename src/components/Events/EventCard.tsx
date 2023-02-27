@@ -84,7 +84,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
   return (
     <div className="h-full w-full rounded-2xl bg-gradient-to-b from-purple-400 to-purple-100 p-[1px]  md:w-[350px]">
-      <div className="flex w-full flex-col justify-center gap-2 rounded-2xl bg-gradient-to-tl from-white to-blue-200 p-4 shadow-xl dark:bg-gradient-to-tl dark:from-slate-900 dark:to-slate-700 ">
+      <div className="flex w-full flex-col justify-center gap-2 rounded-2xl bg-gradient-to-tl from-white to-blue-100 p-4 shadow-xl dark:bg-gradient-to-tl dark:from-slate-900 dark:to-slate-700 ">
         <div className="flex flex-col items-center gap-y-2">
           <div className="flex items-center gap-x-2">
             <Zap className="h-4 w-4 opacity-70" />
