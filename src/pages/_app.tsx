@@ -7,8 +7,6 @@ import { trpc } from "../utils/trpc";
 
 import "@/styles/globals.css";
 import { ThemeProvider } from "next-themes";
-import { RecoilRoot } from "recoil";
-import { RecoilURLSyncJSON } from "recoil-sync";
 import { PromiseQueueContextProvider } from "../contexts/PromiseQueueContext";
 
 const fontSans = FontSans({
@@ -30,27 +28,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
 			}`}</style>
 
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <RecoilRoot>
-          <RecoilURLSyncJSON
-            location={{ part: "queryParams" }}
-            browserInterface={{
-              getURL: () => {
-                if (typeof Window === "undefined") {
-                  return process.env.NEXT_PUBLIC_BASE_URL as string;
-                } else {
-                  return window.document.location.toString();
-                  // ...or here but it never seems to make it to here
-                }
-              },
-            }}
-          >
-            <SessionProvider session={session}>
-              <PromiseQueueContextProvider>
-                <Component {...pageProps} />
-              </PromiseQueueContextProvider>
-            </SessionProvider>
-          </RecoilURLSyncJSON>
-        </RecoilRoot>
+        <SessionProvider session={session}>
+          <PromiseQueueContextProvider>
+            <Component {...pageProps} />
+          </PromiseQueueContextProvider>
+        </SessionProvider>
       </ThemeProvider>
     </>
   );
