@@ -4,9 +4,7 @@ import { TextField } from "@/ui/base/TextField";
 import { Formik } from "formik";
 import type { FunctionComponent } from "react";
 
-export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
-  onSubmit,
-}) => {
+export const AddEventForm: FunctionComponent = ({}) => {
   const trpcContext = trpc.useContext();
   const { mutate: createEvent } = trpc.event.create.useMutation({
     onSuccess: () => {
@@ -32,7 +30,6 @@ export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
             date,
           });
           setSubmitting(false);
-          onSubmit();
         }}
       >
         {({

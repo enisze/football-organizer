@@ -22,6 +22,7 @@ import Link from "next/link";
 import type { FunctionComponent } from "react";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { trpc } from "../../utils/trpc";
+import { AddEventForm } from "../Events/AddEventForm";
 import { LoadingWrapper } from "../LoadingWrapper";
 
 export const OrganizerMenu: FunctionComponent = () => {
@@ -42,20 +43,13 @@ export const OrganizerMenu: FunctionComponent = () => {
       },
     });
 
-  // const [notificationsLocal, setNotificationsLocal] = useState(
-  //   data?.notificationsEnabled
-  // );
-
-  {
-    userData?.user?.name;
-  }
-
   const { data: balance } = trpc.payment.getUserBalance.useQuery();
 
   const res = userData?.user?.name?.split(" ");
 
   const first = res[0]?.charAt(0) ?? "X";
   const second = res[1]?.charAt(0) ?? "X";
+
   return (
     <Dialog>
       <DropdownMenu>
@@ -111,11 +105,7 @@ export const OrganizerMenu: FunctionComponent = () => {
           <DialogTitle>Add Event</DialogTitle>
           <DialogDescription>Add a new event</DialogDescription>
         </DialogHeader>
-        {/* <AddEventForm
-          onSubmit={() => {
-            return;
-          }}
-        /> */}
+        <AddEventForm />
       </DialogContent>
     </Dialog>
   );

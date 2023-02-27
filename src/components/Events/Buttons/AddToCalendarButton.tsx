@@ -12,12 +12,10 @@ import { Sheet } from "@mui/joy";
 import type { CalendarOptions } from "datebook";
 import { GoogleCalendar, ICalendar, OutlookCalendar } from "datebook";
 import type { FunctionComponent } from "react";
-import { useState } from "react";
 
 export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
   event,
 }) => {
-  const [open, setOpen] = useState(false);
   const [startHours, startMinutes] = event.startTime.split(":");
   const [endHours, endMinutes] = event.endTime.split(":");
 
@@ -43,21 +41,9 @@ export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
   const outlookLink = outlookCalendar.render();
 
   return (
-    <Dialog
-      aria-labelledby="modal-title"
-      aria-describedby="modal-desc"
-      open={open}
-      // sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
-    >
+    <Dialog aria-labelledby="modal-title" aria-describedby="modal-desc">
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          onClick={() => {
-            setOpen(true);
-          }}
-        >
-          Zum Kalender hinzufügen
-        </Button>
+        <Button variant="outline">Zum Kalender hinzufügen</Button>
       </DialogTrigger>
       <DialogContent
         aria-labelledby="size-modal-title"
