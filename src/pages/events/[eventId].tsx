@@ -28,7 +28,12 @@ const EventPage: FunctionComponent = () => {
     },
   })
 
-  if (isLoading) return <LoadingWrapper center isLoading={isLoading} />
+  if (isLoading)
+    return (
+      <div className="grid place-items-center h-full">
+        <LoadingWrapper isLoading={isLoading} />
+      </div>
+    )
 
   if (!data) return <div>Wrong ID</div>
 
