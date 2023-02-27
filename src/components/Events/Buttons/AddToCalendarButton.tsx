@@ -1,5 +1,5 @@
-import type { Event } from "@/prisma/generated/client";
-import { Button } from "@/ui/base/Button";
+import type { Event } from '@/prisma/generated/client'
+import { Button } from '@/ui/base/Button'
 import {
   Dialog,
   DialogContent,
@@ -7,38 +7,37 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/ui/base/Dialog";
-import { Sheet } from "@mui/joy";
-import type { CalendarOptions } from "datebook";
-import { GoogleCalendar, ICalendar, OutlookCalendar } from "datebook";
-import type { FunctionComponent } from "react";
+} from '@/ui/base/Dialog'
+import type { CalendarOptions } from 'datebook'
+import { GoogleCalendar, ICalendar, OutlookCalendar } from 'datebook'
+import type { FunctionComponent } from 'react'
 
 export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
   event,
 }) => {
-  const [startHours, startMinutes] = event.startTime.split(":");
-  const [endHours, endMinutes] = event.endTime.split(":");
+  const [startHours, startMinutes] = event.startTime.split(':')
+  const [endHours, endMinutes] = event.endTime.split(':')
 
-  const start = new Date(event.date);
-  const end = new Date(event.date);
+  const start = new Date(event.date)
+  const end = new Date(event.date)
 
-  start.setHours(Number(startHours), Number(startMinutes));
-  end.setHours(Number(endHours), Number(endMinutes));
+  start.setHours(Number(startHours), Number(startMinutes))
+  end.setHours(Number(endHours), Number(endMinutes))
 
   const options: CalendarOptions = {
-    title: "Fußball",
+    title: 'Fußball',
     location: event.address,
     description:
-      "Das (hoffentlich) wöchentliche Cl-Finale! Spiel und Spass vorprogrammiert. Lets go.",
+      'Das (hoffentlich) wöchentliche Cl-Finale! Spiel und Spass vorprogrammiert. Lets go.',
     start: start,
     end: end,
-  };
-  const icalendar = new ICalendar(options);
-  const googleCalendar = new GoogleCalendar(options);
-  const outlookCalendar = new OutlookCalendar(options);
+  }
+  const icalendar = new ICalendar(options)
+  const googleCalendar = new GoogleCalendar(options)
+  const outlookCalendar = new OutlookCalendar(options)
 
-  const googleLink = googleCalendar.render();
-  const outlookLink = outlookCalendar.render();
+  const googleLink = googleCalendar.render()
+  const outlookLink = outlookCalendar.render()
 
   return (
     <Dialog aria-labelledby="modal-title" aria-describedby="modal-desc">
@@ -56,12 +55,12 @@ export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
           </DialogDescription>
         </DialogHeader>
 
-        <Sheet className="flex flex-col gap-y-2">
+        <div className="flex flex-col gap-y-2">
           <Button
             variant="subtle"
             className="bg-[#73C8A9]"
             onClick={() => {
-              icalendar.download();
+              icalendar.download()
             }}
           >
             ICal Kalendar
@@ -70,7 +69,7 @@ export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
             variant="subtle"
             className="bg-[#73C8A9]"
             onClick={() => {
-              window.open(googleLink);
+              window.open(googleLink)
             }}
           >
             Google Kalendar
@@ -80,13 +79,13 @@ export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
             variant="subtle"
             className="bg-[#73C8A9]"
             onClick={() => {
-              window.open(outlookLink);
+              window.open(outlookLink)
             }}
           >
             Outlook Kalendar
           </Button>
-        </Sheet>
+        </div>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}

@@ -1,53 +1,52 @@
-import { TRPCError } from "@trpc/server";
-import { isAfter } from "date-fns";
-import type { OAuth2ClientOptions } from "google-auth-library";
-import { OAuth2Client } from "google-auth-library";
-import type { gmail_v1 } from "googleapis";
-import { google } from "googleapis";
-import { filter, first, map } from "lodash";
-import { z } from "zod";
-import { sendPaidButCanceledMail } from "../../../../inngest/sendPaidButCanceledMail";
-import { sendWelcomeMail } from "../../../../inngest/sendWelcomeMail";
+import { TRPCError } from '@trpc/server'
+import { isAfter } from 'date-fns'
+import type { OAuth2ClientOptions } from 'google-auth-library'
+import { OAuth2Client } from 'google-auth-library'
+import type { gmail_v1 } from 'googleapis'
+import { google } from 'googleapis'
+import { z } from 'zod'
+import { sendPaidButCanceledMail } from '../../../../inngest/sendPaidButCanceledMail'
+import { sendWelcomeMail } from '../../../../inngest/sendWelcomeMail'
 
-import { protectedProcedure, router } from "../trpc";
+import { protectedProcedure, router } from '../trpc'
 
 const credentials: OAuth2ClientOptions = {
   clientId: process.env.GMAIL_CLIENT_ID,
   clientSecret: process.env.GMAIL_CLIENT_SECRET,
   redirectUri: process.env.GMAIL_REDIRECT_URIS,
-};
+}
 
-const oAuth2Client = new OAuth2Client(credentials);
+const oAuth2Client = new OAuth2Client(credentials)
 
-const PAYPAL_LABEL = "Label_3926228921657449356";
+const PAYPAL_LABEL = 'Label_3926228921657449356'
 
-const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
+const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
 export const gmailRouter = router({
   generateAuthLink: protectedProcedure.query(() => {
     const authorizeUrl = oAuth2Client.generateAuthUrl({
-      access_type: "offline",
+      access_type: 'offline',
       scope: SCOPES,
-      prompt: "consent",
-      redirect_uri: process.env.NEXT_PUBLIC_BASE_URL + "/oauth2callback",
-    });
-    return authorizeUrl;
+      prompt: 'consent',
+      redirect_uri: process.env.NEXT_PUBLIC_BASE_URL + '/oauth2callback',
+    })
+    return authorizeUrl
   }),
 
   setToken: protectedProcedure
     .input(z.object({ code: z.string() }))
     .query(async ({ input: { code }, ctx: { prisma } }) => {
-      const { tokens } = await oAuth2Client.getToken(code);
+      const { tokens } = await oAuth2Client.getToken(code)
 
-      const { expiry_date, access_token, refresh_token } = tokens;
+      const { expiry_date, access_token, refresh_token } = tokens
 
       if (!expiry_date || !refresh_token || !access_token)
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Access revoked",
-        });
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Access revoked',
+        })
 
-      await prisma.tokens.deleteMany();
+      await prisma.tokens.deleteMany()
 
       return await prisma.tokens.create({
         data: {
@@ -55,7 +54,7 @@ export const gmailRouter = router({
           access_token,
           refresh_token,
         },
-      });
+      })
     }),
   paypalEmails: protectedProcedure.query(
     async ({
@@ -66,83 +65,85 @@ export const gmailRouter = router({
         prisma,
       },
     }) => {
-      const tokens = await prisma.tokens.findMany();
+      const tokens = await prisma.tokens.findMany()
 
-      const token = first(tokens);
+      const token = tokens[0]
 
       if (!token)
-        throw new TRPCError({ code: "NOT_FOUND", message: "No tokens found" });
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'No tokens found' })
 
-      const { access_token, expiry_date } = token;
+      const { access_token, expiry_date } = token
 
       try {
         oAuth2Client.setCredentials({
           access_token,
           expiry_date: expiry_date.getTime(),
-          token_type: "access_token",
-        });
+          token_type: 'access_token',
+        })
 
-        console.log("here");
+        console.log('here')
 
-        const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
+        const gmail = google.gmail({ version: 'v1', auth: oAuth2Client })
 
         const { data } = await gmail.users.messages.list({
-          userId: "me",
+          userId: 'me',
           labelIds: [PAYPAL_LABEL],
-        });
+        })
 
         const result = await Promise.all(
-          map(data.messages, async (label) => {
-            const res = await gmail.users.messages.get({
-              userId: "me",
-              id: label.id ?? undefined,
-            });
-            return res.data;
-          })
-        );
+          data.messages
+            ? data.messages?.map(async (label) => {
+                const res = await gmail.users.messages.get({
+                  userId: 'me',
+                  id: label.id ?? undefined,
+                })
+                return res.data
+              })
+            : [],
+        )
 
         if (!result)
-          throw new TRPCError({ code: "NOT_FOUND", message: "No Paypal data" });
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'No Paypal data' })
 
-        const filteredByUserAndDate = filter(result, (res) => {
-          if (!res.internalDate) return false;
+        const filteredByUserAndDate = result.filter((res) => {
+          if (!res.internalDate) return false
 
-          const paymentDate = new Date(Number(res.internalDate));
+          const paymentDate = new Date(Number(res.internalDate))
           return (
             res.snippet?.toLowerCase().includes(name.toLowerCase()) &&
-            isAfter(paymentDate, new Date("01.11.2022"))
-          );
-        }) as gmail_v1.Schema$Message[];
+            isAfter(paymentDate, new Date('01.11.2022'))
+          )
+        }) as gmail_v1.Schema$Message[]
 
-        return filteredByUserAndDate;
+        return filteredByUserAndDate
       } catch (error) {
-        console.log("failed token");
-        console.log(error);
+        console.log('failed token')
+        console.log(error)
         throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Probably new gmail token needed",
-        });
+          code: 'UNAUTHORIZED',
+          message: 'Probably new gmail token needed',
+        })
       }
-    }
+    },
   ),
   sendPaidButCancledMail: protectedProcedure
     .input(z.object({ eventId: z.string() }))
     .mutation(async ({ ctx: { prisma, session }, input: { eventId } }) => {
-      const event = await prisma.event.findUnique({ where: { id: eventId } });
+      const event = await prisma.event.findUnique({ where: { id: eventId } })
       const user = await prisma.user.findUnique({
         where: { id: session.user.id },
-      });
+      })
 
-      return await sendPaidButCanceledMail(event, user);
+      return await sendPaidButCanceledMail(event, user)
     }),
 
   sendWelcomeMail: protectedProcedure.mutation(
     async ({ ctx: { prisma, session } }) => {
       const user = await prisma.user.findUnique({
         where: { id: session.user.id },
-      });
+      })
 
-      return await sendWelcomeMail(user);
-    }
+      return await sendWelcomeMail(user)
+    },
   ),
-});
+})

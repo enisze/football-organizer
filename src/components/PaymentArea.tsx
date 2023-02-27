@@ -1,21 +1,21 @@
-import { Button } from "@/ui/base/Button";
-import { Chip, Link } from "@mui/joy";
-import type { FunctionComponent } from "react";
-import { isDateInCertainRange } from "../helpers/isDateInCertainRange";
-import { trpc } from "../utils/trpc";
+import { Button } from '@/ui/base/Button'
+import { Link } from '@mui/joy'
+import type { FunctionComponent } from 'react'
+import { isDateInCertainRange } from '../helpers/isDateInCertainRange'
+import { trpc } from '../utils/trpc'
 
 const paypalLink =
-  "https://www.paypal.com/paypalme/enz1994?country.x=DE&locale.x=de_DE";
+  'https://www.paypal.com/paypalme/enz1994?country.x=DE&locale.x=de_DE'
 
 export const PaymentArea: FunctionComponent<{
-  eventId: string;
-  bookingDate: Date | null;
+  eventId: string
+  bookingDate: Date | null
 }> = ({ eventId, bookingDate }) => {
-  const { data: payment } = trpc.payment.getByEventId.useQuery({ eventId });
+  const { data: payment } = trpc.payment.getByEventId.useQuery({ eventId })
 
   const isInCertainRange = bookingDate
     ? isDateInCertainRange(new Date(), bookingDate)
-    : false;
+    : false
 
   return (
     <div className="flex w-full flex-col items-center justify-center gap-y-2">
@@ -28,10 +28,10 @@ export const PaymentArea: FunctionComponent<{
       )}
       {payment && (
         <div className="flex items-center gap-x-2">
-          {payment?.amount + "€  am " + payment?.paymentDate.toDateString()}
-          <Chip color="success">Bezahlt</Chip>
+          {payment?.amount + '€  am ' + payment?.paymentDate.toDateString()}
+          <span>Bezahlt</span>
         </div>
       )}
     </div>
-  );
-};
+  )
+}

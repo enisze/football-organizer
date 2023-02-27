@@ -1,59 +1,58 @@
-import { LoginForm } from "@/src/components/Authentication/LoginForm";
-import { EventCard } from "@/src/components/Events/EventCard";
-import { LoadingWrapper } from "@/src/components/LoadingWrapper";
-import { Button } from "@/ui/base/Button";
-import { Sheet } from "@mui/joy";
-import { useSession } from "next-auth/react";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import type { FunctionComponent } from "react";
+import { LoginForm } from '@/src/components/Authentication/LoginForm'
+import { EventCard } from '@/src/components/Events/EventCard'
+import { LoadingWrapper } from '@/src/components/LoadingWrapper'
+import { Button } from '@/ui/base/Button'
+import { useSession } from 'next-auth/react'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import type { FunctionComponent } from 'react'
 
-import { trpc } from "../../utils/trpc";
+import { trpc } from '../../utils/trpc'
 
 const EventPage: FunctionComponent = () => {
-  const router = useRouter();
+  const router = useRouter()
 
-  const id = router.query.eventId as string;
+  const id = router.query.eventId as string
 
   const { data, isLoading } = trpc.event.getById.useQuery(
     { id },
-    { enabled: Boolean(id) }
-  );
-  const { status } = useSession();
+    { enabled: Boolean(id) },
+  )
+  const { status } = useSession()
 
-  const trpcContext = trpc.useContext();
+  const trpcContext = trpc.useContext()
 
   const { mutate: leaveEvent, isSuccess } = trpc.event.leave.useMutation({
     onSuccess: () => {
-      trpcContext.invalidate();
+      trpcContext.invalidate()
     },
-  });
+  })
 
-  if (isLoading) return <LoadingWrapper center isLoading={isLoading} />;
+  if (isLoading) return <LoadingWrapper center isLoading={isLoading} />
 
-  if (!data) return <div>Wrong ID</div>;
+  if (!data) return <div>Wrong ID</div>
 
-  const { participants, ...event } = data;
+  const { participants, ...event } = data
 
-  const url = process.env.NEXT_PUBLIC_BASE_URL as string;
+  const url = process.env.NEXT_PUBLIC_BASE_URL as string
 
-  const link = new URL(url);
+  const link = new URL(url)
 
   return (
     <>
       <div
         style={{
-          background: "linear-gradient(to top, #373B44, #73C8A9)",
+          background: 'linear-gradient(to top, #373B44, #73C8A9)',
         }}
         className="fixed -z-10 flex h-full w-full"
       />
 
       <div className="mx-20 flex flex-col">
-        {status === "unauthenticated" ? (
+        {status === 'unauthenticated' ? (
           <LoginForm />
         ) : (
           <div className="flex flex-col items-center">
-            <Sheet className="my-5 flex flex-col items-center justify-center gap-y-2 rounded bg-[#1E293B] p-5">
+            <div className="my-5 flex flex-col items-center justify-center gap-y-2 rounded p-5">
               <Button
                 onClick={() => leaveEvent({ eventId: event.id })}
                 variant="outline"
@@ -69,13 +68,13 @@ const EventPage: FunctionComponent = () => {
               <Link href={link}>
                 <span>Zur Startseite</span>
               </Link>
-            </Sheet>
+            </div>
             <EventCard event={event} participants={participants} />
           </div>
         )}
       </div>
     </>
-  );
-};
+  )
+}
 
-export default EventPage;
+export default EventPage

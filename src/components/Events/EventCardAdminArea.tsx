@@ -1,60 +1,58 @@
-import { trpc } from "@/src/utils/trpc";
-import { Button } from "@/ui/base/Button";
-import { Chip } from "@mui/joy";
-import { map } from "lodash";
-import type { FunctionComponent } from "react";
-import { useIsAdmin } from "../../hooks/useIsAdmin";
-import { LoadingWrapper } from "../LoadingWrapper";
-import { BookEventButton } from "./Buttons/BookEventButton";
-import { DeleteEventButton } from "./Buttons/DeleteEventButton";
+import { trpc } from '@/src/utils/trpc'
+import { Button } from '@/ui/base/Button'
+import type { FunctionComponent } from 'react'
+import { useIsAdmin } from '../../hooks/useIsAdmin'
+import { LoadingWrapper } from '../LoadingWrapper'
+import { BookEventButton } from './Buttons/BookEventButton'
+import { DeleteEventButton } from './Buttons/DeleteEventButton'
 
 type EventCardAdminAreaProps = {
-  eventId: string;
-};
+  eventId: string
+}
 
 export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
   eventId,
 }) => {
-  const isAdmin = useIsAdmin();
-  const trpcContext = trpc.useContext();
+  const isAdmin = useIsAdmin()
+  const trpcContext = trpc.useContext()
 
   const { mutate: remind, isLoading: loadingRemind } =
     trpc.event.remind.useMutation({
       onSuccess: () => trpcContext.invalidate(),
-    });
+    })
   const { mutate: cancel, isLoading: loadingCancel } =
     trpc.event.cancel.useMutation({
       onSuccess: () => trpcContext.invalidate(),
-    });
+    })
 
   const { data: payments, isLoading } =
     trpc.payment.getAllPaymentsForEventFromNotParticipants.useQuery(
       { eventId },
-      { enabled: isAdmin }
-    );
+      { enabled: isAdmin },
+    )
 
-  if (!isAdmin) return null;
+  if (!isAdmin) return null
 
   return (
     <>
       <div className="flex flex-col items-center gap-y-3">
-        <span>{"Id: " + eventId}</span>
+        <span>{'Id: ' + eventId}</span>
         <LoadingWrapper isLoading={isLoading}>
           {payments && payments.length > 0 && (
             <>
               <span>Bezahlt aber nicht teilgenommen</span>
-              {map(payments, (payment) => {
-                if (!payment || !payment?.user) return null;
+              {payments.map((payment) => {
+                if (!payment || !payment?.user) return null
                 return (
                   <div key={payment.id}>
                     <div key={payment.id} className="flex items-center gap-x-2">
                       <div>{payment?.user.name}</div>
-                      <div>{payment?.amount + " €"}</div>
+                      <div>{payment?.amount + ' €'}</div>
                       <div>{payment?.paymentDate.toDateString()}</div>
-                      <Chip color="success">Bezahlt</Chip>
+                      <div color="success">Bezahlt</div>
                     </div>
                   </div>
-                );
+                )
               })}
             </>
           )}
@@ -74,5 +72,5 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
         </Button>
       </LoadingWrapper>
     </>
-  );
-};
+  )
+}

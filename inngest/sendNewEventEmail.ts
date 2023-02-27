@@ -1,79 +1,73 @@
-import { SendSmtpEmail } from "@sendinblue/client";
-import { differenceInCalendarDays } from "date-fns";
-import { createFunction } from "inngest";
-import { filter, map } from "lodash";
-import { PrismaClient } from "../prisma/generated/client";
-import apiInstance from "../src/emails/transporter";
-import { generateNewEventTemplate } from "./emailTemplates/newEventTemplate";
-import type { Event__New } from "./__generated__/types";
+import { SendSmtpEmail } from '@sendinblue/client'
+import { differenceInCalendarDays } from 'date-fns'
+import { createFunction } from 'inngest'
+import { PrismaClient } from '../prisma/generated/client'
+import apiInstance from '../src/emails/transporter'
+import { generateNewEventTemplate } from './emailTemplates/newEventTemplate'
+import type { Event__New } from './__generated__/types'
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
 const job = async ({ event }: { event: Event__New }) => {
   try {
-    const allUsers = await prisma.user.findMany();
+    const allUsers = await prisma.user.findMany()
 
     if (!allUsers)
       return {
         message: `No users found`,
-      };
+      }
 
-    const usersWhoGotMails: string[] = [];
+    const usersWhoGotMails: string[] = []
 
-    const days = differenceInCalendarDays(
-      new Date(event.data.date),
-      new Date()
-    );
+    const days = differenceInCalendarDays(new Date(event.data.date), new Date())
 
-    const promises = map(
-      filter(allUsers, (user) => user.notificationsEnabled),
-      async (user) => {
+    const promises = allUsers
+      .filter((user) => user.notificationsEnabled)
+      .map(async (user) => {
         const html = generateNewEventTemplate({
           event: { ...event.data, date: new Date(event.data.date) },
           userName: user.name,
-        }).html;
+        }).html
 
-        const sendSmptMail = new SendSmtpEmail();
+        const sendSmptMail = new SendSmtpEmail()
 
-        sendSmptMail.to = [{ email: user.email }];
-        sendSmptMail.htmlContent = html;
+        sendSmptMail.to = [{ email: user.email }]
+        sendSmptMail.htmlContent = html
         sendSmptMail.sender = {
-          email: "eniszej@gmail.com",
-          name: "Football Organizer",
-        };
-        sendSmptMail.subject = `NEUES FUSSBALL EVENT: In ${days} Tagen`;
+          email: 'eniszej@gmail.com',
+          name: 'Football Organizer',
+        }
+        sendSmptMail.subject = `NEUES FUSSBALL EVENT: In ${days} Tagen`
 
-        usersWhoGotMails.push(user.email);
-        return apiInstance.sendTransacEmail(sendSmptMail);
-      }
-    );
+        usersWhoGotMails.push(user.email)
+        return apiInstance.sendTransacEmail(sendSmptMail)
+      })
 
-    const responses = await Promise.all(promises);
+    const responses = await Promise.all(promises)
 
-    const codes = map(
-      responses,
-      (res) => res.response.statusCode + " " + res.response.statusMessage
-    );
+    const codes = responses.map(
+      (res) => res.response.statusCode + ' ' + res.response.statusMessage,
+    )
 
     console.log(`Message sent to: ${JSON.stringify(usersWhoGotMails)},
-    Message results: ${codes}`);
+    Message results: ${codes}`)
 
     return {
       message: `Messages sent to: ${usersWhoGotMails}
     Message results: ${codes}
     `,
-    };
+    }
   } catch (error: any) {
     return {
       message: `No users ${error}`,
-    };
+    }
   }
-};
+}
 export const sendNewEventEmail = createFunction(
-  "Send new Event Email",
-  "event/new",
-  job
-);
+  'Send new Event Email',
+  'event/new',
+  job,
+)
 
 // job({
 //   event: {

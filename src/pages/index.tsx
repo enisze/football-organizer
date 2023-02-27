@@ -1,25 +1,25 @@
-import { type NextPage } from "next";
-import { useSession } from "next-auth/react";
-import { LoginForm } from "../components/Authentication/LoginForm";
-import { SignInAndSignOutButton } from "../components/Authentication/SignInAndSignOutButton";
-import { Dashboard } from "../components/Dashboard/Dashboard";
-import { Heading } from "../components/Heading";
-import { LoadingWrapper } from "../components/LoadingWrapper";
-import { Navbar } from "../components/Navigation/Navbar";
-import { useWindowSize } from "../hooks/useWindowSize";
+import { type NextPage } from 'next'
+import { useSession } from 'next-auth/react'
+import { LoginForm } from '../components/Authentication/LoginForm'
+import { SignInAndSignOutButton } from '../components/Authentication/SignInAndSignOutButton'
+import { Dashboard } from '../components/Dashboard/Dashboard'
+import { Heading } from '../components/Heading'
+import { LoadingWrapper } from '../components/LoadingWrapper'
+import { Navbar } from '../components/Navigation/Navbar'
+import { useWindowSize } from '../hooks/useWindowSize'
 
 const Home: NextPage = () => {
-  const { data: sessionData, status } = useSession();
+  const { data: sessionData, status } = useSession()
 
-  const { width } = useWindowSize();
+  const { width } = useWindowSize()
 
   return (
     <div>
       <title>Football Organizer</title>
-      <LoadingWrapper isLoading={status === "loading"} center>
+      <LoadingWrapper isLoading={status === 'loading'} center>
         {!sessionData ? (
           <main className="absolute flex h-full w-full flex-col items-center justify-center gap-y-2">
-            <Heading size={width && width < 720 ? "md" : "lg"} />
+            <Heading size={width && width < 720 ? 'md' : 'lg'} />
             <LoginForm />
             <SignInAndSignOutButton />
           </main>
@@ -32,7 +32,7 @@ const Home: NextPage = () => {
         )}
       </LoadingWrapper>
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
