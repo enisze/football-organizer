@@ -34,7 +34,6 @@ const DynamicOrganizerMap = dynamic<OrganizerMapProps>(
 type EventCardProps = {
   event: Event;
   participants: ParticipantsOnEvents[];
-  showActions?: boolean;
 };
 
 //TODO: Adjust schema event thingy -> Warteliste status?
@@ -43,10 +42,18 @@ type EventCardProps = {
 export const EventCard: FunctionComponent<EventCardProps> = ({
   event,
   participants,
-  showActions = true,
 }) => {
-  const { address, startTime, endTime, date, id, status, maxParticipants } =
-    event;
+  const {
+    address,
+    startTime,
+    cost,
+    endTime,
+    date,
+    id,
+    status,
+    maxParticipants,
+    bookingDate,
+  } = event;
 
   const { data: session } = useSession();
 
@@ -56,8 +63,8 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
   )?.userEventStatus;
 
   const { data, isLoading } = trpc.map.getLatLong.useQuery({
-    id: event.id,
-    address: event.address,
+    id,
+    address,
   });
 
   const joinedUsers = filter(
@@ -68,6 +75,8 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
     participants,
     (participant) => participant.userEventStatus === "CANCELED"
   );
+
+  console.log(userStatus);
 
   return (
     <div className="h-full w-full rounded-2xl bg-gradient-to-b from-purple-400  to-purple-100 p-[1px]">
@@ -87,7 +96,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
           <div className="flex items-center">
             <Euro className="mr-2 h-4 w-4 opacity-70" />
             <span className="font-bold">{`${
-              event.cost / maxParticipants
+              cost / maxParticipants
             } € p.P.`}</span>
           </div>
 
@@ -101,7 +110,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
                 <AccordionTrigger className="p-0">
                   <div className="flex items-center">
                     <MapPin className="mr-2 h-4 w-4 opacity-70" />
-                    {event.address}
+                    {address}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
@@ -110,7 +119,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
                       <div className="flex">
                         <DynamicOrganizerMap coordinates={data} />
                         <div className="absolute top-1 right-1">
-                          <EventDateChip eventDate={event.date} />
+                          <EventDateChip eventDate={date} />
                         </div>
                       </div>
 
@@ -138,26 +147,21 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
           )}
         </div>
         <ParticipantsArea
-          eventId={event.id}
+          eventId={id}
           participants={joinedUsers}
           maxParticipants={maxParticipants}
           heading="Teilnehmer"
         />
         <ParticipantsArea
-          eventId={event.id}
+          eventId={id}
           participants={canceledUsers}
           heading="Absagen"
         />
 
         <EventCardAdminArea eventId={id} />
-        <PaymentArea eventId={event.id} bookingDate={event.bookingDate} />
-        {Boolean(userStatus) ||
-          (showActions && (
-            <>
-              <JoinEventButton id={id} />
-              <LeaveEventButton id={id} />
-            </>
-          ))}
+        <PaymentArea eventId={id} bookingDate={bookingDate} />
+        <JoinEventButton id={id} />
+        <LeaveEventButton id={id} />
 
         <AddToCalendarButton event={event} />
       </div>
