@@ -66,14 +66,15 @@ export const OrganizerMenu: FunctionComponent = () => {
               <DropdownMenuItem>Add Event</DropdownMenuItem>
             </DialogTrigger>
           )}
-          <DropdownMenuItem hidden={!isAdmin}>
-            {link ? (
-              <Link href={link}>New gmail token</Link>
-            ) : (
-              <div>No link</div>
-            )}
-          </DropdownMenuItem>
-          <Separator hidden={!isAdmin} />
+          {isAdmin && (
+            <DropdownMenuItem hidden={!isAdmin}>
+              {link ? (
+                <Link href={link}>New gmail token</Link>
+              ) : (
+                <div>No link</div>
+              )}
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem
             onClick={() =>
               updateNotificationsEnabled({
