@@ -5,15 +5,8 @@ import { useEffect, useState } from 'react'
 export const LoadingWrapper: FunctionComponent<
   PropsWithChildren<{
     isLoading: boolean
-    center?: boolean
-    className?: string
   }>
-> = ({ children, isLoading, center = false, className }) => {
-  const classNameStyling = className
-    ? className
-    : center
-    ? 'absolute top-1/2 left-1/2 '
-    : ''
+> = ({ children, isLoading }) => {
   const [progress, setProgress] = useState(13)
 
   useEffect(() => {
@@ -22,14 +15,6 @@ export const LoadingWrapper: FunctionComponent<
   }, [])
 
   return (
-    <>
-      {isLoading ? (
-        <div className={classNameStyling}>
-          <Progress className="w-36" value={progress} />
-        </div>
-      ) : (
-        children
-      )}
-    </>
+    <>{isLoading ? <Progress className="w-36" value={progress} /> : children}</>
   )
 }

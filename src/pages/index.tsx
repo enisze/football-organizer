@@ -13,10 +13,12 @@ const Home: NextPage = () => {
 
   const { width } = useWindowSize()
 
+  const style = status === 'loading' ? 'grid place-items-center' : ''
+
   return (
-    <div>
+    <div className={`${style} h-full`}>
       <title>Football Organizer</title>
-      <LoadingWrapper isLoading={status === 'loading'} center>
+      <LoadingWrapper isLoading={status === 'loading'}>
         {!sessionData ? (
           <main className="absolute flex h-full w-full flex-col items-center justify-center gap-y-2">
             <Heading size={width && width < 720 ? 'md' : 'lg'} />

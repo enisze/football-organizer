@@ -1,19 +1,19 @@
-import { type Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
-import { type AppType } from "next/app";
+import { type Session } from 'next-auth'
+import { SessionProvider } from 'next-auth/react'
+import { type AppType } from 'next/app'
 
-import { Inter as FontSans } from "@next/font/google";
-import { trpc } from "../utils/trpc";
+import { Inter as FontSans } from '@next/font/google'
+import { trpc } from '../utils/trpc'
 
-import "@/styles/globals.css";
-import { ThemeProvider } from "next-themes";
-import { PromiseQueueContextProvider } from "../contexts/PromiseQueueContext";
+import '@/styles/globals.css'
+import { ThemeProvider } from 'next-themes'
+import { PromiseQueueContextProvider } from '../contexts/PromiseQueueContext'
 
 const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+})
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -22,11 +22,13 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <>
       <style jsx global>{`
-				:root {
-					--font-sans: ${fontSans.style.fontFamily};
-				}
-			}`}</style>
-
+        :root {
+          --font-sans: ${fontSans.style.fontFamily};
+        }
+        #__next {
+          height: 100%;
+        }
+      `}</style>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <SessionProvider session={session}>
           <PromiseQueueContextProvider>
@@ -35,7 +37,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
         </SessionProvider>
       </ThemeProvider>
     </>
-  );
-};
+  )
+}
 
-export default trpc.withTRPC(MyApp);
+export default trpc.withTRPC(MyApp)

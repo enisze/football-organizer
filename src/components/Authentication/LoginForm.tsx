@@ -1,17 +1,17 @@
-import { Button } from "@/ui/base/Button";
-import { TextField } from "@/ui/base/TextField";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn, useSession } from "next-auth/react";
-import type { FunctionComponent } from "react";
-import type { FieldValues } from "react-hook-form";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { LoadingWrapper } from "../LoadingWrapper";
+import { Button } from '@/ui/base/Button'
+import { TextField } from '@/ui/base/TextField'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { signIn, useSession } from 'next-auth/react'
+import type { FunctionComponent } from 'react'
+import type { FieldValues } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { LoadingWrapper } from '../LoadingWrapper'
 
 const loginSchema = z.object({
-  email: z.string().email({ message: "Bitte gib eine gültige Email ein." }),
-  password: z.string().min(2, { message: "Passwort fehlt" }),
-});
+  email: z.string().email({ message: 'Bitte gib eine gültige Email ein.' }),
+  password: z.string().min(2, { message: 'Passwort fehlt' }),
+})
 
 export const LoginForm: FunctionComponent = () => {
   const {
@@ -19,27 +19,27 @@ export const LoginForm: FunctionComponent = () => {
     handleSubmit,
     formState: { errors },
     setError,
-  } = useForm({ resolver: zodResolver(loginSchema), mode: "onBlur" });
+  } = useForm({ resolver: zodResolver(loginSchema), mode: 'onBlur' })
 
-  const { status } = useSession();
+  const { status } = useSession()
 
   const onSubmit = async (values: FieldValues) => {
-    const res = await signIn("credentials", {
+    const res = await signIn('credentials', {
       redirect: false,
       email: values.email,
       password: values.password,
-    });
+    })
 
     if (res?.error) {
-      setError("authentication", {
-        message: "Die angegebenen Daten sind inkorrekt.",
-      });
+      setError('authentication', {
+        message: 'Die angegebenen Daten sind inkorrekt.',
+      })
     }
-  };
+  }
 
   return (
     <>
-      <LoadingWrapper isLoading={status === "loading"}>
+      <LoadingWrapper isLoading={status === 'loading'}>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col justify-center gap-y-2"
@@ -48,7 +48,7 @@ export const LoginForm: FunctionComponent = () => {
             placeholder="Email"
             label="Email"
             type="email"
-            {...register("email")}
+            {...register('email')}
             text={errors.email?.message as string}
           />
 
@@ -56,7 +56,7 @@ export const LoginForm: FunctionComponent = () => {
             label="Passwort"
             placeholder="Passwort"
             type="password"
-            {...register("password")}
+            {...register('password')}
             text={errors.password?.message as string}
           />
 
@@ -66,7 +66,7 @@ export const LoginForm: FunctionComponent = () => {
             </span>
           )}
 
-          <LoadingWrapper isLoading={status === "loading"}>
+          <LoadingWrapper isLoading={status === 'loading'}>
             <Button type="submit" variant="outline">
               Login
             </Button>
@@ -74,5 +74,5 @@ export const LoginForm: FunctionComponent = () => {
         </form>
       </LoadingWrapper>
     </>
-  );
-};
+  )
+}
