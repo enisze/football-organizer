@@ -1,4 +1,4 @@
-import { Popover, PopoverContent, PopoverTrigger } from "@/ui/base/PopOver";
+import { Popover, PopoverContent, PopoverTrigger } from "@/ui/base/Popover";
 import { Check, Delete, Hourglass, X } from "lucide-react";
 import type { FunctionComponent } from "react";
 import type { EventStatus } from "../../../prisma/generated/client";

@@ -1,7 +1,6 @@
 import { Button } from "@/ui/base/Button";
 import { TextField } from "@/ui/base/TextField";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Typography } from "@mui/joy";
 import { signIn, useSession } from "next-auth/react";
 import type { FunctionComponent } from "react";
 import type { FieldValues } from "react-hook-form";
@@ -62,9 +61,9 @@ export const LoginForm: FunctionComponent = () => {
           />
 
           {errors.authentication?.message && (
-            <Typography color="danger">
+            <span className="text-red-500">
               {errors.authentication?.message as string}
-            </Typography>
+            </span>
           )}
 
           <LoadingWrapper isLoading={status === "loading"}>

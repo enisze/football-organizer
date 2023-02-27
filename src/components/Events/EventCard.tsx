@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/ui/base/Accordion";
-import { Chip, Typography } from "@mui/joy";
+import { Chip } from "@mui/joy";
 import { filter, find } from "lodash";
 import { CalendarClock, CalendarDays, Euro, MapPin } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -76,11 +76,9 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
     (participant) => participant.userEventStatus === "CANCELED"
   );
 
-  console.log(userStatus);
-
   return (
     <div className="h-full w-full rounded-2xl bg-gradient-to-b from-purple-400  to-purple-100 p-[1px]">
-      <div className="flex w-max flex-col justify-center gap-2 rounded-2xl bg-gradient-to-bl from-slate-900 to-slate-700 p-6 text-white shadow-xl ">
+      <div className="flex w-max flex-col justify-center gap-2 rounded-2xl bg-gradient-to-tl from-slate-900 to-slate-700 p-6 text-white shadow-xl ">
         <div className="flex flex-col items-center gap-y-2">
           <StatusChip status={status} />
         </div>
@@ -130,12 +128,12 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
                               userStatus === "JOINED" ? "success" : "danger"
                             }
                           >
-                            <Typography className="text-white">
-                              Du hast{" "}
+                            <span>
+                              Du hast
                               {userStatus === "JOINED"
                                 ? "Zugesagt"
                                 : "Abgesagt"}
-                            </Typography>
+                            </span>
                           </Chip>
                         </div>
                       )}

@@ -10,9 +10,7 @@ export const Navbar: FunctionComponent = () => {
         <Heading size="sm" color="white" />
 
         <div className="flex gap-x-2 ">
-          <div
-            className={`flex cursor-pointer items-center decoration-[#73C8A9] hover:underline active:no-underline`}
-          >
+          <div className={`flex cursor-pointer items-center`}>
             <OrganizerMenu />
             <div className="pl-2">
               <ThemeToggle />

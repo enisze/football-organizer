@@ -1,6 +1,6 @@
 import { trpc } from "@/src/utils/trpc";
 import { Button } from "@/ui/base/Button";
-import { Chip, Typography } from "@mui/joy";
+import { Chip } from "@mui/joy";
 import { map } from "lodash";
 import type { FunctionComponent } from "react";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
@@ -38,13 +38,11 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
   return (
     <>
       <div className="flex flex-col items-center gap-y-3">
-        <Typography variant="soft">{"Id: " + eventId}</Typography>
+        <span>{"Id: " + eventId}</span>
         <LoadingWrapper isLoading={isLoading}>
           {payments && payments.length > 0 && (
             <>
-              <Typography variant="soft">
-                Bezahlt aber nicht teilgenommen
-              </Typography>
+              <span>Bezahlt aber nicht teilgenommen</span>
               {map(payments, (payment) => {
                 if (!payment || !payment?.user) return null;
                 return (

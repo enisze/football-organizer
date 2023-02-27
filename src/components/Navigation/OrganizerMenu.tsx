@@ -16,7 +16,6 @@ import {
 import { Label } from "@/ui/base/Label";
 import { Separator } from "@/ui/base/Separator";
 import { Switch } from "@/ui/base/Switch";
-import { Typography } from "@mui/joy";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import type { FunctionComponent } from "react";
@@ -57,17 +56,16 @@ export const OrganizerMenu: FunctionComponent = () => {
           <Avatar className="flex items-center justify-center border-[1px]">
             <AvatarFallback>{first + second}</AvatarFallback>
           </Avatar>
-          <Typography variant="plain" color="primary">
-            {userData?.user?.name}
-          </Typography>
+          <span>{userData?.user?.name}</span>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" forceMount>
+        <DropdownMenuContent align="end">
           <DropdownMenuItem>Kontostand: {balance}€</DropdownMenuItem>
           <Separator />
-          <DialogTrigger asChild>
-            <DropdownMenuItem hidden={!isAdmin}>Add Event</DropdownMenuItem>
-          </DialogTrigger>
-          <Separator hidden={!isAdmin} />
+          {isAdmin && (
+            <DialogTrigger asChild>
+              <DropdownMenuItem>Add Event</DropdownMenuItem>
+            </DialogTrigger>
+          )}
           <DropdownMenuItem hidden={!isAdmin}>
             {link ? (
               <Link href={link}>New gmail token</Link>

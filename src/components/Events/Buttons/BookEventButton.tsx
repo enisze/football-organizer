@@ -1,6 +1,6 @@
 import { Button } from "@/ui/base/Button";
 import { TextField } from "@/ui/base/TextField";
-import { Modal, ModalClose, ModalDialog, Typography } from "@mui/joy";
+import { Modal, ModalClose, ModalDialog } from "@mui/joy";
 import { format } from "date-fns";
 import type { FunctionComponent } from "react";
 import { useState } from "react";
@@ -36,17 +36,9 @@ export const BookEventButton: FunctionComponent<{ id: string }> = ({ id }) => {
           className="max-w-xs md:max-w-2xl"
         >
           <ModalClose variant="outlined" className="rounded shadow-md" />
-          <Typography
-            component="h2"
-            id="modal-title"
-            level="h4"
-            textColor="inherit"
-            fontWeight="lg"
-            mb={1}
-            className="pr-10 pb-3"
-          >
+          <h2 id="modal-title" className="pr-10 pb-3">
             Event buchen
-          </Typography>
+          </h2>
 
           <div className="flex justify-center gap-x-2">
             <TextField

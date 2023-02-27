@@ -2,15 +2,7 @@ import type { FunctionComponent } from "react";
 import { useMemo, useState } from "react";
 import { trpc } from "../../utils/trpc";
 
-import {
-  List,
-  ListItem,
-  Tab,
-  TabList,
-  TabPanel,
-  Tabs,
-  Typography,
-} from "@mui/joy";
+import { List, ListItem, Tab, TabList, TabPanel, Tabs } from "@mui/joy";
 import { addDays, isAfter } from "date-fns";
 import { find, forEach, map, orderBy } from "lodash";
 import { useSession } from "next-auth/react";
@@ -136,7 +128,7 @@ const EventList: FunctionComponent<{
           })
         ) : (
           <div className="flex justify-center">
-            <Typography>Keine Events</Typography>
+            <span>Keine Events</span>
           </div>
         )}
       </List>

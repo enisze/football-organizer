@@ -12,7 +12,6 @@ import {
 import { Button } from "@/ui/base/Button";
 import { TextField } from "@/ui/base/TextField";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Typography } from "@mui/joy";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -98,10 +97,10 @@ const SignUp: FunctionComponent = () => {
                 width="300"
                 height="140"
               />
-              <Typography>
-                Der einzugebene Paypal Name wäre hier{" "}
+              <span>
+                Der einzugebene Paypal Name wäre hier
                 <span className="font-bold">Max Mustermann</span>
-              </Typography>
+              </span>
             </div>
           </AccordionContent>
         </AccordionItem>
@@ -121,9 +120,9 @@ const SignUp: FunctionComponent = () => {
 
       {errors.authentication?.message && (
         <div className="max-w-[300px]">
-          <Typography color="danger">
+          <span className="text-red-500">
             {errors.authentication?.message as string}
-          </Typography>
+          </span>
         </div>
       )}
 

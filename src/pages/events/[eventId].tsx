@@ -2,7 +2,7 @@ import { LoginForm } from "@/src/components/Authentication/LoginForm";
 import { EventCard } from "@/src/components/Events/EventCard";
 import { LoadingWrapper } from "@/src/components/LoadingWrapper";
 import { Button } from "@/ui/base/Button";
-import { Sheet, Typography } from "@mui/joy";
+import { Sheet } from "@mui/joy";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -62,12 +62,12 @@ const EventPage: FunctionComponent = () => {
               </Button>
 
               {isSuccess && (
-                <Typography variant="solid" color="info">
+                <span className="text-green-500">
                   Du hast dich erfolgreich abgemeldet.
-                </Typography>
+                </span>
               )}
               <Link href={link}>
-                <Typography>Zur Startseite</Typography>
+                <span>Zur Startseite</span>
               </Link>
             </Sheet>
             <EventCard event={event} participants={participants} />
