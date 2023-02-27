@@ -16,7 +16,7 @@ export const Heading: FunctionComponent<{
         className={`cursor-pointer text-center font-extrabold leading-normal ${fontSize} bg-gradient-to-r from-blue-400 to-blue-200 bg-clip-text text-transparent dark:from-blue-800 dark:to-slate-800`}
       >
         Football
-        <span className="text-slate-900 dark:text-slate-100">Organizer</span>
+        <span className="text-slate-900 dark:text-slate-100"> Organizer</span>
       </span>
     </Link>
   );
