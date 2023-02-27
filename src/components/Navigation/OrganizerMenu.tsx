@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback } from "@/ui/base/Avatar";
+import { Avatar, AvatarFallback } from '@/ui/base/Avatar'
 import {
   Dialog,
   DialogContent,
@@ -6,51 +6,54 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/ui/base/Dialog";
+} from '@/ui/base/Dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/ui/base/DropDownMenu";
-import { Label } from "@/ui/base/Label";
-import { Separator } from "@/ui/base/Separator";
-import { Switch } from "@/ui/base/Switch";
-import { signOut, useSession } from "next-auth/react";
-import Link from "next/link";
-import type { FunctionComponent } from "react";
-import { useIsAdmin } from "../../hooks/useIsAdmin";
-import { trpc } from "../../utils/trpc";
-import { AddEventForm } from "../Events/AddEventForm";
-import { LoadingWrapper } from "../LoadingWrapper";
+} from '@/ui/base/DropDownMenu'
+import { Label } from '@/ui/base/Label'
+import { Separator } from '@/ui/base/Separator'
+import { Switch } from '@/ui/base/Switch'
+import { signOut, useSession } from 'next-auth/react'
+import Link from 'next/link'
+import type { FunctionComponent } from 'react'
+import { useState } from 'react'
+import { useIsAdmin } from '../../hooks/useIsAdmin'
+import { trpc } from '../../utils/trpc'
+import { AddEventForm } from '../Events/AddEventForm'
+import { LoadingWrapper } from '../LoadingWrapper'
 
 export const OrganizerMenu: FunctionComponent = () => {
-  const isAdmin = useIsAdmin();
-  const trpcContext = trpc.useContext();
-  const { data: userData } = useSession();
+  const isAdmin = useIsAdmin()
+  const trpcContext = trpc.useContext()
+  const { data: userData } = useSession()
+
+  const [open, setOpen] = useState(false)
 
   const { data: link } = trpc.gmail.generateAuthLink.useQuery(undefined, {
     enabled: isAdmin,
-  });
+  })
 
-  const { data, isLoading } = trpc.user.getNotificationStatus.useQuery();
+  const { data, isLoading } = trpc.user.getNotificationStatus.useQuery()
 
   const { mutate: updateNotificationsEnabled } =
     trpc.user.updateNotifications.useMutation({
       onSuccess: () => {
-        trpcContext.invalidate();
+        trpcContext.invalidate()
       },
-    });
+    })
 
-  const { data: balance } = trpc.payment.getUserBalance.useQuery();
+  const { data: balance } = trpc.payment.getUserBalance.useQuery()
 
-  const res = userData?.user?.name?.split(" ");
+  const res = userData?.user?.name?.split(' ')
 
-  const first = res[0]?.charAt(0) ?? "X";
-  const second = res[1]?.charAt(0) ?? "X";
+  const first = res[0]?.charAt(0) ?? 'X'
+  const second = res[1]?.charAt(0) ?? 'X'
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
       <DropdownMenu>
         <DropdownMenuTrigger className="flex items-center justify-between gap-x-2">
           <Avatar className="flex items-center justify-center border-[1px] ">
@@ -106,8 +109,8 @@ export const OrganizerMenu: FunctionComponent = () => {
           <DialogTitle>Add Event</DialogTitle>
           <DialogDescription>Add a new event</DialogDescription>
         </DialogHeader>
-        <AddEventForm />
+        <AddEventForm onSubmit={() => setOpen(false)} />
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}

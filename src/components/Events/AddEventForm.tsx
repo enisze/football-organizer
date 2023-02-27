@@ -1,35 +1,38 @@
-import { trpc } from "@/src/utils/trpc";
-import { Button } from "@/ui/base/Button";
-import { TextField } from "@/ui/base/TextField";
-import { Formik } from "formik";
-import type { FunctionComponent } from "react";
+import { trpc } from '@/src/utils/trpc'
+import { Button } from '@/ui/base/Button'
+import { TextField } from '@/ui/base/TextField'
+import { Formik } from 'formik'
+import type { FunctionComponent } from 'react'
 
-export const AddEventForm: FunctionComponent = ({}) => {
-  const trpcContext = trpc.useContext();
+export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
+  onSubmit,
+}) => {
+  const trpcContext = trpc.useContext()
   const { mutate: createEvent } = trpc.event.create.useMutation({
     onSuccess: () => {
-      trpcContext.invalidate();
+      trpcContext.invalidate()
     },
-  });
+  })
 
   return (
     <div>
       <Formik
         initialValues={{
-          address: "Zülpicher Wall 1, 50674 Köln",
-          date: "",
-          startTime: "20:00",
-          endTime: "21:30",
+          address: 'Zülpicher Wall 1, 50674 Köln',
+          date: '',
+          startTime: '20:00',
+          endTime: '21:30',
           cost: 45,
           maxParticipants: 10,
         }}
         onSubmit={(values, { setSubmitting }) => {
-          const date = new Date(values.date);
+          const date = new Date(values.date)
           createEvent({
             ...values,
             date,
-          });
-          setSubmitting(false);
+          })
+          setSubmitting(false)
+          onSubmit()
         }}
       >
         {({
@@ -51,7 +54,7 @@ export const AddEventForm: FunctionComponent = ({}) => {
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.address}
-              text={errors.address ?? ""}
+              text={errors.address ?? ''}
             />
 
             <TextField
@@ -61,7 +64,7 @@ export const AddEventForm: FunctionComponent = ({}) => {
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.date}
-              text={errors.date ?? ""}
+              text={errors.date ?? ''}
             />
 
             <TextField
@@ -71,7 +74,7 @@ export const AddEventForm: FunctionComponent = ({}) => {
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.startTime}
-              text={errors.startTime ?? ""}
+              text={errors.startTime ?? ''}
             />
             <TextField
               label="Endzeit"
@@ -80,7 +83,7 @@ export const AddEventForm: FunctionComponent = ({}) => {
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.endTime}
-              text={errors.endTime ?? ""}
+              text={errors.endTime ?? ''}
             />
 
             <TextField
@@ -90,7 +93,7 @@ export const AddEventForm: FunctionComponent = ({}) => {
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.cost}
-              text={errors.cost ?? ""}
+              text={errors.cost ?? ''}
             />
 
             <TextField
@@ -100,7 +103,7 @@ export const AddEventForm: FunctionComponent = ({}) => {
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.maxParticipants}
-              text={errors.maxParticipants ?? ""}
+              text={errors.maxParticipants ?? ''}
             />
             <Button
               variant="outline"
@@ -114,5 +117,5 @@ export const AddEventForm: FunctionComponent = ({}) => {
         )}
       </Formik>
     </div>
-  );
-};
+  )
+}

@@ -28,7 +28,7 @@ const EventList: FunctionComponent<{
 }> = ({ events, isLoading }) => {
   return (
     <LoadingWrapper isLoading={isLoading} className="flex justify-center">
-      <ul>
+      <ul className="flex flex-col gap-y-2">
         {events && events?.length > 0 ? (
           events.map((event) => {
             const { participants, ...realEvent } = event
