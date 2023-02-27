@@ -28,12 +28,10 @@ export const JoinEventButton: FunctionComponent<{
   };
 
   return (
-    <>
-      <LoadingWrapper isLoading={loadingJoin} className="self-center">
-        <Button variant="outline" onClick={join}>
-          Zusagen
-        </Button>
-      </LoadingWrapper>
-    </>
+    <LoadingWrapper isLoading={loadingJoin} className="self-center">
+      <Button variant="outline" onClick={join} className="w-full">
+        Zusagen
+      </Button>
+    </LoadingWrapper>
   );
 };

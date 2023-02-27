@@ -9,7 +9,7 @@ import {
 import { Chip } from "@mui/joy";
 import { differenceInCalendarDays } from "date-fns";
 import { filter, find } from "lodash";
-import { Activity, CalendarDays, MapPin, Zap } from "lucide-react";
+import { Activity, CalendarDays, Euro, MapPin, Zap } from "lucide-react";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import type { FunctionComponent } from "react";
@@ -84,12 +84,16 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
   return (
     <div className="h-full w-full rounded-2xl bg-gradient-to-b from-purple-400 to-purple-100 p-[1px]  md:w-[350px]">
-      <div className="flex w-full flex-col justify-center gap-2 rounded-2xl bg-gradient-to-tl from-slate-900 to-slate-700 p-6 text-white shadow-xl ">
+      <div className="flex w-full flex-col justify-center gap-2 rounded-2xl p-4 shadow-xl dark:bg-gradient-to-tl dark:from-slate-900 dark:to-slate-700 ">
         <div className="flex flex-col items-center gap-y-2">
           <div className="flex items-center gap-x-2">
             <Zap className="h-4 w-4 opacity-70" />
             <span className="font-bold">{eventString}</span>
-            <span className="font-bold">{`${cost / maxParticipants} €`}</span>
+
+            <div className="flex items-center">
+              <Euro className="h-4 w-4 opacity-70" />
+              <span> {`${cost / maxParticipants}`}</span>
+            </div>
           </div>
           <div className="flex items-center gap-x-2">
             <Activity className="h-4 w-4 opacity-70" />
@@ -101,8 +105,9 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         <div>
           <div className="flex items-center gap-x-2">
             <CalendarDays className="h-4 w-4 opacity-70" />
-            <span className="font-bold">{transformDate(date)}</span>
-            <span className="font-bold">{[startTime, endTime].join("-")}</span>
+            <span>
+              {transformDate(date) + " " + [startTime, endTime].join("-")}
+            </span>
           </div>
           {data && (
             <Accordion type="single" collapsible className="p-0">
@@ -161,8 +166,10 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
         <EventCardAdminArea eventId={id} />
         <PaymentArea eventId={id} bookingDate={bookingDate} />
-        <JoinEventButton id={id} />
-        <LeaveEventButton id={id} />
+        <div className="flex  justify-between gap-x-2">
+          <JoinEventButton id={id} />
+          <LeaveEventButton id={id} />
+        </div>
 
         <AddToCalendarButton event={event} />
       </div>

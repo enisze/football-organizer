@@ -33,7 +33,7 @@ export const LeaveEventButton: FunctionComponent<{
   return (
     <>
       <LoadingWrapper isLoading={loadingLeave} className="self-center">
-        <Button variant="outline" onClick={leave}>
+        <Button variant="outline" onClick={leave} className="w-full">
           Absagen
         </Button>
       </LoadingWrapper>
