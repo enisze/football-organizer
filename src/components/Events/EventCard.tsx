@@ -83,7 +83,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
     days < 0 ? "Vergangenes Event" : days === 0 ? "Heute" : `In ${days} Tagen`;
 
   return (
-    <div className="h-full w-[250px] rounded-2xl bg-gradient-to-b from-purple-400 to-purple-100 p-[1px]  md:w-[350px]">
+    <div className="h-full w-full rounded-2xl bg-gradient-to-b from-purple-400 to-purple-100 p-[1px]  md:w-[350px]">
       <div className="flex w-full flex-col justify-center gap-2 rounded-2xl bg-gradient-to-tl from-slate-900 to-slate-700 p-6 text-white shadow-xl ">
         <div className="flex flex-col items-center gap-y-2">
           <div className="flex items-center gap-x-2">
