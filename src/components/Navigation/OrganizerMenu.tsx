@@ -1,5 +1,4 @@
-import { Avatar, AvatarImage } from "@/ui/base/Avatar";
-import { Button } from "@/ui/base/Button";
+import { Avatar, AvatarFallback } from "@/ui/base/Avatar";
 import {
   Dialog,
   DialogContent,
@@ -47,19 +46,26 @@ export const OrganizerMenu: FunctionComponent = () => {
   //   data?.notificationsEnabled
   // );
 
+  {
+    userData?.user?.name;
+  }
+
   const { data: balance } = trpc.payment.getUserBalance.useQuery();
+
+  const res = userData?.user?.name?.split(" ");
+
+  const first = res[0]?.charAt(0) ?? "X";
+  const second = res[1]?.charAt(0) ?? "X";
   return (
     <Dialog>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="sm">
-            <Avatar className="mr-2">
-              <AvatarImage src="https://avatars2.githubusercontent.com/u/24394388?s=460&u=e7c1b6ab09c60a65a6a84ca6edcc46d5b35bcc60&v=4" />
-            </Avatar>
-            <Typography variant="plain" color="primary">
-              {userData?.user?.name}
-            </Typography>
-          </Button>
+        <DropdownMenuTrigger className="flex items-center gap-x-2">
+          <Avatar className="flex items-center justify-center border-[1px]">
+            <AvatarFallback>{first + second}</AvatarFallback>
+          </Avatar>
+          <Typography variant="plain" color="primary">
+            {userData?.user?.name}
+          </Typography>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" forceMount>
           <DropdownMenuItem>Kontostand: {balance}€</DropdownMenuItem>

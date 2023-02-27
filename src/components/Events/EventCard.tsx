@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/ui/base/Accordion";
-import { Card, Chip, Typography } from "@mui/joy";
+import { Chip, Typography } from "@mui/joy";
 import { filter, find } from "lodash";
 import { CalendarClock, CalendarDays, Euro, MapPin } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -70,17 +70,28 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
   );
 
   return (
-    <Card className="flex w-max flex-col justify-center gap-2 rounded border-2 bg-gray-400 from-gray-400 to-gray-600 p-6 text-white shadow-xl ">
-      <div className="flex flex-col items-center gap-y-2">
-        <StatusChip
-          status={status}
-          numberOfParticipants={joinedUsers.length}
-          maxParticipants={maxParticipants}
-        />
-      </div>
-      <div>
-        {data && (
-          <>
+    <div className="h-full w-full rounded-2xl bg-gradient-to-b from-purple-400  to-purple-100 p-[1px]">
+      <div className="flex w-max flex-col justify-center gap-2 rounded-2xl bg-gradient-to-bl from-slate-900 to-slate-700 p-6 text-white shadow-xl ">
+        <div className="flex flex-col items-center gap-y-2">
+          <StatusChip status={status} />
+        </div>
+        <div>
+          <div className="flex items-center">
+            <CalendarDays className="mr-2 h-4 w-4 opacity-70" />
+            <span className="font-bold">{transformDate(date)}</span>
+          </div>
+          <div className="flex items-center">
+            <CalendarClock className="mr-2 h-4 w-4 opacity-70" />
+            <span className="font-bold">{[startTime, endTime].join("-")}</span>
+          </div>
+          <div className="flex items-center">
+            <Euro className="mr-2 h-4 w-4 opacity-70" />
+            <span className="font-bold">{`${
+              event.cost / maxParticipants
+            } € p.P.`}</span>
+          </div>
+
+          {data && (
             <Accordion type="single" collapsible className="p-0">
               <AccordionItem
                 value="item-1"
@@ -124,46 +135,32 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-          </>
-        )}
-        <div className="flex items-center">
-          <CalendarDays className="mr-2 h-4 w-4 opacity-70" />
-          <span className="font-bold">{transformDate(date)}</span>
+          )}
         </div>
-        <div className="flex items-center">
-          <CalendarClock className="mr-2 h-4 w-4 opacity-70" />
-          <span className="font-bold">{[startTime, endTime].join("-")}</span>
-        </div>
-        <div className="flex items-center">
-          <Euro className="mr-2 h-4 w-4 opacity-70" />
-          <span className="font-bold">{`${
-            event.cost / maxParticipants
-          } € p.P.`}</span>
-        </div>
+        <ParticipantsArea
+          eventId={event.id}
+          participants={joinedUsers}
+          maxParticipants={maxParticipants}
+          heading="Teilnehmer"
+        />
+        <ParticipantsArea
+          eventId={event.id}
+          participants={canceledUsers}
+          heading="Absagen"
+        />
+
+        <EventCardAdminArea eventId={id} />
+        <PaymentArea eventId={event.id} bookingDate={event.bookingDate} />
+        {Boolean(userStatus) ||
+          (showActions && (
+            <>
+              <JoinEventButton id={id} />
+              <LeaveEventButton id={id} />
+            </>
+          ))}
+
+        <AddToCalendarButton event={event} />
       </div>
-      <ParticipantsArea
-        eventId={event.id}
-        participants={joinedUsers}
-        maxParticipants={maxParticipants}
-        heading="Teilnehmer"
-      />
-      <ParticipantsArea
-        eventId={event.id}
-        participants={canceledUsers}
-        heading="Absagen"
-      />
-
-      <EventCardAdminArea eventId={id} />
-      <PaymentArea eventId={event.id} bookingDate={event.bookingDate} />
-      {Boolean(userStatus) ||
-        (showActions && (
-          <>
-            <JoinEventButton id={id} />
-            <LeaveEventButton id={id} />
-          </>
-        ))}
-
-      <AddToCalendarButton event={event} />
-    </Card>
+    </div>
   );
 };
