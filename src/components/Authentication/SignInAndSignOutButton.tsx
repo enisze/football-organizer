@@ -19,9 +19,7 @@ export const SignInAndSignOutButton: FunctionComponent = () => {
 const SignInButton: FunctionComponent = () => {
   return (
     <Link href={`${process.env.NEXT_PUBLIC_BASE_URL}/signUp`}>
-      <Button className="px-4 py-2" variant="outline">
-        Registrieren
-      </Button>
+      <Button variant="outline">Registrieren</Button>
     </Link>
   );
 };
