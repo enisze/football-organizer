@@ -1,11 +1,10 @@
-import { Button, TextField } from "@mui/joy";
+import { trpc } from "@/src/utils/trpc";
+import { Button } from "@/ui/base/Button";
+import { TextField } from "@/ui/base/TextField";
 import { Formik } from "formik";
 import type { FunctionComponent } from "react";
-import { trpc } from "../../utils/trpc";
 
-export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
-  onSubmit,
-}) => {
+export const AddEventForm: FunctionComponent = ({}) => {
   const trpcContext = trpc.useContext();
   const { mutate: createEvent } = trpc.event.create.useMutation({
     onSuccess: () => {
@@ -31,13 +30,11 @@ export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
             date,
           });
           setSubmitting(false);
-          onSubmit();
         }}
       >
         {({
           values,
           errors,
-          touched,
           handleChange,
           handleBlur,
           handleSubmit,
@@ -50,66 +47,63 @@ export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
           >
             <TextField
               label="Address"
-              variant="outlined"
               name="address"
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.address}
-              helperText={errors.address && touched.address}
+              text={errors.address ?? ""}
             />
 
             <TextField
               label="Datum"
-              variant="outlined"
               type="date"
               name="date"
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.date}
+              text={errors.date ?? ""}
             />
 
             <TextField
               label="Startzeit"
-              variant="outlined"
               type="time"
               name="startTime"
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.startTime}
+              text={errors.startTime ?? ""}
             />
             <TextField
               label="Endzeit"
-              variant="outlined"
               type="time"
               name="endTime"
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.endTime}
+              text={errors.endTime ?? ""}
             />
 
             <TextField
               label="Kosten"
-              variant="outlined"
               name="cost"
               type="number"
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.cost}
-              helperText={errors.cost && touched.cost}
+              text={errors.cost ?? ""}
             />
 
             <TextField
               label="Teilnehmerzahl"
-              variant="outlined"
               name="maxParticipants"
               type="number"
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.maxParticipants}
-              helperText={errors.maxParticipants && touched.maxParticipants}
+              text={errors.maxParticipants ?? ""}
             />
             <Button
-              variant="soft"
+              variant="outline"
               type="submit"
               disabled={isSubmitting}
               className="bg-[#73C8A9]"

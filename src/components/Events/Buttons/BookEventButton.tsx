@@ -1,11 +1,6 @@
-import {
-  Button,
-  Modal,
-  ModalClose,
-  ModalDialog,
-  TextField,
-  Typography,
-} from "@mui/joy";
+import { Button } from "@/ui/base/Button";
+import { TextField } from "@/ui/base/TextField";
+import { Modal, ModalClose, ModalDialog } from "@mui/joy";
 import { format } from "date-fns";
 import type { FunctionComponent } from "react";
 import { useState } from "react";
@@ -24,7 +19,7 @@ export const BookEventButton: FunctionComponent<{ id: string }> = ({ id }) => {
 
   return (
     <>
-      <Button variant="outlined" onClick={() => setShowBookModal(true)}>
+      <Button variant="outline" onClick={() => setShowBookModal(true)}>
         Book
       </Button>
 
@@ -41,22 +36,13 @@ export const BookEventButton: FunctionComponent<{ id: string }> = ({ id }) => {
           className="max-w-xs md:max-w-2xl"
         >
           <ModalClose variant="outlined" className="rounded shadow-md" />
-          <Typography
-            component="h2"
-            id="modal-title"
-            level="h4"
-            textColor="inherit"
-            fontWeight="lg"
-            mb={1}
-            className="pr-10 pb-3"
-          >
+          <h2 id="modal-title" className="pr-10 pb-3">
             Event buchen
-          </Typography>
+          </h2>
 
           <div className="flex justify-center gap-x-2">
             <TextField
               label="Datum"
-              variant="outlined"
               type="date"
               name="date"
               onChange={(event) => {
@@ -65,9 +51,10 @@ export const BookEventButton: FunctionComponent<{ id: string }> = ({ id }) => {
                 setBookingDate(format(date, "yyyy-MM-dd"));
               }}
               value={bookingDate}
+              text={""}
             />
             <Button
-              variant="outlined"
+              variant="outline"
               color="info"
               onClick={() => {
                 bookEvent({ id, date: new Date(bookingDate) });

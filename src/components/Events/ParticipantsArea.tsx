@@ -1,9 +1,11 @@
-import { Avatar, Button } from "@mui/joy";
+import type { ParticipantsOnEvents } from "@/prisma/generated/client";
+import { trpc } from "@/src/utils/trpc";
+import { Avatar } from "@/ui/base/Avatar";
+import { Button } from "@/ui/base/Button";
+import { AvatarFallback } from "@radix-ui/react-avatar";
 import { map } from "lodash";
 import type { FunctionComponent } from "react";
 import { useState } from "react";
-import type { ParticipantsOnEvents } from "../../../prisma/generated/client";
-import { trpc } from "../../utils/trpc";
 import { EventCardAdminPaymentArea } from "./EventCardAdminPaymentArea";
 
 export const ParticipantsArea: FunctionComponent<{
@@ -27,7 +29,7 @@ export const ParticipantsArea: FunctionComponent<{
   return (
     <>
       <Button
-        variant="soft"
+        variant="ghost"
         color="info"
         onClick={() => setShowParticipants(!showParticipants)}
         className="bg-[#89A6FB]"
@@ -36,9 +38,15 @@ export const ParticipantsArea: FunctionComponent<{
       </Button>
       {showParticipants &&
         map(users, (participant) => {
+          const res = participant?.name?.split(" ") as string[];
+          const first = res[0]?.charAt(0) ?? "X";
+          const second = res[1]?.charAt(0) ?? "X";
+
           return (
             <div key={participant?.id} className="flex items-center gap-x-2">
-              <Avatar />
+              <Avatar className="flex items-center justify-center border-[1px]">
+                <AvatarFallback>{first + second}</AvatarFallback>
+              </Avatar>
               <div>{participant?.name}</div>
               <EventCardAdminPaymentArea
                 eventId={eventId}

@@ -1,4 +1,5 @@
-import { Button, Chip, Link } from "@mui/joy";
+import { Button } from "@/ui/base/Button";
+import { Chip, Link } from "@mui/joy";
 import type { FunctionComponent } from "react";
 import { isDateInCertainRange } from "../helpers/isDateInCertainRange";
 import { trpc } from "../utils/trpc";
@@ -20,7 +21,7 @@ export const PaymentArea: FunctionComponent<{
     <div className="flex w-full flex-col items-center justify-center gap-y-2">
       {!payment && isInCertainRange && (
         <Link href={paypalLink} underline="none" className="w-full">
-          <Button variant="outlined" className="w-full">
+          <Button variant="outline" className="w-full">
             Bezahlen per Paypal
           </Button>
         </Link>

@@ -1,7 +1,8 @@
-import { Button, Modal, ModalClose, ModalDialog, Typography } from "@mui/joy";
+import { trpc } from "@/src/utils/trpc";
+import { Button } from "@/ui/base/Button";
+import { Modal, ModalClose, ModalDialog } from "@mui/joy";
 import type { FunctionComponent } from "react";
 import { useState } from "react";
-import { trpc } from "../../../utils/trpc";
 import { LoadingWrapper } from "../../LoadingWrapper";
 
 export const LeaveEventButton: FunctionComponent<{
@@ -32,7 +33,7 @@ export const LeaveEventButton: FunctionComponent<{
   return (
     <>
       <LoadingWrapper isLoading={loadingLeave} className="self-center">
-        <Button variant="outlined" onClick={leave}>
+        <Button variant="outline" onClick={leave}>
           Absagen
         </Button>
       </LoadingWrapper>
@@ -49,21 +50,13 @@ export const LeaveEventButton: FunctionComponent<{
           className="max-w-xs md:max-w-2xl"
         >
           <ModalClose variant="outlined" className="rounded shadow-md" />
-          <Typography
-            component="h2"
-            id="modal-title"
-            level="h4"
-            textColor="inherit"
-            fontWeight="lg"
-            mb={1}
-            className="pr-10 pb-3"
-          >
+          <h2 id="modal-title" className="pr-10 pb-3">
             Du hast bereits bezahlt, bist du dir sicher, dass du absagen willst?
-          </Typography>
+          </h2>
 
           <div className="flex justify-center gap-x-2">
             <Button
-              variant="outlined"
+              variant="outline"
               color="info"
               onClick={() => {
                 leaveEvent({ eventId: id });
@@ -77,7 +70,7 @@ export const LeaveEventButton: FunctionComponent<{
             </Button>
 
             <Button
-              variant="outlined"
+              variant="outline"
               onClick={() => {
                 setShowLeaveModal(false);
               }}

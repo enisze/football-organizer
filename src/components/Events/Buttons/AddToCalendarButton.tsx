@@ -1,21 +1,21 @@
+import type { Event } from "@/prisma/generated/client";
+import { Button } from "@/ui/base/Button";
 import {
-  Button,
-  Modal,
-  ModalClose,
-  ModalDialog,
-  Sheet,
-  Typography,
-} from "@mui/joy";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/ui/base/Dialog";
+import { Sheet } from "@mui/joy";
 import type { CalendarOptions } from "datebook";
 import { GoogleCalendar, ICalendar, OutlookCalendar } from "datebook";
 import type { FunctionComponent } from "react";
-import { useState } from "react";
-import type { Event } from "../../../../prisma/generated/client";
 
 export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
   event,
 }) => {
-  const [open, setOpen] = useState(false);
   const [startHours, startMinutes] = event.startTime.split(":");
   const [endHours, endMinutes] = event.endTime.split(":");
 
@@ -41,70 +41,52 @@ export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
   const outlookLink = outlookCalendar.render();
 
   return (
-    <>
-      <Button
-        variant="outlined"
-        onClick={() => {
-          setOpen(true);
-        }}
+    <Dialog aria-labelledby="modal-title" aria-describedby="modal-desc">
+      <DialogTrigger asChild>
+        <Button variant="outline">Zum Kalender hinzufügen</Button>
+      </DialogTrigger>
+      <DialogContent
+        aria-labelledby="size-modal-title"
+        aria-describedby="size-modal-description"
       >
-        Zum Kalender hinzufügen
-      </Button>
-      <Modal
-        aria-labelledby="modal-title"
-        aria-describedby="modal-desc"
-        open={open}
-        onClose={() => setOpen(false)}
-        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
-      >
-        <ModalDialog
-          aria-labelledby="size-modal-title"
-          aria-describedby="size-modal-description"
-        >
-          <ModalClose variant="outlined" className="rounded shadow-md" />
-          <Typography
-            component="h2"
-            id="modal-title"
-            level="h4"
-            textColor="inherit"
-            fontWeight="lg"
-            mb={1}
+        <DialogHeader>
+          <DialogTitle>Zum Kalender hinzufügen</DialogTitle>
+          <DialogDescription>
+            Füge das Event einem Kalender deiner Wahl hinyu
+          </DialogDescription>
+        </DialogHeader>
+
+        <Sheet className="flex flex-col gap-y-2">
+          <Button
+            variant="subtle"
+            className="bg-[#73C8A9]"
+            onClick={() => {
+              icalendar.download();
+            }}
           >
-            Kalender wählen
-          </Typography>
+            ICal Kalendar
+          </Button>
+          <Button
+            variant="subtle"
+            className="bg-[#73C8A9]"
+            onClick={() => {
+              window.open(googleLink);
+            }}
+          >
+            Google Kalendar
+          </Button>
 
-          <Sheet className="flex flex-col gap-y-2">
-            <Button
-              variant="soft"
-              className="bg-[#73C8A9]"
-              onClick={() => {
-                icalendar.download();
-              }}
-            >
-              ICal Kalendar
-            </Button>
-            <Button
-              variant="soft"
-              className="bg-[#73C8A9]"
-              onClick={() => {
-                window.open(googleLink);
-              }}
-            >
-              Google Kalendar
-            </Button>
-
-            <Button
-              variant="soft"
-              className="bg-[#73C8A9]"
-              onClick={() => {
-                window.open(outlookLink);
-              }}
-            >
-              Outlook Kalendar
-            </Button>
-          </Sheet>
-        </ModalDialog>
-      </Modal>
-    </>
+          <Button
+            variant="subtle"
+            className="bg-[#73C8A9]"
+            onClick={() => {
+              window.open(outlookLink);
+            }}
+          >
+            Outlook Kalendar
+          </Button>
+        </Sheet>
+      </DialogContent>
+    </Dialog>
   );
 };

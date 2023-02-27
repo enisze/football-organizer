@@ -1,6 +1,5 @@
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
-import Head from "next/head";
 import { LoginForm } from "../components/Authentication/LoginForm";
 import { SignInAndSignOutButton } from "../components/Authentication/SignInAndSignOutButton";
 import { Dashboard } from "../components/Dashboard/Dashboard";
@@ -16,25 +15,7 @@ const Home: NextPage = () => {
 
   return (
     <div>
-      <div
-        style={{
-          background: "linear-gradient(to bottom, #373B44, #73C8A9)",
-        }}
-        className="fixed -z-10 flex h-full w-full"
-      />
-      <Head>
-        <title>Football Organizer</title>
-        <link rel="icon" href="/favicon.ico?v=2" />
-        <meta
-          name="googlebot"
-          content="A simple football organizer showing payments based on emails"
-        />
-        <meta
-          name="robots"
-          content="A simple football organizer showing payments based on emails"
-        />
-      </Head>
-
+      <title>Football Organizer</title>
       <LoadingWrapper isLoading={status === "loading"} center>
         {!sessionData ? (
           <main className="absolute flex h-full w-full flex-col items-center justify-center gap-y-2">

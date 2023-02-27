@@ -1,29 +1,33 @@
+import { Avatar, AvatarFallback } from "@/ui/base/Avatar";
 import {
-  Divider,
-  Menu,
-  MenuItem,
-  Modal,
-  ModalClose,
-  ModalDialog,
-  Switch,
-} from "@mui/joy";
-import { signOut } from "next-auth/react";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/ui/base/Dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/ui/base/DropDownMenu";
+import { Label } from "@/ui/base/Label";
+import { Separator } from "@/ui/base/Separator";
+import { Switch } from "@/ui/base/Switch";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import type { FunctionComponent } from "react";
-import { useState } from "react";
 import { useIsAdmin } from "../../hooks/useIsAdmin";
 import { trpc } from "../../utils/trpc";
 import { AddEventForm } from "../Events/AddEventForm";
 import { LoadingWrapper } from "../LoadingWrapper";
 
-export const OrganizerMenu: FunctionComponent<{
-  showDropdown: boolean;
-  setShowDropdown: (value: boolean) => void;
-  anchorEl: HTMLDivElement | null;
-}> = ({ showDropdown, setShowDropdown, anchorEl }) => {
+export const OrganizerMenu: FunctionComponent = () => {
   const isAdmin = useIsAdmin();
-  const [open, setOpen] = useState(false);
   const trpcContext = trpc.useContext();
+  const { data: userData } = useSession();
 
   const { data: link } = trpc.gmail.generateAuthLink.useQuery(undefined, {
     enabled: isAdmin,
@@ -38,80 +42,70 @@ export const OrganizerMenu: FunctionComponent<{
       },
     });
 
-  // const [notificationsLocal, setNotificationsLocal] = useState(
-  //   data?.notificationsEnabled
-  // );
-
   const { data: balance } = trpc.payment.getUserBalance.useQuery();
-  return (
-    <>
-      <Menu
-        className="m-2 mt-2 w-44 bg-slate-800"
-        open={showDropdown}
-        anchorEl={anchorEl}
-        sx={{ margin: "8px" }}
-        onClose={() => setShowDropdown(false)}
-      >
-        <MenuItem className="cursor-text text-white">
-          Kontostand: {balance}€
-        </MenuItem>
-        <Divider />
-        <MenuItem
-          hidden={!isAdmin}
-          className="text-white"
-          onClick={() => setOpen(true)}
-        >
-          Add Event
-        </MenuItem>
-        <Divider hidden={!isAdmin} />
-        <MenuItem hidden={!isAdmin} className="text-white">
-          {link && <Link href={link}>New gmail token</Link>}
-        </MenuItem>
-        <Divider hidden={!isAdmin} />
-        <MenuItem
-          className="text-white"
-          onClick={() =>
-            updateNotificationsEnabled({
-              notificationsEnabled: !data?.notificationsEnabled,
-            })
-          }
-        >
-          <div className="flex gap-x-2">
-            Notifications
-            <LoadingWrapper isLoading={isLoading}>
-              <Switch
-                checked={data?.notificationsEnabled}
-                color={data?.notificationsEnabled ? "success" : "primary"}
-                variant={data?.notificationsEnabled ? "outlined" : "solid"}
-              />
-            </LoadingWrapper>
-          </div>
-        </MenuItem>
-        <Divider />
-        <MenuItem className="text-white" onClick={() => signOut()}>
-          Ausloggen
-        </MenuItem>
-      </Menu>
 
-      <Modal
-        aria-labelledby="modal-title"
-        aria-describedby="modal-desc"
-        open={open}
-        onClose={() => setOpen(false)}
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <ModalDialog
-          aria-labelledby="size-modal-title"
-          aria-describedby="size-modal-description"
-        >
-          <ModalClose variant="outlined" className="rounded shadow-md" />
-          <AddEventForm onSubmit={() => setOpen(false)} />
-        </ModalDialog>
-      </Modal>
-    </>
+  const res = userData?.user?.name?.split(" ");
+
+  const first = res[0]?.charAt(0) ?? "X";
+  const second = res[1]?.charAt(0) ?? "X";
+
+  return (
+    <Dialog>
+      <DropdownMenu>
+        <DropdownMenuTrigger className="flex items-center justify-between gap-x-2">
+          <Avatar className="flex items-center justify-center border-[1px]">
+            <AvatarFallback>{first + second}</AvatarFallback>
+          </Avatar>
+          <span>{userData?.user?.name}</span>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem>Kontostand: {balance}€</DropdownMenuItem>
+          <Separator />
+          {isAdmin && (
+            <DialogTrigger asChild>
+              <DropdownMenuItem>Add Event</DropdownMenuItem>
+            </DialogTrigger>
+          )}
+          {isAdmin && (
+            <DropdownMenuItem hidden={!isAdmin}>
+              {link ? (
+                <Link href={link}>New gmail token</Link>
+              ) : (
+                <div>No link</div>
+              )}
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuItem
+            onClick={() =>
+              updateNotificationsEnabled({
+                notificationsEnabled: !data?.notificationsEnabled,
+              })
+            }
+          >
+            <div className="flex items-center space-x-2">
+              <Label htmlFor="airplane-mode">Notifications</Label>
+              <LoadingWrapper isLoading={isLoading}>
+                <Switch
+                  id="notifications-enabled"
+                  checked={data?.notificationsEnabled}
+                />
+              </LoadingWrapper>
+            </div>
+          </DropdownMenuItem>
+          <Separator />
+          <DropdownMenuItem onClick={() => signOut()}>
+            Ausloggen
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Add Event</DialogTitle>
+          <DialogDescription>Add a new event</DialogDescription>
+        </DialogHeader>
+        <AddEventForm />
+      </DialogContent>
+    </Dialog>
   );
 };

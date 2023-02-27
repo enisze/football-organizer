@@ -1,11 +1,12 @@
-import { Button, Sheet, Typography } from "@mui/joy";
+import { LoginForm } from "@/src/components/Authentication/LoginForm";
+import { EventCard } from "@/src/components/Events/EventCard";
+import { LoadingWrapper } from "@/src/components/LoadingWrapper";
+import { Button } from "@/ui/base/Button";
+import { Sheet } from "@mui/joy";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import type { FunctionComponent } from "react";
-import { LoginForm } from "../../components/Authentication/LoginForm";
-import { EventCard } from "../../components/Events/EventCard";
-import { LoadingWrapper } from "../../components/LoadingWrapper";
 
 import { trpc } from "../../utils/trpc";
 
@@ -55,18 +56,18 @@ const EventPage: FunctionComponent = () => {
             <Sheet className="my-5 flex flex-col items-center justify-center gap-y-2 rounded bg-[#1E293B] p-5">
               <Button
                 onClick={() => leaveEvent({ eventId: event.id })}
-                variant="outlined"
+                variant="outline"
               >
                 Keine Emails mehr erhalten
               </Button>
 
               {isSuccess && (
-                <Typography variant="solid" color="info">
+                <span className="text-green-500">
                   Du hast dich erfolgreich abgemeldet.
-                </Typography>
+                </span>
               )}
               <Link href={link}>
-                <Typography>Zur Startseite</Typography>
+                <span>Zur Startseite</span>
               </Link>
             </Sheet>
             <EventCard event={event} participants={participants} />
