@@ -3,12 +3,7 @@ import type { FunctionComponent } from "react";
 
 export const Heading: FunctionComponent<{
   size?: "sm" | "md" | "lg";
-  color?: "grey" | "white";
-}> = ({ size = "lg", color = "grey" }) => {
-  const textColor = color === "grey" ? "text-gray-700" : "text-white";
-
-  console.log(size);
-
+}> = ({ size = "lg" }) => {
   const fontSize =
     size === "lg"
       ? "text-[80px]"
@@ -18,9 +13,9 @@ export const Heading: FunctionComponent<{
   return (
     <Link href={process.env.NEXT_PUBLIC_BASE_URL ?? ""}>
       <span
-        className={`cursor-pointer text-center font-extrabold leading-normal ${textColor} ${fontSize} bg-gradient-to-r from-blue-400 to-blue-200 bg-clip-text text-transparent dark:from-blue-800 dark:to-slate-800`}
+        className={`cursor-pointer text-center font-extrabold leading-normal ${fontSize} bg-gradient-to-r from-blue-400 to-blue-200 bg-clip-text text-transparent dark:from-blue-800 dark:to-slate-800`}
       >
-        Football{" "}
+        Football
         <span className="text-slate-900 dark:text-slate-100">Organizer</span>
       </span>
     </Link>
