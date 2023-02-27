@@ -44,7 +44,7 @@ export const ParticipantsArea: FunctionComponent<{
 
           return (
             <div key={participant?.id} className="flex items-center gap-x-2">
-              <Avatar className="flex items-center justify-center border-[1px]">
+              <Avatar className="flex items-center justify-center border-[1px] border-slate-100 dark:border-white">
                 <AvatarFallback>{first + second}</AvatarFallback>
               </Avatar>
               <div>{participant?.name}</div>

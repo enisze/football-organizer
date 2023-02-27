@@ -53,8 +53,10 @@ export const OrganizerMenu: FunctionComponent = () => {
     <Dialog>
       <DropdownMenu>
         <DropdownMenuTrigger className="flex items-center justify-between gap-x-2">
-          <Avatar className="flex items-center justify-center border-[1px]">
-            <AvatarFallback>{first + second}</AvatarFallback>
+          <Avatar className="flex items-center justify-center border-[1px] ">
+            <AvatarFallback className="bg-white dark:bg-slate-900">
+              {first + second}
+            </AvatarFallback>
           </Avatar>
           <span>{userData?.user?.name}</span>
         </DropdownMenuTrigger>
