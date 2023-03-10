@@ -31,7 +31,7 @@ export const ParticipantsArea: FunctionComponent<{
         variant="ghost"
         color="info"
         onClick={() => setShowParticipants(!showParticipants)}
-        className="bg-[#89A6FB]"
+        className="bg-[#89A6FB] text-black"
       >
         {participantsString}
       </Button>

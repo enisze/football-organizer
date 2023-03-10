@@ -1,33 +1,32 @@
-import type { FunctionComponent } from "react";
-import { useState } from "react";
-import type { FieldValues } from "react-hook-form";
-import { useForm } from "react-hook-form";
+import type { FunctionComponent } from 'react'
+import type { FieldValues } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/ui/base/Accordion";
-import { Button } from "@/ui/base/Button";
-import { TextField } from "@/ui/base/TextField";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import { z } from "zod";
-import { trpc } from "../utils/trpc";
+} from '@/ui/base/Accordion'
+import { Button } from '@/ui/base/Button'
+import { TextField } from '@/ui/base/TextField'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { signIn } from 'next-auth/react'
+import Image from 'next/image'
+import { useRouter } from 'next/router'
+import { z } from 'zod'
+import { trpc } from '../utils/trpc'
 
 const signUpSchema = z.object({
-  email: z.string().email({ message: "Bitte gib eine gültige Email ein." }),
+  email: z.string().email({ message: 'Bitte gib eine gültige Email ein.' }),
   username: z.string().regex(/^[^@]*$/, {
-    message: "Paypal name fehlt oder du gibst deine Email an!",
+    message: 'Paypal name fehlt oder du gibst deine Email an!',
   }),
-  password: z.string().min(2, { message: "Passwort fehlt" }),
+  password: z.string().min(2, { message: 'Passwort fehlt' }),
   key: z.string().min(1, {
-    message: "Der angegebene Schlüssel ist falsch.",
+    message: 'Der angegebene Schlüssel ist falsch.',
   }),
-});
+})
 
 const SignUp: FunctionComponent = () => {
   const {
@@ -35,34 +34,32 @@ const SignUp: FunctionComponent = () => {
     handleSubmit,
     setError,
     formState: { errors },
-  } = useForm({ resolver: zodResolver(signUpSchema), mode: "onBlur" });
+  } = useForm({ resolver: zodResolver(signUpSchema), mode: 'onBlur' })
 
-  const router = useRouter();
+  const router = useRouter()
 
-  const [showExample, setShowExample] = useState(false);
-
-  const { mutate: sendWelcomeMail } = trpc.gmail.sendWelcomeMail.useMutation();
+  const { mutate: sendWelcomeMail } = trpc.gmail.sendWelcomeMail.useMutation()
 
   const onSubmit = async (values: FieldValues) => {
-    const res = await signIn("credentials", {
+    const res = await signIn('credentials', {
       redirect: false,
       email: values.email,
       password: values.password,
       username: values.username,
       key: values.key,
-      callbackUrl: "/",
-    });
+      callbackUrl: '/',
+    })
 
     if (res?.error) {
-      setError("authentication", {
+      setError('authentication', {
         message:
-          "Bitte überprüfe deine Eingaben, inklusive Schlüssel. Achte auf Gross- und Kleinschreibung.",
-      });
+          'Bitte überprüfe deine Eingaben, inklusive Schlüssel. Achte auf Gross- und Kleinschreibung.',
+      })
     } else {
-      sendWelcomeMail();
-      if (res?.url) router.push(res.url);
+      sendWelcomeMail()
+      if (res?.url) router.push(res.url)
     }
-  };
+  }
 
   return (
     <form
@@ -72,7 +69,7 @@ const SignUp: FunctionComponent = () => {
       {/* register your input into the hook by invoking the "register" function */}
       <TextField
         label="Email"
-        {...register("email")}
+        {...register('email')}
         text={errors.email?.message as string}
       />
 
@@ -80,7 +77,7 @@ const SignUp: FunctionComponent = () => {
         label="Username"
         placeholder="Dein Paypal Name"
         text={errors.username?.message as string}
-        {...register("username")}
+        {...register('username')}
       />
 
       <Accordion type="single" collapsible>
@@ -108,13 +105,13 @@ const SignUp: FunctionComponent = () => {
 
       <TextField
         label="Passwort"
-        {...register("password")}
+        {...register('password')}
         type="password"
         text={errors.password?.message as string}
       />
       <TextField
         label="Schlüssel"
-        {...register("key")}
+        {...register('key')}
         text={errors.key?.message as string}
       />
 
@@ -130,7 +127,7 @@ const SignUp: FunctionComponent = () => {
         Registrieren
       </Button>
     </form>
-  );
-};
+  )
+}
 
-export default SignUp;
+export default SignUp

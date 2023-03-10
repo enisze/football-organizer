@@ -13,6 +13,10 @@ export default function Document() {
           name="robots"
           content="A simple football organizer showing payments based on emails"
         />
+        <meta
+          name="description"
+          content="A simple football organizer showing payments based on emails"
+        />
       </Head>
       <body className="h-full dark:bg-slate-900 dark:text-slate-50 min-h-screen bg-white font-sans text-slate-900 antialiased">
         <Main />

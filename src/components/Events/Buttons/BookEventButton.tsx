@@ -24,10 +24,8 @@ export const BookEventButton: FunctionComponent<{ id: string }> = ({ id }) => {
 
   return (
     <Dialog>
-      <DialogTrigger>
-        <Button variant="outline" className="w-full">
-          Book
-        </Button>
+      <DialogTrigger className="rounded-md border p-2 border-opacity-[1px]">
+        Book
       </DialogTrigger>
 
       <DialogContent className="w-50">
