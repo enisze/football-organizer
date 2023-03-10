@@ -9,11 +9,9 @@ import {
 import { differenceInCalendarDays } from 'date-fns'
 import { Activity, CalendarDays, Euro, MapPin, Zap } from 'lucide-react'
 import { useSession } from 'next-auth/react'
-import dynamic from 'next/dynamic'
 import type { FunctionComponent } from 'react'
 import { transformDate } from '../../helpers/transformDate'
 import { LoadingWrapper } from '../LoadingWrapper'
-import type { OrganizerMapProps } from '../Map/OrganizerMap'
 import { PaymentArea } from '../PaymentArea'
 import { AddToCalendarButton } from './Buttons/AddToCalendarButton'
 import { JoinEventButton } from './Buttons/JoinEventButton'
@@ -22,12 +20,12 @@ import { EventCardAdminArea } from './EventCardAdminArea'
 import { ParticipantsArea } from './ParticipantsArea'
 import { StatusChip } from './StatusChip'
 
-const DynamicOrganizerMap = dynamic<OrganizerMapProps>(
-  () => import('../Map/OrganizerMap').then((module) => module.OrganizerMap),
-  {
-    ssr: false,
-  },
-)
+// const DynamicOrganizerMap = dynamic<OrganizerMapProps>(
+//   () => import('../Map/OrganizerMap').then((module) => module.OrganizerMap),
+//   {
+//     ssr: false,
+//   },
+// )
 
 type EventCardProps = {
   event: Event
@@ -126,7 +124,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
                   <div className="relative h-[200px] w-[250px] md:h-[250px] md:w-[350px]">
                     <LoadingWrapper isLoading={isLoading}>
                       <div className="flex">
-                        <DynamicOrganizerMap coordinates={data} />
+                        {/* <DynamicOrganizerMap coordinates={data} /> */}
                       </div>
                     </LoadingWrapper>
                   </div>
