@@ -1,3 +1,4 @@
+import type { ParticipantsOnEvents } from '@/prisma/generated/client'
 import { trpc } from '@/src/utils/trpc'
 import { Button } from '@/ui/base/Button'
 import {
@@ -6,23 +7,34 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/ui/base/Dialog'
 import { TRPCError } from '@trpc/server'
 import { Check, XIcon } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { useState } from 'react'
-import { LoadingWrapper } from '../../LoadingWrapper'
+import { QuestionMark } from '../../QuestionMark'
 
 export const EventStatusArea: FunctionComponent<{
   id: string
-}> = ({ id }) => {
+  participants: ParticipantsOnEvents[]
+}> = ({ id, participants }) => {
   const trpcContext = trpc.useContext()
+
+  const { data: session } = useSession()
+
+  const userStatus = participants.find(
+    (user) => user.id === session?.user?.id,
+  )?.userEventStatus
+
+  const checkMarkColor = userStatus === 'JOINED' ? 'text-green-500' : ''
+  const maybeMarkColor = userStatus === 'MAYBE' ? 'fill-yellow-500' : ''
+  const canceledMarkColor = userStatus === 'CANCELED' ? 'text-red-500' : ''
 
   const [showLeaveModal, setShowLeaveModal] = useState(false)
   const { mutate: sendEmail } = trpc.gmail.sendPaidButCancledMail.useMutation()
 
-  const { mutate: setEventStatus, isLoading } =
+  const { mutate: setEventStatus } =
     trpc.event.setParticipatingStatus.useMutation({
       onSuccess: () => {
         trpcContext.invalidate()
@@ -42,15 +54,15 @@ export const EventStatusArea: FunctionComponent<{
 
   const { data: payment } = trpc.payment.getByEventId.useQuery({ eventId: id })
 
-  const leave = async () => {
-    if (payment) {
+  const leave = () => {
+    if (!payment) {
       setEventStatus({ eventId: id, status: 'CANCELED' })
     } else {
       setShowLeaveModal(true)
     }
   }
 
-  const maybe = async () => {
+  const maybe = () => {
     setEventStatus({ eventId: id, status: 'MAYBE' })
   }
 
@@ -59,22 +71,18 @@ export const EventStatusArea: FunctionComponent<{
       open={showLeaveModal}
       onOpenChange={(open) => setShowLeaveModal(open)}
     >
-      <LoadingWrapper isLoading={isLoading}>
-        <div className="flex gap-x-1">
-          <Button variant="outline" onClick={join} className="w-full">
-            <Check />
-          </Button>
-          <Button variant="outline" onClick={maybe} className="w-full">
-            <Check />
-          </Button>
-        </div>
-
-        <DialogTrigger asChild>
-          <Button variant="outline" onClick={leave} className="w-full">
-            <XIcon />
-          </Button>
-        </DialogTrigger>
-      </LoadingWrapper>
+      <span>Mein Status:</span>
+      <div className="flex gap-x-1">
+        <Button variant="outline" onClick={join} className="w-full">
+          <Check className={checkMarkColor} />
+        </Button>
+        <Button variant="outline" onClick={maybe} className="w-full">
+          <QuestionMark className={`fill-white ${maybeMarkColor}`} />
+        </Button>
+        <Button variant="outline" onClick={leave} className="w-full">
+          <XIcon className={canceledMarkColor} />
+        </Button>
+      </div>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
