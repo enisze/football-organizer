@@ -6,6 +6,7 @@ import { Dashboard } from '../components/Dashboard/Dashboard'
 import { Heading } from '../components/Heading'
 import { LoadingWrapper } from '../components/LoadingWrapper'
 import { Navbar } from '../components/Navigation/Navbar'
+import { OrganizerCommandDialog } from '../components/OrganizerCommandDialog'
 import { useWindowSize } from '../hooks/useWindowSize'
 
 const Home: NextPage = () => {
@@ -30,6 +31,7 @@ const Home: NextPage = () => {
             <Navbar />
             <div className="p-8" />
             <Dashboard />
+            <OrganizerCommandDialog />
           </div>
         )}
       </LoadingWrapper>
