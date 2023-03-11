@@ -1,36 +1,57 @@
 import { trpc } from '@/src/utils/trpc'
 import { Button } from '@/ui/base/Button'
-import { Dialog, DialogContent, DialogHeader } from '@/ui/base/Dialog'
 import {
+  Dialog,
+  DialogContent,
   DialogDescription,
+  DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@radix-ui/react-dialog'
+} from '@/ui/base/Dialog'
+import { TRPCError } from '@trpc/server'
+import { Check, XIcon } from 'lucide-react'
 import type { FunctionComponent } from 'react'
 import { useState } from 'react'
+import { LoadingWrapper } from '../../LoadingWrapper'
 
-export const LeaveEventButton: FunctionComponent<{
+export const EventStatusArea: FunctionComponent<{
   id: string
 }> = ({ id }) => {
-  const [showLeaveModal, setShowLeaveModal] = useState(false)
   const trpcContext = trpc.useContext()
 
+  const [showLeaveModal, setShowLeaveModal] = useState(false)
   const { mutate: sendEmail } = trpc.gmail.sendPaidButCancledMail.useMutation()
 
-  const { mutate: leaveEvent } = trpc.event.leave.useMutation({
-    onSuccess: () => {
-      trpcContext.invalidate()
-    },
-  })
+  const { mutate: setEventStatus, isLoading } =
+    trpc.event.setParticipatingStatus.useMutation({
+      onSuccess: () => {
+        trpcContext.invalidate()
+      },
+    })
+
+  const join = () => {
+    try {
+      setEventStatus({ eventId: id, status: 'JOINED' })
+    } catch (error) {
+      if (error instanceof TRPCError) {
+        error.code === 'PRECONDITION_FAILED'
+      }
+      alert('Leider ist kein Platz mehr frei :( ')
+    }
+  }
 
   const { data: payment } = trpc.payment.getByEventId.useQuery({ eventId: id })
 
   const leave = async () => {
     if (payment) {
-      leaveEvent({ eventId: id })
+      setEventStatus({ eventId: id, status: 'CANCELED' })
     } else {
       setShowLeaveModal(true)
     }
+  }
+
+  const maybe = async () => {
+    setEventStatus({ eventId: id, status: 'MAYBE' })
   }
 
   return (
@@ -38,11 +59,22 @@ export const LeaveEventButton: FunctionComponent<{
       open={showLeaveModal}
       onOpenChange={(open) => setShowLeaveModal(open)}
     >
-      <DialogTrigger className="w-full" asChild>
-        <Button variant="outline" onClick={leave} className="w-full">
-          Absagen
-        </Button>
-      </DialogTrigger>
+      <LoadingWrapper isLoading={isLoading}>
+        <div className="flex gap-x-1">
+          <Button variant="outline" onClick={join} className="w-full">
+            <Check />
+          </Button>
+          <Button variant="outline" onClick={maybe} className="w-full">
+            <Check />
+          </Button>
+        </div>
+
+        <DialogTrigger asChild>
+          <Button variant="outline" onClick={leave} className="w-full">
+            <XIcon />
+          </Button>
+        </DialogTrigger>
+      </LoadingWrapper>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
@@ -60,7 +92,7 @@ export const LeaveEventButton: FunctionComponent<{
             variant="outline"
             color="info"
             onClick={() => {
-              leaveEvent({ eventId: id })
+              setEventStatus({ eventId: id, status: 'CANCELED' })
               sendEmail({ eventId: id })
               setShowLeaveModal(false)
             }}

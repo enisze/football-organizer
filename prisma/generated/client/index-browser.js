@@ -205,6 +205,7 @@ exports.EventStatus = makeEnum({
 });
 
 exports.UserEventStatus = makeEnum({
+  MAYBE: 'MAYBE',
   AVAILABLE: 'AVAILABLE',
   JOINED: 'JOINED',
   CANCELED: 'CANCELED'

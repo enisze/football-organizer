@@ -16,8 +16,7 @@ import { LoadingWrapper } from '../LoadingWrapper'
 import type { OrganizerMapProps } from '../Map/OrganizerMap'
 import { PaymentArea } from '../PaymentArea'
 import { AddToCalendarButton } from './Buttons/AddToCalendarButton'
-import { JoinEventButton } from './Buttons/JoinEventButton'
-import { LeaveEventButton } from './Buttons/LeaveEventButton'
+import { EventStatusArea } from './Buttons/EventStatusArea'
 import { EventCardAdminArea } from './EventCardAdminArea'
 import { ParticipantsArea } from './ParticipantsArea'
 import { StatusChip } from './StatusChip'
@@ -149,10 +148,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
         <EventCardAdminArea eventId={id} />
         <PaymentArea eventId={id} bookingDate={bookingDate} />
-        <div className="flex  justify-between gap-x-2">
-          <JoinEventButton id={id} />
-          <LeaveEventButton id={id} />
-        </div>
+        <EventStatusArea id={id} />
 
         <AddToCalendarButton event={event} />
       </div>
