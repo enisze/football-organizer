@@ -1,60 +1,95 @@
 import type { ParticipantsOnEvents } from '@/prisma/generated/client'
 import { trpc } from '@/src/utils/trpc'
-import { Avatar } from '@/ui/base/Avatar'
-import { Button } from '@/ui/base/Button'
-import { AvatarFallback } from '@radix-ui/react-avatar'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/ui/base/Accordion'
+import { Avatar, AvatarFallback } from '@radix-ui/react-avatar'
 import type { FunctionComponent } from 'react'
-import { useState } from 'react'
 import { EventCardAdminPaymentArea } from './EventCardAdminPaymentArea'
 
 export const ParticipantsArea: FunctionComponent<{
   participants: ParticipantsOnEvents[]
   eventId: string
   maxParticipants?: number
-  heading: string
-}> = ({ participants, eventId, heading, maxParticipants }) => {
-  const [showParticipants, setShowParticipants] = useState(false)
+}> = ({ participants, eventId, maxParticipants }) => {
+  const joinedUsers = participants.filter(
+    (participant) => participant.userEventStatus === 'JOINED',
+  )
+  const canceledUsers = participants.filter(
+    (participant) => participant.userEventStatus === 'CANCELED',
+  )
 
+  const maybeUsers = participants.filter(
+    (participant) => participant.userEventStatus === 'MAYBE',
+  )
   const { data: users } = trpc.user.getUserNamesByIds.useQuery({
     ids: participants.map((user) => user.id),
   })
 
-  const amountOfParticipants = users?.length ?? 0
+  const allUsersLength = [...joinedUsers, ...canceledUsers, ...maybeUsers]
+    .length
 
-  const participantsString =
-    heading === 'Teilnehmer'
-      ? `${heading} ${amountOfParticipants}/${maxParticipants}`
-      : `${heading}: ${amountOfParticipants}`
+  const joinedWidth = {
+    width: `${(joinedUsers.length / allUsersLength) * 100}%`,
+  }
+  const maybeWidth = { width: `${(maybeUsers.length / allUsersLength) * 100}%` }
+
+  const canceledWidth = {
+    width: `${(canceledUsers.length / allUsersLength) * 100}%`,
+  }
+
+  const participantsString = ''
   return (
-    <>
-      <Button
-        variant="ghost"
-        color="info"
-        onClick={() => setShowParticipants(!showParticipants)}
-        className="bg-[#89A6FB] dark:text-black"
+    <Accordion type="single" collapsible className="p-0">
+      <AccordionItem
+        value="item-1"
+        className="border-b-0"
+        style={{ padding: 0 }}
       >
-        {participantsString}
-      </Button>
-      {showParticipants &&
-        users &&
-        users.map((participant) => {
-          const res = participant?.name?.split(' ') as string[]
-          const first = res[0]?.charAt(0) ?? 'X'
-          const second = res[1]?.charAt(0) ?? 'X'
-
-          return (
-            <div key={participant?.id} className="flex items-center gap-x-2">
-              <Avatar className="flex items-center justify-center border-[1px] border-slate-100 dark:border-white">
-                <AvatarFallback>{first + second}</AvatarFallback>
-              </Avatar>
-              <div>{participant?.name}</div>
-              <EventCardAdminPaymentArea
-                eventId={eventId}
-                userId={participant?.id ?? ''}
-              />
+        <AccordionTrigger className="p-0 hover:no-underline">
+          <div className={`rounded flex border w-full bg-gradient-to-b from`}>
+            <div className="bg-green-400" style={joinedWidth}>
+              {joinedUsers.length}
             </div>
-          )
-        })}
-    </>
+            <div className="bg-yellow-400" style={maybeWidth}>
+              {maybeUsers.length}
+            </div>
+            <div className="bg-red-400" style={canceledWidth}>
+              {canceledUsers.length}
+            </div>
+          </div>
+          {participantsString}
+        </AccordionTrigger>
+        <AccordionContent className="[&>div]:pb-0 [&>div]:pt-2">
+          <div className="flex flex-col gap-y-1">
+            {users &&
+              users.map((participant) => {
+                const res = participant?.name?.split(' ') as string[]
+                const first = res[0]?.charAt(0) ?? 'X'
+                const second = res[1]?.charAt(0) ?? 'X'
+
+                return (
+                  <div
+                    key={participant?.id}
+                    className="flex items-center gap-x-2"
+                  >
+                    <Avatar className="flex items-center rounded-full h-10 w-10 justify-center border-[1px] border-slate-100 dark:border-white">
+                      <AvatarFallback>{first + second}</AvatarFallback>
+                    </Avatar>
+                    <div>{participant?.name}</div>
+                    <EventCardAdminPaymentArea
+                      eventId={eventId}
+                      userId={participant?.id ?? ''}
+                    />
+                  </div>
+                )
+              })}
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   )
 }
