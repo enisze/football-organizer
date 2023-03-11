@@ -28,7 +28,7 @@ export const EventStatusArea: FunctionComponent<{
   )?.userEventStatus
 
   const checkMarkColor = userStatus === 'JOINED' ? 'text-green-500' : ''
-  const maybeMarkColor = userStatus === 'MAYBE' ? 'fill-yellow-500' : ''
+  const maybeMarkColor = userStatus === 'MAYBE' ? '!fill-yellow-500' : ''
   const canceledMarkColor = userStatus === 'CANCELED' ? 'text-red-500' : ''
 
   const [showLeaveModal, setShowLeaveModal] = useState(false)
@@ -77,7 +77,9 @@ export const EventStatusArea: FunctionComponent<{
           <Check className={checkMarkColor} />
         </Button>
         <Button variant="outline" onClick={maybe} className="w-full">
-          <QuestionMark className={`fill-white ${maybeMarkColor}`} />
+          <QuestionMark
+            className={`fill-black dark:fill-white ${maybeMarkColor}`}
+          />
         </Button>
         <Button variant="outline" onClick={leave} className="w-full">
           <XIcon className={canceledMarkColor} />

@@ -6,8 +6,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/ui/base/Accordion'
-import { Avatar, AvatarFallback } from '@radix-ui/react-avatar'
 import type { FunctionComponent } from 'react'
+import { AvatarStatus } from './AvatarStatus'
 import { EventCardAdminPaymentArea } from './EventCardAdminPaymentArea'
 
 export const ParticipantsArea: FunctionComponent<{
@@ -27,10 +27,10 @@ export const ParticipantsArea: FunctionComponent<{
   )
   const { data: users } = trpc.user.getUserNamesByIds.useQuery({
     ids: participants.map((user) => user.id),
+    eventId,
   })
 
-  const allUsersLength = [...joinedUsers, ...canceledUsers, ...maybeUsers]
-    .length
+  const allUsersLength = participants.length
 
   const joinedWidth = {
     width: `${(joinedUsers.length / allUsersLength) * 100}%`,
@@ -41,7 +41,6 @@ export const ParticipantsArea: FunctionComponent<{
     width: `${(canceledUsers.length / allUsersLength) * 100}%`,
   }
 
-  const participantsString = ''
   return (
     <Accordion type="single" collapsible className="p-0">
       <AccordionItem
@@ -61,28 +60,28 @@ export const ParticipantsArea: FunctionComponent<{
               {canceledUsers.length}
             </div>
           </div>
-          {participantsString}
         </AccordionTrigger>
         <AccordionContent className="[&>div]:pb-0 [&>div]:pt-2">
           <div className="flex flex-col gap-y-1">
             {users &&
               users.map((participant) => {
-                const res = participant?.name?.split(' ') as string[]
+                const res = participant?.user?.name?.split(' ') as string[]
                 const first = res[0]?.charAt(0) ?? 'X'
                 const second = res[1]?.charAt(0) ?? 'X'
 
                 return (
                   <div
-                    key={participant?.id}
+                    key={participant?.user.id}
                     className="flex items-center gap-x-2"
                   >
-                    <Avatar className="flex items-center rounded-full h-10 w-10 justify-center border-[1px] border-slate-100 dark:border-white">
-                      <AvatarFallback>{first + second}</AvatarFallback>
-                    </Avatar>
-                    <div>{participant?.name}</div>
+                    <AvatarStatus
+                      name={participant?.user.name ?? ''}
+                      shortName={`${first}${second}`}
+                      userEventStatus={participant?.userEventStatus}
+                    />
                     <EventCardAdminPaymentArea
                       eventId={eventId}
-                      userId={participant?.id ?? ''}
+                      userId={participant?.user.id ?? ''}
                     />
                   </div>
                 )

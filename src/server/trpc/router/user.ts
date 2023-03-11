@@ -19,18 +19,21 @@ export const userRouter = router({
       })
     }),
   getUserNamesByIds: protectedProcedure
-    .input(z.object({ ids: z.string().array() }))
+    .input(z.object({ ids: z.string().array(), eventId: z.string() }))
     .query(async ({ ctx: { prisma }, input }) => {
+      const { eventId, ids } = input
       const res = await Promise.all(
-        input.ids.map((id) =>
-          prisma.user.findUnique({
-            where: {
-              id,
+        ids.map((id) =>
+          prisma.participantsOnEvents.findUnique({
+            where: { id_eventId: { eventId, id } },
+            select: {
+              userEventStatus: true,
+              user: { select: { name: true, id: true } },
             },
-            select: { name: true, id: true },
           }),
         ),
       )
+
       return res
     }),
   deleteAll: protectedProcedure.query(async ({ ctx: { prisma } }) => {
