@@ -61,70 +61,85 @@ export const eventRouter = router({
       return true
     }),
 
-  join: protectedProcedure
+  setParticipatingStatus: protectedProcedure
     .input(
       z.object({
         eventId: z.string(),
+        status: z.enum(['JOINED', 'CANCELED', 'MAYBE']),
       }),
     )
     .mutation(async ({ ctx: { prisma, session }, input }) => {
+      const { eventId, status } = input
       const userId = session.user.id
       if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED' })
 
-      const event = await prisma.event.findUnique({
-        where: { id: input.eventId },
-        include: { participants: true },
-      })
+      switch (status) {
+        case 'JOINED':
+          const event = await prisma.event.findUnique({
+            where: { id: eventId },
+            include: { participants: true },
+          })
+          if (
+            event?.participants.filter(
+              (participant) => participant.userEventStatus === 'JOINED',
+            ).length === event?.maxParticipants
+          )
+            throw new TRPCError({ code: 'PRECONDITION_FAILED' })
 
-      if (
-        event?.participants.filter(
-          (participant) => participant.userEventStatus === 'JOINED',
-        ).length === 10
-      )
-        throw new TRPCError({ code: 'PRECONDITION_FAILED' })
+          return await prisma.participantsOnEvents.upsert({
+            create: {
+              eventId,
+              id: userId,
+              userEventStatus: 'JOINED',
+            },
+            update: {
+              userEventStatus: 'JOINED',
+            },
+            where: {
+              id_eventId: {
+                eventId,
+                id: userId,
+              },
+            },
+          })
+        case 'CANCELED':
+          return await prisma.participantsOnEvents.upsert({
+            create: {
+              eventId,
+              id: userId,
+              userEventStatus: 'CANCELED',
+            },
+            update: {
+              userEventStatus: 'CANCELED',
+            },
+            where: {
+              id_eventId: {
+                eventId,
+                id: userId,
+              },
+            },
+          })
 
-      return await prisma.participantsOnEvents.upsert({
-        create: {
-          eventId: input.eventId,
-          id: userId,
-          userEventStatus: 'JOINED',
-        },
-        update: {
-          userEventStatus: 'JOINED',
-        },
-        where: {
-          id_eventId: {
-            eventId: input.eventId,
-            id: userId,
-          },
-        },
-      })
-    }),
-  leave: protectedProcedure
-    .input(
-      z.object({
-        eventId: z.string(),
-      }),
-    )
-    .mutation(async ({ ctx: { prisma, session }, input }) => {
-      const userId = session.user.id
-      if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED' })
-      return await prisma.participantsOnEvents.upsert({
-        create: {
-          eventId: input.eventId,
-          id: userId,
-          userEventStatus: 'CANCELED',
-        },
-        update: {
-          userEventStatus: 'CANCELED',
-        },
-        where: {
-          id_eventId: {
-            eventId: input.eventId,
-            id: userId,
-          },
-        },
-      })
+        case 'MAYBE':
+          return await prisma.participantsOnEvents.upsert({
+            create: {
+              eventId,
+              id: userId,
+              userEventStatus: 'MAYBE',
+            },
+            update: {
+              userEventStatus: 'MAYBE',
+            },
+            where: {
+              id_eventId: {
+                eventId,
+                id: userId,
+              },
+            },
+          })
+        default:
+          throw new TRPCError({ code: 'BAD_REQUEST' })
+      }
     }),
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))

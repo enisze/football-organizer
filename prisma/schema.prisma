@@ -138,6 +138,7 @@ enum EventStatus {
 }
 
 enum UserEventStatus {
+  MAYBE
   AVAILABLE
   JOINED
   CANCELED

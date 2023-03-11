@@ -8,7 +8,6 @@ import {
 } from '@/ui/base/Accordion'
 import { differenceInCalendarDays } from 'date-fns'
 import { Activity, CalendarDays, Euro, MapPin, Zap } from 'lucide-react'
-import { useSession } from 'next-auth/react'
 import dynamic from 'next/dynamic'
 import type { FunctionComponent } from 'react'
 import { transformDate } from '../../helpers/transformDate'
@@ -16,8 +15,7 @@ import { LoadingWrapper } from '../LoadingWrapper'
 import type { OrganizerMapProps } from '../Map/OrganizerMap'
 import { PaymentArea } from '../PaymentArea'
 import { AddToCalendarButton } from './Buttons/AddToCalendarButton'
-import { JoinEventButton } from './Buttons/JoinEventButton'
-import { LeaveEventButton } from './Buttons/LeaveEventButton'
+import { EventStatusArea } from './Buttons/EventStatusArea'
 import { EventCardAdminArea } from './EventCardAdminArea'
 import { ParticipantsArea } from './ParticipantsArea'
 import { StatusChip } from './StatusChip'
@@ -52,12 +50,6 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
     maxParticipants,
     bookingDate,
   } = event
-
-  const { data: session } = useSession()
-
-  const userStatus = participants.find(
-    (user) => user.id === session?.user?.id,
-  )?.userEventStatus
 
   const { data, isLoading } = trpc.map.getLatLong.useQuery({
     id,
@@ -98,8 +90,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
           <div className="flex items-center gap-x-2">
             <Activity className="h-4 w-4 opacity-70" />
             <span className="font-bold">Status:</span>
-            <StatusChip status={status} of="event" />
-            <StatusChip status={userStatus ?? 'AVAILABLE'} of="user" />
+            <StatusChip status={status} />
           </div>
         </div>
         <div>
@@ -149,10 +140,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
         <EventCardAdminArea eventId={id} />
         <PaymentArea eventId={id} bookingDate={bookingDate} />
-        <div className="flex  justify-between gap-x-2">
-          <JoinEventButton id={id} />
-          <LeaveEventButton id={id} />
-        </div>
+        <EventStatusArea id={id} participants={participants} />
 
         <AddToCalendarButton event={event} />
       </div>

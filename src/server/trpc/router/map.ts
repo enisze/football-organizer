@@ -1,70 +1,70 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
+import { TRPCError } from '@trpc/server'
+import { z } from 'zod'
 
-import axios from "axios";
-import { getAddressAndCoordinatesRedisKeys } from "../../../helpers/getAddressAndCoordinatesRedisKeys";
-import { redis } from "../../redis/redis";
-import { protectedProcedure, router } from "../trpc";
+import axios from 'axios'
+import { getAddressAndCoordinatesRedisKeys } from '../../../helpers/getAddressAndCoordinatesRedisKeys'
+import { redis } from '../../redis/redis'
+import { protectedProcedure, router } from '../trpc'
 
-const LATLONG_API_KEY = process.env.LATLONG_API_KEY;
+const LATLONG_API_KEY = process.env.LATLONG_API_KEY
 
 export const mapRouter = router({
   getLatLong: protectedProcedure
     .input(z.object({ id: z.string(), address: z.string() }))
     .query(async ({ input }) => {
-      const { id, address } = input;
+      const { id, address } = input
 
       try {
-        await redis.ping();
+        await redis.ping()
       } catch (error) {
-        console.log("connecting");
-        await redis.connect();
+        console.log('connecting')
+        await redis.connect()
       }
 
-      if (!address) return null;
+      if (!address) return null
 
       const { addressKey, coordinatesKey } =
-        getAddressAndCoordinatesRedisKeys(id);
+        getAddressAndCoordinatesRedisKeys(id)
 
-      const cachedAddress = await redis.get(addressKey);
-      const coordinates = await redis.get(coordinatesKey);
+      const cachedAddress = await redis.get(addressKey)
+      const coordinates = await redis.get(coordinatesKey)
 
       if (
-        coordinates !== "undefined,undefined" &&
+        coordinates !== 'undefined,undefined' &&
         coordinates &&
         cachedAddress === address
       ) {
-        return mapCoordinatesToArray(coordinates);
+        return mapCoordinatesToArray(coordinates)
       } else {
-        await redis.set(addressKey, address);
+        await redis.set(addressKey, address)
 
         try {
           const {
             data: { data },
           } = await axios.get(
-            `http://api.positionstack.com/v1/forward?access_key=${LATLONG_API_KEY}&query=${address}`
-          );
-          const longitude = data[0].longitude;
-          const latitude = data[0].latitude;
+            `http://api.positionstack.com/v1/forward?access_key=${LATLONG_API_KEY}&query=${address}`,
+          )
+          const longitude = data[0].longitude
+          const latitude = data[0].latitude
 
           if (!latitude || !longitude) {
-            return null;
+            return null
           }
-          const coordinates = `${longitude},${latitude}`;
+          const coordinates = `${longitude},${latitude}`
 
-          await redis.set(coordinatesKey, coordinates);
+          await redis.set(coordinatesKey, coordinates)
 
-          return mapCoordinatesToArray(coordinates);
+          return mapCoordinatesToArray(coordinates)
         } catch (error) {
-          console.log(error);
-          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+          console.log(error)
+          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' })
         }
       }
     }),
-});
+})
 
 const mapCoordinatesToArray = (coordinates: string | null) => {
-  const split = coordinates?.split(",");
-  if (!split) return null;
-  return [Number(split[0]), Number(split[1])];
-};
+  const split = coordinates?.split(',')
+  if (!split) return null
+  return [Number(split[0]), Number(split[1])]
+}

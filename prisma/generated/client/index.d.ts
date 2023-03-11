@@ -168,6 +168,7 @@ export type EventStatus = (typeof EventStatus)[keyof typeof EventStatus]
 
 
 export const UserEventStatus: {
+  MAYBE: 'MAYBE',
   AVAILABLE: 'AVAILABLE',
   JOINED: 'JOINED',
   CANCELED: 'CANCELED'
