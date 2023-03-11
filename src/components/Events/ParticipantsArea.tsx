@@ -48,8 +48,11 @@ export const ParticipantsArea: FunctionComponent<{
         className="border-b-0"
         style={{ padding: 0 }}
       >
+        <span className="self-start">Teilnehmer: </span>
         <AccordionTrigger className="p-0 hover:no-underline">
-          <div className={`rounded flex border w-full bg-gradient-to-b from`}>
+          <div
+            className={`rounded flex border w-full bg-gradient-to-b from mr-1`}
+          >
             <div className="bg-green-400" style={joinedWidth}>
               {joinedUsers.length}
             </div>
