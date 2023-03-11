@@ -22,11 +22,12 @@ const EventPage: FunctionComponent = () => {
 
   const trpcContext = trpc.useContext()
 
-  const { mutate: leaveEvent, isSuccess } = trpc.event.leave.useMutation({
-    onSuccess: () => {
-      trpcContext.invalidate()
-    },
-  })
+  const { mutate: setStatus, isSuccess } =
+    trpc.event.setParticipatingStatus.useMutation({
+      onSuccess: () => {
+        trpcContext.invalidate()
+      },
+    })
 
   if (isLoading)
     return (
@@ -59,7 +60,9 @@ const EventPage: FunctionComponent = () => {
           <div className="flex flex-col items-center">
             <div className="my-5 flex flex-col items-center justify-center gap-y-2 rounded p-5">
               <Button
-                onClick={() => leaveEvent({ eventId: event.id })}
+                onClick={() =>
+                  setStatus({ eventId: event.id, status: 'CANCELED' })
+                }
                 variant="outline"
               >
                 Keine Emails mehr erhalten
