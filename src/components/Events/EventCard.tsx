@@ -56,13 +56,6 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
     address,
   })
 
-  const joinedUsers = participants.filter(
-    (participant) => participant.userEventStatus === 'JOINED',
-  )
-  const canceledUsers = participants.filter(
-    (participant) => participant.userEventStatus === 'CANCELED',
-  )
-
   const currentDate = new Date()
   const days = differenceInCalendarDays(date, currentDate)
 
@@ -104,10 +97,10 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
             <Accordion type="single" collapsible className="p-0">
               <AccordionItem
                 value="item-1"
-                className="border-b-0 "
+                className="border-b-0"
                 style={{ padding: 0 }}
               >
-                <AccordionTrigger className="p-0">
+                <AccordionTrigger className="p-0 hover:no-underline">
                   <div className="flex w-full items-center">
                     <MapPin className="mr-2 h-4 w-4 opacity-70" />
                     {address}
@@ -128,14 +121,8 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
         </div>
         <ParticipantsArea
           eventId={id}
-          participants={joinedUsers}
+          participants={participants}
           maxParticipants={maxParticipants}
-          heading="Teilnehmer"
-        />
-        <ParticipantsArea
-          eventId={id}
-          participants={canceledUsers}
-          heading="Absagen"
         />
 
         <EventCardAdminArea eventId={id} />
