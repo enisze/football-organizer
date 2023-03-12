@@ -1,5 +1,6 @@
 import { type NextPage } from 'next'
 import { useSession } from 'next-auth/react'
+import { CreateGroupButton } from '../components/Authentication/CreateGroupButton'
 import { LoginForm } from '../components/Authentication/LoginForm'
 import { SignInAndSignOutButton } from '../components/Authentication/SignInAndSignOutButton'
 import { Dashboard } from '../components/Dashboard/Dashboard'
@@ -25,6 +26,7 @@ const Home: NextPage = () => {
             <Heading size={width && width < 720 ? 'md' : 'lg'} />
             <LoginForm />
             <SignInAndSignOutButton />
+            <CreateGroupButton />
           </main>
         ) : (
           <div className="flex flex-col pb-2">
