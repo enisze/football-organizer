@@ -9,7 +9,7 @@ export const StatusChip: FunctionComponent<{
 }> = ({ status }) => {
   return (
     <Popover>
-      <PopoverTrigger>
+      <PopoverTrigger aria-label="event-status-button">
         <div className="flex items-center ">
           {status === 'BOOKED' ? (
             <>
