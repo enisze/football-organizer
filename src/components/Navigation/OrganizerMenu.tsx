@@ -50,7 +50,9 @@ export const OrganizerMenu: FunctionComponent = () => {
       },
     })
 
-  const { data: balance } = trpc.payment.getUserBalance.useQuery()
+  const { data: balance } = trpc.payment.getUserBalance.useQuery(undefined, {
+    enabled: Boolean(userData),
+  })
 
   if (!userData) return null
 

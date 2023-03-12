@@ -12,12 +12,12 @@ export const Navbar: FunctionComponent = () => {
 
         <div className="flex gap-x-1">
           <div className={`flex cursor-pointer items-center`}>
+            <Link href={'/pricing'}>Pricing</Link>
             <OrganizerMenu />
             <div className="pl-2">
               <ThemeToggle />
             </div>
           </div>
-          <Link href={'/pricing'}></Link>
         </div>
       </nav>
     </header>
