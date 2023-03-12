@@ -1,7 +1,8 @@
-import { ThemeToggle } from "@/ui/theme-toggle";
-import type { FunctionComponent } from "react";
-import { Heading } from "../Heading";
-import { OrganizerMenu } from "./OrganizerMenu";
+import { ThemeToggle } from '@/ui/theme-toggle'
+import Link from 'next/link'
+import type { FunctionComponent } from 'react'
+import { Heading } from '../Heading'
+import { OrganizerMenu } from './OrganizerMenu'
 
 export const Navbar: FunctionComponent = () => {
   return (
@@ -16,10 +17,11 @@ export const Navbar: FunctionComponent = () => {
               <ThemeToggle />
             </div>
           </div>
+          <Link href={'/pricing'}></Link>
         </div>
       </nav>
     </header>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar

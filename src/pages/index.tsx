@@ -19,6 +19,7 @@ const Home: NextPage = () => {
     <div className={`${style} h-full`}>
       <title>Football Organizer</title>
       <LoadingWrapper isLoading={status === 'loading'}>
+        <Navbar />
         {!sessionData ? (
           <main className="absolute flex h-full w-full flex-col items-center justify-center gap-y-2">
             <Heading size={width && width < 720 ? 'md' : 'lg'} />
@@ -27,7 +28,6 @@ const Home: NextPage = () => {
           </main>
         ) : (
           <div className="flex flex-col pb-2">
-            <Navbar />
             <div className="p-8" />
             <Dashboard />
           </div>

@@ -36,7 +36,12 @@ export const OrganizerMenu: FunctionComponent = () => {
     enabled: isAdmin,
   })
 
-  const { data, isLoading } = trpc.user.getNotificationStatus.useQuery()
+  const { data, isLoading } = trpc.user.getNotificationStatus.useQuery(
+    undefined,
+    {
+      enabled: Boolean(userData),
+    },
+  )
 
   const { mutate: updateNotificationsEnabled } =
     trpc.user.updateNotifications.useMutation({
@@ -46,6 +51,8 @@ export const OrganizerMenu: FunctionComponent = () => {
     })
 
   const { data: balance } = trpc.payment.getUserBalance.useQuery()
+
+  if (!userData) return null
 
   const res = userData?.user?.name?.split(' ')
 
