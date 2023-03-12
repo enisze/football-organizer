@@ -1,31 +1,16 @@
 import type { Event, ParticipantsOnEvents } from '@/prisma/generated/client'
 import { trpc } from '@/src/utils/trpc'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/ui/base/Accordion'
+import { Separator } from '@/ui/base/Separator'
 import { differenceInCalendarDays } from 'date-fns'
-import { Activity, CalendarDays, Euro, MapPin, Zap } from 'lucide-react'
-import dynamic from 'next/dynamic'
+import { CalendarDays, Euro } from 'lucide-react'
 import type { FunctionComponent } from 'react'
-import { transformDate } from '../../helpers/transformDate'
-import { LoadingWrapper } from '../LoadingWrapper'
-import type { OrganizerMapProps } from '../Map/OrganizerMap'
+import { MapAccordion } from '../Map/MapAccordion'
 import { PaymentArea } from '../PaymentArea'
-import { AddToCalendarButton } from './Buttons/AddToCalendarButton'
 import { EventStatusArea } from './Buttons/EventStatusArea'
+import { DateInfo } from './DateInfo'
 import { EventCardAdminArea } from './EventCardAdminArea'
 import { ParticipantsArea } from './ParticipantsArea'
 import { StatusChip } from './StatusChip'
-
-const DynamicOrganizerMap = dynamic<OrganizerMapProps>(
-  () => import('../Map/OrganizerMap').then((module) => module.OrganizerMap),
-  {
-    ssr: false,
-  },
-)
 
 type EventCardProps = {
   event: Event
@@ -65,71 +50,58 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
   const fullEventString = status === 'CANCELED' ? 'Abgesagt' : eventString
   const fullEventStringStyle = status === 'CANCELED' ? 'text-red-500' : 'none'
 
-  return (
-    <div className="h-full w-full rounded-2xl bg-gradient-to-b from-purple-400 to-purple-100 p-[1px] md:w-[350px]">
-      <div className="flex w-full flex-col justify-center gap-2 rounded-2xl bg-gradient-to-tl from-white to-blue-100 p-4 shadow-xl dark:bg-gradient-to-tl dark:from-slate-900 dark:to-slate-700">
-        <div className="flex flex-col items-center gap-y-2">
-          <div className="flex items-center gap-x-2">
-            <Zap className="h-4 w-4 opacity-70" />
-            <span className={`font-bold ${fullEventStringStyle}`}>
-              {fullEventString}
-            </span>
+  const iconStyle = 'h-4 w-4 opacity-70 flex-none'
 
-            <div className="flex items-center">
-              <Euro className="h-4 w-4 opacity-70" />
+  return (
+    <div className="relative h-full w-full rounded-2xl bg-gradient-to-b from-purple-400 to-purple-100 p-[1px] md:w-[400px]">
+      <div className="flex w-full flex-col justify-center gap-2 rounded-2xl bg-gradient-to-tl from-white to-blue-100 shadow-xl dark:bg-gradient-to-tl dark:from-slate-900 dark:to-slate-700">
+        <div className="grid grid-cols-[40px_8px_auto]">
+          <div className="pl-2 py-2">
+            <DateInfo
+              address={address}
+              date={date}
+              endTime={endTime}
+              startTime={startTime}
+            />
+          </div>
+
+          <div className="flex justify-center">
+            <Separator orientation="vertical" />
+          </div>
+
+          <div className="flex flex-col gap-y-1 py-4 pr-4">
+            <div className="flex items-center justify-center gap-x-1 w-full">
+              <span className={`font-bold ${fullEventStringStyle}`}>
+                {fullEventString}
+              </span>
+              <div className="items-center flex justify-center border rounded-full w-5 h-5">
+                <StatusChip status={status} />
+              </div>
+            </div>
+            <div className="flex items-center gap-x-1">
+              <CalendarDays className={iconStyle} />
+              <span>{[startTime, endTime].join('-')}</span>
+              <Euro className={iconStyle} />
               <span> {`${cost / maxParticipants}`}</span>
             </div>
-          </div>
-          <div className="flex items-center gap-x-2">
-            <Activity className="h-4 w-4 opacity-70" />
-            <span className="font-bold">Status:</span>
-            <StatusChip status={status} />
+            {data && (
+              <MapAccordion
+                address={address}
+                coordinates={data}
+                isLoading={isLoading}
+              />
+            )}
+            <ParticipantsArea
+              eventId={id}
+              participants={participants}
+              maxParticipants={maxParticipants}
+            />
+
+            <EventCardAdminArea eventId={id} />
+            <PaymentArea eventId={id} bookingDate={bookingDate} />
+            <EventStatusArea id={id} participants={participants} />
           </div>
         </div>
-        <div>
-          <div className="flex items-center gap-x-2">
-            <CalendarDays className="h-4 w-4 opacity-70" />
-            <span>
-              {transformDate(date) + ' ' + [startTime, endTime].join('-')}
-            </span>
-          </div>
-          {data && (
-            <Accordion type="single" collapsible className="p-0">
-              <AccordionItem
-                value="item-1"
-                className="border-b-0"
-                style={{ padding: 0 }}
-              >
-                <AccordionTrigger className="p-0 hover:no-underline">
-                  <div className="flex w-full items-center">
-                    <MapPin className="mr-2 h-4 w-4 opacity-70" />
-                    {address}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="relative h-[200px] w-[250px] md:h-[250px] md:w-[350px]">
-                    <LoadingWrapper isLoading={isLoading}>
-                      <div className="flex">
-                        <DynamicOrganizerMap coordinates={data} />
-                      </div>
-                    </LoadingWrapper>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          )}
-        </div>
-        <ParticipantsArea
-          eventId={id}
-          participants={participants}
-          maxParticipants={maxParticipants}
-        />
-
-        <EventCardAdminArea eventId={id} />
-        <PaymentArea eventId={id} bookingDate={bookingDate} />
-        <EventStatusArea id={id} participants={participants} />
-
-        <AddToCalendarButton event={event} />
       </div>
     </div>
   )
