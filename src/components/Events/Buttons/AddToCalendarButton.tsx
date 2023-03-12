@@ -10,6 +10,7 @@ import {
 } from '@/ui/base/Dialog'
 import type { CalendarOptions } from 'datebook'
 import { GoogleCalendar, ICalendar, OutlookCalendar } from 'datebook'
+import { CalendarPlus } from 'lucide-react'
 import type { FunctionComponent } from 'react'
 
 export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
@@ -42,7 +43,9 @@ export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
   return (
     <Dialog aria-labelledby="modal-title" aria-describedby="modal-desc">
       <DialogTrigger asChild>
-        <Button variant="outline">Zum Kalender hinzufügen</Button>
+        <Button variant="ghost" className="p-0 h-fit">
+          <CalendarPlus />
+        </Button>
       </DialogTrigger>
       <DialogContent
         aria-labelledby="size-modal-title"
