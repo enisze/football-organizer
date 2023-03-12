@@ -74,10 +74,9 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
               <span className={`font-bold ${fullEventStringStyle}`}>
                 {fullEventString}
               </span>
-            </div>
-            <div className="flex items-center gap-x-1">
-              <span>Event Status:</span>
-              <StatusChip status={status} />
+              <div className="items-center flex justify-center border rounded-full w-5 h-5">
+                <StatusChip status={status} />
+              </div>
             </div>
             <div className="flex items-center gap-x-1">
               <CalendarDays className={iconStyle} />

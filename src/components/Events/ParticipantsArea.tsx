@@ -6,6 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/ui/base/Accordion'
+import { User } from 'lucide-react'
 import type { FunctionComponent } from 'react'
 import { AvatarStatus } from './AvatarStatus'
 import { EventCardAdminPaymentArea } from './EventCardAdminPaymentArea'
@@ -48,7 +49,10 @@ export const ParticipantsArea: FunctionComponent<{
         className="border-b-0"
         style={{ padding: 0 }}
       >
-        <span className="self-start">Teilnehmer: </span>
+        <div className="flex gap-x-1 items-center">
+          <User className="h-4 w-4 opacity-70 flex-none" />
+          <span>{`${joinedUsers.length}/${maxParticipants} Teilnehmer`}</span>
+        </div>
         <AccordionTrigger className="p-0 hover:no-underline">
           <div
             className={`rounded flex border w-full bg-gradient-to-b from mr-1`}
