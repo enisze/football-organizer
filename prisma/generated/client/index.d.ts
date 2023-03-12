@@ -104,6 +104,9 @@ export type Session = {
 export type Group = {
   id: string
   ownerId: string
+  name: string
+  createdAt: Date
+  updatedAt: Date
   pricingModel: PricingModel
 }
 
@@ -1206,6 +1209,7 @@ export namespace Prisma {
     payments: number
     events: number
     groups: number
+    Group: number
   }
 
   export type UserCountOutputTypeSelect = {
@@ -1214,6 +1218,7 @@ export namespace Prisma {
     payments?: boolean
     events?: boolean
     groups?: boolean
+    Group?: boolean
   }
 
   export type UserCountOutputTypeGetPayload<S extends boolean | null | undefined | UserCountOutputTypeArgs> =
@@ -7418,18 +7423,27 @@ export namespace Prisma {
   export type GroupMinAggregateOutputType = {
     id: string | null
     ownerId: string | null
+    name: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
     pricingModel: PricingModel | null
   }
 
   export type GroupMaxAggregateOutputType = {
     id: string | null
     ownerId: string | null
+    name: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
     pricingModel: PricingModel | null
   }
 
   export type GroupCountAggregateOutputType = {
     id: number
     ownerId: number
+    name: number
+    createdAt: number
+    updatedAt: number
     pricingModel: number
     _all: number
   }
@@ -7438,18 +7452,27 @@ export namespace Prisma {
   export type GroupMinAggregateInputType = {
     id?: true
     ownerId?: true
+    name?: true
+    createdAt?: true
+    updatedAt?: true
     pricingModel?: true
   }
 
   export type GroupMaxAggregateInputType = {
     id?: true
     ownerId?: true
+    name?: true
+    createdAt?: true
+    updatedAt?: true
     pricingModel?: true
   }
 
   export type GroupCountAggregateInputType = {
     id?: true
     ownerId?: true
+    name?: true
+    createdAt?: true
+    updatedAt?: true
     pricingModel?: true
     _all?: true
   }
@@ -7535,6 +7558,9 @@ export namespace Prisma {
   export type GroupGroupByOutputType = {
     id: string
     ownerId: string
+    name: string
+    createdAt: Date
+    updatedAt: Date
     pricingModel: PricingModel
     _count: GroupCountAggregateOutputType | null
     _min: GroupMinAggregateOutputType | null
@@ -7558,9 +7584,13 @@ export namespace Prisma {
   export type GroupSelect = {
     id?: boolean
     ownerId?: boolean
+    name?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     events?: boolean | GroupEventsArgs
     users?: boolean | GroupUsersArgs
     pricingModel?: boolean
+    user?: boolean | UserArgs
     _count?: boolean | GroupCountOutputTypeArgs
   }
 
@@ -7568,6 +7598,7 @@ export namespace Prisma {
   export type GroupInclude = {
     events?: boolean | GroupEventsArgs
     users?: boolean | GroupUsersArgs
+    user?: boolean | UserArgs
     _count?: boolean | GroupCountOutputTypeArgs
   } 
 
@@ -7580,6 +7611,7 @@ export namespace Prisma {
     [P in TruthyKeys<S['include']>]:
         P extends 'events' ? Array < EventGetPayload<S['include'][P]>>  :
         P extends 'users' ? Array < UserOnGroupsGetPayload<S['include'][P]>>  :
+        P extends 'user' ? UserGetPayload<S['include'][P]> :
         P extends '_count' ? GroupCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (GroupArgs | GroupFindManyArgs)
@@ -7587,6 +7619,7 @@ export namespace Prisma {
     [P in TruthyKeys<S['select']>]:
         P extends 'events' ? Array < EventGetPayload<S['select'][P]>>  :
         P extends 'users' ? Array < UserOnGroupsGetPayload<S['select'][P]>>  :
+        P extends 'user' ? UserGetPayload<S['select'][P]> :
         P extends '_count' ? GroupCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Group ? Group[P] : never
   } 
       : Group
@@ -7964,6 +7997,8 @@ export namespace Prisma {
     events<T extends GroupEventsArgs= {}>(args?: Subset<T, GroupEventsArgs>): PrismaPromise<Array<EventGetPayload<T>>| Null>;
 
     users<T extends GroupUsersArgs= {}>(args?: Subset<T, GroupUsersArgs>): PrismaPromise<Array<UserOnGroupsGetPayload<T>>| Null>;
+
+    user<T extends UserArgs= {}>(args?: Subset<T, UserArgs>): Prisma__UserClient<UserGetPayload<T> | Null>;
 
     private get _document();
     /**
@@ -8648,6 +8683,7 @@ export namespace Prisma {
     events?: boolean | UserEventsArgs
     groups?: boolean | UserGroupsArgs
     groupId?: boolean
+    Group?: boolean | UserGroupArgs
     _count?: boolean | UserCountOutputTypeArgs
   }
 
@@ -8658,6 +8694,7 @@ export namespace Prisma {
     payments?: boolean | UserPaymentsArgs
     events?: boolean | UserEventsArgs
     groups?: boolean | UserGroupsArgs
+    Group?: boolean | UserGroupArgs
     _count?: boolean | UserCountOutputTypeArgs
   } 
 
@@ -8673,6 +8710,7 @@ export namespace Prisma {
         P extends 'payments' ? Array < PaymentGetPayload<S['include'][P]>>  :
         P extends 'events' ? Array < ParticipantsOnEventsGetPayload<S['include'][P]>>  :
         P extends 'groups' ? Array < UserOnGroupsGetPayload<S['include'][P]>>  :
+        P extends 'Group' ? Array < GroupGetPayload<S['include'][P]>>  :
         P extends '_count' ? UserCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (UserArgs | UserFindManyArgs)
@@ -8683,6 +8721,7 @@ export namespace Prisma {
         P extends 'payments' ? Array < PaymentGetPayload<S['select'][P]>>  :
         P extends 'events' ? Array < ParticipantsOnEventsGetPayload<S['select'][P]>>  :
         P extends 'groups' ? Array < UserOnGroupsGetPayload<S['select'][P]>>  :
+        P extends 'Group' ? Array < GroupGetPayload<S['select'][P]>>  :
         P extends '_count' ? UserCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof User ? User[P] : never
   } 
       : User
@@ -9066,6 +9105,8 @@ export namespace Prisma {
     events<T extends UserEventsArgs= {}>(args?: Subset<T, UserEventsArgs>): PrismaPromise<Array<ParticipantsOnEventsGetPayload<T>>| Null>;
 
     groups<T extends UserGroupsArgs= {}>(args?: Subset<T, UserGroupsArgs>): PrismaPromise<Array<UserOnGroupsGetPayload<T>>| Null>;
+
+    Group<T extends UserGroupArgs= {}>(args?: Subset<T, UserGroupArgs>): PrismaPromise<Array<GroupGetPayload<T>>| Null>;
 
     private get _document();
     /**
@@ -9582,6 +9623,29 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: Enumerable<UserOnGroupsScalarFieldEnum>
+  }
+
+
+  /**
+   * User.Group
+   */
+  export type UserGroupArgs = {
+    /**
+     * Select specific fields to fetch from the Group
+     * 
+    **/
+    select?: GroupSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     * 
+    **/
+    include?: GroupInclude | null
+    where?: GroupWhereInput
+    orderBy?: Enumerable<GroupOrderByWithRelationInput>
+    cursor?: GroupWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<GroupScalarFieldEnum>
   }
 
 
@@ -13516,6 +13580,9 @@ export namespace Prisma {
   export const GroupScalarFieldEnum: {
     id: 'id',
     ownerId: 'ownerId',
+    name: 'name',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
     pricingModel: 'pricingModel'
   };
 
@@ -13975,27 +14042,37 @@ export namespace Prisma {
     NOT?: Enumerable<GroupWhereInput>
     id?: StringFilter | string
     ownerId?: StringFilter | string
+    name?: StringFilter | string
+    createdAt?: DateTimeFilter | Date | string
+    updatedAt?: DateTimeFilter | Date | string
     events?: EventListRelationFilter
     users?: UserOnGroupsListRelationFilter
     pricingModel?: EnumPricingModelFilter | PricingModel
+    user?: XOR<UserRelationFilter, UserWhereInput>
   }
 
   export type GroupOrderByWithRelationInput = {
     id?: SortOrder
     ownerId?: SortOrder
+    name?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     events?: EventOrderByRelationAggregateInput
     users?: UserOnGroupsOrderByRelationAggregateInput
     pricingModel?: SortOrder
+    user?: UserOrderByWithRelationInput
   }
 
   export type GroupWhereUniqueInput = {
     id?: string
-    ownerId?: string
   }
 
   export type GroupOrderByWithAggregationInput = {
     id?: SortOrder
     ownerId?: SortOrder
+    name?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     pricingModel?: SortOrder
     _count?: GroupCountOrderByAggregateInput
     _max?: GroupMaxOrderByAggregateInput
@@ -14008,6 +14085,9 @@ export namespace Prisma {
     NOT?: Enumerable<GroupScalarWhereWithAggregatesInput>
     id?: StringWithAggregatesFilter | string
     ownerId?: StringWithAggregatesFilter | string
+    name?: StringWithAggregatesFilter | string
+    createdAt?: DateTimeWithAggregatesFilter | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter | Date | string
     pricingModel?: EnumPricingModelWithAggregatesFilter | PricingModel
   }
 
@@ -14030,6 +14110,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsListRelationFilter
     groups?: UserOnGroupsListRelationFilter
     groupId?: StringNullableFilter | string | null
+    Group?: GroupListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -14048,6 +14129,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsOrderByRelationAggregateInput
     groups?: UserOnGroupsOrderByRelationAggregateInput
     groupId?: SortOrder
+    Group?: GroupOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = {
@@ -14703,15 +14785,21 @@ export namespace Prisma {
 
   export type GroupCreateInput = {
     id?: string
-    ownerId: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     events?: EventCreateNestedManyWithoutGroupInput
     users?: UserOnGroupsCreateNestedManyWithoutGroupInput
     pricingModel?: PricingModel
+    user: UserCreateNestedOneWithoutGroupInput
   }
 
   export type GroupUncheckedCreateInput = {
     id?: string
     ownerId: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     events?: EventUncheckedCreateNestedManyWithoutGroupInput
     users?: UserOnGroupsUncheckedCreateNestedManyWithoutGroupInput
     pricingModel?: PricingModel
@@ -14719,15 +14807,21 @@ export namespace Prisma {
 
   export type GroupUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    ownerId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     events?: EventUpdateManyWithoutGroupNestedInput
     users?: UserOnGroupsUpdateManyWithoutGroupNestedInput
     pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
+    user?: UserUpdateOneRequiredWithoutGroupNestedInput
   }
 
   export type GroupUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     ownerId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     events?: EventUncheckedUpdateManyWithoutGroupNestedInput
     users?: UserOnGroupsUncheckedUpdateManyWithoutGroupNestedInput
     pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
@@ -14736,18 +14830,26 @@ export namespace Prisma {
   export type GroupCreateManyInput = {
     id?: string
     ownerId: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     pricingModel?: PricingModel
   }
 
   export type GroupUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    ownerId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
   }
 
   export type GroupUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     ownerId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
   }
 
@@ -14767,6 +14869,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsCreateNestedManyWithoutUserInput
     groupId?: string | null
+    Group?: GroupCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -14785,6 +14888,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
     groupId?: string | null
+    Group?: GroupUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -14803,6 +14907,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
     groupId?: NullableStringFieldUpdateOperationsInput | string | null
+    Group?: GroupUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -14821,6 +14926,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
     groupId?: NullableStringFieldUpdateOperationsInput | string | null
+    Group?: GroupUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -15589,18 +15695,27 @@ export namespace Prisma {
   export type GroupCountOrderByAggregateInput = {
     id?: SortOrder
     ownerId?: SortOrder
+    name?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     pricingModel?: SortOrder
   }
 
   export type GroupMaxOrderByAggregateInput = {
     id?: SortOrder
     ownerId?: SortOrder
+    name?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     pricingModel?: SortOrder
   }
 
   export type GroupMinOrderByAggregateInput = {
     id?: SortOrder
     ownerId?: SortOrder
+    name?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     pricingModel?: SortOrder
   }
 
@@ -15631,11 +15746,21 @@ export namespace Prisma {
     none?: SessionWhereInput
   }
 
+  export type GroupListRelationFilter = {
+    every?: GroupWhereInput
+    some?: GroupWhereInput
+    none?: GroupWhereInput
+  }
+
   export type AccountOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type SessionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type GroupOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -16051,6 +16176,12 @@ export namespace Prisma {
     connect?: Enumerable<UserOnGroupsWhereUniqueInput>
   }
 
+  export type UserCreateNestedOneWithoutGroupInput = {
+    create?: XOR<UserCreateWithoutGroupInput, UserUncheckedCreateWithoutGroupInput>
+    connectOrCreate?: UserCreateOrConnectWithoutGroupInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type EventUncheckedCreateNestedManyWithoutGroupInput = {
     create?: XOR<Enumerable<EventCreateWithoutGroupInput>, Enumerable<EventUncheckedCreateWithoutGroupInput>>
     connectOrCreate?: Enumerable<EventCreateOrConnectWithoutGroupInput>
@@ -16095,6 +16226,14 @@ export namespace Prisma {
 
   export type EnumPricingModelFieldUpdateOperationsInput = {
     set?: PricingModel
+  }
+
+  export type UserUpdateOneRequiredWithoutGroupNestedInput = {
+    create?: XOR<UserCreateWithoutGroupInput, UserUncheckedCreateWithoutGroupInput>
+    connectOrCreate?: UserCreateOrConnectWithoutGroupInput
+    upsert?: UserUpsertWithoutGroupInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<UserUpdateWithoutGroupInput, UserUncheckedUpdateWithoutGroupInput>
   }
 
   export type EventUncheckedUpdateManyWithoutGroupNestedInput = {
@@ -16160,6 +16299,13 @@ export namespace Prisma {
     connect?: Enumerable<UserOnGroupsWhereUniqueInput>
   }
 
+  export type GroupCreateNestedManyWithoutUserInput = {
+    create?: XOR<Enumerable<GroupCreateWithoutUserInput>, Enumerable<GroupUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<GroupCreateOrConnectWithoutUserInput>
+    createMany?: GroupCreateManyUserInputEnvelope
+    connect?: Enumerable<GroupWhereUniqueInput>
+  }
+
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<Enumerable<AccountCreateWithoutUserInput>, Enumerable<AccountUncheckedCreateWithoutUserInput>>
     connectOrCreate?: Enumerable<AccountCreateOrConnectWithoutUserInput>
@@ -16193,6 +16339,13 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<UserOnGroupsCreateOrConnectWithoutUserInput>
     createMany?: UserOnGroupsCreateManyUserInputEnvelope
     connect?: Enumerable<UserOnGroupsWhereUniqueInput>
+  }
+
+  export type GroupUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<Enumerable<GroupCreateWithoutUserInput>, Enumerable<GroupUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<GroupCreateOrConnectWithoutUserInput>
+    createMany?: GroupCreateManyUserInputEnvelope
+    connect?: Enumerable<GroupWhereUniqueInput>
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -16269,6 +16422,20 @@ export namespace Prisma {
     deleteMany?: Enumerable<UserOnGroupsScalarWhereInput>
   }
 
+  export type GroupUpdateManyWithoutUserNestedInput = {
+    create?: XOR<Enumerable<GroupCreateWithoutUserInput>, Enumerable<GroupUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<GroupCreateOrConnectWithoutUserInput>
+    upsert?: Enumerable<GroupUpsertWithWhereUniqueWithoutUserInput>
+    createMany?: GroupCreateManyUserInputEnvelope
+    set?: Enumerable<GroupWhereUniqueInput>
+    disconnect?: Enumerable<GroupWhereUniqueInput>
+    delete?: Enumerable<GroupWhereUniqueInput>
+    connect?: Enumerable<GroupWhereUniqueInput>
+    update?: Enumerable<GroupUpdateWithWhereUniqueWithoutUserInput>
+    updateMany?: Enumerable<GroupUpdateManyWithWhereWithoutUserInput>
+    deleteMany?: Enumerable<GroupScalarWhereInput>
+  }
+
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<Enumerable<AccountCreateWithoutUserInput>, Enumerable<AccountUncheckedCreateWithoutUserInput>>
     connectOrCreate?: Enumerable<AccountCreateOrConnectWithoutUserInput>
@@ -16337,6 +16504,20 @@ export namespace Prisma {
     update?: Enumerable<UserOnGroupsUpdateWithWhereUniqueWithoutUserInput>
     updateMany?: Enumerable<UserOnGroupsUpdateManyWithWhereWithoutUserInput>
     deleteMany?: Enumerable<UserOnGroupsScalarWhereInput>
+  }
+
+  export type GroupUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<Enumerable<GroupCreateWithoutUserInput>, Enumerable<GroupUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<GroupCreateOrConnectWithoutUserInput>
+    upsert?: Enumerable<GroupUpsertWithWhereUniqueWithoutUserInput>
+    createMany?: GroupCreateManyUserInputEnvelope
+    set?: Enumerable<GroupWhereUniqueInput>
+    disconnect?: Enumerable<GroupWhereUniqueInput>
+    delete?: Enumerable<GroupWhereUniqueInput>
+    connect?: Enumerable<GroupWhereUniqueInput>
+    update?: Enumerable<GroupUpdateWithWhereUniqueWithoutUserInput>
+    updateMany?: Enumerable<GroupUpdateManyWithWhereWithoutUserInput>
+    deleteMany?: Enumerable<GroupScalarWhereInput>
   }
 
   export type UserCreateNestedOneWithoutGroupsInput = {
@@ -16689,14 +16870,20 @@ export namespace Prisma {
 
   export type GroupCreateWithoutEventsInput = {
     id?: string
-    ownerId: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     users?: UserOnGroupsCreateNestedManyWithoutGroupInput
     pricingModel?: PricingModel
+    user: UserCreateNestedOneWithoutGroupInput
   }
 
   export type GroupUncheckedCreateWithoutEventsInput = {
     id?: string
     ownerId: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     users?: UserOnGroupsUncheckedCreateNestedManyWithoutGroupInput
     pricingModel?: PricingModel
   }
@@ -16769,14 +16956,20 @@ export namespace Prisma {
 
   export type GroupUpdateWithoutEventsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    ownerId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     users?: UserOnGroupsUpdateManyWithoutGroupNestedInput
     pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
+    user?: UserUpdateOneRequiredWithoutGroupNestedInput
   }
 
   export type GroupUncheckedUpdateWithoutEventsInput = {
     id?: StringFieldUpdateOperationsInput | string
     ownerId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     users?: UserOnGroupsUncheckedUpdateManyWithoutGroupNestedInput
     pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
   }
@@ -16796,6 +16989,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsCreateNestedManyWithoutUserInput
     groupId?: string | null
+    Group?: GroupCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutEventsInput = {
@@ -16813,6 +17007,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
     groupId?: string | null
+    Group?: GroupUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutEventsInput = {
@@ -16877,6 +17072,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
     groupId?: NullableStringFieldUpdateOperationsInput | string | null
+    Group?: GroupUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutEventsInput = {
@@ -16894,6 +17090,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
     groupId?: NullableStringFieldUpdateOperationsInput | string | null
+    Group?: GroupUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type EventUpsertWithoutParticipantsInput = {
@@ -16985,6 +17182,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsCreateNestedManyWithoutUserInput
     groupId?: string | null
+    Group?: GroupCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPaymentsInput = {
@@ -17002,6 +17200,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
     groupId?: string | null
+    Group?: GroupUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPaymentsInput = {
@@ -17066,6 +17265,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
     groupId?: NullableStringFieldUpdateOperationsInput | string | null
+    Group?: GroupUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPaymentsInput = {
@@ -17083,6 +17283,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
     groupId?: NullableStringFieldUpdateOperationsInput | string | null
+    Group?: GroupUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -17100,6 +17301,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsCreateNestedManyWithoutUserInput
     groupId?: string | null
+    Group?: GroupCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -17117,6 +17319,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
     groupId?: string | null
+    Group?: GroupUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -17144,6 +17347,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
     groupId?: NullableStringFieldUpdateOperationsInput | string | null
+    Group?: GroupUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -17161,6 +17365,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
     groupId?: NullableStringFieldUpdateOperationsInput | string | null
+    Group?: GroupUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -17178,6 +17383,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsCreateNestedManyWithoutUserInput
     groupId?: string | null
+    Group?: GroupCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -17195,6 +17401,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
     groupId?: string | null
+    Group?: GroupUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -17222,6 +17429,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
     groupId?: NullableStringFieldUpdateOperationsInput | string | null
+    Group?: GroupUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -17239,6 +17447,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
     groupId?: NullableStringFieldUpdateOperationsInput | string | null
+    Group?: GroupUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type EventCreateWithoutGroupInput = {
@@ -17301,6 +17510,47 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type UserCreateWithoutGroupInput = {
+    id?: string
+    name: string
+    email: string
+    emailVerified?: Date | string | null
+    image?: string | null
+    role: string
+    createdAt?: Date | string
+    password: string
+    notificationsEnabled?: boolean
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    payments?: PaymentCreateNestedManyWithoutUserInput
+    events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
+    groups?: UserOnGroupsCreateNestedManyWithoutUserInput
+    groupId?: string | null
+  }
+
+  export type UserUncheckedCreateWithoutGroupInput = {
+    id?: string
+    name: string
+    email: string
+    emailVerified?: Date | string | null
+    image?: string | null
+    role: string
+    createdAt?: Date | string
+    password: string
+    notificationsEnabled?: boolean
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
+    events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
+    groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
+    groupId?: string | null
+  }
+
+  export type UserCreateOrConnectWithoutGroupInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutGroupInput, UserUncheckedCreateWithoutGroupInput>
+  }
+
   export type EventUpsertWithWhereUniqueWithoutGroupInput = {
     where: EventWhereUniqueInput
     update: XOR<EventUpdateWithoutGroupInput, EventUncheckedUpdateWithoutGroupInput>
@@ -17357,6 +17607,47 @@ export namespace Prisma {
     NOT?: Enumerable<UserOnGroupsScalarWhereInput>
     id?: StringFilter | string
     groupId?: StringFilter | string
+  }
+
+  export type UserUpsertWithoutGroupInput = {
+    update: XOR<UserUpdateWithoutGroupInput, UserUncheckedUpdateWithoutGroupInput>
+    create: XOR<UserCreateWithoutGroupInput, UserUncheckedCreateWithoutGroupInput>
+  }
+
+  export type UserUpdateWithoutGroupInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    password?: StringFieldUpdateOperationsInput | string
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    payments?: PaymentUpdateManyWithoutUserNestedInput
+    events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
+    groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
+    groupId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type UserUncheckedUpdateWithoutGroupInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    password?: StringFieldUpdateOperationsInput | string
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
+    events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
+    groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
+    groupId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -17489,6 +17780,36 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type GroupCreateWithoutUserInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    events?: EventCreateNestedManyWithoutGroupInput
+    users?: UserOnGroupsCreateNestedManyWithoutGroupInput
+    pricingModel?: PricingModel
+  }
+
+  export type GroupUncheckedCreateWithoutUserInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    events?: EventUncheckedCreateNestedManyWithoutGroupInput
+    users?: UserOnGroupsUncheckedCreateNestedManyWithoutGroupInput
+    pricingModel?: PricingModel
+  }
+
+  export type GroupCreateOrConnectWithoutUserInput = {
+    where: GroupWhereUniqueInput
+    create: XOR<GroupCreateWithoutUserInput, GroupUncheckedCreateWithoutUserInput>
+  }
+
+  export type GroupCreateManyUserInputEnvelope = {
+    data: Enumerable<GroupCreateManyUserInput>
+    skipDuplicates?: boolean
+  }
+
   export type AccountUpsertWithWhereUniqueWithoutUserInput = {
     where: AccountWhereUniqueInput
     update: XOR<AccountUpdateWithoutUserInput, AccountUncheckedUpdateWithoutUserInput>
@@ -17597,6 +17918,34 @@ export namespace Prisma {
     data: XOR<UserOnGroupsUpdateManyMutationInput, UserOnGroupsUncheckedUpdateManyWithoutGroupsInput>
   }
 
+  export type GroupUpsertWithWhereUniqueWithoutUserInput = {
+    where: GroupWhereUniqueInput
+    update: XOR<GroupUpdateWithoutUserInput, GroupUncheckedUpdateWithoutUserInput>
+    create: XOR<GroupCreateWithoutUserInput, GroupUncheckedCreateWithoutUserInput>
+  }
+
+  export type GroupUpdateWithWhereUniqueWithoutUserInput = {
+    where: GroupWhereUniqueInput
+    data: XOR<GroupUpdateWithoutUserInput, GroupUncheckedUpdateWithoutUserInput>
+  }
+
+  export type GroupUpdateManyWithWhereWithoutUserInput = {
+    where: GroupScalarWhereInput
+    data: XOR<GroupUpdateManyMutationInput, GroupUncheckedUpdateManyWithoutGroupInput>
+  }
+
+  export type GroupScalarWhereInput = {
+    AND?: Enumerable<GroupScalarWhereInput>
+    OR?: Enumerable<GroupScalarWhereInput>
+    NOT?: Enumerable<GroupScalarWhereInput>
+    id?: StringFilter | string
+    ownerId?: StringFilter | string
+    name?: StringFilter | string
+    createdAt?: DateTimeFilter | Date | string
+    updatedAt?: DateTimeFilter | Date | string
+    pricingModel?: EnumPricingModelFilter | PricingModel
+  }
+
   export type UserCreateWithoutGroupsInput = {
     id?: string
     name: string
@@ -17612,6 +17961,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
     groupId?: string | null
+    Group?: GroupCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutGroupsInput = {
@@ -17629,6 +17979,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
     groupId?: string | null
+    Group?: GroupUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutGroupsInput = {
@@ -17638,14 +17989,20 @@ export namespace Prisma {
 
   export type GroupCreateWithoutUsersInput = {
     id?: string
-    ownerId: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     events?: EventCreateNestedManyWithoutGroupInput
     pricingModel?: PricingModel
+    user: UserCreateNestedOneWithoutGroupInput
   }
 
   export type GroupUncheckedCreateWithoutUsersInput = {
     id?: string
     ownerId: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     events?: EventUncheckedCreateNestedManyWithoutGroupInput
     pricingModel?: PricingModel
   }
@@ -17675,6 +18032,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
     groupId?: NullableStringFieldUpdateOperationsInput | string | null
+    Group?: GroupUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGroupsInput = {
@@ -17692,6 +18050,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
     groupId?: NullableStringFieldUpdateOperationsInput | string | null
+    Group?: GroupUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type GroupUpsertWithoutUsersInput = {
@@ -17701,14 +18060,20 @@ export namespace Prisma {
 
   export type GroupUpdateWithoutUsersInput = {
     id?: StringFieldUpdateOperationsInput | string
-    ownerId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     events?: EventUpdateManyWithoutGroupNestedInput
     pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
+    user?: UserUpdateOneRequiredWithoutGroupNestedInput
   }
 
   export type GroupUncheckedUpdateWithoutUsersInput = {
     id?: StringFieldUpdateOperationsInput | string
     ownerId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     events?: EventUncheckedUpdateManyWithoutGroupNestedInput
     pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
   }
@@ -17893,6 +18258,14 @@ export namespace Prisma {
     groupId: string
   }
 
+  export type GroupCreateManyUserInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    pricingModel?: PricingModel
+  }
+
   export type AccountUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
@@ -18001,6 +18374,34 @@ export namespace Prisma {
 
   export type UserOnGroupsUncheckedUpdateManyWithoutGroupsInput = {
     groupId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type GroupUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    events?: EventUpdateManyWithoutGroupNestedInput
+    users?: UserOnGroupsUpdateManyWithoutGroupNestedInput
+    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
+  }
+
+  export type GroupUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    events?: EventUncheckedUpdateManyWithoutGroupNestedInput
+    users?: UserOnGroupsUncheckedUpdateManyWithoutGroupNestedInput
+    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
+  }
+
+  export type GroupUncheckedUpdateManyWithoutGroupInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
   }
 
 

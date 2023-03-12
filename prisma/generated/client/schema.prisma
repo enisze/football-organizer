@@ -60,7 +60,6 @@ model Payment {
   event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-
   @@index([eventId])
   @@index([userId])
 }
@@ -96,10 +95,16 @@ model Session {
 
 model Group {
   id           String         @id @default(cuid())
-  ownerId      String         @unique
+  ownerId      String
+  name         String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
   events       Event[]
   users        UserOnGroups[]
   pricingModel PricingModel   @default(FREE)
+  user User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
 }
 
 model User {
@@ -118,6 +123,7 @@ model User {
   events               ParticipantsOnEvents[]
   groups               UserOnGroups[]
   groupId              String?
+  Group                Group[]
 }
 
 model UserOnGroups {

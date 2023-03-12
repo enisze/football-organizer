@@ -142,6 +142,9 @@ exports.Prisma.EventScalarFieldEnum = makeEnum({
 exports.Prisma.GroupScalarFieldEnum = makeEnum({
   id: 'id',
   ownerId: 'ownerId',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   pricingModel: 'pricingModel'
 });
 
