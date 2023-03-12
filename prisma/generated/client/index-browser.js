@@ -135,7 +135,14 @@ exports.Prisma.EventScalarFieldEnum = makeEnum({
   bookingDate: 'bookingDate',
   cost: 'cost',
   status: 'status',
-  maxParticipants: 'maxParticipants'
+  maxParticipants: 'maxParticipants',
+  groupId: 'groupId'
+});
+
+exports.Prisma.GroupScalarFieldEnum = makeEnum({
+  id: 'id',
+  ownerId: 'ownerId',
+  pricingModel: 'pricingModel'
 });
 
 exports.Prisma.ParticipantsOnEventsScalarFieldEnum = makeEnum({
@@ -181,6 +188,11 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.UserOnGroupsScalarFieldEnum = makeEnum({
+  id: 'id',
+  groupId: 'groupId'
+});
+
 exports.Prisma.UserScalarFieldEnum = makeEnum({
   id: 'id',
   name: 'name',
@@ -190,7 +202,8 @@ exports.Prisma.UserScalarFieldEnum = makeEnum({
   role: 'role',
   createdAt: 'createdAt',
   password: 'password',
-  notificationsEnabled: 'notificationsEnabled'
+  notificationsEnabled: 'notificationsEnabled',
+  groupId: 'groupId'
 });
 
 exports.Prisma.VerificationTokenScalarFieldEnum = makeEnum({
@@ -202,6 +215,12 @@ exports.EventStatus = makeEnum({
   CANCELED: 'CANCELED',
   CREATED: 'CREATED',
   BOOKED: 'BOOKED'
+});
+
+exports.PricingModel = makeEnum({
+  FREE: 'FREE',
+  SUPPORTER: 'SUPPORTER',
+  PREMIUM: 'PREMIUM'
 });
 
 exports.UserEventStatus = makeEnum({
@@ -218,7 +237,9 @@ exports.Prisma.ModelName = makeEnum({
   Payment: 'Payment',
   Account: 'Account',
   Session: 'Session',
+  Group: 'Group',
   User: 'User',
+  UserOnGroups: 'UserOnGroups',
   VerificationToken: 'VerificationToken',
   d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl: 'd6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl',
   edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl: 'edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl'
