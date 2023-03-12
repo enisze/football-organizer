@@ -73,15 +73,30 @@ export const EventStatusArea: FunctionComponent<{
     >
       <span>Mein Status:</span>
       <div className="flex gap-x-1">
-        <Button variant="outline" onClick={join} className="w-full">
+        <Button
+          aria-label="join-button"
+          variant="outline"
+          onClick={join}
+          className="w-full"
+        >
           <Check className={checkMarkColor} />
         </Button>
-        <Button variant="outline" onClick={maybe} className="w-full">
+        <Button
+          aria-label="maybe-button"
+          variant="outline"
+          onClick={maybe}
+          className="w-full"
+        >
           <QuestionMark
             className={`fill-black dark:fill-white ${maybeMarkColor}`}
           />
         </Button>
-        <Button variant="outline" onClick={leave} className="w-full">
+        <Button
+          aria-label="cancel-button"
+          variant="outline"
+          onClick={leave}
+          className="w-full"
+        >
           <XIcon className={canceledMarkColor} />
         </Button>
       </div>

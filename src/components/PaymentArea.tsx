@@ -23,7 +23,11 @@ export const PaymentArea: FunctionComponent<{
           <div className="flex w-full flex-col items-center justify-center gap-y-2">
             {!payment && isInCertainRange && (
               <a href={paypalLink} className="w-full">
-                <Button variant="outline" className="w-full">
+                <Button
+                  variant="outline"
+                  aria-label="paypal"
+                  className="w-full"
+                >
                   Bezahlen per Paypal
                 </Button>
               </a>
