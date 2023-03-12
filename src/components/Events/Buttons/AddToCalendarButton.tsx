@@ -49,7 +49,11 @@ export const AddToCalendarButton: FunctionComponent<
   return (
     <Dialog aria-labelledby="modal-title" aria-describedby="modal-desc">
       <DialogTrigger asChild>
-        <Button variant="ghost" className="p-0 h-fit">
+        <Button
+          variant="ghost"
+          aria-label="add-to-calender"
+          className="p-0 h-fit"
+        >
           <CalendarPlus />
         </Button>
       </DialogTrigger>
@@ -71,12 +75,14 @@ export const AddToCalendarButton: FunctionComponent<
             onClick={() => {
               icalendar.download()
             }}
+            aria-label="icalendar"
           >
             ICal Kalendar
           </Button>
           <Button
             variant="subtle"
             className="bg-[#73C8A9]"
+            aria-label="google-calendar"
             onClick={() => {
               window.open(googleLink)
             }}
@@ -87,6 +93,7 @@ export const AddToCalendarButton: FunctionComponent<
           <Button
             variant="subtle"
             className="bg-[#73C8A9]"
+            aria-label="outlook-calendar"
             onClick={() => {
               window.open(outlookLink)
             }}
