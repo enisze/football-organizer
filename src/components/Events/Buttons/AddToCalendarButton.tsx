@@ -1,4 +1,3 @@
-import type { Event } from '@/prisma/generated/client'
 import { Button } from '@/ui/base/Button'
 import {
   Dialog,
@@ -13,21 +12,28 @@ import { GoogleCalendar, ICalendar, OutlookCalendar } from 'datebook'
 import { CalendarPlus } from 'lucide-react'
 import type { FunctionComponent } from 'react'
 
-export const AddToCalendarButton: FunctionComponent<{ event: Event }> = ({
-  event,
-}) => {
-  const [startHours, startMinutes] = event.startTime.split(':')
-  const [endHours, endMinutes] = event.endTime.split(':')
+export type AddToCalendarButtonProps = {
+  startTime: string
+  endTime: string
+  date: Date
+  address: string
+}
 
-  const start = new Date(event.date)
-  const end = new Date(event.date)
+export const AddToCalendarButton: FunctionComponent<
+  AddToCalendarButtonProps
+> = ({ startTime, endTime, date, address }) => {
+  const [startHours, startMinutes] = startTime.split(':')
+  const [endHours, endMinutes] = endTime.split(':')
+
+  const start = new Date(date)
+  const end = new Date(date)
 
   start.setHours(Number(startHours), Number(startMinutes))
   end.setHours(Number(endHours), Number(endMinutes))
 
   const options: CalendarOptions = {
     title: 'Fußball',
-    location: event.address,
+    location: address,
     description:
       'Das (hoffentlich) wöchentliche Cl-Finale! Spiel und Spass vorprogrammiert. Lets go.',
     start: start,

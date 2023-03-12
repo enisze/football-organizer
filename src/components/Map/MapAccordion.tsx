@@ -30,8 +30,8 @@ export const MapAccordion: FunctionComponent<{
         style={{ padding: 0 }}
       >
         <AccordionTrigger className="p-0 hover:no-underline">
-          <div className="flex w-full items-center">
-            <MapPin className="mr-2 h-4 w-4 opacity-70" />
+          <div className="flex w-full items-center gap-x-1">
+            <MapPin className="h-4 w-4 opacity-70 flex-none" />
             {address}
           </div>
         </AccordionTrigger>
