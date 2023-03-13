@@ -3,6 +3,18 @@ import { z } from 'zod'
 import { protectedProcedure, router } from '../trpc'
 
 export const groupRouter = router({
+  getGroupNamesOwnedByUser: protectedProcedure
+    .input(
+      z.object({
+        ownerId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      return await ctx.prisma.group.findMany({
+        where: { ownerId: input.ownerId },
+        select: { name: true },
+      })
+    }),
   getUsers: protectedProcedure
     .input(
       z.object({
@@ -10,10 +22,22 @@ export const groupRouter = router({
       }),
     )
     .query(async ({ ctx, input }) => {
-      return await ctx.prisma.group.findUnique({
+      const res = await ctx.prisma.group.findUnique({
         where: { id: input.id },
-        include: { users: true, user: true },
+        include: { users: true },
       })
+
+      const users = await Promise.all(
+        res
+          ? res?.users.map((user) => {
+              return prisma?.user.findUnique({ where: { id: user.id } })
+            })
+          : [],
+      ).then((data) => {
+        //TODO: remove null / undefined
+      })
+
+      return users
     }),
   getEvents: protectedProcedure
     .input(

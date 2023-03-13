@@ -59,4 +59,10 @@ export const userRouter = router({
       })
     },
   ),
+  delete: protectedProcedure.mutation(async ({ ctx: { session, prisma } }) => {
+    const id = session.user.id
+    return await prisma.user.delete({
+      where: { id },
+    })
+  }),
 })
