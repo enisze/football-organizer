@@ -1,9 +1,10 @@
-import { router } from "../trpc";
-import { eventRouter } from "./event";
-import { gmailRouter } from "./gmail";
-import { mapRouter } from "./map";
-import { paymentRouter } from "./payment";
-import { userRouter } from "./user";
+import { router } from '../trpc'
+import { eventRouter } from './event'
+import { gmailRouter } from './gmail'
+import { groupRouter } from './group'
+import { mapRouter } from './map'
+import { paymentRouter } from './payment'
+import { userRouter } from './user'
 
 export const appRouter = router({
   event: eventRouter,
@@ -11,7 +12,8 @@ export const appRouter = router({
   payment: paymentRouter,
   user: userRouter,
   map: mapRouter,
-});
+  group: groupRouter,
+})
 
 // export type definition of API
-export type AppRouter = typeof appRouter;
+export type AppRouter = typeof appRouter
