@@ -13,9 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/ui/base/DropDownMenu'
-import { Label } from '@/ui/base/Label'
 import { Separator } from '@/ui/base/Separator'
-import { Switch } from '@/ui/base/Switch'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import type { FunctionComponent } from 'react'
@@ -23,11 +21,9 @@ import { useState } from 'react'
 import { useIsAdmin } from '../../hooks/useIsAdmin'
 import { trpc } from '../../utils/trpc'
 import { AddEventForm } from '../Events/AddEventForm'
-import { LoadingWrapper } from '../LoadingWrapper'
 
 export const OrganizerMenu: FunctionComponent = () => {
   const isAdmin = useIsAdmin()
-  const trpcContext = trpc.useContext()
   const { data: userData } = useSession()
 
   const [open, setOpen] = useState(false)
@@ -35,20 +31,6 @@ export const OrganizerMenu: FunctionComponent = () => {
   const { data: link } = trpc.gmail.generateAuthLink.useQuery(undefined, {
     enabled: isAdmin,
   })
-
-  const { data, isLoading } = trpc.user.getNotificationStatus.useQuery(
-    undefined,
-    {
-      enabled: Boolean(userData),
-    },
-  )
-
-  const { mutate: updateNotificationsEnabled } =
-    trpc.user.updateNotifications.useMutation({
-      onSuccess: () => {
-        trpcContext.invalidate()
-      },
-    })
 
   const { data: balance } = trpc.payment.getUserBalance.useQuery(undefined, {
     enabled: Boolean(userData),
@@ -58,8 +40,8 @@ export const OrganizerMenu: FunctionComponent = () => {
 
   const res = userData?.user?.name?.split(' ')
 
-  const first = res[0]?.charAt(0) ?? 'X'
-  const second = res[1]?.charAt(0) ?? 'X'
+  const first = res ? res[0]?.charAt(0) ?? 'X' : 'X'
+  const second = res ? res[1]?.charAt(0) ?? 'X' : 'X'
 
   return (
     <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
@@ -89,23 +71,6 @@ export const OrganizerMenu: FunctionComponent = () => {
               )}
             </DropdownMenuItem>
           )}
-          <DropdownMenuItem
-            onClick={() =>
-              updateNotificationsEnabled({
-                notificationsEnabled: !data?.notificationsEnabled,
-              })
-            }
-          >
-            <div className="flex items-center space-x-2">
-              <Label htmlFor="airplane-mode">Notifications</Label>
-              <LoadingWrapper isLoading={isLoading}>
-                <Switch
-                  id="notifications-enabled"
-                  checked={data?.notificationsEnabled}
-                />
-              </LoadingWrapper>
-            </div>
-          </DropdownMenuItem>
           <Separator />
           <DropdownMenuItem onClick={() => signOut()}>
             Ausloggen

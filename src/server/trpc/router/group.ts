@@ -34,7 +34,10 @@ export const groupRouter = router({
             })
           : [],
       ).then((data) => {
-        //TODO: remove null / undefined
+        return data.map((user) => {
+          if (!user) return null
+          return user
+        })
       })
 
       return users
@@ -68,7 +71,8 @@ export const groupRouter = router({
       return await prisma.group.create({
         data: {
           name: input.name,
-          user: { connect: { id } },
+          ownerId: id,
+          users: { create: { id } },
         },
       })
     }),
