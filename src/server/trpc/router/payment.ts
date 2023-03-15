@@ -86,17 +86,13 @@ export const paymentRouter = router({
           (payment) => payment.userId === session.user.id,
         )
 
-        if (!event) return acc
-
-        const cost: number = event?.cost / event.maxParticipants
+        const cost: number = event.cost / event.maxParticipants
 
         if (userEvent.userEventStatus === 'JOINED') {
-          if (payment) return acc
           if (!payment) return acc - cost
         }
         if (userEvent.userEventStatus === 'CANCELED') {
           if (payment) return acc + cost
-          if (!payment) return acc
         }
         return acc
       }, 0)
