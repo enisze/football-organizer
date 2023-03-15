@@ -128,7 +128,6 @@ export const paymentRouter = router({
                   })
                   return { ...payment, user }
                 }
-                return undefined
               })
               .filter((x) => Boolean(x))
           : [],
