@@ -91,15 +91,13 @@ export const gmailRouter = router({
         })
 
         const result = await Promise.all(
-          data.messages
-            ? data.messages?.map(async (label) => {
-                const res = await gmail.users.messages.get({
-                  userId: 'me',
-                  id: label.id ?? undefined,
-                })
-                return res.data
-              })
-            : [],
+          data.messages?.map(async (message) => {
+            const res = await gmail.users.messages.get({
+              userId: 'me',
+              id: message.id ?? undefined,
+            })
+            return res.data
+          }) ?? [],
         )
 
         if (!result)
