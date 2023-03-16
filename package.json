@@ -49,6 +49,7 @@
     "googleapis": "105",
     "inngest": "^0.8.9",
     "ioredis": "^5.2.4",
+    "jotai": "^2.0.3",
     "lucide-react": "^0.115.0",
     "mjml": "^4.13.0",
     "mjml-react": "^2.0.8",

@@ -1,12 +1,13 @@
 import type { FunctionComponent } from 'react'
 import { trpc } from '../../utils/trpc'
 
+import { useAtomValue } from 'jotai'
 import type {
   Event,
   ParticipantsOnEvents,
 } from '../../../prisma/generated/client'
 import { EventCard } from '../Events/EventCard'
-import { GroupSelector } from '../Groups/GroupSelector'
+import { GroupSelector, selectedGroupAtom } from '../Groups/GroupSelector'
 import { LoadingWrapper } from '../LoadingWrapper'
 
 type EventsWithparticipants =
@@ -14,7 +15,11 @@ type EventsWithparticipants =
   | undefined
 
 export const Dashboard: FunctionComponent = () => {
-  const { data: events, isLoading } = trpc.event.getAll.useQuery()
+  const groupId = useAtomValue(selectedGroupAtom)
+
+  const { data: events, isLoading } = trpc.event.getAllByGroup.useQuery({
+    groupId: groupId ?? '',
+  })
 
   return (
     <div className="m-8 flex flex-col items-center justify-center">

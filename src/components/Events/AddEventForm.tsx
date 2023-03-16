@@ -2,12 +2,17 @@ import { trpc } from '@/src/utils/trpc'
 import { Button } from '@/ui/base/Button'
 import { TextField } from '@/ui/base/TextField'
 import { Formik } from 'formik'
+import { useAtomValue } from 'jotai'
 import type { FunctionComponent } from 'react'
+import { GroupSelector, selectedGroupAtom } from '../Groups/GroupSelector'
 
 export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
   onSubmit,
 }) => {
   const trpcContext = trpc.useContext()
+
+  const groupId = useAtomValue(selectedGroupAtom)
+
   const { mutate: createEvent } = trpc.event.create.useMutation({
     onSuccess: () => {
       trpcContext.invalidate()
@@ -15,7 +20,8 @@ export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
   })
 
   return (
-    <div>
+    <div className="flex flex-col gap-y-3">
+      <GroupSelector />
       <Formik
         initialValues={{
           address: 'Zülpicher Wall 1, 50674 Köln',
@@ -28,6 +34,7 @@ export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
         onSubmit={(values, { setSubmitting }) => {
           const date = new Date(values.date)
           createEvent({
+            groupId: groupId ?? '',
             ...values,
             date,
           })
