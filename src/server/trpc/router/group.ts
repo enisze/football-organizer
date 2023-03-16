@@ -3,31 +3,20 @@ import { z } from 'zod'
 import { protectedProcedure, router } from '../trpc'
 
 export const groupRouter = router({
-  getGroupNamesOwnedByUser: protectedProcedure.query(async ({ ctx }) => {
-    const {
-      user: { id },
-    } = ctx.session
+  getGroupsOfUser: protectedProcedure
+    .input(z.object({ owned: z.boolean() }).optional())
+    .query(async ({ ctx, input }) => {
+      const {
+        user: { id },
+      } = ctx.session
 
-    if (!id) throw new TRPCError({ code: 'UNAUTHORIZED' })
+      if (!id) throw new TRPCError({ code: 'UNAUTHORIZED' })
 
-    return await ctx.prisma.group.findMany({
-      where: { ownerId: id },
-      select: { name: true },
-    })
-  }),
-
-  getGroupsOfUser: protectedProcedure.query(async ({ ctx }) => {
-    const {
-      user: { id },
-    } = ctx.session
-
-    if (!id) throw new TRPCError({ code: 'UNAUTHORIZED' })
-
-    return await ctx.prisma.group.findMany({
-      where: { users: { some: { id } } },
-      select: { name: true, id: true },
-    })
-  }),
+      return await ctx.prisma.group.findMany({
+        where: input?.owned ? { ownerId: id } : { users: { some: { id } } },
+        select: { name: true, id: true, users: true },
+      })
+    }),
   getUsers: protectedProcedure
     .input(
       z.object({
@@ -69,8 +58,17 @@ export const groupRouter = router({
     }),
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx: { prisma }, input }) => {
-      return await prisma.group.delete({ where: { id: input.id } })
+    .mutation(async ({ ctx: { prisma, session }, input }) => {
+      const { id } = input
+
+      const {
+        user: { id: ownerId },
+      } = session
+
+      const group = await prisma.group.findFirst({ where: { id, ownerId } })
+      if (!group) throw new TRPCError({ code: 'UNAUTHORIZED' })
+
+      return await prisma.group.delete({ where: { id } })
     }),
 
   create: protectedProcedure
@@ -89,8 +87,7 @@ export const groupRouter = router({
         },
       })
     }),
-
-  update: protectedProcedure
+  updateName: protectedProcedure
     .input(z.object({ id: z.string(), name: z.string() }))
     .mutation(async ({ ctx: { prisma }, input }) => {
       const { id, name } = input

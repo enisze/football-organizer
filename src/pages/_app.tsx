@@ -6,6 +6,7 @@ import { Inter as FontSans } from '@next/font/google'
 import { trpc } from '../utils/trpc'
 
 import '@/styles/globals.css'
+import { Toaster } from '@/ui/base/Toaster'
 import { ThemeProvider } from 'next-themes'
 import { PromiseQueueContextProvider } from '../contexts/PromiseQueueContext'
 
@@ -32,6 +33,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <SessionProvider session={session}>
           <PromiseQueueContextProvider>
+            <Toaster />
             <Component {...pageProps} />
           </PromiseQueueContextProvider>
         </SessionProvider>

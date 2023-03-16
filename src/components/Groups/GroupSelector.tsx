@@ -12,21 +12,25 @@ import { LoadingWrapper } from '../LoadingWrapper'
 
 export const selectedGroupAtom = atom<string | undefined>(undefined)
 
-export const GroupSelector: FunctionComponent = () => {
-  const { data: groups, isLoading } = trpc.group.getGroupsOfUser.useQuery()
-
+export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
+  owned = false,
+}) => {
+  const { data: groups, isLoading } = trpc.group.getGroupsOfUser.useQuery({
+    owned: owned,
+  })
   const [group, setSelectedGroup] = useAtom(selectedGroupAtom)
 
   return (
     <LoadingWrapper isLoading={isLoading}>
       <Select
         value={group}
+        defaultValue={groups?.at(0)?.id}
         onValueChange={(val) => {
           setSelectedGroup(val)
         }}
       >
         <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Theme" />
+          <SelectValue placeholder="Gruppe auswählen" />
         </SelectTrigger>
         <SelectContent>
           {groups?.map((group) => (
