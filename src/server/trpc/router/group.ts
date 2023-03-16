@@ -3,18 +3,31 @@ import { z } from 'zod'
 import { protectedProcedure, router } from '../trpc'
 
 export const groupRouter = router({
-  getGroupNamesOwnedByUser: protectedProcedure
-    .input(
-      z.object({
-        ownerId: z.string(),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      return await ctx.prisma.group.findMany({
-        where: { ownerId: input.ownerId },
-        select: { name: true },
-      })
-    }),
+  getGroupNamesOwnedByUser: protectedProcedure.query(async ({ ctx }) => {
+    const {
+      user: { id },
+    } = ctx.session
+
+    if (!id) throw new TRPCError({ code: 'UNAUTHORIZED' })
+
+    return await ctx.prisma.group.findMany({
+      where: { ownerId: id },
+      select: { name: true },
+    })
+  }),
+
+  getGroupsOfUser: protectedProcedure.query(async ({ ctx }) => {
+    const {
+      user: { id },
+    } = ctx.session
+
+    if (!id) throw new TRPCError({ code: 'UNAUTHORIZED' })
+
+    return await ctx.prisma.group.findMany({
+      where: { users: { some: { id } } },
+      select: { name: true, id: true },
+    })
+  }),
   getUsers: protectedProcedure
     .input(
       z.object({

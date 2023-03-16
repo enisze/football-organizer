@@ -1,5 +1,4 @@
 import { ThemeToggle } from '@/ui/theme-toggle'
-import Link from 'next/link'
 import type { FunctionComponent } from 'react'
 import { Heading } from '../Heading'
 import { OrganizerMenu } from './OrganizerMenu'
@@ -12,7 +11,7 @@ export const Navbar: FunctionComponent = () => {
 
         <div className="flex gap-x-1">
           <div className={`flex cursor-pointer items-center`}>
-            <Link href={'/pricing'}>Pricing</Link>
+            {/* <Link href={'/pricing'}>Pricing</Link> */}
             <OrganizerMenu />
             <div className="pl-2">
               <ThemeToggle />
