@@ -3943,7 +3943,7 @@ next-auth@^4.18.7:
     preact-render-to-string "^5.1.19"
     uuid "^8.3.2"
 
-next-superjson-plugin@^0.5.2:
+next-superjson-plugin@^0.5.6:
   version "0.5.6"
   resolved "https://registry.yarnpkg.com/next-superjson-plugin/-/next-superjson-plugin-0.5.6.tgz#dbb76f6559becccb41f83a7aff1938be7c52057b"
   integrity sha512-vokzkgtr3axon5uXobhXJWN6/YlPOHdcAb/BeR+d0rXA3h1b5h98A+V0TgMUf+vcy9RvBqte/ppaJfkOwi4NGA==
@@ -4551,6 +4551,11 @@ react-is@^16.13.1, react-is@^16.7.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
+react-loading-skeleton@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/react-loading-skeleton/-/react-loading-skeleton-3.2.0.tgz#c79f1390195bcd8625c30e68454a1b95508a9c74"
+  integrity sha512-kN12x4Ud69jbksr2EdhYywAFeW4bPdvFQ9p3ID1OM/QeFjgwFSmSUY2a6P6uOb5ACzWp3ozY8C+7+04KR6+PHA==
+
 react-reconciler@^0.26.1:
   version "0.26.2"
   resolved "https://registry.yarnpkg.com/react-reconciler/-/react-reconciler-0.26.2.tgz#bbad0e2d1309423f76cf3c3309ac6c96e05e9d91"
@@ -4998,7 +5003,7 @@ styled-jsx@5.1.1:
   dependencies:
     client-only "0.0.1"
 
-superjson@^1.12.1:
+superjson@^1.12.2:
   version "1.12.2"
   resolved "https://registry.yarnpkg.com/superjson/-/superjson-1.12.2.tgz#072471f1e6add2d95a38b77fef8c7a199d82103a"
   integrity sha512-ugvUo9/WmvWOjstornQhsN/sR9mnGtWGYeTxFuqLb4AiT4QdUavjGFRALCPKWWnAiUJ4HTpytj5e0t5HoMRkXg==

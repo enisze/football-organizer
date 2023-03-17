@@ -44,6 +44,8 @@ export const NewGroup: FunctionComponent = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-2">
+      <h3>Neue Gruppe erstellen</h3>
+
       <TextField
         label="Name"
         {...register('name')}

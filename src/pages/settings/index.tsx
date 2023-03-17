@@ -65,7 +65,7 @@ const Settings: FunctionComponent = () => {
               <Switch
                 id="notifications-enabled"
                 checked={notificationStatus?.notificationsEnabled}
-                onChange={() => {
+                onClick={() => {
                   updateNotificationsEnabled({
                     notificationsEnabled:
                       !notificationStatus?.notificationsEnabled,
@@ -90,6 +90,7 @@ const Settings: FunctionComponent = () => {
               }
             }}
             disabled={!userCanBeDeleted}
+            className="w-fit"
             variant="destructive"
           >
             Löschen

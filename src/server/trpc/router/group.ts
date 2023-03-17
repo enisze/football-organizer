@@ -14,8 +14,41 @@ export const groupRouter = router({
 
       return await ctx.prisma.group.findMany({
         where: input?.owned ? { ownerId: id } : { users: { some: { id } } },
-        select: { name: true, id: true, users: true },
+        select: {
+          name: true,
+          id: true,
+          createdAt: true,
+          events: true,
+          pricingModel: true,
+          users: true,
+        },
       })
+    }),
+  getGroupbyId: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const res = await ctx.prisma.group.findUnique({
+        where: { id: input.id },
+        include: { users: true },
+      })
+
+      const users = await Promise.all(
+        res
+          ? res?.users.map((user) => {
+              return prisma?.user.findUnique({ where: { id: user.id } })
+            })
+          : [],
+      ).then((data) => {
+        return data.map((user) => {
+          if (!user) return null
+          return user
+        })
+      })
+      return { group: res, users }
     }),
   getUsers: protectedProcedure
     .input(

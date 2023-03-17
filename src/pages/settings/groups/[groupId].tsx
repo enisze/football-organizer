@@ -1,4 +1,3 @@
-import { NewGroup } from '@/src/components/Groups/NewGroup'
 import { SettingsSidebar } from '@/src/components/SettingsSidebar'
 import { useToast } from '@/src/hooks/useToast'
 import { Button } from '@/ui/base/Button'
@@ -13,22 +12,37 @@ import {
 import { Label } from '@/ui/base/Label'
 import { Separator } from '@/ui/base/Separator'
 import { TextField } from '@/ui/base/TextField'
-import { useAtomValue } from 'jotai'
 import { useSession } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 
-import { AddEventForm } from '../../components/Events/AddEventForm'
-import {
-  GroupSelector,
-  selectedGroupAtom,
-} from '../../components/Groups/GroupSelector'
-import Navbar from '../../components/Navigation/Navbar'
-import { trpc } from '../../utils/trpc'
+import { AddEventForm } from '@/src/components/Events/AddEventForm'
+import { selectedGroupAtom } from '@/src/components/Groups/GroupSelector'
+import Navbar from '@/src/components/Navigation/Navbar'
+import { trpc } from '@/src/utils/trpc'
+import { useSetAtom } from 'jotai'
+import { useRouter } from 'next/router'
 
 const GroupSettings: FunctionComponent = () => {
   const { data } = useSession()
   const userId = data?.user?.id
+
+  const router = useRouter()
+
+  const groupId = router.query.groupId as string
+
+  const setAtom = useSetAtom(selectedGroupAtom)
+
+  useEffect(() => {
+    setAtom(groupId)
+  }, [groupId, setAtom])
+
+  const { data: groupData } = trpc.group.getGroupbyId.useQuery(
+    { id: groupId },
+    {
+      enabled: Boolean(groupId),
+    },
+  )
 
   const [groupNameForDeletion, setGroupNameForDeletion] = useState('')
   const { toast } = useToast()
@@ -36,24 +50,14 @@ const GroupSettings: FunctionComponent = () => {
   const [open, setOpen] = useState(false)
 
   const trpcContext = trpc.useContext()
-  const selectedGroup = useAtomValue(selectedGroupAtom)
 
-  const { data: groups, isLoading: loadingGroups } =
-    trpc.group.getGroupsOfUser.useQuery({ owned: true })
-
-  const [groupNameEdit, setGroupnameEdit] = useState<string | undefined>()
+  const [groupNameEdit, setGroupnameEdit] = useState<string | undefined>(
+    groupData?.group?.name,
+  )
 
   const groupCanBeDeleted = useMemo(() => {
-    const groupName = groups?.find((group) => group.id === selectedGroup)?.name
-    return groupNameForDeletion === groupName
-  }, [groupNameForDeletion, selectedGroup, groups])
-
-  useEffect(() => {
-    setGroupnameEdit(groups?.find((group) => group.id === selectedGroup)?.name)
-  }, [selectedGroup, groups])
-
-  const { data: usersOfGroup, isLoading: loadingUsers } =
-    trpc.group.getUsers.useQuery({ id: selectedGroup ?? '' })
+    return groupNameForDeletion === groupData?.group?.name
+  }, [groupNameForDeletion, groupData])
 
   const { mutate: updateGroupname } = trpc.group.updateName.useMutation({
     onSuccess: () => {
@@ -67,7 +71,7 @@ const GroupSettings: FunctionComponent = () => {
     },
   })
 
-  if (!userId) {
+  if (!userId || !groupId) {
     // window.location.replace('/')
     // window.location.reload()
     return null
@@ -83,7 +87,9 @@ const GroupSettings: FunctionComponent = () => {
 
         <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
           <div className="flex flex-col gap-y-2 p-2">
-            <h3 className="font-bold">Gruppeneinstellungen</h3>
+            <h3 className="font-bold">
+              Gruppeneinstellungen für {groupData?.group?.name}
+            </h3>
 
             <TextField
               id="group-name-input"
@@ -94,8 +100,11 @@ const GroupSettings: FunctionComponent = () => {
             />
             <Button
               onClick={() => {
-                if (!selectedGroup || !groupNameEdit) return
-                updateGroupname({ id: selectedGroup, name: groupNameEdit })
+                if (!groupNameEdit) return
+                updateGroupname({
+                  id: groupData?.group?.id ?? '',
+                  name: groupNameEdit,
+                })
                 toast({
                   title: 'Gruppenname geändert',
                   description: `Der Gruppenname wurde erfolgreich zu ${groupNameEdit} geändert.`,
@@ -107,19 +116,17 @@ const GroupSettings: FunctionComponent = () => {
               Speichern
             </Button>
 
-            <GroupSelector owned />
-
             <DialogTrigger className="flex flex-col gap-y-2 justify-start">
               <Label>Neues Event</Label>
-              <Button variant="outline">Erstellen</Button>
+              <Button variant="outline" role="definition">
+                Erstellen
+              </Button>
             </DialogTrigger>
 
             <div>TODO: Nutzer management</div>
-            {usersOfGroup?.map((user, idx) => {
+            {groupData?.users?.map((user, idx) => {
               return <div key={idx}>{user?.name}</div>
             })}
-
-            <NewGroup />
 
             <TextField
               id="group-name-input"
@@ -131,8 +138,15 @@ const GroupSettings: FunctionComponent = () => {
             />
             <Button
               onClick={() => {
-                if (groupCanBeDeleted && selectedGroup) {
-                  deleteGroup({ id: selectedGroup })
+                if (groupCanBeDeleted) {
+                  deleteGroup(
+                    { id: groupData?.group?.id ?? '' },
+                    {
+                      onSuccess: () => {
+                        router.push('/settings/groups')
+                      },
+                    },
+                  )
                   toast({
                     title: 'Gruppe gelöscht',
                     description: `Die Gruppe wurde erfolgreich gelöscht.`,
