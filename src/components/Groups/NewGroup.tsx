@@ -43,10 +43,7 @@ export const NewGroup: FunctionComponent = () => {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col items-center justify-center gap-y-2"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-2">
       <TextField
         label="Name"
         {...register('name')}
@@ -61,7 +58,7 @@ export const NewGroup: FunctionComponent = () => {
         </div>
       )}
 
-      <Button type="submit" variant="outline">
+      <Button type="submit" variant="outline" className="w-fit">
         Gruppe erstellen
       </Button>
     </form>

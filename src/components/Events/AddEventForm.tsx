@@ -4,7 +4,7 @@ import { TextField } from '@/ui/base/TextField'
 import { Formik } from 'formik'
 import { useAtomValue } from 'jotai'
 import type { FunctionComponent } from 'react'
-import { GroupSelector, selectedGroupAtom } from '../Groups/GroupSelector'
+import { selectedGroupAtom } from '../Groups/GroupSelector'
 
 export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
   onSubmit,
@@ -21,7 +21,6 @@ export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
 
   return (
     <div className="flex flex-col gap-y-3">
-      <GroupSelector />
       <Formik
         initialValues={{
           address: 'Zülpicher Wall 1, 50674 Köln',

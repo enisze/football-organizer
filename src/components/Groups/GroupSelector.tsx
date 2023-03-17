@@ -1,4 +1,5 @@
 import { trpc } from '@/src/utils/trpc'
+import { Label } from '@/ui/base/Label'
 import {
   Select,
   SelectContent,
@@ -22,6 +23,7 @@ export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
 
   return (
     <LoadingWrapper isLoading={isLoading}>
+      <Label>Gruppe</Label>
       <Select
         value={group}
         defaultValue={groups?.at(0)?.id}

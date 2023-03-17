@@ -1,4 +1,5 @@
 import { NewGroup } from '@/src/components/Groups/NewGroup'
+import { SettingsSidebar } from '@/src/components/SettingsSidebar'
 import { useToast } from '@/src/hooks/useToast'
 import { Button } from '@/ui/base/Button'
 import {
@@ -9,14 +10,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/ui/base/Dialog'
-import { OrganizerLink } from '@/ui/base/OrganizerLink'
+import { Label } from '@/ui/base/Label'
+import { Separator } from '@/ui/base/Separator'
 import { TextField } from '@/ui/base/TextField'
 import { useAtomValue } from 'jotai'
 import { useSession } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 
-import { z } from 'zod'
 import { AddEventForm } from '../../components/Events/AddEventForm'
 import {
   GroupSelector,
@@ -24,12 +25,6 @@ import {
 } from '../../components/Groups/GroupSelector'
 import Navbar from '../../components/Navigation/Navbar'
 import { trpc } from '../../utils/trpc'
-
-const newGroupSchema = z.object({
-  name: z
-    .string()
-    .min(5, { message: 'Der Gruppenname ist zu kurz. Mindestlaenge 5.' }),
-})
 
 const GroupSettings: FunctionComponent = () => {
   const { data } = useSession()
@@ -81,18 +76,13 @@ const GroupSettings: FunctionComponent = () => {
   return (
     <>
       <Navbar />
-      <div className="grid grid-cols-2">
-        <div>
-          <OrganizerLink href={'/settings'} className={''}>
-            Nutzer
-          </OrganizerLink>
-          <OrganizerLink href={'/settings/groups'} className={''}>
-            Gruppen
-          </OrganizerLink>
-        </div>
+      <div className="grid grid-cols-[220px_8px_auto]">
+        <SettingsSidebar />
+
+        <Separator orientation="vertical" />
 
         <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
-          <div className="flex flex-col gap-y-2">
+          <div className="flex flex-col gap-y-2 p-2">
             <h3 className="font-bold">Gruppeneinstellungen</h3>
 
             <TextField
@@ -112,16 +102,19 @@ const GroupSettings: FunctionComponent = () => {
                 })
               }}
               variant="outline"
+              className="w-fit"
             >
               Speichern
             </Button>
 
             <GroupSelector owned />
 
-            <DialogTrigger>
-              <Button variant="outline">Event erstellen</Button>
+            <DialogTrigger className="flex flex-col gap-y-2 justify-start">
+              <Label>Neues Event</Label>
+              <Button variant="outline">Erstellen</Button>
             </DialogTrigger>
 
+            <div>TODO: Nutzer management</div>
             {usersOfGroup?.map((user, idx) => {
               return <div key={idx}>{user?.name}</div>
             })}
@@ -148,6 +141,7 @@ const GroupSettings: FunctionComponent = () => {
               }}
               disabled={!groupCanBeDeleted}
               variant="destructive"
+              className="w-fit"
             >
               Löschen
             </Button>
@@ -169,6 +163,7 @@ const GroupSettings: FunctionComponent = () => {
           </DialogContent>
         </Dialog>
       </div>
+      <Separator />
     </>
   )
 }

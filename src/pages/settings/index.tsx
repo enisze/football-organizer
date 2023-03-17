@@ -1,6 +1,7 @@
+import { SettingsSidebar } from '@/src/components/SettingsSidebar'
 import { Button } from '@/ui/base/Button'
 import { Label } from '@/ui/base/Label'
-import { OrganizerLink } from '@/ui/base/OrganizerLink'
+import { Separator } from '@/ui/base/Separator'
 import { Switch } from '@/ui/base/Switch'
 import { TextField } from '@/ui/base/TextField'
 import { useSession } from 'next-auth/react'
@@ -51,17 +52,12 @@ const Settings: FunctionComponent = () => {
     <>
       <Navbar />
 
-      <div className="grid grid-cols-2">
-        <div>
-          <OrganizerLink href={'/settings'} className={''}>
-            Nutzer
-          </OrganizerLink>
-          <OrganizerLink href={'/settings/groups'} className={''}>
-            Gruppen
-          </OrganizerLink>
-        </div>
+      <div className="grid grid-cols-[220px_8px_auto]">
+        <SettingsSidebar />
 
-        <div className="flex flex-col gap-y-2">
+        <Separator orientation="vertical" />
+
+        <div className="flex flex-col gap-y-2 p-2">
           <h3 className="font-bold">Nutzereinstellungen</h3>
           <div className="flex items-center space-x-2">
             <Label>Alle Benachrichtigungen</Label>
@@ -100,6 +96,7 @@ const Settings: FunctionComponent = () => {
           </Button>
         </div>
       </div>
+      <Separator className="" />
     </>
   )
 }
