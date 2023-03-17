@@ -35,7 +35,7 @@ const job = async ({ event }: { event: Event__New }) => {
         sendSmptMail.htmlContent = html
         sendSmptMail.sender = {
           email: 'eniszej@gmail.com',
-          name: 'Football Organizer',
+          name: 'Event Wizard',
         }
         sendSmptMail.subject = `NEUES FUSSBALL EVENT: In ${days} Tagen`
 

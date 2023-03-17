@@ -1,19 +1,19 @@
-import compileMjml from "mjml";
-import type { Event } from "../../prisma/generated/client";
-import { paypalLink } from "./helpers/constants";
-import { getButton } from "./helpers/getButton";
-import { getEventTemplate } from "./helpers/getEventTemplate";
+import compileMjml from 'mjml'
+import type { Event } from '../../prisma/generated/client'
+import { paypalLink } from './helpers/constants'
+import { getButton } from './helpers/getButton'
+import { getEventTemplate } from './helpers/getEventTemplate'
 
 export const generatePaymentReminderTemplate = ({
   event,
   userName,
 }: {
-  event: Partial<Event>;
-  userName: string;
+  event: Partial<Event>
+  userName: string
 }) => {
-  const { cost, maxParticipants } = event;
+  const { cost, maxParticipants } = event
 
-  const eventTemplate = getEventTemplate(event);
+  const eventTemplate = getEventTemplate(event)
 
   const html = compileMjml(`
 <mjml>
@@ -45,7 +45,7 @@ Hier kannst du den fehlenden Betrag von ${
   } € bezahlen:
         </mj-text>
       <mj-column width="50%">
-      ${getButton(paypalLink, "Bei Paypal bezahlen")}
+      ${getButton(paypalLink, 'Bei Paypal bezahlen')}
       </mj-column>
 
         <mj-text align="center" color="#FFF" font-family="Helvetica" padding-left="25px" padding-right="25px" padding-bottom="28px" padding-top="28px"><span style="font-size:14px">
@@ -60,12 +60,12 @@ Hier kannst du den fehlenden Betrag von ${
         <mj-divider border-color="#ffffff" border-width="2px" border-style="solid" padding-left="20px" padding-right="20px" padding-bottom="0px" padding-top="0"></mj-divider>
         <mj-text align="center" color="#FFF" font-size="15px" font-family="Helvetica" padding-left="25px" padding-right="25px" padding-bottom="20px" padding-top="20px">Liebe Grüße,
           <br />
-          <span style="font-size:15px">Das Football Organizer Team </span>
+          <span style="font-size:15px">Das Event Wizard Team </span>
         </mj-text>
       </mj-column>
     </mj-section>
   </mj-body>
 </mjml>
-  `);
-  return html;
-};
+  `)
+  return html
+}

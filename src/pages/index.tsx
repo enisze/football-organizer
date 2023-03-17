@@ -18,7 +18,7 @@ const Home: NextPage = () => {
 
   return (
     <div className={`${style} h-full`}>
-      <title>Football Organizer</title>
+      <title>Event Wizard</title>
       <LoadingWrapper isLoading={status === 'loading'}>
         <Navbar />
         {!sessionData ? (

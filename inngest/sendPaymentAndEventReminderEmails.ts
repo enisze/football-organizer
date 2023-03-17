@@ -70,7 +70,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
         sendSmptMail.htmlContent = html
         sendSmptMail.sender = {
           email: 'eniszej@gmail.com',
-          name: 'Football Organizer',
+          name: 'Event Wizard',
         }
         sendSmptMail.subject = `Erinnerung: Fussball in ${days} Tagen, ${joinedParticipantIds.length}/${footballEvent.maxParticipants} Teilnehmer!`
 
@@ -98,7 +98,7 @@ const job = async ({ event }: { event: Event__Reminder }) => {
           sendSmptMail.htmlContent = html
           sendSmptMail.sender = {
             email: 'eniszej@gmail.com',
-            name: 'Football Organizer',
+            name: 'Event Wizard',
           }
           sendSmptMail.subject = 'Erinnerung: Fussball bezahlen'
 

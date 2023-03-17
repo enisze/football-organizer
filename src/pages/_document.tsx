@@ -7,15 +7,15 @@ export default function Document() {
         <link rel="icon" href="/favicon.ico?v=2" />
         <meta
           name="googlebot"
-          content="A simple football organizer showing payments based on emails"
+          content="A simple Event Wizard showing payments based on emails"
         />
         <meta
           name="robots"
-          content="A simple football organizer showing payments based on emails"
+          content="A simple Event Wizard showing payments based on emails"
         />
         <meta
           name="description"
-          content="A simple football organizer showing payments based on emails"
+          content="A simple Event Wizard showing payments based on emails"
         />
       </Head>
       <body className="h-full dark:bg-slate-900 dark:text-slate-50 min-h-screen bg-white font-sans text-slate-900 antialiased">

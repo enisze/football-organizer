@@ -1,5 +1,5 @@
-import compileMjml from "mjml";
-import { getFAQTemplate } from "./helpers/faqTemplate";
+import compileMjml from 'mjml'
+import { getFAQTemplate } from './helpers/faqTemplate'
 
 export const generateWelcomeTemplate = ({ userName }: { userName: string }) => {
   const html = compileMjml(`
@@ -38,12 +38,12 @@ export const generateWelcomeTemplate = ({ userName }: { userName: string }) => {
         <mj-divider border-color="#ffffff" border-width="2px" border-style="solid" padding-left="20px" padding-right="20px" padding-bottom="0px" padding-top="0"></mj-divider>
         <mj-text align="center" color="#FFF" font-size="15px" font-family="Helvetica" padding-left="25px" padding-right="25px" padding-bottom="20px" padding-top="20px">Liebe Grüße,
           <br />
-          <span style="font-size:15px">Das Football Organizer Team </span>
+          <span style="font-size:15px">Das Event Wizard Team </span>
         </mj-text>
       </mj-column>
     </mj-section>
   </mj-body>
 </mjml>
-  `);
-  return html;
-};
+  `)
+  return html
+}
