@@ -1,6 +1,7 @@
 import { NewGroup } from '@/src/components/Groups/NewGroup'
 import { SettingsSidebar } from '@/src/components/SettingsSidebar'
 import { trpc } from '@/src/utils/trpc'
+import { Container } from '@/ui/base/Container'
 import { OrganizerLink } from '@/ui/base/OrganizerLink'
 import { Separator } from '@/ui/base/Separator'
 import { useSession } from 'next-auth/react'
@@ -32,10 +33,7 @@ const GroupSettings: FunctionComponent = () => {
         <div className="flex flex-col p-2">
           <div className="flex flex-1 gap-x-3">
             {groups?.map((group) => (
-              <div
-                key={group.id}
-                className="flex flex-col rounded border border-solid p-1"
-              >
+              <Container key={group.id} className="flex flex-col">
                 <span>{`Name: ${group.name}`}</span>
                 <span>{`Erstellungsdatum: ${group.createdAt}`}</span>
                 <span>{`Users: ${group.users.length}`}</span>
@@ -43,11 +41,11 @@ const GroupSettings: FunctionComponent = () => {
                 <span>{`Pricing: ${group.pricingModel}`}</span>
                 <OrganizerLink
                   href={`/settings/groups/${group.id}`}
-                  className="border border-white w-fit"
+                  className=" flex w-full rounded-md border border-slate-300 bg-transparent mt-3 text-sm dark:border-slate-700 dark:text-slate-50"
                 >
                   Bearbeiten
                 </OrganizerLink>
-              </div>
+              </Container>
             ))}
           </div>
           <NewGroup />

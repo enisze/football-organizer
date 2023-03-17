@@ -33,9 +33,9 @@ const EventList: FunctionComponent<{
   isLoading: boolean
 }> = ({ events, isLoading }) => {
   return (
-    <LoadingWrapper isLoading={isLoading}>
-      <div className="flex flex-col gap-y-3 justify-center items-center">
-        <GroupSelector />
+    <div className="flex flex-col gap-y-3 justify-center items-center">
+      <GroupSelector />
+      <LoadingWrapper isLoading={isLoading}>
         <ul className="flex flex-col gap-y-2">
           {events && events?.length > 0 ? (
             events.map((event) => {
@@ -52,7 +52,7 @@ const EventList: FunctionComponent<{
             </div>
           )}
         </ul>
-      </div>
-    </LoadingWrapper>
+      </LoadingWrapper>
+    </div>
   )
 }

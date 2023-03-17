@@ -20,7 +20,9 @@ import { AddEventForm } from '@/src/components/Events/AddEventForm'
 import { selectedGroupAtom } from '@/src/components/Groups/GroupSelector'
 import Navbar from '@/src/components/Navigation/Navbar'
 import { trpc } from '@/src/utils/trpc'
+import { Container } from '@/ui/base/Container'
 import { useSetAtom } from 'jotai'
+import { XIcon } from 'lucide-react'
 import { useRouter } from 'next/router'
 
 const GroupSettings: FunctionComponent = () => {
@@ -60,6 +62,12 @@ const GroupSettings: FunctionComponent = () => {
   }, [groupNameForDeletion, groupData])
 
   const { mutate: updateGroupname } = trpc.group.updateName.useMutation({
+    onSuccess: () => {
+      trpcContext.invalidate()
+    },
+  })
+
+  const { mutate: deleteUser } = trpc.group.deleteUser.useMutation({
     onSuccess: () => {
       trpcContext.invalidate()
     },
@@ -123,10 +131,31 @@ const GroupSettings: FunctionComponent = () => {
               </Button>
             </DialogTrigger>
 
-            <div>TODO: Nutzer management</div>
-            {groupData?.users?.map((user, idx) => {
-              return <div key={idx}>{user?.name}</div>
-            })}
+            <div>Accounts</div>
+
+            <Container>
+              {groupData?.users?.map((user, idx) => {
+                return (
+                  <div
+                    key={idx}
+                    className="flex w-full justify-between items-center"
+                  >
+                    <div>{user?.name}</div>
+                    <Button
+                      onClick={() => {
+                        deleteUser({
+                          userId: user?.id ?? '',
+                          groupId,
+                        })
+                      }}
+                      variant="ghost"
+                    >
+                      <XIcon />
+                    </Button>
+                  </div>
+                )
+              })}
+            </Container>
 
             <TextField
               id="group-name-input"

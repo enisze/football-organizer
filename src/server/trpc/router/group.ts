@@ -126,4 +126,13 @@ export const groupRouter = router({
       const { id, name } = input
       return await prisma.group.update({ data: { name }, where: { id } })
     }),
+  deleteUser: protectedProcedure
+    .input(z.object({ groupId: z.string(), userId: z.string() }))
+    .mutation(async ({ ctx: { prisma }, input }) => {
+      const { groupId, userId } = input
+      return await prisma.group.update({
+        data: { users: { delete: { id_groupId: { groupId, id: userId } } } },
+        where: { id: groupId },
+      })
+    }),
 })

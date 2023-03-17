@@ -9,6 +9,7 @@ import {
 } from '@/ui/base/Select'
 import { atom, useAtom } from 'jotai'
 import type { FunctionComponent } from 'react'
+import { useEffect, useRef } from 'react'
 import { LoadingWrapper } from '../LoadingWrapper'
 
 export const selectedGroupAtom = atom<string | undefined>(undefined)
@@ -21,12 +22,19 @@ export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
   })
   const [group, setSelectedGroup] = useAtom(selectedGroupAtom)
 
+  const isInitialGroupSet = useRef(false)
+
+  useEffect(() => {
+    if (isLoading || isInitialGroupSet.current) return
+    isInitialGroupSet.current = true
+    setSelectedGroup(groups?.at(0)?.id)
+  }, [groups, group, isLoading, setSelectedGroup])
+
   return (
     <LoadingWrapper isLoading={isLoading}>
       <Label>Gruppe</Label>
       <Select
         value={group}
-        defaultValue={groups?.at(0)?.id}
         onValueChange={(val) => {
           setSelectedGroup(val)
         }}
