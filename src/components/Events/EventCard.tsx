@@ -1,11 +1,11 @@
 import type { Event, ParticipantsOnEvents } from '@/prisma/generated/client'
 import { trpc } from '@/src/utils/trpc'
-import { Separator } from '@/ui/base/Separator'
 import { differenceInCalendarDays } from 'date-fns'
 import { CalendarDays, Euro } from 'lucide-react'
 import type { FunctionComponent } from 'react'
 import { MapAccordion } from '../Map/MapAccordion'
 import { PaymentArea } from '../PaymentArea'
+import { AddToCalendarButton } from './Buttons/AddToCalendarButton'
 import { EventStatusArea } from './Buttons/EventStatusArea'
 import { DateInfo } from './DateInfo'
 import { EventCardAdminArea } from './EventCardAdminArea'
@@ -55,29 +55,28 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
   return (
     <div className="relative h-full w-full rounded-2xl bg-gradient-to-b from-purple-400 to-purple-100 p-[1px] md:w-[400px]">
       <div className="flex w-full flex-col justify-center gap-2 rounded-2xl bg-gradient-to-tl from-white to-blue-100 shadow-xl dark:bg-gradient-to-tl dark:from-slate-900 dark:to-slate-700">
-        <div className="grid grid-cols-[40px_8px_auto]">
-          <div className="pl-2 py-2">
-            <DateInfo
-              address={address}
-              date={date}
-              endTime={endTime}
-              startTime={startTime}
-            />
-          </div>
+        <div className="flex flex-col p-4 gap-y-2">
+          <div className="flex justify-between gap-x-1 w-full">
+            <DateInfo date={date} />
 
-          <div className="flex justify-center">
-            <Separator orientation="vertical" />
-          </div>
-
-          <div className="flex flex-col gap-y-1 py-4 pr-4">
-            <div className="flex items-center justify-center gap-x-1 w-full">
+            <div className="flex items-center gap-x-2">
               <span className={`font-bold ${fullEventStringStyle}`}>
                 {fullEventString}
               </span>
-              <div className="items-center flex justify-center border rounded-full w-5 h-5">
+              <div className="flex justify-center border rounded-full w-5 h-5">
                 <StatusChip status={status} />
               </div>
             </div>
+
+            <AddToCalendarButton
+              address={address}
+              date={date}
+              startTime={startTime}
+              endTime={endTime}
+            />
+          </div>
+
+          <div className="gap-y-1">
             <div className="flex items-center gap-x-1">
               <CalendarDays className={iconStyle} />
               <span>{[startTime, endTime].join('-')}</span>

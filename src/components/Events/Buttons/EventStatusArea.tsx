@@ -72,7 +72,7 @@ export const EventStatusArea: FunctionComponent<{
       onOpenChange={(open) => setShowLeaveModal(open)}
     >
       <span>Mein Status:</span>
-      <div className="flex gap-x-1">
+      <div className="flex gap-x-1 w-full">
         <Button
           aria-label="join-button"
           variant="outline"
