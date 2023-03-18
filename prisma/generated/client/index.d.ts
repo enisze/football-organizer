@@ -120,7 +120,7 @@ export type User = {
   image: string | null
   role: string
   createdAt: Date
-  password: string
+  password: string | null
   notificationsEnabled: boolean
 }
 
@@ -8212,7 +8212,7 @@ export namespace Prisma {
     image: string | null
     role: string
     createdAt: Date
-    password: string
+    password: string | null
     notificationsEnabled: boolean
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
@@ -13404,7 +13404,7 @@ export namespace Prisma {
     image?: StringNullableFilter | string | null
     role?: StringFilter | string
     createdAt?: DateTimeFilter | Date | string
-    password?: StringFilter | string
+    password?: StringNullableFilter | string | null
     notificationsEnabled?: BoolFilter | boolean
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
@@ -13464,7 +13464,7 @@ export namespace Prisma {
     image?: StringNullableWithAggregatesFilter | string | null
     role?: StringWithAggregatesFilter | string
     createdAt?: DateTimeWithAggregatesFilter | Date | string
-    password?: StringWithAggregatesFilter | string
+    password?: StringNullableWithAggregatesFilter | string | null
     notificationsEnabled?: BoolWithAggregatesFilter | boolean
   }
 
@@ -14157,9 +14157,9 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     image?: string | null
-    role: string
+    role?: string
     createdAt?: Date | string
-    password: string
+    password?: string | null
     notificationsEnabled?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -14175,9 +14175,9 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     image?: string | null
-    role: string
+    role?: string
     createdAt?: Date | string
-    password: string
+    password?: string | null
     notificationsEnabled?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -14195,7 +14195,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -14213,7 +14213,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -14229,9 +14229,9 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     image?: string | null
-    role: string
+    role?: string
     createdAt?: Date | string
-    password: string
+    password?: string | null
     notificationsEnabled?: boolean
   }
 
@@ -14243,7 +14243,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
@@ -14255,7 +14255,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
@@ -16268,9 +16268,9 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     image?: string | null
-    role: string
+    role?: string
     createdAt?: Date | string
-    password: string
+    password?: string | null
     notificationsEnabled?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -16285,9 +16285,9 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     image?: string | null
-    role: string
+    role?: string
     createdAt?: Date | string
-    password: string
+    password?: string | null
     notificationsEnabled?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -16351,7 +16351,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -16368,7 +16368,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -16457,9 +16457,9 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     image?: string | null
-    role: string
+    role?: string
     createdAt?: Date | string
-    password: string
+    password?: string | null
     notificationsEnabled?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -16474,9 +16474,9 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     image?: string | null
-    role: string
+    role?: string
     createdAt?: Date | string
-    password: string
+    password?: string | null
     notificationsEnabled?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -16540,7 +16540,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -16557,7 +16557,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -16572,9 +16572,9 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     image?: string | null
-    role: string
+    role?: string
     createdAt?: Date | string
-    password: string
+    password?: string | null
     notificationsEnabled?: boolean
     sessions?: SessionCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
@@ -16589,9 +16589,9 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     image?: string | null
-    role: string
+    role?: string
     createdAt?: Date | string
-    password: string
+    password?: string | null
     notificationsEnabled?: boolean
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
@@ -16618,7 +16618,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     sessions?: SessionUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
@@ -16635,7 +16635,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
@@ -16650,9 +16650,9 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     image?: string | null
-    role: string
+    role?: string
     createdAt?: Date | string
-    password: string
+    password?: string | null
     notificationsEnabled?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
@@ -16667,9 +16667,9 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     image?: string | null
-    role: string
+    role?: string
     createdAt?: Date | string
-    password: string
+    password?: string | null
     notificationsEnabled?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
@@ -16696,7 +16696,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
@@ -16713,7 +16713,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
@@ -16788,9 +16788,9 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     image?: string | null
-    role: string
+    role?: string
     createdAt?: Date | string
-    password: string
+    password?: string | null
     notificationsEnabled?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -16805,9 +16805,9 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     image?: string | null
-    role: string
+    role?: string
     createdAt?: Date | string
-    password: string
+    password?: string | null
     notificationsEnabled?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -16892,7 +16892,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -16909,7 +16909,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -17220,9 +17220,9 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     image?: string | null
-    role: string
+    role?: string
     createdAt?: Date | string
-    password: string
+    password?: string | null
     notificationsEnabled?: boolean
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -17237,9 +17237,9 @@ export namespace Prisma {
     email: string
     emailVerified?: Date | string | null
     image?: string | null
-    role: string
+    role?: string
     createdAt?: Date | string
-    password: string
+    password?: string | null
     notificationsEnabled?: boolean
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -17291,7 +17291,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -17308,7 +17308,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
