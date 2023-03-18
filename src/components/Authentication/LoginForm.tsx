@@ -7,6 +7,7 @@ import type { FieldValues } from 'react-hook-form'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { LoadingWrapper } from '../LoadingWrapper'
+import { SignInAndSignOutButton } from './SignInAndSignOutButton'
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Bitte gib eine gültige Email ein.' }),
@@ -45,7 +46,7 @@ export const LoginForm: FunctionComponent<{ onSubmit?: () => void }> = ({
       <LoadingWrapper isLoading={status === 'loading'}>
         <form
           onSubmit={handleSubmit(submit)}
-          className="flex flex-col justify-center gap-y-2"
+          className="flex flex-col justify-center items-center gap-y-2"
         >
           <TextField
             placeholder="Email"
@@ -70,10 +71,13 @@ export const LoginForm: FunctionComponent<{ onSubmit?: () => void }> = ({
           )}
 
           <LoadingWrapper isLoading={status === 'loading'}>
-            <Button type="submit" variant="outline">
+            <Button type="submit" variant="outline" className="w-fit">
               Login
             </Button>
           </LoadingWrapper>
+          <div className="flex">
+            <SignInAndSignOutButton />
+          </div>
         </form>
       </LoadingWrapper>
     </>
