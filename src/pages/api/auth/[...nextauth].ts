@@ -98,11 +98,21 @@ export const authOptions: NextAuthOptions = {
       return true
     },
     async jwt({ token, user, account }) {
-      console.log(token, user, account)
-      if (user) {
-        token.id = user.id
-        token.role = user.role
-      }
+      //TODO: Add param to user, if the paypal username was set
+      //TODO: add paypalUserName to user
+      //TODO: if not set, a banner should appear blocking user from proceeding
+      //TODO: Until it is filled out.
+      //TOOD: change the paypal username in the settings as well as the username
+      //TODO: magic invitation links to a group. The user is able to signin via this link.
+      //TODO: Already signed in users should be able to join the group as well.
+      //TODO: Users without a group should not exist.
+      //TODO: removing the last group of the user will also cause the user to be deleted. ->
+
+      if (account?.provider === 'discord')
+        if (user) {
+          token.id = user.id
+          token.role = user.role
+        }
       return token
     },
     async session({ session, token }) {
