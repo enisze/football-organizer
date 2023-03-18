@@ -1,11 +1,14 @@
 import { Button } from '@/ui/base/Button'
 import { TextField } from '@/ui/base/TextField'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { TRPCClientError } from '@trpc/client'
 import { useSession } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import type { FieldValues } from 'react-hook-form'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { useToast } from '../hooks/useToast'
+import { trpc } from '../utils/trpc'
 import { LoadingWrapper } from './LoadingWrapper'
 
 const contactSchema = z.object({
@@ -22,22 +25,46 @@ export const ContactForm: FunctionComponent<{ onSubmit?: () => void }> = ({
     setError,
   } = useForm({ resolver: zodResolver(contactSchema), mode: 'onBlur' })
 
+  const { mutate: sendEmail } = trpc.gmail.sendGroupRequestMail.useMutation()
+
   const { status } = useSession()
+  const { toast } = useToast()
 
   const submit = async (values: FieldValues) => {
-    //TOOD: send email to me, with the email address of the user
-    //TOOD: create accept button inside the email,
-    // that will send a request to the backend to create a new user with the email address
+    sendEmail(
+      { email: values.email },
+      {
+        onError: (err) => {
+          if (
+            err instanceof TRPCClientError &&
+            err.message.includes('Too many requests')
+          ) {
+            toast({
+              title: 'Zu viele Anfragen',
+              description:
+                'Du hast bereits eine Anfrage gestellt, bitte warte auf eine Antwort.',
+            })
+          } else {
+            setError('Create group', {
+              message: 'Leider ist ein Fehler aufgetreten.',
+            })
+          }
+        },
+        onSuccess: () => {
+          toast({
+            title: 'Anfrage erfolgreich gestellt',
+            description: 'Wir melden uns bei dir.',
+          })
+        },
+      },
+    )
+
+    onSubmit?.()
+    //TOOD: create accept button inside the email -> which sends an email to the user
+    // with a magic link for authentication (password needed)
     // and permissions to create a new group, but limited to just one group and 10 users max.
     //TODO: create role management -> how many groups can a user create?
     //TODO: which modes are possible? (free, premium, enterprise) -> how many groups
-    // how many users per group?
-    if (false) {
-      setError('authentication', {
-        message: 'Leider ist ein Fehler aufgetreten.',
-      })
-    }
-    onSubmit?.()
   }
 
   return (
@@ -63,7 +90,7 @@ export const ContactForm: FunctionComponent<{ onSubmit?: () => void }> = ({
           <LoadingWrapper isLoading={status === 'loading'}>
             <Button
               variant="outline"
-              className="bg-gradient-to-br from-blue-300 to-blue-600 shadow-lg shadow-blue-500"
+              className="bg-gradient-to-br from-yellow-300/80 to-yellow-600 shadow-lg shadow-yellow-600"
               type="submit"
             >
               Anfrage senden

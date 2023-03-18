@@ -1,3 +1,4 @@
+import { sendGroupRequestEmail } from '@/inngest/sendGroupRequestEmail'
 import { TRPCError } from '@trpc/server'
 import { isAfter } from 'date-fns'
 import type { OAuth2ClientOptions } from 'google-auth-library'
@@ -8,7 +9,7 @@ import { z } from 'zod'
 import { sendPaidButCanceledMail } from '../../../../inngest/sendPaidButCanceledMail'
 import { sendWelcomeMail } from '../../../../inngest/sendWelcomeMail'
 
-import { protectedProcedure, router } from '../trpc'
+import { protectedProcedure, rateLimitedProcedure, router } from '../trpc'
 
 const credentials: OAuth2ClientOptions = {
   clientId: process.env.GMAIL_CLIENT_ID,
@@ -144,4 +145,10 @@ export const gmailRouter = router({
       return await sendWelcomeMail(user)
     },
   ),
+
+  sendGroupRequestMail: rateLimitedProcedure
+    .input(z.object({ email: z.string().email() }))
+    .mutation(async ({ ctx: { req }, input: { email } }) => {
+      return await sendGroupRequestEmail({ sender: email })
+    }),
 })
