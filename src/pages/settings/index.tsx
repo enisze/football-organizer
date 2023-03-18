@@ -77,8 +77,9 @@ const Settings: FunctionComponent = () => {
           <TextField
             id="user-name-input"
             type="text"
-            label="Benutzername eingeben um zu löschen"
+            label={`Benutzername ${userName} eingeben um zu löschen`}
             text=""
+            placeholder={userName}
             onChange={(name) => setUserNameForDeletion(name.target.value)}
             value={userNameForDeletion}
           />

@@ -13,7 +13,9 @@ const loginSchema = z.object({
   password: z.string().min(2, { message: 'Passwort fehlt' }),
 })
 
-export const LoginForm: FunctionComponent = () => {
+export const LoginForm: FunctionComponent<{ onSubmit?: () => void }> = ({
+  onSubmit,
+}) => {
   const {
     register,
     handleSubmit,
@@ -23,7 +25,7 @@ export const LoginForm: FunctionComponent = () => {
 
   const { status } = useSession()
 
-  const onSubmit = async (values: FieldValues) => {
+  const submit = async (values: FieldValues) => {
     const res = await signIn('credentials', {
       redirect: false,
       email: values.email,
@@ -35,13 +37,14 @@ export const LoginForm: FunctionComponent = () => {
         message: 'Die angegebenen Daten sind inkorrekt.',
       })
     }
+    onSubmit?.()
   }
 
   return (
     <>
       <LoadingWrapper isLoading={status === 'loading'}>
         <form
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(submit)}
           className="flex flex-col justify-center gap-y-2"
         >
           <TextField

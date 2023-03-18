@@ -46,6 +46,8 @@ const GroupSettings: FunctionComponent = () => {
     },
   )
 
+  const groupName = groupData?.group?.name
+
   const [groupNameForDeletion, setGroupNameForDeletion] = useState('')
   const { toast } = useToast()
 
@@ -58,8 +60,8 @@ const GroupSettings: FunctionComponent = () => {
   )
 
   const groupCanBeDeleted = useMemo(() => {
-    return groupNameForDeletion === groupData?.group?.name
-  }, [groupNameForDeletion, groupData])
+    return groupNameForDeletion === groupName
+  }, [groupNameForDeletion, groupName])
 
   const { mutate: updateGroupname } = trpc.group.updateName.useMutation({
     onSuccess: () => {
@@ -95,14 +97,13 @@ const GroupSettings: FunctionComponent = () => {
 
         <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
           <div className="flex flex-col gap-y-2 p-2">
-            <h3 className="font-bold">
-              Gruppeneinstellungen für {groupData?.group?.name}
-            </h3>
+            <h3 className="font-bold">Gruppeneinstellungen für {groupName}</h3>
 
             <TextField
               id="group-name-input"
               label="Gruppenname bearbeiten"
               value={groupNameEdit}
+              placeholder="Gruppenname..."
               text=""
               onChange={(name) => setGroupnameEdit(name.target.value)}
             />
@@ -110,7 +111,7 @@ const GroupSettings: FunctionComponent = () => {
               onClick={() => {
                 if (!groupNameEdit) return
                 updateGroupname({
-                  id: groupData?.group?.id ?? '',
+                  id: groupId,
                   name: groupNameEdit,
                 })
                 toast({
@@ -160,8 +161,9 @@ const GroupSettings: FunctionComponent = () => {
             <TextField
               id="group-name-input"
               type="text"
-              label="Gruppenname eingeben um zu löschen"
+              label={`Gruppenname ${groupName} eingeben um zu löschen`}
               text=""
+              placeholder={groupName}
               onChange={(name) => setGroupNameForDeletion(name.target.value)}
               value={groupNameForDeletion}
             />
@@ -169,7 +171,7 @@ const GroupSettings: FunctionComponent = () => {
               onClick={() => {
                 if (groupCanBeDeleted) {
                   deleteGroup(
-                    { id: groupData?.group?.id ?? '' },
+                    { id: groupId },
                     {
                       onSuccess: () => {
                         router.push('/settings/groups')
