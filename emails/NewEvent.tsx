@@ -20,7 +20,7 @@ export const NewEvent = ({
   return (
     <Tailwind>
       <Head />
-      <Preview>The platform to organize your events magically.</Preview>
+      <Preview>Neues Event, dein Status wird benötigt.</Preview>
       <Body className="bg-white text-black font-sans">
         <ContainerBox>
           <Text>Hi {userName},</Text>

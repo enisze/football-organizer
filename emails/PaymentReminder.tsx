@@ -22,7 +22,7 @@ export const PaymentReminder = ({
   return (
     <Tailwind>
       <Head />
-      <Preview>The platform to organize your events magically.</Preview>
+      <Preview>Deine Bezahlung steht aus.</Preview>
       <Body className="bg-white text-black font-sans">
         <ContainerBox>
           <Text>Hi {userName},</Text>
