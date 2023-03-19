@@ -57,15 +57,13 @@ const job = async ({ event }: { event: Event__Reminder }) => {
       ) {
         //Send event reminder
 
-        const html = render({
-          type: EventReminder,
-          key: 'eventReminder',
-          props: {
-            event: footballEvent,
-            userName: user.name,
-            participantsAmount: joinedParticipantIds.length,
-          },
-        })
+        const html = render(
+          <EventReminder
+            event={footballEvent}
+            userName={user.name}
+            participantsAmount={joinedParticipantIds.length}
+          />,
+        )
 
         const sendSmptMail = new SendSmtpEmail()
 
