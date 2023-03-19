@@ -5,10 +5,11 @@ import type {
 } from '../prisma/generated/client'
 import { PrismaClient } from '../prisma/generated/client'
 import apiInstance from '../src/emails/transporter'
-import { generateEventReminderTemplate } from './emailTemplates/eventReminderTemplate'
-import { generatePaymentReminderTemplate } from './emailTemplates/paymentReminderTemplate'
 import type { Event__Reminder } from './__generated__/types'
 
+import EventReminder from '@/emails/EventReminder'
+import PaymentReminder from '@/emails/PaymentReminder'
+import { render } from '@react-email/render'
 import { SendSmtpEmail } from '@sendinblue/client'
 import { differenceInCalendarDays } from 'date-fns'
 
@@ -56,11 +57,15 @@ const job = async ({ event }: { event: Event__Reminder }) => {
       ) {
         //Send event reminder
 
-        const html = generateEventReminderTemplate({
-          event: footballEvent,
-          userName: user.name,
-          participantsAmount: joinedParticipantIds.length,
-        }).html
+        const html = render({
+          type: EventReminder,
+          key: 'eventReminder',
+          props: {
+            event: footballEvent,
+            userName: user.name,
+            participantsAmount: joinedParticipantIds.length,
+          },
+        })
 
         const sendSmptMail = new SendSmtpEmail()
 
@@ -87,10 +92,9 @@ const job = async ({ event }: { event: Event__Reminder }) => {
         if (!payment) {
           //Send payment reminder
 
-          const html = generatePaymentReminderTemplate({
-            event: footballEvent,
-            userName: user.name,
-          }).html
+          const html = render(
+            <PaymentReminder event={footballEvent} userName={user.name} />,
+          )
 
           const sendSmptMail = new SendSmtpEmail()
 

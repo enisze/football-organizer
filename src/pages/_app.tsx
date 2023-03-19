@@ -7,7 +7,6 @@ import { trpc } from '../utils/trpc'
 
 import '@/styles/globals.css'
 import { ThemeProvider } from 'next-themes'
-import { PromiseQueueContextProvider } from '../contexts/PromiseQueueContext'
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -31,9 +30,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       `}</style>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <SessionProvider session={session}>
-          <PromiseQueueContextProvider>
-            <Component {...pageProps} />
-          </PromiseQueueContextProvider>
+          <Component {...pageProps} />
         </SessionProvider>
       </ThemeProvider>
     </>
