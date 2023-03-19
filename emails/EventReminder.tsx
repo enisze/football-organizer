@@ -27,7 +27,9 @@ export const EventReminder = ({
   return (
     <Tailwind>
       <Head />
-      <Preview>The platform to organize your events magically.</Preview>
+      <Preview>
+        {`Teilnehmer ${(event.maxParticipants ?? 10) - participantsAmount}`}
+      </Preview>
       <Body className="bg-white text-black font-sans">
         <ContainerBox className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] w-[465px]">
           <Text>Hi {userName},</Text>
