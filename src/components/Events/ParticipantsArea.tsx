@@ -59,13 +59,16 @@ export const ParticipantsArea: FunctionComponent<{
             <div
               className={`rounded flex border w-full bg-gradient-to-b from mr-1`}
             >
-              <div className="bg-green-400" style={joinedWidth}>
+              <div
+                className={`bg-green-400 overflow-hidden`}
+                style={joinedWidth}
+              >
                 {joinedUsers.length}
               </div>
-              <div className="bg-yellow-400" style={maybeWidth}>
+              <div className="bg-yellow-400 overflow-hidden" style={maybeWidth}>
                 {maybeUsers.length}
               </div>
-              <div className="bg-red-400" style={canceledWidth}>
+              <div className="bg-red-400 overflow-hidden" style={canceledWidth}>
                 {canceledUsers.length}
               </div>
             </div>
