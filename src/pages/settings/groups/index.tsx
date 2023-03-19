@@ -48,7 +48,8 @@ const GroupSettings: FunctionComponent = () => {
               </Container>
             ))}
           </div>
-          <NewGroup />
+          {/*TODO: Proper management Limited to one group per user currently */}
+          {groups?.length && groups?.length < 0 && <NewGroup />}
         </div>
       </div>
       <Separator />
