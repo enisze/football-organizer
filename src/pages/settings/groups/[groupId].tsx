@@ -16,6 +16,7 @@ import { useSession } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 
+import { Group } from '@/prisma/generated/client'
 import { AddEventForm } from '@/src/components/Events/AddEventForm'
 import { selectedGroupAtom } from '@/src/components/Groups/GroupSelector'
 import Navbar from '@/src/components/Navigation/Navbar'
@@ -142,7 +143,9 @@ const GroupSettings: FunctionComponent = () => {
             </DialogTrigger>
 
             <div className="flex items-center justify-between gap-x-2">
-              <p>Mitglieder</p>
+              <p>{`Mitglieder ${groupData?.users.length}/${
+                getPricingInfos(groupData?.group)?.maximalMembers
+              }`}</p>
               <Button
                 onClick={() => {
                   navigator.clipboard.writeText(
@@ -161,27 +164,32 @@ const GroupSettings: FunctionComponent = () => {
                 return (
                   <div
                     key={idx}
-                    className="flex w-full justify-between items-center"
+                    className="grid grid-cols-3 w-full justify-between items-center"
                   >
                     <div>{user?.name}</div>
-                    <p>
+
+                    <p className="justify-self-center">
+                      {/* TODO: setup dropdown list to change user role */}
                       {
                         groupData.group?.users.find((groupUser) => {
                           return groupUser.id === user?.id
                         })?.role
                       }
                     </p>
-                    <Button
-                      onClick={() => {
-                        deleteUser({
-                          userId: user?.id ?? '',
-                          groupId,
-                        })
-                      }}
-                      variant="ghost"
-                    >
-                      <XIcon />
-                    </Button>
+                    {user?.id === groupData.group?.ownerId && (
+                      <Button
+                        onClick={() => {
+                          deleteUser({
+                            userId: user?.id ?? '',
+                            groupId,
+                          })
+                        }}
+                        variant="ghost"
+                        className="w-fit justify-self-end"
+                      >
+                        <XIcon />
+                      </Button>
+                    )}
                   </div>
                 )
               })}
@@ -243,3 +251,15 @@ const GroupSettings: FunctionComponent = () => {
 }
 
 export default GroupSettings
+
+const getPricingInfos = (group: Group | null | undefined) => {
+  if (!group) return { maximalMembers: 0 }
+  switch (group.pricingModel) {
+    case 'FREE':
+      return { maximalMembers: 15 }
+    case 'SUPPORTER':
+      return { maximalMembers: 30 }
+    case 'FREE':
+      return { maximalMembers: 100 }
+  }
+}
