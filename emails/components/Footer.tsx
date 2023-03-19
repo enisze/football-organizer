@@ -6,7 +6,7 @@ export const Footer = () => {
       <Text>
         Viele Grüße
         <br />
-        Das Event Wizard Team
+        Das <strong>Event Wizard</strong> Team
       </Text>
       <Hr />
       <Text>50935 Köln - NRW Deutschland</Text>

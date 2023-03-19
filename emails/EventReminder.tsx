@@ -1,18 +1,11 @@
-import {
-  Body,
-  Column,
-  Container,
-  Head,
-  Preview,
-  Section,
-  Text,
-} from '@react-email/components'
+import { Body, Column, Head, Preview, Row, Text } from '@react-email/components'
 import { Tailwind } from '@react-email/tailwind'
 import { CustomButton } from './components/CustomButton'
-import { EventTemplate } from './components/EventTemplate'
 import { Footer } from './components/Footer'
 
 import type { Event } from '../prisma/generated/client'
+import { ContainerBox } from './components/ContainerBox'
+import { EventTemplate } from './components/EventTemplate'
 import { paypalLink } from './helpers/constants'
 
 const baseUrl = process.env.VERCEL_URL
@@ -35,8 +28,8 @@ export const EventReminder = ({
     <Tailwind>
       <Head />
       <Preview>The platform to organize your events magically.</Preview>
-      <Body className="bg-white text-black font-serif">
-        <Container>
+      <Body className="bg-white text-black font-sans">
+        <ContainerBox className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] w-[465px]">
           <Text>Hi {userName},</Text>
           <Text>
             Ein Event zu dem du weder zu- noch abgesagt hast steht noch an.
@@ -47,25 +40,17 @@ export const EventReminder = ({
           </Text>
           <EventTemplate event={event} />
 
-          <Container className="pt-4">
-            <Section className="text-center">
-              <Column>
-                <CustomButton href={paypalLink} className="justify-center">
-                  Bei Paypal bezahlen
-                </CustomButton>
-              </Column>
-              <Column>
-                <CustomButton href={eventLink} className="justify-center">
-                  Hier gehts zum Event
-                </CustomButton>
-              </Column>
-            </Section>
-          </Container>
+          <Row className="pt-4 text-center">
+            <Column>
+              <CustomButton href={paypalLink}>Bei Paypal bezahlen</CustomButton>
+            </Column>
+            <Column>
+              <CustomButton href={eventLink}>Zusagen / Absagen</CustomButton>
+            </Column>
+          </Row>
 
-          <Container>
-            <Footer />
-          </Container>
-        </Container>
+          <Footer />
+        </ContainerBox>
       </Body>
     </Tailwind>
   )

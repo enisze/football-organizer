@@ -1,25 +1,17 @@
-import {
-  Body,
-  Container,
-  Head,
-  Hr,
-  Preview,
-  Text,
-} from '@react-email/components'
+import { Body, Head, Hr, Preview, Text } from '@react-email/components'
 import { Tailwind } from '@react-email/tailwind'
 import { EventTemplate } from './components/EventTemplate'
 import { Footer } from './components/Footer'
 
 import type { Event } from '../prisma/generated/client'
+import { ContainerBox } from './components/ContainerBox'
 
 export const PaidButCanceled = ({
   event = { id: '1', bookingDate: new Date(), maxParticipants: 10 },
-  link,
   userName,
   participantName,
 }: {
   event: Partial<Event>
-  link: string
   userName: string
   participantName: string
 }) => {
@@ -27,8 +19,8 @@ export const PaidButCanceled = ({
     <Tailwind>
       <Head />
       <Preview>The platform to organize your events magically.</Preview>
-      <Body className="bg-white text-black font-serif">
-        <Container>
+      <Body className="bg-white text-black font-sans">
+        <ContainerBox>
           <Text>Hi {userName},</Text>
 
           <Text>Jemand hat bezahlt, aber abgesagt.</Text>
@@ -37,11 +29,9 @@ export const PaidButCanceled = ({
 
           <EventTemplate event={event} />
 
-          <Container>
-            <Text>{participantName} hat das Event bezahlt aber abgesagt.</Text>
-            <Footer />
-          </Container>
-        </Container>
+          <Text>{participantName} hat das Event bezahlt aber abgesagt.</Text>
+          <Footer />
+        </ContainerBox>
       </Body>
     </Tailwind>
   )

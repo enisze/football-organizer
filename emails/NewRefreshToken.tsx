@@ -1,12 +1,6 @@
-import {
-  Body,
-  Container,
-  Head,
-  Preview,
-  Section,
-  Text,
-} from '@react-email/components'
+import { Body, Head, Preview, Section, Text } from '@react-email/components'
 import { Tailwind } from '@react-email/tailwind'
+import { ContainerBox } from './components/ContainerBox'
 import { CustomButton } from './components/CustomButton'
 import { Footer } from './components/Footer'
 
@@ -21,8 +15,8 @@ export const NewRefreshToken = ({
     <Tailwind>
       <Head />
       <Preview>The platform to organize your events magically.</Preview>
-      <Body className="bg-white text-black font-serif">
-        <Container>
+      <Body className="bg-white text-black font-sans">
+        <ContainerBox>
           <Text>Hi {userName},</Text>
 
           <Text>Du brauchst ein neues Refresh token</Text>
@@ -32,7 +26,7 @@ export const NewRefreshToken = ({
             </CustomButton>
           </Section>
           <Footer />
-        </Container>
+        </ContainerBox>
       </Body>
     </Tailwind>
   )

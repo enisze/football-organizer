@@ -1,32 +1,22 @@
-import {
-  Body,
-  Container,
-  Head,
-  Preview,
-  Section,
-  Text,
-} from '@react-email/components'
+import { Body, Head, Preview, Section, Text } from '@react-email/components'
 import { Tailwind } from '@react-email/tailwind'
+import { ContainerBox } from './components/ContainerBox'
 import { CustomButton } from './components/CustomButton'
 import { FAQArea } from './components/FAQArea'
 import { Footer } from './components/Footer'
 
-interface KoalaWelcomeEmailProps {
+type WelcomeEmailProps = {
   userFirstname: string
 }
 
-const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : ''
+const url = process.env.NEXT_PUBLIC_BASE_URL ?? ''
 
-export const WelcomeEmail = ({
-  userFirstname = 'Zeno',
-}: KoalaWelcomeEmailProps) => (
+export const WelcomeEmail = ({ userFirstname = 'Zeno' }: WelcomeEmailProps) => (
   <Tailwind>
     <Head />
     <Preview>The platform to organize your events magically.</Preview>
-    <Body className="bg-white text-black font-serif">
-      <Container>
+    <Body className="bg-white text-black font-sans">
+      <ContainerBox>
         <Text>Hi {userFirstname},</Text>
         <Text>Willkommen beim Event Wizard.</Text>
 
@@ -34,10 +24,10 @@ export const WelcomeEmail = ({
 
         <FAQArea />
         <Section className="text-center">
-          <CustomButton href="https://getkoala.com">Get started</CustomButton>
+          <CustomButton href={url}>Los gehts</CustomButton>
         </Section>
         <Footer />
-      </Container>
+      </ContainerBox>
     </Body>
   </Tailwind>
 )
