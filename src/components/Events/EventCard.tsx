@@ -76,7 +76,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
             />
           </div>
 
-          <div className="gap-y-1">
+          <div className="flex flex-col gap-y-1">
             <div className="flex items-center gap-x-1">
               <CalendarDays className={iconStyle} />
               <span>{[startTime, endTime].join('-')}</span>

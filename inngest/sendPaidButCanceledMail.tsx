@@ -1,16 +1,24 @@
+import { PaidButCanceled } from '@/emails/PaidButCanceled'
+import { render } from '@react-email/render'
 import { SendSmtpEmail } from '@sendinblue/client'
 import type { Event, User } from '../prisma/generated/client'
 import apiInstance from '../src/emails/transporter'
-import { generateNewEventTemplate } from './emailTemplates/newEventTemplate'
 
 export const sendPaidButCanceledMail = async (
   event: Event | null,
   user: User | null,
 ) => {
-  const html = generateNewEventTemplate({
-    event: { ...event, date: event?.date ? new Date(event.date) : new Date() },
-    userName: user?.name ?? '',
-  }).html
+  const html = render(
+    <PaidButCanceled
+      event={{
+        ...event,
+        date: event?.date ? new Date(event.date) : new Date(),
+      }}
+      participantName={user?.name ?? ''}
+      //TODO: send user name here too (owner name)
+      userName={user?.name ?? ''}
+    />,
+  )
 
   const sendSmptMail = new SendSmtpEmail()
 
@@ -18,7 +26,7 @@ export const sendPaidButCanceledMail = async (
   sendSmptMail.htmlContent = html
   sendSmptMail.sender = {
     email: 'eniszej@gmail.com',
-    name: 'Event Wizard',
+    name: 'Football Organizer',
   }
   sendSmptMail.subject = 'BEZAHLUNG TROTZ ABSAGE'
 

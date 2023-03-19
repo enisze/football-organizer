@@ -1,9 +1,10 @@
+import { render } from '@react-email/render'
 import { SendSmtpEmail } from '@sendinblue/client'
 import { differenceInCalendarDays } from 'date-fns'
 import { createFunction } from 'inngest'
+import { NewEvent } from '../emails/NewEvent'
 import { PrismaClient } from '../prisma/generated/client'
 import apiInstance from '../src/emails/transporter'
-import { generateNewEventTemplate } from './emailTemplates/newEventTemplate'
 import type { Event__New } from './__generated__/types'
 
 const prisma = new PrismaClient()
@@ -24,10 +25,14 @@ const job = async ({ event }: { event: Event__New }) => {
     const promises = allUsers
       .filter((user) => user.notificationsEnabled)
       .map(async (user) => {
-        const html = generateNewEventTemplate({
-          event: { ...event.data, date: new Date(event.data.date) },
-          userName: user.name,
-        }).html
+        const html = render(
+          <NewEvent
+            event={{ ...event.data, date: new Date(event.data.date) }}
+            userName={user.name}
+          />,
+        )
+
+        if (user.email !== 'eniszej@gmail.com') return
 
         const sendSmptMail = new SendSmtpEmail()
 
@@ -46,7 +51,7 @@ const job = async ({ event }: { event: Event__New }) => {
     const responses = await Promise.all(promises)
 
     const codes = responses.map(
-      (res) => res.response.statusCode + ' ' + res.response.statusMessage,
+      (res) => res?.response.statusCode + ' ' + res?.response.statusMessage,
     )
 
     console.log(`Message sent to: ${JSON.stringify(usersWhoGotMails)},
@@ -72,14 +77,14 @@ export const sendNewEventEmail = createFunction(
 // job({
 //   event: {
 //     data: {
-//       id: "test",
-//       address: "test",
+//       id: 'test',
+//       address: 'test',
 //       cost: 10,
-//       date: "t",
-//       startTime: "a",
-//       endTime: "b",
+//       date: 't',
+//       startTime: 'a',
+//       endTime: 'b',
 //     },
-//     name: "event/new",
+//     name: 'event/new',
 //     ts: new Date().getMilliseconds(),
 //   },
-// });
+// })

@@ -1,11 +1,11 @@
+import { NewRefreshToken } from '@/emails/NewRefreshToken'
+import { render } from '@react-email/render'
 import { SendSmtpEmail } from '@sendinblue/client'
 import apiInstance from '../src/emails/transporter'
-import { generateNewRefreshTokenTemplate } from './emailTemplates/newRefreshTokenTemplate'
 
 export const sendNewRefreshTokenMail = async ({ link }: { link: string }) => {
-  const html = generateNewRefreshTokenTemplate({
-    link,
-  }).html
+  //TODO: send username of the owner of the group here
+  const html = render(<NewRefreshToken link={link} userName="" />)
 
   const sendSmptMail = new SendSmtpEmail()
 
@@ -13,7 +13,7 @@ export const sendNewRefreshTokenMail = async ({ link }: { link: string }) => {
   sendSmptMail.htmlContent = html
   sendSmptMail.sender = {
     email: 'eniszej@gmail.com',
-    name: 'Event Wizard',
+    name: 'Football Organizer',
   }
   sendSmptMail.subject = 'Neues Refresh Token benötigt'
 

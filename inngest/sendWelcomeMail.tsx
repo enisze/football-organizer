@@ -1,12 +1,11 @@
+import { WelcomeEmail } from '@/emails/Welcome'
+import { render } from '@react-email/render'
 import { SendSmtpEmail } from '@sendinblue/client'
 import type { User } from '../prisma/generated/client'
 import apiInstance from '../src/emails/transporter'
-import { generateWelcomeTemplate } from './emailTemplates/welcomeTemplate'
 
 export const sendWelcomeMail = async (user: User | null) => {
-  const html = generateWelcomeTemplate({
-    userName: user?.name ?? '',
-  }).html
+  const html = render(<WelcomeEmail userFirstname={user?.name ?? ''} />)
 
   const sendSmptMail = new SendSmtpEmail()
 
@@ -14,7 +13,7 @@ export const sendWelcomeMail = async (user: User | null) => {
   sendSmptMail.htmlContent = html
   sendSmptMail.sender = {
     email: 'eniszej@gmail.com',
-    name: 'Event Wizard',
+    name: 'Football Organizer',
   }
   sendSmptMail.subject = 'Erfolgreich Registriert :)'
 
