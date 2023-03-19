@@ -130,6 +130,7 @@ model User {
 model UserOnGroups {
   id      String
   groupId String
+  role    GroupRole @default(USER)
   user    User   @relation(fields: [id], references: [id], onDelete: Cascade)
   group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
@@ -168,6 +169,12 @@ model edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl {
   paymentDate DateTime
 
   @@map("_4edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl")
+}
+
+enum GroupRole {
+  OWNER
+  ADMIN
+  USER
 }
 
 enum EventStatus {

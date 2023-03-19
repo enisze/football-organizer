@@ -1,18 +1,18 @@
-import { useRouter } from "next/router";
-import type { FunctionComponent } from "react";
-import { trpc } from "../utils/trpc";
+import { trpc } from '@/src/utils/trpc'
+import { useRouter } from 'next/router'
+import type { FunctionComponent } from 'react'
 
 const Oauth2Callback: FunctionComponent = () => {
-  const router = useRouter();
+  const router = useRouter()
 
-  const { code } = router.query;
+  const { code } = router.query
 
   const { data } = trpc.gmail.setToken.useQuery(
     { code: code as string },
-    { enabled: Boolean(code) }
-  );
+    { enabled: Boolean(code) },
+  )
 
-  return <div>Tokens were set: {data?.refresh_token}</div>;
-};
+  return <div>Tokens were set: {data?.refresh_token}</div>
+}
 
-export default Oauth2Callback;
+export default Oauth2Callback

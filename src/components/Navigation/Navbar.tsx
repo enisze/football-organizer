@@ -1,4 +1,3 @@
-import { toast } from '@/src/hooks/useToast'
 import { Button } from '@/ui/base/Button'
 import {
   Dialog,
@@ -39,10 +38,6 @@ export const Navbar: FunctionComponent = () => {
                 <LoginForm
                   onSubmit={() => {
                     setOpen(false)
-                    toast({
-                      title: 'Event erstellt',
-                      description: `Das Event wurde erfolgreich erstellt.`,
-                    })
                   }}
                 />
               </DialogContent>

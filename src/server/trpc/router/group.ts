@@ -1,4 +1,5 @@
 import { TRPCError } from '@trpc/server'
+import { decode, sign, verify } from 'jsonwebtoken'
 import { z } from 'zod'
 import { protectedProcedure, router } from '../trpc'
 
@@ -112,12 +113,17 @@ export const groupRouter = router({
 
       if (!id) throw new TRPCError({ code: 'BAD_REQUEST' })
 
-      return await prisma.group.create({
+      const group = await prisma.group.create({
         data: {
           name: input.name,
           ownerId: id,
           users: { create: { id } },
         },
+        select: { id: true },
+      })
+
+      return await prisma.userOnGroups.create({
+        data: { id, groupId: group.id, role: 'OWNER' },
       })
     }),
   updateName: protectedProcedure
@@ -135,4 +141,73 @@ export const groupRouter = router({
         where: { id: groupId },
       })
     }),
+  getDataFromJWT: protectedProcedure
+    .input(z.object({ JWT: z.string() }))
+    .query(async ({ input }) => {
+      const isValid = verifyJWT(input.JWT)
+
+      if (!isValid) throw new TRPCError({ code: 'BAD_REQUEST' })
+
+      const res = decode(input.JWT) as {
+        id: string
+        groupName: string
+        ownerName: string
+      }
+
+      return res
+    }),
+
+  addUserViaJWT: protectedProcedure
+    .input(z.object({ JWT: z.string() }))
+    .mutation(async ({ ctx: { prisma, session }, input }) => {
+      const userId = session.user.id
+
+      const isValid = verifyJWT(input.JWT)
+
+      if (!isValid) throw new TRPCError({ code: 'BAD_REQUEST' })
+
+      const res = decode(input.JWT) as {
+        id: string
+        groupName: string
+        ownerName: string
+      }
+
+      return await prisma.group.update({
+        data: {
+          users: { create: { id: userId } },
+        },
+        where: { id: res.id },
+      })
+    }),
+  getJWT: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        groupName: z.string(),
+        ownerName: z.string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const { id, groupName, ownerName } = input
+      const token = sign(
+        { id, groupName, ownerName },
+        process.env.SECRET as string,
+      )
+
+      return token
+    }),
 })
+
+const verifyJWT = (JWT: string) => {
+  let isJWTValid = false
+
+  verify(JWT, process.env.SECRET as string, (error, data) => {
+    if (error) {
+      return
+    }
+
+    isJWTValid = true
+  })
+
+  return isJWTValid
+}

@@ -131,6 +131,7 @@ export type User = {
 export type UserOnGroups = {
   id: string
   groupId: string
+  role: GroupRole
 }
 
 /**
@@ -186,6 +187,15 @@ export const EventStatus: {
 };
 
 export type EventStatus = (typeof EventStatus)[keyof typeof EventStatus]
+
+
+export const GroupRole: {
+  OWNER: 'OWNER',
+  ADMIN: 'ADMIN',
+  USER: 'USER'
+};
+
+export type GroupRole = (typeof GroupRole)[keyof typeof GroupRole]
 
 
 export const PricingModel: {
@@ -9182,16 +9192,19 @@ export namespace Prisma {
   export type UserOnGroupsMinAggregateOutputType = {
     id: string | null
     groupId: string | null
+    role: GroupRole | null
   }
 
   export type UserOnGroupsMaxAggregateOutputType = {
     id: string | null
     groupId: string | null
+    role: GroupRole | null
   }
 
   export type UserOnGroupsCountAggregateOutputType = {
     id: number
     groupId: number
+    role: number
     _all: number
   }
 
@@ -9199,16 +9212,19 @@ export namespace Prisma {
   export type UserOnGroupsMinAggregateInputType = {
     id?: true
     groupId?: true
+    role?: true
   }
 
   export type UserOnGroupsMaxAggregateInputType = {
     id?: true
     groupId?: true
+    role?: true
   }
 
   export type UserOnGroupsCountAggregateInputType = {
     id?: true
     groupId?: true
+    role?: true
     _all?: true
   }
 
@@ -9288,6 +9304,7 @@ export namespace Prisma {
   export type UserOnGroupsGroupByOutputType = {
     id: string
     groupId: string
+    role: GroupRole
     _count: UserOnGroupsCountAggregateOutputType | null
     _min: UserOnGroupsMinAggregateOutputType | null
     _max: UserOnGroupsMaxAggregateOutputType | null
@@ -9310,6 +9327,7 @@ export namespace Prisma {
   export type UserOnGroupsSelect = {
     id?: boolean
     groupId?: boolean
+    role?: boolean
     user?: boolean | UserArgs
     group?: boolean | GroupArgs
   }
@@ -12955,7 +12973,8 @@ export namespace Prisma {
 
   export const UserOnGroupsScalarFieldEnum: {
     id: 'id',
-    groupId: 'groupId'
+    groupId: 'groupId',
+    role: 'role'
   };
 
   export type UserOnGroupsScalarFieldEnum = (typeof UserOnGroupsScalarFieldEnum)[keyof typeof UserOnGroupsScalarFieldEnum]
@@ -13474,6 +13493,7 @@ export namespace Prisma {
     NOT?: Enumerable<UserOnGroupsWhereInput>
     id?: StringFilter | string
     groupId?: StringFilter | string
+    role?: EnumGroupRoleFilter | GroupRole
     user?: XOR<UserRelationFilter, UserWhereInput>
     group?: XOR<GroupRelationFilter, GroupWhereInput>
   }
@@ -13481,6 +13501,7 @@ export namespace Prisma {
   export type UserOnGroupsOrderByWithRelationInput = {
     id?: SortOrder
     groupId?: SortOrder
+    role?: SortOrder
     user?: UserOrderByWithRelationInput
     group?: GroupOrderByWithRelationInput
   }
@@ -13492,6 +13513,7 @@ export namespace Prisma {
   export type UserOnGroupsOrderByWithAggregationInput = {
     id?: SortOrder
     groupId?: SortOrder
+    role?: SortOrder
     _count?: UserOnGroupsCountOrderByAggregateInput
     _max?: UserOnGroupsMaxOrderByAggregateInput
     _min?: UserOnGroupsMinOrderByAggregateInput
@@ -13503,6 +13525,7 @@ export namespace Prisma {
     NOT?: Enumerable<UserOnGroupsScalarWhereWithAggregatesInput>
     id?: StringWithAggregatesFilter | string
     groupId?: StringWithAggregatesFilter | string
+    role?: EnumGroupRoleWithAggregatesFilter | GroupRole
   }
 
   export type VerificationTokenWhereInput = {
@@ -14260,6 +14283,7 @@ export namespace Prisma {
   }
 
   export type UserOnGroupsCreateInput = {
+    role?: GroupRole
     user: UserCreateNestedOneWithoutGroupsInput
     group: GroupCreateNestedOneWithoutUsersInput
   }
@@ -14267,9 +14291,11 @@ export namespace Prisma {
   export type UserOnGroupsUncheckedCreateInput = {
     id: string
     groupId: string
+    role?: GroupRole
   }
 
   export type UserOnGroupsUpdateInput = {
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
     user?: UserUpdateOneRequiredWithoutGroupsNestedInput
     group?: GroupUpdateOneRequiredWithoutUsersNestedInput
   }
@@ -14277,20 +14303,23 @@ export namespace Prisma {
   export type UserOnGroupsUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     groupId?: StringFieldUpdateOperationsInput | string
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
   }
 
   export type UserOnGroupsCreateManyInput = {
     id: string
     groupId: string
+    role?: GroupRole
   }
 
   export type UserOnGroupsUpdateManyMutationInput = {
-
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
   }
 
   export type UserOnGroupsUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     groupId?: StringFieldUpdateOperationsInput | string
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
   }
 
   export type VerificationTokenCreateInput = {
@@ -15099,6 +15128,13 @@ export namespace Prisma {
     _max?: NestedBoolFilter
   }
 
+  export type EnumGroupRoleFilter = {
+    equals?: GroupRole
+    in?: Enumerable<GroupRole>
+    notIn?: Enumerable<GroupRole>
+    not?: NestedEnumGroupRoleFilter | GroupRole
+  }
+
   export type UserOnGroupsIdGroupIdCompoundUniqueInput = {
     id: string
     groupId: string
@@ -15107,16 +15143,29 @@ export namespace Prisma {
   export type UserOnGroupsCountOrderByAggregateInput = {
     id?: SortOrder
     groupId?: SortOrder
+    role?: SortOrder
   }
 
   export type UserOnGroupsMaxOrderByAggregateInput = {
     id?: SortOrder
     groupId?: SortOrder
+    role?: SortOrder
   }
 
   export type UserOnGroupsMinOrderByAggregateInput = {
     id?: SortOrder
     groupId?: SortOrder
+    role?: SortOrder
+  }
+
+  export type EnumGroupRoleWithAggregatesFilter = {
+    equals?: GroupRole
+    in?: Enumerable<GroupRole>
+    notIn?: Enumerable<GroupRole>
+    not?: NestedEnumGroupRoleWithAggregatesFilter | GroupRole
+    _count?: NestedIntFilter
+    _min?: NestedEnumGroupRoleFilter
+    _max?: NestedEnumGroupRoleFilter
   }
 
   export type VerificationTokenIdentifierTokenCompoundUniqueInput = {
@@ -15820,6 +15869,10 @@ export namespace Prisma {
     connect?: GroupWhereUniqueInput
   }
 
+  export type EnumGroupRoleFieldUpdateOperationsInput = {
+    set?: GroupRole
+  }
+
   export type UserUpdateOneRequiredWithoutGroupsNestedInput = {
     create?: XOR<UserCreateWithoutGroupsInput, UserUncheckedCreateWithoutGroupsInput>
     connectOrCreate?: UserCreateOrConnectWithoutGroupsInput
@@ -16102,6 +16155,23 @@ export namespace Prisma {
     _count?: NestedIntFilter
     _min?: NestedBoolFilter
     _max?: NestedBoolFilter
+  }
+
+  export type NestedEnumGroupRoleFilter = {
+    equals?: GroupRole
+    in?: Enumerable<GroupRole>
+    notIn?: Enumerable<GroupRole>
+    not?: NestedEnumGroupRoleFilter | GroupRole
+  }
+
+  export type NestedEnumGroupRoleWithAggregatesFilter = {
+    equals?: GroupRole
+    in?: Enumerable<GroupRole>
+    notIn?: Enumerable<GroupRole>
+    not?: NestedEnumGroupRoleWithAggregatesFilter | GroupRole
+    _count?: NestedIntFilter
+    _min?: NestedEnumGroupRoleFilter
+    _max?: NestedEnumGroupRoleFilter
   }
 
   export type PaymentCreateWithoutEventInput = {
@@ -16765,11 +16835,13 @@ export namespace Prisma {
   }
 
   export type UserOnGroupsCreateWithoutGroupInput = {
+    role?: GroupRole
     user: UserCreateNestedOneWithoutGroupsInput
   }
 
   export type UserOnGroupsUncheckedCreateWithoutGroupInput = {
     id: string
+    role?: GroupRole
   }
 
   export type UserOnGroupsCreateOrConnectWithoutGroupInput = {
@@ -16877,6 +16949,7 @@ export namespace Prisma {
     NOT?: Enumerable<UserOnGroupsScalarWhereInput>
     id?: StringFilter | string
     groupId?: StringFilter | string
+    role?: EnumGroupRoleFilter | GroupRole
   }
 
   export type UserUpsertWithoutOwnedGroupsInput = {
@@ -17031,11 +17104,13 @@ export namespace Prisma {
   }
 
   export type UserOnGroupsCreateWithoutUserInput = {
+    role?: GroupRole
     group: GroupCreateNestedOneWithoutUsersInput
   }
 
   export type UserOnGroupsUncheckedCreateWithoutUserInput = {
     groupId: string
+    role?: GroupRole
   }
 
   export type UserOnGroupsCreateOrConnectWithoutUserInput = {
@@ -17422,6 +17497,7 @@ export namespace Prisma {
 
   export type UserOnGroupsCreateManyGroupInput = {
     id: string
+    role?: GroupRole
   }
 
   export type EventUpdateWithoutGroupInput = {
@@ -17471,15 +17547,18 @@ export namespace Prisma {
   }
 
   export type UserOnGroupsUpdateWithoutGroupInput = {
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
     user?: UserUpdateOneRequiredWithoutGroupsNestedInput
   }
 
   export type UserOnGroupsUncheckedUpdateWithoutGroupInput = {
     id?: StringFieldUpdateOperationsInput | string
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
   }
 
   export type UserOnGroupsUncheckedUpdateManyWithoutUsersInput = {
     id?: StringFieldUpdateOperationsInput | string
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
   }
 
   export type AccountCreateManyUserInput = {
@@ -17520,6 +17599,7 @@ export namespace Prisma {
 
   export type UserOnGroupsCreateManyUserInput = {
     groupId: string
+    role?: GroupRole
   }
 
   export type GroupCreateManyOwnerInput = {
@@ -17629,15 +17709,18 @@ export namespace Prisma {
   }
 
   export type UserOnGroupsUpdateWithoutUserInput = {
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
     group?: GroupUpdateOneRequiredWithoutUsersNestedInput
   }
 
   export type UserOnGroupsUncheckedUpdateWithoutUserInput = {
     groupId?: StringFieldUpdateOperationsInput | string
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
   }
 
   export type UserOnGroupsUncheckedUpdateManyWithoutGroupsInput = {
     groupId?: StringFieldUpdateOperationsInput | string
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
   }
 
   export type GroupUpdateWithoutOwnerInput = {

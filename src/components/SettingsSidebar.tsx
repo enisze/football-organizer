@@ -5,7 +5,7 @@ export const SettingsSidebar: FunctionComponent = () => {
   return (
     <div className="m-2">
       <OrganizerLink href={'/settings'} className={''}>
-        Nutzer
+        Account
       </OrganizerLink>
       <OrganizerLink href={'/settings/groups'} className={''}>
         Gruppen

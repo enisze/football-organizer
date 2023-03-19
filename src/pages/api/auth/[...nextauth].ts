@@ -108,15 +108,15 @@ export const authOptions: NextAuthOptions = {
       //TODO: Users without a group should not exist.
       //TODO: removing the last group of the user will also cause the user to be deleted. ->
 
-      if (account?.provider === 'discord')
-        if (user) {
-          token.id = user.id
-          token.role = user.role
-        }
+      // if (account?.provider === 'discord')
+
+      if (user) {
+        token.id = user.id
+        token.role = user.role
+      }
       return token
     },
     async session({ session, token }) {
-      console.log(token, session)
       if (token && session.user) {
         session.user.id = token.id
         session.user.role = token.role

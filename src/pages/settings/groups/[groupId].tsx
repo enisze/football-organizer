@@ -22,7 +22,7 @@ import Navbar from '@/src/components/Navigation/Navbar'
 import { trpc } from '@/src/utils/trpc'
 import { Container } from '@/ui/base/Container'
 import { useSetAtom } from 'jotai'
-import { XIcon } from 'lucide-react'
+import { Copy, XIcon } from 'lucide-react'
 import { useRouter } from 'next/router'
 
 const GroupSettings: FunctionComponent = () => {
@@ -46,7 +46,7 @@ const GroupSettings: FunctionComponent = () => {
     },
   )
 
-  const groupName = groupData?.group?.name
+  const groupName = groupData?.group?.name ?? ''
 
   const [groupNameForDeletion, setGroupNameForDeletion] = useState('')
   const { toast } = useToast()
@@ -54,6 +54,15 @@ const GroupSettings: FunctionComponent = () => {
   const [open, setOpen] = useState(false)
 
   const trpcContext = trpc.useContext()
+
+  const { data: token } = trpc.group.getJWT.useQuery(
+    {
+      id: groupId,
+      groupName,
+      ownerName: data?.user?.name ?? '',
+    },
+    { enabled: Boolean(groupId) },
+  )
 
   const [groupNameEdit, setGroupnameEdit] = useState<string | undefined>(
     groupData?.group?.name,
@@ -97,7 +106,7 @@ const GroupSettings: FunctionComponent = () => {
 
         <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
           <div className="flex flex-col gap-y-2 p-2">
-            <h3 className="font-bold">Gruppeneinstellungen für {groupName}</h3>
+            <h3 className="font-bold">Einstellungen für Gruppe {groupName}</h3>
 
             <TextField
               id="group-name-input"
@@ -132,9 +141,22 @@ const GroupSettings: FunctionComponent = () => {
               </Button>
             </DialogTrigger>
 
-            <div>Accounts</div>
+            <div className="flex items-center justify-between gap-x-2">
+              <p>Mitglieder</p>
+              <Button
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    'https://localhost:3000/groups/addToGroup/' + token,
+                  )
+                }}
+                className="w-fit"
+              >
+                Einladungslink&nbsp;
+                <Copy />
+              </Button>
+            </div>
 
-            <Container>
+            <Container className="flex-col">
               {groupData?.users?.map((user, idx) => {
                 return (
                   <div
@@ -142,6 +164,13 @@ const GroupSettings: FunctionComponent = () => {
                     className="flex w-full justify-between items-center"
                   >
                     <div>{user?.name}</div>
+                    <p>
+                      {
+                        groupData.group?.users.find((groupUser) => {
+                          return groupUser.id === user?.id
+                        })?.role
+                      }
+                    </p>
                     <Button
                       onClick={() => {
                         deleteUser({

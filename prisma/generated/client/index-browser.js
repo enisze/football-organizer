@@ -193,7 +193,8 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.UserOnGroupsScalarFieldEnum = makeEnum({
   id: 'id',
-  groupId: 'groupId'
+  groupId: 'groupId',
+  role: 'role'
 });
 
 exports.Prisma.UserScalarFieldEnum = makeEnum({
@@ -217,6 +218,12 @@ exports.EventStatus = makeEnum({
   CANCELED: 'CANCELED',
   CREATED: 'CREATED',
   BOOKED: 'BOOKED'
+});
+
+exports.GroupRole = makeEnum({
+  OWNER: 'OWNER',
+  ADMIN: 'ADMIN',
+  USER: 'USER'
 });
 
 exports.PricingModel = makeEnum({
