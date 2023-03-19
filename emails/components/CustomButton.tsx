@@ -6,7 +6,7 @@ export const CustomButton = (props: ButtonProps) => {
 
   return (
     <Button
-      className={`bg-blue-400 text-white p-3 rounded ${className}`}
+      className={`bg-blue-200 text-black p-3 rounded ${className}`}
       {...propsWithoutClassName}
     />
   )

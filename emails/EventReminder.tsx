@@ -35,7 +35,7 @@ export const EventReminder = ({
     <Tailwind>
       <Head />
       <Preview>The platform to organize your events magically.</Preview>
-      <Body className="bg-slate-900 text-white font-serif">
+      <Body className="bg-white text-black font-serif">
         <Container>
           <Text>Hi {userName},</Text>
           <Text>
@@ -45,20 +45,26 @@ export const EventReminder = ({
             Es sind noch {(event.maxParticipants ?? 10) - participantsAmount}{' '}
             Plätze frei.
           </Text>
-          <EventTemplate />
-          <Section className="text-center">
-            <Column>
-              <CustomButton href={paypalLink} className="justify-center">
-                Bei Paypal bezahlen
-              </CustomButton>
-            </Column>
-            <Column>
-              <CustomButton href={eventLink} className="justify-center">
-                Hier gehts zum Event
-              </CustomButton>
-            </Column>
-          </Section>
-          <Footer />
+          <EventTemplate event={event} />
+
+          <Container className="pt-4">
+            <Section className="text-center">
+              <Column>
+                <CustomButton href={paypalLink} className="justify-center">
+                  Bei Paypal bezahlen
+                </CustomButton>
+              </Column>
+              <Column>
+                <CustomButton href={eventLink} className="justify-center">
+                  Hier gehts zum Event
+                </CustomButton>
+              </Column>
+            </Section>
+          </Container>
+
+          <Container>
+            <Footer />
+          </Container>
         </Container>
       </Body>
     </Tailwind>

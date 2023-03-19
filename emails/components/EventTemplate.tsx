@@ -4,7 +4,7 @@ import { Text } from '@react-email/text'
 import type { Event } from '../../prisma/generated/client'
 import { transformDate } from '../helpers/transformDate'
 
-export const EventTemplate = (event: Partial<Event>) => {
+export const EventTemplate = ({ event }: { event: Partial<Event> }) => {
   const {
     address = 'unbekannt',
     cost = 10,
@@ -15,7 +15,7 @@ export const EventTemplate = (event: Partial<Event>) => {
   } = event
 
   return (
-    <Section>
+    <Section className="bg-gray-200 p-4 rounded">
       <Column>
         Ort
         <Text>{address}</Text>
@@ -32,7 +32,7 @@ export const EventTemplate = (event: Partial<Event>) => {
       </Column>
       <Column>
         Preis
-        <Text>{cost && cost / (maxParticipants ?? 10)}</Text>
+        <Text>{cost && cost / (maxParticipants ?? 10)} Euro</Text>
       </Column>
     </Section>
   )

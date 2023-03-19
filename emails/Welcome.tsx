@@ -25,7 +25,7 @@ export const WelcomeEmail = ({
   <Tailwind>
     <Head />
     <Preview>The platform to organize your events magically.</Preview>
-    <Body className="bg-slate-900 text-white font-serif">
+    <Body className="bg-white text-black font-serif">
       <Container>
         <Text>Hi {userFirstname},</Text>
         <Text>Willkommen beim Event Wizard.</Text>
@@ -34,9 +34,7 @@ export const WelcomeEmail = ({
 
         <FAQArea />
         <Section className="text-center">
-          <CustomButton href="https://getkoala.com" className="justify-center">
-            Get started
-          </CustomButton>
+          <CustomButton href="https://getkoala.com">Get started</CustomButton>
         </Section>
         <Footer />
       </Container>
