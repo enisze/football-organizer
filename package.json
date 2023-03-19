@@ -100,5 +100,5 @@
     "ts-alias": "^0.0.7",
     "typescript": "^4.9.4"
   },
-  "packageManager": "yarn@3.4.1"
+  "packageManager": "yarn@3.5.0"
 }
