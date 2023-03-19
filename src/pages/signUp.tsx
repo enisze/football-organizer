@@ -12,10 +12,20 @@ import { Button } from '@/ui/base/Button'
 import { TextField } from '@/ui/base/TextField'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { signIn } from 'next-auth/react'
+import { useTheme } from 'next-themes'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { z } from 'zod'
 import { trpc } from '../utils/trpc'
+
+const discordStyles = {
+  logo: 'https://authjs.dev/img/providers/discord.svg',
+  logoDark: 'https://authjs.dev/img/providers/discord-dark.svg',
+  bg: '#fff',
+  text: '#7289DA',
+  bgDark: '#7289DA',
+  textDark: '#fff',
+}
 
 const signUpSchema = z.object({
   email: z.string().email({ message: 'Bitte gib eine gültige Email ein.' }),
@@ -29,6 +39,8 @@ const signUpSchema = z.object({
 })
 
 const SignUp: FunctionComponent = () => {
+  const { theme } = useTheme()
+
   const {
     register,
     handleSubmit,
@@ -126,6 +138,21 @@ const SignUp: FunctionComponent = () => {
       <Button type="submit" variant="outline">
         Registrieren
       </Button>
+      <button
+        type="submit"
+        className="
+        items-center flex justify-center px-3 py-4 relative transition-all duration-100 ease-in-out
+        bg-white text-[#7289DA] dark:bg-[#7289DA] dark:text-[#fff] rounded-lg p-2 w-[300px]"
+      >
+        <Image
+          id="discord-logo"
+          src={theme === 'dark' ? discordStyles.logoDark : discordStyles.logo}
+          alt="discord-logo"
+          width="32"
+          height="32"
+        />
+        <span className="flex-grow font-bold">Sign in with Discord</span>
+      </button>
     </form>
   )
 }
