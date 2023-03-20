@@ -150,7 +150,7 @@ export const gmailRouter = router({
 
   sendPaymentAndEventReminder: protectedProcedure
     .input(z.object({ eventId: z.string() }))
-    .mutation(async ({ ctx: { prisma, session }, input }) => {
+    .mutation(async ({ input }) => {
       return sendPaymentAndEventReminderEmails({ id: input.eventId })
     }),
 })
