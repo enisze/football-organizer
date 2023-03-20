@@ -9,7 +9,7 @@ import { z } from 'zod'
 import { LoadingWrapper } from '../LoadingWrapper'
 
 const loginSchema = z.object({
-  email: z.string().email({ message: 'Bitte gib eine gültige Email ein.' }),
+  email: z.string().email({ message: 'Bitte gib eine gültige Email ein. ' }),
   password: z.string().min(2, { message: 'Passwort fehlt' }),
 })
 
@@ -41,41 +41,39 @@ export const LoginForm: FunctionComponent<{ onSubmit?: () => void }> = ({
   }
 
   return (
-    <>
+    <form
+      onSubmit={handleSubmit(submit)}
+      className="flex flex-col justify-center items-center gap-y-2"
+    >
+      <TextField
+        placeholder="Email"
+        label="Email"
+        type="email"
+        {...register('email')}
+        text=""
+      />
+
+      <TextField
+        label="Passwort"
+        placeholder="Passwort"
+        type="password"
+        {...register('password')}
+        text=""
+      />
+
+      <div className="h-5">
+        <span className="text-red-500 h-20">
+          {errors.authentication?.message as string}
+          {errors.email?.message as string}
+          {errors.password?.message as string}
+        </span>
+      </div>
+
       <LoadingWrapper isLoading={status === 'loading'}>
-        <form
-          onSubmit={handleSubmit(submit)}
-          className="flex flex-col justify-center items-center gap-y-2"
-        >
-          <TextField
-            placeholder="Email"
-            label="Email"
-            type="email"
-            {...register('email')}
-            text={errors.email?.message as string}
-          />
-
-          <TextField
-            label="Passwort"
-            placeholder="Passwort"
-            type="password"
-            {...register('password')}
-            text={errors.password?.message as string}
-          />
-
-          {errors.authentication?.message && (
-            <span className="text-red-500">
-              {errors.authentication?.message as string}
-            </span>
-          )}
-
-          <LoadingWrapper isLoading={status === 'loading'}>
-            <Button type="submit" variant="outline" className="w-fit">
-              Login
-            </Button>
-          </LoadingWrapper>
-        </form>
+        <Button type="submit" variant="outline" className="w-fit">
+          Login
+        </Button>
       </LoadingWrapper>
-    </>
+    </form>
   )
 }
