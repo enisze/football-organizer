@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "sideEffects": false,
-  "type": "module",
   "scripts": {
     "build": "next build",
     "dev": "next dev",
@@ -12,7 +11,9 @@
     "start": "next start",
     "cronjob": "ts-node -r dotenv-flow/config ./inngest/cronjobForPayments.ts",
     "email:dev": "email dev",
-    "newEvent": "tsx -r dotenv-flow/config ./inngest/sendNewEventEmail.ts"
+    "newEvent": "tsx -r dotenv-flow/config ./inngest/sendNewEventEmail.ts",
+    "test": "ts-node --esm -r dotenv-flow/config ./inngest/test.mjs",
+    "sendPayment": "ts-node --esm -r dotenv-flow/config ./inngest/sendPaymentAndEventReminderEmails.ts"
   },
   "dependencies": {
     "@google-cloud/local-auth": "2.1.0",
