@@ -126,9 +126,7 @@ export const sendPaymentAndEventReminderEmails = async ({
     Message results: ${codes}`,
   )
   return {
-    message: `Event reminders: ${usersEventReminder}.
-    Payment reminders: ${usersPaymentReminder},
-    Message results: ${codes}`,
+    success: true,
   }
 }
 
@@ -143,13 +141,3 @@ const getParticipantIdsByStatus = (
     return acc
   }, [])
 }
-
-// job({
-//   event: {
-//     data: {
-//       eventId: "clblbxpwm0002nqy7vxtu5zid",
-//     },
-//     name: "event/reminder",
-//     ts: new Date().getMilliseconds(),
-//   },
-// });

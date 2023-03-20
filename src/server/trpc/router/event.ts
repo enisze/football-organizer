@@ -1,7 +1,7 @@
+import { sendNewEventEmail } from '@/inngest/sendNewEventEmail'
 import { TRPCError } from '@trpc/server'
 import { subDays } from 'date-fns'
 import { z } from 'zod'
-import { inngest } from '../../../../inngest/inngestClient'
 import { getAddressAndCoordinatesRedisKeys } from '../../../helpers/getAddressAndCoordinatesRedisKeys'
 import { redis } from '../../redis/redis'
 
@@ -24,15 +24,13 @@ export const eventRouter = router({
     .mutation(async ({ ctx: { prisma }, input }) => {
       if (!input) throw new TRPCError({ code: 'BAD_REQUEST' })
 
-      const result = await prisma.event.create({
+      const event = await prisma.event.create({
         data: { ...input },
-        select: { id: true },
-      })
-      await inngest.send('event/new', {
-        data: { ...input, date: input.date.toDateString(), id: result.id },
       })
 
-      return result
+      await sendNewEventEmail({ event })
+
+      return event
     }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.event.findMany({
