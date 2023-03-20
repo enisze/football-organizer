@@ -1,4 +1,7 @@
 import { sendGroupRequestEmail } from '@/inngest/sendGroupRequestEmail'
+import { sendPaidButCanceledMail } from '@/inngest/sendPaidButCanceledMail'
+import { sendPaymentAndEventReminderEmails } from '@/inngest/sendPaymentAndEventReminderEmails'
+import { sendWelcomeMail } from '@/inngest/sendWelcomeMail'
 import { TRPCError } from '@trpc/server'
 import { isAfter } from 'date-fns'
 import type { OAuth2ClientOptions } from 'google-auth-library'
@@ -6,8 +9,6 @@ import { OAuth2Client } from 'google-auth-library'
 import type { gmail_v1 } from 'googleapis'
 import { google } from 'googleapis'
 import { z } from 'zod'
-import { sendPaidButCanceledMail } from '../../../../inngest/sendPaidButCanceledMail'
-import { sendWelcomeMail } from '../../../../inngest/sendWelcomeMail'
 
 import { protectedProcedure, rateLimitedProcedure, router } from '../trpc'
 
@@ -150,5 +151,10 @@ export const gmailRouter = router({
     .input(z.object({ email: z.string().email() }))
     .mutation(async ({ ctx: { req }, input: { email } }) => {
       return await sendGroupRequestEmail({ sender: email })
+    }),
+  sendPaymentAndEventReminder: protectedProcedure
+    .input(z.object({ eventId: z.string() }))
+    .mutation(async ({ input }) => {
+      return sendPaymentAndEventReminderEmails({ id: input.eventId })
     }),
 })

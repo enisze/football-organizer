@@ -1,11 +1,9 @@
-import { createFunction } from 'inngest'
 import type {
   ParticipantsOnEvents,
   UserEventStatus,
 } from '../prisma/generated/client'
 import { PrismaClient } from '../prisma/generated/client'
 import apiInstance from '../src/emails/transporter'
-import type { Event__Reminder } from './__generated__/types'
 
 import EventReminder from '@/emails/EventReminder'
 import PaymentReminder from '@/emails/PaymentReminder'
@@ -15,9 +13,11 @@ import { differenceInCalendarDays } from 'date-fns'
 
 const prisma = new PrismaClient()
 
-const job = async ({ event }: { event: Event__Reminder }) => {
-  const id = event.data.eventId
-
+export const sendPaymentAndEventReminderEmails = async ({
+  id,
+}: {
+  id: string
+}) => {
   const allUsers = await prisma.user.findMany()
 
   const footballEvent = await prisma.event.findUnique({
@@ -126,16 +126,9 @@ const job = async ({ event }: { event: Event__Reminder }) => {
     Message results: ${codes}`,
   )
   return {
-    message: `Event reminders: ${usersEventReminder}.
-    Payment reminders: ${usersPaymentReminder},
-    Message results: ${codes}`,
+    success: true,
   }
 }
-export const sendPaymentAndEventReminder = createFunction(
-  'Send Payment And Event Reminder',
-  'event/reminder',
-  job,
-)
 
 const getParticipantIdsByStatus = (
   participants: ParticipantsOnEvents[],
@@ -148,13 +141,3 @@ const getParticipantIdsByStatus = (
     return acc
   }, [])
 }
-
-// job({
-//   event: {
-//     data: {
-//       eventId: "clblbxpwm0002nqy7vxtu5zid",
-//     },
-//     name: "event/reminder",
-//     ts: new Date().getMilliseconds(),
-//   },
-// });
