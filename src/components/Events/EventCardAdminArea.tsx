@@ -17,7 +17,7 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
   const trpcContext = trpc.useContext()
 
   const { mutate: remind, isLoading: loadingRemind } =
-    trpc.event.remind.useMutation({
+    trpc.gmail.sendPaymentAndEventReminder.useMutation({
       onSuccess: () => trpcContext.invalidate(),
     })
   const { mutate: cancel, isLoading: loadingCancel } =

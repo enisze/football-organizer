@@ -52,15 +52,6 @@ export const eventRouter = router({
         include: { participants: true },
       })
     }),
-  remind: protectedProcedure
-    .input(z.object({ eventId: z.string() }))
-    .mutation(async ({ input }) => {
-      const { eventId } = input
-
-      await inngest.send('event/reminder', { data: { eventId } })
-      return true
-    }),
-
   setParticipatingStatus: protectedProcedure
     .input(
       z.object({
