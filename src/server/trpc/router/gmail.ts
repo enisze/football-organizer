@@ -148,7 +148,7 @@ export const gmailRouter = router({
   sendGroupRequestMail: rateLimitedProcedure
     .input(z.object({ email: z.string().email() }))
     .mutation(async ({ ctx: { req }, input: { email } }) => {
-      return await sendGroupRequestEmail({ sender: email })
+      return await sendGroupRequestEmail({ requester: email })
     }),
   sendPaymentAndEventReminder: protectedProcedure
     .input(z.object({ eventId: z.string() }))

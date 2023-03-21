@@ -3,8 +3,8 @@ import NextAuth, { type NextAuthOptions } from 'next-auth'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
+import { sendWelcomeMail } from '@/inngest/sendWelcomeMail'
 import DiscordProvider from 'next-auth/providers/discord'
-import { inngest } from '../../../../inngest/inngestClient'
 import { prisma } from '../../../server/db/client'
 
 export const authOptions: NextAuthOptions = {
@@ -42,10 +42,9 @@ export const authOptions: NextAuthOptions = {
           placeholder: 'Dein Paypal Name',
         },
         password: { label: 'Passwort', type: 'password' },
-        key: { label: 'Schlüssel', type: 'string' },
       },
       async authorize(credentials) {
-        if (!credentials?.key && !credentials?.username) {
+        if (!credentials?.username) {
           const user = await prisma.user.findFirst({
             where: {
               email: credentials?.email,
@@ -55,33 +54,19 @@ export const authOptions: NextAuthOptions = {
           return user
         }
 
-        if (
-          credentials?.key !== process.env.AUTH_KEY &&
-          credentials?.key !== process.env.ADMIN_AUTH_KEY
-        )
-          return null
-
-        let role = 'user'
-
-        if (credentials.key === process.env.ADMIN_AUTH_KEY) {
-          role = 'admin'
-        }
-
         try {
           const createdUser = await prisma.user.create({
             data: {
               name: credentials.username,
               email: credentials.email,
               password: credentials.password,
-              role,
+              role: 'USER',
             },
           })
 
-          const { createdAt } = createdUser
+          console.log(createdUser)
 
-          await inngest.send('user/new', {
-            data: { ...createdUser, createdAt: createdAt.toDateString() },
-          })
+          await sendWelcomeMail(createdUser)
 
           return createdUser
         } catch (error) {
@@ -106,7 +91,6 @@ export const authOptions: NextAuthOptions = {
       //TODO: magic invitation links to a group. The user is able to signin via this link.
       //TODO: Already signed in users should be able to join the group as well.
       //TODO: Users without a group should not exist.
-      //TODO: removing the last group of the user will also cause the user to be deleted. ->
 
       // if (account?.provider === 'discord')
 

@@ -206,7 +206,8 @@ exports.Prisma.UserScalarFieldEnum = makeEnum({
   role: 'role',
   createdAt: 'createdAt',
   password: 'password',
-  notificationsEnabled: 'notificationsEnabled'
+  notificationsEnabled: 'notificationsEnabled',
+  paypalName: 'paypalName'
 });
 
 exports.Prisma.VerificationTokenScalarFieldEnum = makeEnum({

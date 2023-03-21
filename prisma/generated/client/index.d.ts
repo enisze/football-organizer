@@ -122,6 +122,7 @@ export type User = {
   createdAt: Date
   password: string | null
   notificationsEnabled: boolean
+  paypalName: string | null
 }
 
 /**
@@ -8076,6 +8077,7 @@ export namespace Prisma {
     createdAt: Date | null
     password: string | null
     notificationsEnabled: boolean | null
+    paypalName: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -8088,6 +8090,7 @@ export namespace Prisma {
     createdAt: Date | null
     password: string | null
     notificationsEnabled: boolean | null
+    paypalName: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -8100,6 +8103,7 @@ export namespace Prisma {
     createdAt: number
     password: number
     notificationsEnabled: number
+    paypalName: number
     _all: number
   }
 
@@ -8114,6 +8118,7 @@ export namespace Prisma {
     createdAt?: true
     password?: true
     notificationsEnabled?: true
+    paypalName?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -8126,6 +8131,7 @@ export namespace Prisma {
     createdAt?: true
     password?: true
     notificationsEnabled?: true
+    paypalName?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -8138,6 +8144,7 @@ export namespace Prisma {
     createdAt?: true
     password?: true
     notificationsEnabled?: true
+    paypalName?: true
     _all?: true
   }
 
@@ -8224,6 +8231,7 @@ export namespace Prisma {
     createdAt: Date
     password: string | null
     notificationsEnabled: boolean
+    paypalName: string | null
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -8253,6 +8261,7 @@ export namespace Prisma {
     createdAt?: boolean
     password?: boolean
     notificationsEnabled?: boolean
+    paypalName?: boolean
     accounts?: boolean | User$accountsArgs
     sessions?: boolean | User$sessionsArgs
     payments?: boolean | User$paymentsArgs
@@ -12989,7 +12998,8 @@ export namespace Prisma {
     role: 'role',
     createdAt: 'createdAt',
     password: 'password',
-    notificationsEnabled: 'notificationsEnabled'
+    notificationsEnabled: 'notificationsEnabled',
+    paypalName: 'paypalName'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -13425,6 +13435,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter | Date | string
     password?: StringNullableFilter | string | null
     notificationsEnabled?: BoolFilter | boolean
+    paypalName?: StringNullableFilter | string | null
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
     payments?: PaymentListRelationFilter
@@ -13443,6 +13454,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     password?: SortOrder
     notificationsEnabled?: SortOrder
+    paypalName?: SortOrder
     accounts?: AccountOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
     payments?: PaymentOrderByRelationAggregateInput
@@ -13467,6 +13479,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     password?: SortOrder
     notificationsEnabled?: SortOrder
+    paypalName?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -13485,6 +13498,7 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter | Date | string
     password?: StringNullableWithAggregatesFilter | string | null
     notificationsEnabled?: BoolWithAggregatesFilter | boolean
+    paypalName?: StringNullableWithAggregatesFilter | string | null
   }
 
   export type UserOnGroupsWhereInput = {
@@ -14184,6 +14198,7 @@ export namespace Prisma {
     createdAt?: Date | string
     password?: string | null
     notificationsEnabled?: boolean
+    paypalName?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
@@ -14202,6 +14217,7 @@ export namespace Prisma {
     createdAt?: Date | string
     password?: string | null
     notificationsEnabled?: boolean
+    paypalName?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
@@ -14220,6 +14236,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
@@ -14238,6 +14255,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
@@ -14256,6 +14274,7 @@ export namespace Prisma {
     createdAt?: Date | string
     password?: string | null
     notificationsEnabled?: boolean
+    paypalName?: string | null
   }
 
   export type UserUpdateManyMutationInput = {
@@ -14268,6 +14287,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -14280,6 +14300,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserOnGroupsCreateInput = {
@@ -15094,6 +15115,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     password?: SortOrder
     notificationsEnabled?: SortOrder
+    paypalName?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -15106,6 +15128,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     password?: SortOrder
     notificationsEnabled?: SortOrder
+    paypalName?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -15118,6 +15141,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     password?: SortOrder
     notificationsEnabled?: SortOrder
+    paypalName?: SortOrder
   }
 
   export type BoolWithAggregatesFilter = {
@@ -16342,6 +16366,7 @@ export namespace Prisma {
     createdAt?: Date | string
     password?: string | null
     notificationsEnabled?: boolean
+    paypalName?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
@@ -16359,6 +16384,7 @@ export namespace Prisma {
     createdAt?: Date | string
     password?: string | null
     notificationsEnabled?: boolean
+    paypalName?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
@@ -16423,6 +16449,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
@@ -16440,6 +16467,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
@@ -16531,6 +16559,7 @@ export namespace Prisma {
     createdAt?: Date | string
     password?: string | null
     notificationsEnabled?: boolean
+    paypalName?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
@@ -16548,6 +16577,7 @@ export namespace Prisma {
     createdAt?: Date | string
     password?: string | null
     notificationsEnabled?: boolean
+    paypalName?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
@@ -16612,6 +16642,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
@@ -16629,6 +16660,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
@@ -16646,6 +16678,7 @@ export namespace Prisma {
     createdAt?: Date | string
     password?: string | null
     notificationsEnabled?: boolean
+    paypalName?: string | null
     sessions?: SessionCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
@@ -16663,6 +16696,7 @@ export namespace Prisma {
     createdAt?: Date | string
     password?: string | null
     notificationsEnabled?: boolean
+    paypalName?: string | null
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
@@ -16690,6 +16724,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     sessions?: SessionUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
@@ -16707,6 +16742,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
@@ -16724,6 +16760,7 @@ export namespace Prisma {
     createdAt?: Date | string
     password?: string | null
     notificationsEnabled?: boolean
+    paypalName?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
@@ -16741,6 +16778,7 @@ export namespace Prisma {
     createdAt?: Date | string
     password?: string | null
     notificationsEnabled?: boolean
+    paypalName?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
@@ -16768,6 +16806,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
@@ -16785,6 +16824,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
@@ -16864,6 +16904,7 @@ export namespace Prisma {
     createdAt?: Date | string
     password?: string | null
     notificationsEnabled?: boolean
+    paypalName?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
@@ -16881,6 +16922,7 @@ export namespace Prisma {
     createdAt?: Date | string
     password?: string | null
     notificationsEnabled?: boolean
+    paypalName?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
@@ -16967,6 +17009,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
@@ -16984,6 +17027,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
@@ -17299,6 +17343,7 @@ export namespace Prisma {
     createdAt?: Date | string
     password?: string | null
     notificationsEnabled?: boolean
+    paypalName?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
@@ -17316,6 +17361,7 @@ export namespace Prisma {
     createdAt?: Date | string
     password?: string | null
     notificationsEnabled?: boolean
+    paypalName?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
@@ -17368,6 +17414,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
@@ -17385,6 +17432,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput

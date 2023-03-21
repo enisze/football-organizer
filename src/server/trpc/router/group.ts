@@ -1,7 +1,8 @@
 import { TRPCError } from '@trpc/server'
-import { decode, sign, verify } from 'jsonwebtoken'
+import { decode, sign } from 'jsonwebtoken'
 import { z } from 'zod'
 import { protectedProcedure, router } from '../trpc'
+import { verifyJWT } from '../verifyJWT'
 
 export const groupRouter = router({
   getGroupsOfUser: protectedProcedure
@@ -191,23 +192,9 @@ export const groupRouter = router({
       const { id, groupName, ownerName } = input
       const token = sign(
         { id, groupName, ownerName },
-        process.env.SECRET as string,
+        process.env.JWT_SECRET as string,
       )
 
       return token
     }),
 })
-
-const verifyJWT = (JWT: string) => {
-  let isJWTValid = false
-
-  verify(JWT, process.env.SECRET as string, (error, data) => {
-    if (error) {
-      return
-    }
-
-    isJWTValid = true
-  })
-
-  return isJWTValid
-}

@@ -1,5 +1,8 @@
+import { TRPCError } from '@trpc/server'
+import { decode } from 'jsonwebtoken'
 import { z } from 'zod'
-import { protectedProcedure, router } from '../trpc'
+import { protectedProcedure, publicProcedure, router } from '../trpc'
+import { verifyJWT } from '../verifyJWT'
 
 export const userRouter = router({
   cancelEvent: protectedProcedure
@@ -65,4 +68,17 @@ export const userRouter = router({
       where: { id },
     })
   }),
+  getDataFromJWT: publicProcedure
+    .input(z.object({ JWT: z.string() }))
+    .query(async ({ input }) => {
+      const isValid = verifyJWT(input.JWT)
+
+      if (!isValid) throw new TRPCError({ code: 'BAD_REQUEST' })
+
+      const res = decode(input.JWT) as {
+        email: string
+      }
+
+      return res
+    }),
 })
