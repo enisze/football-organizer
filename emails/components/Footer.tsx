@@ -1,8 +1,8 @@
-import { Hr, Section, Text } from '@react-email/components'
+import { Hr, Text } from '@react-email/components'
 
 export const Footer = () => {
   return (
-    <Section>
+    <>
       <Text>
         Viele Grüße
         <br />
@@ -10,6 +10,6 @@ export const Footer = () => {
       </Text>
       <Hr />
       <Text>50935 Köln - NRW Deutschland</Text>
-    </Section>
+    </>
   )
 }
