@@ -137,7 +137,6 @@ export const gmailRouter = router({
 
       return await sendPaidButCanceledMail(event, user)
     }),
-
   sendWelcomeMail: protectedProcedure.mutation(
     async ({ ctx: { prisma, session } }) => {
       const user = await prisma.user.findUnique({
@@ -147,7 +146,6 @@ export const gmailRouter = router({
       return await sendWelcomeMail(user)
     },
   ),
-
   sendPaymentAndEventReminder: protectedProcedure
     .input(z.object({ eventId: z.string() }))
     .mutation(async ({ input }) => {
