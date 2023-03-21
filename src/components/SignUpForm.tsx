@@ -14,9 +14,20 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { signIn } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { z } from 'zod'
 import { trpc } from '../utils/trpc'
+
+const clientId = process.env.DISCORD_CLIENT_ID
+
+const link =
+  'https://discord.com/oauth2/authorize?client_id=' +
+  clientId +
+  '&scope=identify&email&response_type=code' +
+  '&redirect_uri=' +
+  process.env.NEXT_PUBLIC_BASE_URL +
+  '/api/auth/callback/discord'
 
 const discordStyles = {
   logo: 'https://authjs.dev/img/providers/discord.svg',
@@ -142,8 +153,9 @@ export const SignUpForm: FunctionComponent<{ email?: string }> = ({
       <Button type="submit" variant="outline">
         Registrieren
       </Button>
-      <button
+      <Link
         type="submit"
+        href={link}
         className="
         items-center flex justify-center px-3 py-4 relative transition-all duration-100 ease-in-out
         bg-white text-[#7289DA] dark:bg-[#7289DA] dark:text-[#fff] rounded-lg p-2 w-[300px]"
@@ -162,7 +174,7 @@ export const SignUpForm: FunctionComponent<{ email?: string }> = ({
           }}
         />
         <span className="flex-grow font-bold">Sign in with Discord</span>
-      </button>
+      </Link>
     </form>
   )
 }
