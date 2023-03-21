@@ -1,13 +1,10 @@
-import { Column } from '@react-email/column'
-import { Row } from '@react-email/row'
-import { Section } from '@react-email/section'
-import { Text } from '@react-email/text'
+import { Section } from '@react-email/components'
 import type { Event } from '../../prisma/generated/client'
 import { transformDate } from '../helpers/transformDate'
 
 export const EventTemplate = ({ event }: { event: Partial<Event> }) => {
   const {
-    address = 'unbekannt',
+    address = 'Zuelpicher Str. 49, 50674 Köln ',
     cost = 10,
     date = new Date(),
     endTime = '21:30',
@@ -17,26 +14,22 @@ export const EventTemplate = ({ event }: { event: Partial<Event> }) => {
 
   return (
     <Section className="bg-gray-200 p-4 rounded">
-      <Row>
-        <Column>
-          Ort
-          <Text>{address}</Text>
-        </Column>
-        <Column>
-          Datum
-          <Text>{date ? transformDate(date) : 'Unbekannt'}</Text>
-        </Column>
-        <Column>
-          Uhrzeit
-          <Text>
-            {startTime} - {endTime} Uhr
-          </Text>
-        </Column>
-        <Column>
-          Preis
-          <Text>{cost && cost / (maxParticipants ?? 10)} Euro</Text>
-        </Column>
-      </Row>
+      <div className="text-start p-1">
+        <strong className="pr-2">Ort:</strong>
+        {address}
+      </div>
+      <div className="text-start p-1">
+        <strong className="pr-2">Datum:</strong>
+        {date ? transformDate(date) : 'Unbekannt'}
+      </div>
+      <div className="text-start p-1">
+        <strong className="pr-2">Uhrzeit:</strong>
+        {startTime} - {endTime} Uhr
+      </div>
+      <div className="text-start p-1">
+        <strong className="pr-2">Preis:</strong>
+        {cost && cost / (maxParticipants ?? 10)} Euro
+      </div>
     </Section>
   )
 }
