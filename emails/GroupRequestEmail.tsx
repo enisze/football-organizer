@@ -22,14 +22,7 @@ export const GroupRequestEmail = ({ email, token }: GroupRequestEmail) => {
   const createGroupLink =
     process.env.NEXT_PUBLIC_BASE_URL + '/groups/allow/' + token
 
-  //TODO: button should lead to /api/groups/allow
-  //TODO: Send email with jwt token to me including user email and that the user is allowed to create a group
-  //TODO: the button should be a link to /api/groups/allow?token=jwtToken
-  //TODO: the api should check if the token is valid and if the user is allowed to create a group
-  //TODO: if so the user gets a mail with a link to register and after registration is lead to the group creation page
   //TODO: Adjust UserSchema: allowedNumberOfGroups, paypalName
-
-  console.log(token)
 
   return (
     <Html>

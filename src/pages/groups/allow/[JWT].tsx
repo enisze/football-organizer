@@ -1,9 +1,13 @@
 import { NewGroup } from '@/src/components/Groups/NewGroup'
-import { SignUpForm } from '@/src/components/SignUpForm'
 import { trpc } from '@/src/utils/trpc'
 import { useSession } from 'next-auth/react'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import type { FunctionComponent } from 'react'
+import { FunctionComponent, useMemo } from 'react'
+
+const NavBar = dynamic(() => import('@/src/components/Navigation/Navbar'), {
+  ssr: false,
+})
 
 const AddToGroup: FunctionComponent = () => {
   const router = useRouter()
@@ -12,27 +16,41 @@ const AddToGroup: FunctionComponent = () => {
 
   const { data } = useSession()
 
-  const { data: userData } = trpc.user.getDataFromJWT.useQuery(
+  const {
+    data: userData,
+    isLoading,
+    isFetching,
+  } = trpc.user.getDataFromJWT.useQuery(
     { JWT },
-    { enabled: Boolean(JWT) },
+    { enabled: Boolean(JWT) && Boolean(data?.user?.email) },
   )
 
+  const isValid = useMemo(() => {
+    const jwtEmail = userData?.email
+    const sessionEmail = data?.user?.email
+    return jwtEmail?.includes(sessionEmail ?? '')
+  }, [data, userData])
+
   return (
-    <div className="flex flex-col w-full h-full p-2 gap-y-4 justify-center items-center">
-      <div className="text-lg font-bold">
-        Um eine Gruppe zu erstellen, musst du dich zuerst registrieren:
-      </div>
-      {data?.user?.name ? (
-        <div className="flex flex-col h-full">
-          <div> {data.user.name}, du kannst nun eine Gruppe erstellen</div>
-          <NewGroup />
+    <>
+      <NavBar />
+      {isFetching && isLoading ? (
+        <div className="flex flex-col w-full h-full p-2 gap-y-4 justify-center items-center">
+          <div className="text-lg font-bold">Lade...</div>
         </div>
       ) : (
-        <div>
-          <SignUpForm email={userData?.email} />
-        </div>
+        <>
+          {data?.user?.name && (
+            <div className="flex flex-col items-center p-5 h-full">
+              <div>
+                Hallo {data.user.name}, du kannst nun eine Gruppe erstellen
+                {isValid && <NewGroup />}
+              </div>
+            </div>
+          )}
+        </>
       )}
-    </div>
+    </>
   )
 }
 

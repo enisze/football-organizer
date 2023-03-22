@@ -2,8 +2,13 @@ import { useToast } from '@/src/hooks/useToast'
 import { trpc } from '@/src/utils/trpc'
 import { Button } from '@/ui/base/Button'
 import { OrganizerLink } from '@/ui/base/OrganizerLink'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import type { FunctionComponent } from 'react'
+
+const NavBar = dynamic(() => import('@/src/components/Navigation/Navbar'), {
+  ssr: false,
+})
 
 const AddToGroup: FunctionComponent = () => {
   const router = useRouter()
@@ -27,13 +32,16 @@ const AddToGroup: FunctionComponent = () => {
   })
 
   return (
-    <div className="flex flex-col justify-center items-center w-full">
-      <div>{`${groupData?.ownerName} hat dich eingeladen seiner Gruppe ${groupData?.groupName} beizutreten.`}</div>
-      <Button onClick={() => mutate({ JWT })}>Beitreten</Button>
-      <OrganizerLink href={'/'} className="justify-center">
-        Zurück zu den Events
-      </OrganizerLink>
-    </div>
+    <>
+      <NavBar />
+      <div className="flex flex-col justify-center items-center w-full">
+        <div>{`${groupData?.ownerName} hat dich eingeladen seiner Gruppe ${groupData?.groupName} beizutreten.`}</div>
+        <Button onClick={() => mutate({ JWT })}>Beitreten</Button>
+        <OrganizerLink href={'/'} className="justify-center">
+          Zurück zu den Events
+        </OrganizerLink>
+      </div>
+    </>
   )
 }
 

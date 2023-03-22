@@ -18,7 +18,7 @@ export const authOptions: NextAuthOptions = {
   // pages: { signIn: '/', newUser: '/signUp' },
   providers: [
     DiscordProvider({
-      clientId: process.env.DISCORD_CLIENT_ID ?? '',
+      clientId: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID ?? '',
       clientSecret: process.env.DISCORD_CLIENT_SECRET ?? '',
       token: 'https://discord.com/api/oauth2/token',
       userinfo: 'https://discord.com/api/users/@me',
@@ -84,13 +84,13 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, user, account }) {
       //TODO: Add param to user, if the paypal username was set
-      //TODO: add paypalUserName to user
-      //TODO: if not set, a banner should appear blocking user from proceeding
-      //TODO: Until it is filled out.
+      //TODO: add paypalUserName to user -> paypalUserName banner to show everytime on login
+      //TODO: add bubble to show, it has to be set else no info on payment
       //TOOD: change the paypal username in the settings as well as the username
       //TODO: magic invitation links to a group. The user is able to signin via this link.
       //TODO: Already signed in users should be able to join the group as well.
-      //TODO: Users without a group should not exist.
+      //Anyone can sign in
+      //TODO: Empty group screen
 
       // if (account?.provider === 'discord')
 

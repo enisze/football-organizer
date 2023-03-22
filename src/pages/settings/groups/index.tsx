@@ -23,33 +23,40 @@ const GroupSettings: FunctionComponent = () => {
     return null
   }
 
+  const showNewGroup = (groups?.length ?? 0) < 0
+
   return (
     <>
       <Navbar />
       <div className="grid grid-cols-[220px_8px_auto]">
         <SettingsSidebar />
-
         <Separator orientation="vertical" />
         <div className="flex flex-col p-2">
-          <div className="flex flex-1 gap-x-3">
-            {groups?.map((group) => (
-              <Container key={group.id} className="flex flex-col">
-                <span>{`Name: ${group.name}`}</span>
-                <span>{`Erstellungsdatum: ${group.createdAt}`}</span>
-                <span>{`Users: ${group.users.length}`}</span>
-                <span>{`Events: ${group.events.length}`}</span>
-                <span>{`Pricing: ${group.pricingModel}`}</span>
-                <OrganizerLink
-                  href={`/settings/groups/${group.id}`}
-                  className=" flex w-full rounded-md border border-slate-300 bg-transparent mt-3 text-sm dark:border-slate-700 dark:text-slate-50"
-                >
-                  Bearbeiten
-                </OrganizerLink>
-              </Container>
-            ))}
-          </div>
+          {(groups?.length ?? 0) > 0 && (
+            <div className="flex flex-1 gap-x-3">
+              {groups?.map((group) => (
+                <Container key={group.id} className="flex flex-col">
+                  <span>{`Name: ${group.name}`}</span>
+                  <span>{`Erstellungsdatum: ${group.createdAt}`}</span>
+                  <span>{`Users: ${group.users.length}`}</span>
+                  <span>{`Events: ${group.events.length}`}</span>
+                  <span>{`Pricing: ${group.pricingModel}`}</span>
+                  <OrganizerLink
+                    href={`/settings/groups/${group.id}`}
+                    className=" flex w-full rounded-md border border-slate-300 bg-transparent mt-3 text-sm dark:border-slate-700 dark:text-slate-50"
+                  >
+                    Bearbeiten
+                  </OrganizerLink>
+                </Container>
+              ))}
+            </div>
+          )}
           {/*TODO: Proper management Limited to one group per user currently */}
-          {groups?.length && groups?.length < 0 && <NewGroup />}
+          {showNewGroup ? (
+            <NewGroup />
+          ) : (
+            <div className="justify-center flex">Du hast keine Gruppen</div>
+          )}
         </div>
       </div>
       <Separator />
