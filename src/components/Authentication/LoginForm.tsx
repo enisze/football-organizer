@@ -57,7 +57,7 @@ export const LoginForm: FunctionComponent<{ onSubmit?: () => void }> = ({
   const submit = async (values: FieldValues) => {
     const res = await signIn('credentials', {
       redirect: false,
-      email: values.email,
+      email,
       password: values.password,
     })
 
