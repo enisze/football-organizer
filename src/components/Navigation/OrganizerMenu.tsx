@@ -8,6 +8,7 @@ import {
 import { Separator } from '@/ui/base/Separator'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import type { FunctionComponent } from 'react'
 import { useIsAdmin } from '../../hooks/useIsAdmin'
 import { trpc } from '../../utils/trpc'
@@ -15,6 +16,8 @@ import { trpc } from '../../utils/trpc'
 export const OrganizerMenu: FunctionComponent = () => {
   const isAdmin = useIsAdmin()
   const { data: userData } = useSession()
+
+  const router = useRouter()
 
   const { data: link } = trpc.gmail.generateAuthLink.useQuery(undefined, {
     enabled: isAdmin,
@@ -58,7 +61,14 @@ export const OrganizerMenu: FunctionComponent = () => {
           <Link href={'/settings'}>Einstellungen</Link>
         </DropdownMenuItem>
         <Separator />
-        <DropdownMenuItem onClick={() => signOut()}>Ausloggen</DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            signOut()
+            router.push('/')
+          }}
+        >
+          Ausloggen
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

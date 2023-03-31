@@ -7,11 +7,9 @@ import { useEffect } from 'react'
 const Settings: FunctionComponent = () => {
   const router = useRouter()
 
-  if (window.innerWidth > 768) [router.push('/settings/user')]
-
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 768) {
+      if (window && window.innerWidth > 768) {
         router.push('/settings/user')
       }
     }
