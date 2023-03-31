@@ -32,26 +32,24 @@ export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
 
   return (
     <LoadingWrapper isLoading={isLoading}>
-      <div className="flex items-center gap-x-2">
-        <Label>Gruppe</Label>
-        <Select
-          value={group}
-          onValueChange={(val) => {
-            setSelectedGroup(val)
-          }}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Gruppe auswählen" />
-          </SelectTrigger>
-          <SelectContent>
-            {groups?.map((group) => (
-              <SelectItem key={group.id} value={group.id}>
-                {group.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <Label>Gruppe</Label>
+      <Select
+        value={group}
+        onValueChange={(val) => {
+          setSelectedGroup(val)
+        }}
+      >
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Gruppe auswählen" />
+        </SelectTrigger>
+        <SelectContent>
+          {groups?.map((group) => (
+            <SelectItem key={group.id} value={group.id}>
+              {group.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </LoadingWrapper>
   )
 }

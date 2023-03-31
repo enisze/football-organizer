@@ -7,7 +7,7 @@ import type {
   ParticipantsOnEvents,
 } from '../../../prisma/generated/client'
 import { EventCard } from '../Events/EventCard'
-import { selectedGroupAtom } from '../Groups/GroupSelector'
+import { GroupSelector, selectedGroupAtom } from '../Groups/GroupSelector'
 import { LoadingWrapper } from '../LoadingWrapper'
 
 type EventsWithparticipants =
@@ -34,6 +34,7 @@ const EventList: FunctionComponent<{
 }> = ({ events, isLoading }) => {
   return (
     <div className="flex flex-col gap-y-3 justify-center items-center">
+      <GroupSelector />
       <LoadingWrapper isLoading={isLoading}>
         <ul className="flex flex-col gap-y-2">
           {events && events?.length > 0 ? (
