@@ -55,7 +55,9 @@ const GroupSettings: FunctionComponent = () => {
           {showNewGroup ? (
             <NewGroup />
           ) : (
-            <div className="justify-center flex">Du hast keine Gruppen</div>
+            groups?.length === 0 && (
+              <div className="justify-center flex">Du hast keine Gruppen</div>
+            )
           )}
         </div>
       </div>
