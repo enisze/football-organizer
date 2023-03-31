@@ -1,4 +1,4 @@
-import { SettingsSidebar } from '@/src/components/SettingsSidebar'
+import { SpecificSettings } from '@/src/components/SettingsSidebar'
 import { useToast } from '@/src/hooks/useToast'
 import { Button } from '@/ui/base/Button'
 import {
@@ -100,8 +100,8 @@ const GroupSettings: FunctionComponent = () => {
   return (
     <>
       <Navbar />
-      <div className="grid grid-cols-[220px_8px_auto]">
-        <SettingsSidebar />
+      <div className="flex flex-col md:grid grid-cols-[220px_8px_auto]">
+        <SpecificSettings />
 
         <Separator orientation="vertical" />
 

@@ -1,5 +1,5 @@
 import { NewGroup } from '@/src/components/Groups/NewGroup'
-import { SettingsSidebar } from '@/src/components/SettingsSidebar'
+import { SpecificSettings } from '@/src/components/SettingsSidebar'
 import { trpc } from '@/src/utils/trpc'
 import { Container } from '@/ui/base/Container'
 import { OrganizerLink } from '@/ui/base/OrganizerLink'
@@ -28,8 +28,8 @@ const GroupSettings: FunctionComponent = () => {
   return (
     <>
       <Navbar />
-      <div className="grid grid-cols-[220px_8px_auto]">
-        <SettingsSidebar />
+      <div className="flex flex-col md:grid grid-cols-[220px_8px_auto]">
+        <SpecificSettings />
         <Separator orientation="vertical" />
         <div className="flex flex-col p-2">
           {(groups?.length ?? 0) > 0 && (
