@@ -84,16 +84,11 @@ export const authOptions: NextAuthOptions = {
       return true
     },
     async jwt({ token, user, account }) {
-      //TODO: Add param to user, if the paypal username was set
-      //TODO: add paypalUserName to user -> paypalUserName banner to show everytime on login
+      //TODO: add paypalUserName to user -> paypalUserName banner to show everytime -> a bobble should show up
+      //if the paypalName is empty, the user should be able to add it + it should explain
+      // that the user and the organizer cannot see the current state of the payment
       //TODO: add bubble to show, it has to be set else no info on payment
       //TOOD: change the paypal username in the settings as well as the username
-      //TODO: magic invitation links to a group. The user is able to signin via this link.
-      //TODO: Already signed in users should be able to join the group as well.
-      //Anyone can sign in
-      //TODO: Empty group screen
-
-      // if (account?.provider === 'discord')
 
       if (user) {
         token.id = user.id
