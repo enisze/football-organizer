@@ -1,6 +1,5 @@
 import { type NextPage } from 'next'
 import { useSession } from 'next-auth/react'
-import { ContactForm } from '../components/ContactForm'
 import { Dashboard } from '../components/Dashboard/Dashboard'
 import { Hero } from '../components/Heading'
 import { LoadingWrapper } from '../components/LoadingWrapper'
@@ -18,7 +17,7 @@ const Home: NextPage = () => {
         {!sessionData ? (
           <main className="absolute flex h-full w-full flex-col items-center justify-center">
             <Hero />
-            <ContactForm />
+            {/* <ContactForm /> */}
           </main>
         ) : (
           <div className="flex flex-col pb-2">

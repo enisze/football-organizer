@@ -51,20 +51,21 @@ export const authOptions: NextAuthOptions = {
               password: credentials?.password,
             },
           })
+
           return user
         }
+
+        if (!credentials?.email) return null
 
         try {
           const createdUser = await prisma.user.create({
             data: {
-              name: credentials.username,
-              email: credentials.email,
-              password: credentials.password,
+              name: credentials?.username ?? '',
+              email: credentials?.email,
+              password: credentials?.password,
               role: 'USER',
             },
           })
-
-          console.log(createdUser)
 
           await sendWelcomeMail(createdUser)
 

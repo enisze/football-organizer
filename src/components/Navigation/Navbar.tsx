@@ -7,6 +7,7 @@ import {
   DialogTrigger,
 } from '@/ui/base/Dialog'
 import { ThemeToggle } from '@/ui/theme-toggle'
+import { useSession } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { useState } from 'react'
 import { LoginForm } from '../Authentication/LoginForm'
@@ -15,6 +16,8 @@ import { OrganizerMenu } from './OrganizerMenu'
 
 export const Navbar: FunctionComponent = () => {
   const [open, setOpen] = useState(false)
+
+  const { data } = useSession()
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-b-slate-200 bg-white dark:border-b-slate-700 dark:bg-slate-900">
@@ -28,7 +31,7 @@ export const Navbar: FunctionComponent = () => {
 
             <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
               <DialogTrigger>
-                <Button>Login</Button>
+                {!data?.user && <Button>Login / Registrieren</Button>}
               </DialogTrigger>
 
               <DialogContent className="sm:max-w-[425px]">

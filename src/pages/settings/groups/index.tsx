@@ -23,7 +23,7 @@ const GroupSettings: FunctionComponent = () => {
     return null
   }
 
-  const showNewGroup = (groups?.length ?? 0) < 0
+  const showNewGroup = (groups?.length ?? 0) < 1
 
   return (
     <>

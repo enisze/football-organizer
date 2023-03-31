@@ -119,7 +119,7 @@ model User {
   createdAt            DateTime               @default(now())
   password             String?
   notificationsEnabled Boolean                @default(true)
-  paypalName          String?
+  paypalName           String?
   accounts             Account[]
   sessions             Session[]
   payments             Payment[]

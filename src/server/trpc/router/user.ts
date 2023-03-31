@@ -81,4 +81,15 @@ export const userRouter = router({
 
       return res
     }),
+  checkByEmail: publicProcedure
+    .input(z.object({ email: z.string().email() }))
+    .mutation(async ({ input, ctx: { prisma } }) => {
+      const user = await prisma.user.findFirst({
+        where: { email: input.email },
+      })
+
+      console.log(user)
+
+      return Boolean(user)
+    }),
 })

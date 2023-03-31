@@ -1,14 +1,14 @@
+import { trpc } from '@/src/utils/trpc'
 import { Button } from '@/ui/base/Button'
 import { TextField } from '@/ui/base/TextField'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { signIn, useSession } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import Image from 'next/image'
-import type { FunctionComponent } from 'react'
+import { FunctionComponent, useState } from 'react'
 import type { FieldValues } from 'react-hook-form'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { LoadingWrapper } from '../LoadingWrapper'
 
 const discordStyles = {
   logo: 'https://authjs.dev/img/providers/discord.svg',
@@ -30,9 +30,13 @@ const link =
   process.env.NEXT_PUBLIC_BASE_URL +
   '/api/auth/callback/discord'
 
+const emailSchema = z
+  .string()
+  .email({ message: 'Bitte gib eine gültige Email ein. ' })
+
 const loginSchema = z.object({
-  email: z.string().email({ message: 'Bitte gib eine gültige Email ein. ' }),
   password: z.string().min(2, { message: 'Passwort fehlt' }),
+  name: z.string().optional(),
 })
 
 export const LoginForm: FunctionComponent<{ onSubmit?: () => void }> = ({
@@ -47,7 +51,8 @@ export const LoginForm: FunctionComponent<{ onSubmit?: () => void }> = ({
     setError,
   } = useForm({ resolver: zodResolver(loginSchema), mode: 'onBlur' })
 
-  const { status } = useSession()
+  const [email, setEmail] = useState('')
+  const [authState, setAuthState] = useState<'login' | 'register'>()
 
   const submit = async (values: FieldValues) => {
     const res = await signIn('credentials', {
@@ -60,6 +65,7 @@ export const LoginForm: FunctionComponent<{ onSubmit?: () => void }> = ({
       setError('authentication', {
         message: 'Die angegebenen Daten sind inkorrekt.',
       })
+      return
     }
     onSubmit?.()
   }
@@ -67,43 +73,52 @@ export const LoginForm: FunctionComponent<{ onSubmit?: () => void }> = ({
   return (
     <div className="flex flex-col gap-y-2">
       <form onSubmit={handleSubmit(submit)}>
-        <TextField
-          placeholder="Email"
-          label="Email"
-          type="email"
-          {...register('email')}
-          text=""
+        <EmailForm
+          setAuthState={(val) => setAuthState(val)}
+          setEmailExternal={setEmail}
         />
 
-        <TextField
-          label="Passwort"
-          placeholder="Passwort"
-          type="password"
-          {...register('password')}
-          text=""
-        />
+        {authState && (
+          <>
+            <div className="flex flex-col gap-y-1">
+              <span>Email</span>
+              <span>{email}</span>
+            </div>
+
+            <TextField
+              label="Passwort"
+              placeholder="Passwort"
+              type="password"
+              {...register('password')}
+              text=""
+            />
+          </>
+        )}
+        {authState === 'register' && (
+          <TextField
+            label="Name"
+            placeholder="name"
+            type="text"
+            {...register('name')}
+            text=""
+          />
+        )}
 
         <div className="h-5">
           <span className="text-red-500 h-20">
             {errors.authentication?.message as string}
-            {errors.email?.message as string}
             {errors.password?.message as string}
           </span>
         </div>
 
-        <LoadingWrapper isLoading={status === 'loading'}>
-          <Button
-            type="submit"
-            variant="outline"
-            className="w-fit align-self-center"
-          >
-            Login
+        {authState && (
+          <Button type="submit" variant="outline" className="w-fit self-center">
+            {authState === 'login' ? 'Login' : 'Registrieren'}
           </Button>
-        </LoadingWrapper>
+        )}
       </form>
       <button
-        className="
-        items-center align-self-center flex justify-center px-3 py-4 relative transition-all duration-100 ease-in-out
+        className="self-center flex justify-center px-3 py-4 relative transition-all duration-100 ease-in-out
         bg-white text-[#7289DA] dark:bg-[#7289DA] dark:text-[#fff] rounded-lg p-2 w-[300px]"
         onClick={async () => {
           await signIn('discord', { callbackUrl: '/' })
@@ -125,5 +140,64 @@ export const LoginForm: FunctionComponent<{ onSubmit?: () => void }> = ({
         <span className="font-bold">Sign in with Discord</span>
       </button>
     </div>
+  )
+}
+
+const EmailForm = ({
+  setAuthState,
+  setEmailExternal,
+}: {
+  setAuthState: (state: 'login' | 'register') => void
+  setEmailExternal: (email: string) => void
+}) => {
+  const [email, setEmail] = useState('')
+
+  const [error, setError] = useState('')
+
+  const { data, mutateAsync } = trpc.user.checkByEmail.useMutation()
+
+  const onClick = async () => {
+    const res = emailSchema.safeParse(email)
+
+    if (res.success) {
+      setEmailExternal(email)
+      const res = await mutateAsync({ email })
+      setAuthState(res === true ? 'login' : 'register')
+      setError('')
+
+      return
+    }
+
+    setError(res.error.errors[0]?.message ?? '')
+  }
+
+  return (
+    <>
+      {data === undefined && (
+        <div className="flex flex-col gap-y-2">
+          <TextField
+            placeholder="Email"
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(val) => setEmail(val.target.value)}
+            text=""
+          />
+
+          <div className="h-5">
+            <span className="text-red-500 h-20">{error}</span>
+          </div>
+          {data === undefined && (
+            <Button
+              variant="outline"
+              className="w-fit self-center"
+              onClick={onClick}
+            >
+              Weiter
+            </Button>
+          )}
+        </div>
+      )}
+    </>
   )
 }
