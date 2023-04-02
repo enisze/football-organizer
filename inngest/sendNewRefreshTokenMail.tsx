@@ -19,7 +19,7 @@ export const sendNewRefreshTokenMail = async ({
   sendSmptMail.htmlContent = html
   sendSmptMail.sender = {
     email: 'eniszej@gmail.com',
-    name: 'Football Organizer',
+    name: 'Event Wizard',
   }
   sendSmptMail.subject = 'Neues Refresh Token benötigt'
 

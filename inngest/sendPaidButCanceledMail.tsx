@@ -26,7 +26,7 @@ export const sendPaidButCanceledMail = async (
   sendSmptMail.htmlContent = html
   sendSmptMail.sender = {
     email: 'eniszej@gmail.com',
-    name: 'Football Organizer',
+    name: 'Event Wizard',
   }
   sendSmptMail.subject = 'BEZAHLUNG TROTZ ABSAGE'
 

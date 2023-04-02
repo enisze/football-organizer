@@ -20,26 +20,26 @@ export const sendPaymentAndEventReminderEmails = async ({
 }) => {
   const allUsers = await prisma.user.findMany()
 
-  const footballEvent = await prisma.event.findUnique({
+  const event = await prisma.event.findUnique({
     where: { id },
     include: { participants: true, payments: true },
   })
 
-  if (!footballEvent)
+  if (!event)
     return {
-      message: 'No football event',
+      message: 'No event',
     }
 
-  const { participants } = footballEvent
+  const { participants } = event
 
   //Ids which are available
   const canceledParticipantIds = getParticipantIdsByStatus(
-    footballEvent.participants,
+    event.participants,
     'CANCELED',
   )
 
   const joinedParticipantIds = getParticipantIdsByStatus(
-    footballEvent.participants,
+    event.participants,
     'JOINED',
   )
 
@@ -53,13 +53,13 @@ export const sendPaymentAndEventReminderEmails = async ({
       if (
         !joinedParticipantIds.includes(user.id) &&
         !canceledParticipantIds.includes(user.id) &&
-        participants.length < footballEvent.maxParticipants
+        participants.length < event.maxParticipants
       ) {
         //Send event reminder
 
         const html = render(
           <EventReminder
-            event={footballEvent}
+            event={event}
             userName={user.name}
             participantsAmount={joinedParticipantIds.length}
           />,
@@ -67,7 +67,7 @@ export const sendPaymentAndEventReminderEmails = async ({
 
         const sendSmptMail = new SendSmtpEmail()
 
-        const days = differenceInCalendarDays(footballEvent.date, new Date())
+        const days = differenceInCalendarDays(event.date, new Date())
 
         sendSmptMail.to = [{ email: user.email }]
         sendSmptMail.htmlContent = html
@@ -75,15 +75,15 @@ export const sendPaymentAndEventReminderEmails = async ({
           email: 'eniszej@gmail.com',
           name: 'Event Wizard',
         }
-        sendSmptMail.subject = `Erinnerung: Fussball in ${days} Tagen, ${joinedParticipantIds.length}/${footballEvent.maxParticipants} Teilnehmer!`
+        sendSmptMail.subject = `Erinnerung: Fussball in ${days} Tagen, ${joinedParticipantIds.length}/${event.maxParticipants} Teilnehmer!`
 
         usersEventReminder.push(user.email)
 
         return apiInstance.sendTransacEmail(sendSmptMail)
       }
 
-      if (footballEvent.bookingDate && joinedParticipantIds.includes(user.id)) {
-        const payment = footballEvent.payments.find(
+      if (event.bookingDate && joinedParticipantIds.includes(user.id)) {
+        const payment = event.payments.find(
           (payment) => payment.userId === user.id,
         )
 
@@ -91,7 +91,7 @@ export const sendPaymentAndEventReminderEmails = async ({
           //Send payment reminder
 
           const html = render(
-            <PaymentReminder event={footballEvent} userName={user.name} />,
+            <PaymentReminder event={event} userName={user.name} />,
           )
 
           const sendSmptMail = new SendSmtpEmail()
