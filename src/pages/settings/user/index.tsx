@@ -109,6 +109,7 @@ const Settings: FunctionComponent = () => {
             placeholder="Paypal Name"
             onChange={(name) => setNewPaypalName(name.target.value)}
             value={newPaypalName}
+            withBubble={!paypalName}
           />
 
           <Button

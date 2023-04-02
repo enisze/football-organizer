@@ -46,7 +46,7 @@ export const OrganizerMenu: FunctionComponent = () => {
               {first + second}
             </AvatarFallback>
           </Avatar>
-          {!hasPaypalName && <NotificationBubble position="topRight" />}
+          {!hasPaypalName && <NotificationBubble />}
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -66,7 +66,7 @@ export const OrganizerMenu: FunctionComponent = () => {
         <DropdownMenuItem>
           <div className="relative flex w-full">
             <Link href={'/settings'}>Einstellungen</Link>
-            {!hasPaypalName && <NotificationBubble position="topRight" />}
+            {!hasPaypalName && <NotificationBubble />}
           </div>
         </DropdownMenuItem>
         <Separator />

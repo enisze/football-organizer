@@ -1,3 +1,4 @@
+import { NotificationBubble } from '@/src/components/NotificationBubble'
 import { Label } from '@radix-ui/react-label'
 import { InfoIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
@@ -10,10 +11,11 @@ type TextFieldProps = InputProps & {
   text: string
   label: string
   infoContent?: ReactNode
+  withBubble?: boolean
 }
 
 const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
-  ({ label, text, infoContent, ...props }, ref) => {
+  ({ label, text, infoContent, withBubble, ...props }, ref) => {
     const [showInfo, setShowInfo] = useState(false)
 
     return (
@@ -39,7 +41,10 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
             </HoverCard>
           )}
         </div>
-        <Input ref={ref} {...props} />
+        <div className="relative">
+          <Input ref={ref} {...props} />
+          {withBubble && <NotificationBubble className="right-2 top-3" />}
+        </div>
         <p className="text-sm text-red-500/90">{text}</p>
       </div>
     )
