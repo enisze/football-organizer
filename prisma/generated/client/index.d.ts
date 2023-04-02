@@ -13140,6 +13140,7 @@ export namespace Prisma {
 
   export type TokensWhereUniqueInput = {
     id?: string
+    refresh_token?: string
   }
 
   export type TokensOrderByWithAggregationInput = {
