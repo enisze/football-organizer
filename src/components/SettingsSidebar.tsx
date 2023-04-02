@@ -17,7 +17,7 @@ export const SettingsSidebar: FunctionComponent = () => {
         <div className="relative flex">
           <span>Accounteinstellungen </span>
 
-          {!hasPaypalName && <NotificationBubble className="-right-3" />}
+          {!hasPaypalName && <NotificationBubble className="!-right-3" />}
         </div>
       </OrganizerLink>
       <OrganizerLink href={'/settings/groups'} className={''}>
