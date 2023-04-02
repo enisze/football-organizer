@@ -88,8 +88,19 @@ export const userRouter = router({
         where: { email: input.email },
       })
 
-      console.log(user)
-
       return Boolean(user)
+    }),
+
+  updatePaypalName: publicProcedure
+    .input(z.object({ name: z.string() }))
+    .mutation(async ({ input, ctx: { prisma, session } }) => {
+      const { name } = input
+      const id = session?.user?.id
+      if (!id) throw new TRPCError({ code: 'UNAUTHORIZED' })
+
+      return await prisma.user.update({
+        where: { id },
+        data: { paypalName: name },
+      })
     }),
 })

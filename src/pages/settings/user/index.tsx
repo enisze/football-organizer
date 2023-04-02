@@ -1,4 +1,5 @@
 import { SpecificSettings } from '@/src/components/SettingsSidebar'
+import { useToast } from '@/src/hooks/useToast'
 import { Button } from '@/ui/base/Button'
 import { Label } from '@/ui/base/Label'
 import { Separator } from '@/ui/base/Separator'
@@ -7,7 +8,7 @@ import { TextField } from '@/ui/base/TextField'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import type { FunctionComponent } from 'react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { LoadingWrapper } from '../../../components/LoadingWrapper'
 import Navbar from '../../../components/Navigation/Navbar'
@@ -17,14 +18,25 @@ const Settings: FunctionComponent = () => {
   const { data } = useSession()
   const userId = data?.user?.id
   const userName = data?.user?.name
+  const paypalName = data?.user?.paypalName
 
   const [userNameForDeletion, setUserNameForDeletion] = useState('')
+
+  const [newPaypalName, setNewPaypalName] = useState('')
+
+  useEffect(() => {
+    if (paypalName) {
+      setNewPaypalName(paypalName)
+    }
+  }, [paypalName])
 
   const userCanBeDeleted = useMemo(() => {
     return userNameForDeletion === userName
   }, [userNameForDeletion, userName])
 
   const router = useRouter()
+
+  const { toast } = useToast()
 
   const trpcContext = trpc.useContext()
 
@@ -40,7 +52,15 @@ const Settings: FunctionComponent = () => {
       },
     })
 
-  const { mutate: deleteUser } = trpc.user.delete.useMutation({})
+  const { mutate: deleteUser } = trpc.user.delete.useMutation()
+
+  const { mutate: updatePaypalName } = trpc.user.updatePaypalName.useMutation({
+    onSuccess: () => {
+      toast({
+        title: 'Paypal Name wurde geändert',
+      })
+    },
+  })
 
   if (!userId) {
     // window.location.replace('/')
@@ -73,6 +93,31 @@ const Settings: FunctionComponent = () => {
               />
             </LoadingWrapper>
           </div>
+
+          <TextField
+            id="user-name-input"
+            type="text"
+            label={`Paypal Name`}
+            text=""
+            infoContent={
+              <div>
+                Du solltest deinen Paypal namen spezifizieren, damit dein
+                Bezahlstatus korrekt angezeigt wird.
+              </div>
+            }
+            placeholder="Paypal Name"
+            onChange={(name) => setNewPaypalName(name.target.value)}
+            value={newPaypalName}
+          />
+
+          <Button
+            onClick={() => {
+              updatePaypalName({ name: newPaypalName })
+            }}
+            className="w-fit"
+          >
+            Speichern
+          </Button>
           <TextField
             id="user-name-input"
             type="text"

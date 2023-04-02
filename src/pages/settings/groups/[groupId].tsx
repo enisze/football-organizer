@@ -16,7 +16,7 @@ import { useSession } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 
-import { Group } from '@/prisma/generated/client'
+import type { Group } from '@/prisma/generated/client'
 import { AddEventForm } from '@/src/components/Events/AddEventForm'
 import { selectedGroupAtom } from '@/src/components/Groups/GroupSelector'
 import Navbar from '@/src/components/Navigation/Navbar'
@@ -49,6 +49,12 @@ const GroupSettings: FunctionComponent = () => {
 
   const groupName = groupData?.group?.name ?? ''
 
+  useEffect(() => {
+    if (groupName) {
+      setGroupnameEdit(groupName)
+    }
+  }, [groupName])
+
   const [groupNameForDeletion, setGroupNameForDeletion] = useState('')
   const { toast } = useToast()
 
@@ -65,9 +71,7 @@ const GroupSettings: FunctionComponent = () => {
     { enabled: Boolean(groupId) },
   )
 
-  const [groupNameEdit, setGroupnameEdit] = useState<string | undefined>(
-    groupData?.group?.name,
-  )
+  const [groupNameEdit, setGroupnameEdit] = useState<string>()
 
   const groupCanBeDeleted = useMemo(() => {
     return groupNameForDeletion === groupName
