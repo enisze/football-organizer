@@ -18,8 +18,6 @@ export const sendPaymentAndEventReminderEmails = async ({
 }: {
   id: string
 }) => {
-  const allUsers = await prisma.user.findMany()
-
   const event = await prisma.event.findUnique({
     where: { id },
     include: { participants: true, payments: true },
@@ -29,6 +27,21 @@ export const sendPaymentAndEventReminderEmails = async ({
     return {
       message: 'No event',
     }
+
+  const usersOnGroup = await prisma.userOnGroups.findMany({
+    where: { groupId: event.groupId ?? '' },
+  })
+
+  if (!usersOnGroup)
+    return {
+      message: `No users found`,
+    }
+
+  const usersOfGroup = await Promise.all(
+    usersOnGroup.map(async (user) => {
+      return await prisma.user.findUnique({ where: { id: user.id } })
+    }),
+  )
 
   const { participants } = event
 
@@ -46,9 +59,10 @@ export const sendPaymentAndEventReminderEmails = async ({
   const usersEventReminder: string[] = []
   const usersPaymentReminder: string[] = []
 
-  const promises = allUsers
-    .filter((user) => user.notificationsEnabled)
+  const promises = usersOfGroup
+    .filter((user) => user?.notificationsEnabled)
     .map(async (user) => {
+      if (!user) return
       //Did not interact with the event at all
       if (
         !joinedParticipantIds.includes(user.id) &&
