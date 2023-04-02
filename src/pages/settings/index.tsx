@@ -9,10 +9,12 @@ const Settings: FunctionComponent = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window && window.innerWidth > 768) {
+      if (window && window.innerWidth > 768 && router.isReady) {
         router.push('/settings/user')
       }
     }
+
+    handleResize()
     window.addEventListener('resize', handleResize)
 
     return () => window.removeEventListener('resize', handleResize)
