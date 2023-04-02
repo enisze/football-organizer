@@ -56,6 +56,7 @@ const Settings: FunctionComponent = () => {
 
   const { mutate: updatePaypalName } = trpc.user.updatePaypalName.useMutation({
     onSuccess: () => {
+      trpcContext.invalidate()
       toast({
         title: 'Paypal Name wurde geändert',
       })

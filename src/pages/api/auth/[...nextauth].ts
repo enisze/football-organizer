@@ -84,7 +84,19 @@ export const authOptions: NextAuthOptions = {
     async signIn({}) {
       return true
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
+      const id = token.id
+
+      let dbUser
+      if (!user) {
+        dbUser = await prisma.user.findUnique({ where: { id } })
+
+        if (dbUser) {
+          token.id = dbUser?.id
+          token.role = dbUser?.role
+          token.paypalName = dbUser?.paypalName
+        }
+      }
       if (user) {
         token.id = user.id
         token.role = user.role
