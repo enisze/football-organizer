@@ -84,8 +84,6 @@ export const gmailRouter = router({
           token_type: 'access_token',
         })
 
-        console.log('here')
-
         const gmail = google.gmail({ version: 'v1', auth: oAuth2Client })
 
         const { data } = await gmail.users.messages.list({

@@ -3,17 +3,9 @@ import { trpc } from '../../utils/trpc'
 
 import { OrganizerLink } from '@/ui/base/OrganizerLink'
 import { useAtomValue } from 'jotai'
-import type {
-  Event,
-  ParticipantsOnEvents,
-} from '../../../prisma/generated/client'
 import { EventCard } from '../Events/EventCard'
 import { GroupSelector, selectedGroupAtom } from '../Groups/GroupSelector'
 import { LoadingWrapper } from '../LoadingWrapper'
-
-type EventsWithparticipants =
-  | (Event & { participants: ParticipantsOnEvents[] })[]
-  | undefined
 
 export const Dashboard: FunctionComponent = () => {
   return (
@@ -37,8 +29,6 @@ const EventList: FunctionComponent = () => {
     trpc.group.getGroupsOfUser.useQuery({
       owned: false,
     })
-
-  console.log(groups)
 
   return (
     <div className="flex flex-col gap-y-3 justify-center items-center">

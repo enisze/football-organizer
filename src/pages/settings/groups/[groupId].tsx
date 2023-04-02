@@ -47,8 +47,6 @@ const GroupSettings: FunctionComponent = () => {
     },
   )
 
-  console.log(groupData)
-
   const groupName = groupData?.group?.name ?? ''
 
   useEffect(() => {
