@@ -47,6 +47,8 @@ const GroupSettings: FunctionComponent = () => {
     },
   )
 
+  console.log(groupData)
+
   const groupName = groupData?.group?.name ?? ''
 
   useEffect(() => {
@@ -153,7 +155,9 @@ const GroupSettings: FunctionComponent = () => {
               <Button
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    'https://localhost:3000/groups/addToGroup/' + token,
+                    process.env.NEXT_PUBLIC_BASE_URL +
+                      '/groups/addToGroup/' +
+                      token,
                   )
                 }}
                 className="w-fit"
