@@ -13465,7 +13465,6 @@ export namespace Prisma {
 
   export type UserWhereUniqueInput = {
     id?: string
-    name?: string
     email?: string
   }
 

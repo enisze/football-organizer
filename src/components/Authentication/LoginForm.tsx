@@ -40,7 +40,7 @@ export const LoginForm: FunctionComponent<{ onSubmit?: () => void }> = ({
 
   const [password, setPassword] = useState('')
 
-  const [userName, setUserName] = useState('')
+  const [username, setUsername] = useState('')
 
   const [authenticationError, setAuthenticationError] = useState('')
 
@@ -49,11 +49,13 @@ export const LoginForm: FunctionComponent<{ onSubmit?: () => void }> = ({
       redirect: false,
       email,
       password,
-      userName,
+      username,
     })
 
     if (res?.error) {
-      setAuthenticationError('Die angegebenen Daten sind inkorrekt.')
+      setAuthenticationError(
+        'Die angegebenen Daten sind inkorrekt. Falls du eine andere Loginvariante genutzt hast, nutze bitte diese.',
+      )
       return
     }
     onSubmit?.()
@@ -93,8 +95,8 @@ export const LoginForm: FunctionComponent<{ onSubmit?: () => void }> = ({
           placeholder="name"
           type="text"
           text=""
-          value={userName}
-          onChange={(val) => setUserName(val.target.value)}
+          value={username}
+          onChange={(val) => setUsername(val.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               submit()
@@ -103,7 +105,7 @@ export const LoginForm: FunctionComponent<{ onSubmit?: () => void }> = ({
         />
       )}
 
-      <div className="h-5">
+      <div className="">
         <span className="text-red-500 h-20">{authenticationError}</span>
       </div>
 
@@ -137,7 +139,7 @@ export const LoginForm: FunctionComponent<{ onSubmit?: () => void }> = ({
               theme === 'dark' ? discordStyles.textDark : discordStyles.text,
           }}
         />
-        <span className="font-bold">Sign in with Discord</span>
+        <span className="font-bold">Login mit Discord</span>
       </button>
     </div>
   )

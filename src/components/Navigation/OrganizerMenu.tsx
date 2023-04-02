@@ -12,6 +12,7 @@ import { useRouter } from 'next/router'
 import type { FunctionComponent } from 'react'
 import { useIsAdmin } from '../../hooks/useIsAdmin'
 import { trpc } from '../../utils/trpc'
+import { NotificationBubble } from '../NotificationBubble'
 
 export const OrganizerMenu: FunctionComponent = () => {
   const isAdmin = useIsAdmin()
@@ -29,6 +30,8 @@ export const OrganizerMenu: FunctionComponent = () => {
 
   if (!userData) return null
 
+  const hasPaypalName = Boolean(userData?.user?.paypalName)
+
   const res = userData?.user?.name?.split(' ')
 
   const first = res ? res[0]?.charAt(0) ?? 'X' : 'X'
@@ -37,11 +40,14 @@ export const OrganizerMenu: FunctionComponent = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center justify-between gap-x-2">
-        <Avatar className="flex items-center justify-center border-[1px] ">
-          <AvatarFallback className="bg-white dark:bg-slate-900">
-            {first + second}
-          </AvatarFallback>
-        </Avatar>
+        <div className="relative flex">
+          <Avatar className="flex items-center justify-center border-[1px]">
+            <AvatarFallback className="bg-white dark:bg-slate-900">
+              {first + second}
+            </AvatarFallback>
+          </Avatar>
+          {!hasPaypalName && <NotificationBubble position="topRight" />}
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem>{userData?.user?.name}</DropdownMenuItem>
@@ -58,7 +64,10 @@ export const OrganizerMenu: FunctionComponent = () => {
         )}
 
         <DropdownMenuItem>
-          <Link href={'/settings'}>Einstellungen</Link>
+          <div className="relative flex w-full">
+            <Link href={'/settings'}>Einstellungen</Link>
+            {!hasPaypalName && <NotificationBubble position="topRight" />}
+          </div>
         </DropdownMenuItem>
         <Separator />
         <DropdownMenuItem

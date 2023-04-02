@@ -1,6 +1,7 @@
 import type { FunctionComponent } from 'react'
 import { trpc } from '../../utils/trpc'
 
+import { OrganizerLink } from '@/ui/base/OrganizerLink'
 import { useAtomValue } from 'jotai'
 import type {
   Event,
@@ -15,44 +16,63 @@ type EventsWithparticipants =
   | undefined
 
 export const Dashboard: FunctionComponent = () => {
+  return (
+    <div className="m-8 flex flex-col items-center justify-center">
+      <EventList />
+    </div>
+  )
+}
+
+const EventList: FunctionComponent = () => {
   const groupId = useAtomValue(selectedGroupAtom)
 
   const { data: events, isLoading } = trpc.event.getAllByGroup.useQuery({
     groupId: groupId ?? '',
   })
 
-  return (
-    <div className="m-8 flex flex-col items-center justify-center">
-      <EventList events={events} isLoading={isLoading} />
-    </div>
-  )
-}
+  const { data: groups, isLoading: groupsLoading } =
+    trpc.group.getGroupsOfUser.useQuery({
+      owned: false,
+    })
 
-const EventList: FunctionComponent<{
-  events: EventsWithparticipants
-  isLoading: boolean
-}> = ({ events, isLoading }) => {
   return (
     <div className="flex flex-col gap-y-3 justify-center items-center">
-      <GroupSelector />
-      <LoadingWrapper isLoading={isLoading}>
-        <ul className="flex flex-col gap-y-2">
-          {events && events?.length > 0 ? (
-            events.map((event) => {
-              const { participants, ...realEvent } = event
-              return (
-                <li key={realEvent.id}>
-                  <EventCard event={realEvent} participants={participants} />
-                </li>
-              )
-            })
-          ) : (
-            <div className="flex justify-center">
-              <span>Keine Events</span>
-            </div>
-          )}
-        </ul>
-      </LoadingWrapper>
+      {groups && groups?.length > 1 && (
+        <>
+          <GroupSelector />
+
+          <LoadingWrapper isLoading={isLoading}>
+            <ul className="flex flex-col gap-y-2">
+              {events && events?.length > 0 ? (
+                events.map((event) => {
+                  const { participants, ...realEvent } = event
+                  return (
+                    <li key={realEvent.id}>
+                      <EventCard
+                        event={realEvent}
+                        participants={participants}
+                      />
+                    </li>
+                  )
+                })
+              ) : (
+                <div className="flex justify-center">
+                  <span>Keine Events</span>
+                </div>
+              )}
+            </ul>
+          </LoadingWrapper>
+        </>
+      )}
+      {groups && groups?.length < 1 && (
+        <div className="flex flex-col justify-center">
+          <span>Du bist noch kein Mitglied einer Gruppe</span>
+
+          <OrganizerLink href="/settings/groups" className="justify-center">
+            Grupper erstellen
+          </OrganizerLink>
+        </div>
+      )}
     </div>
   )
 }
