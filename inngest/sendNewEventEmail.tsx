@@ -32,7 +32,7 @@ export const sendNewEventEmail = async ({ event }: { event: Event }) => {
         sendSmptMail.htmlContent = html
         sendSmptMail.sender = {
           email: 'eniszej@gmail.com',
-          name: 'Football Organizer',
+          name: 'Event Wizard',
         }
         sendSmptMail.subject = `NEUES FUSSBALL EVENT: In ${days} Tagen`
 

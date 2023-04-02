@@ -65,10 +65,12 @@ export const paymentRouter = router({
         where: { eventId, userId: session.user.id },
       })
     }),
-  getUserBalance: protectedProcedure.query(
-    async ({ ctx: { prisma, session } }) => {
+  getUserBalance: protectedProcedure
+    .input(z.object({ groupId: z.string() }))
+    .query(async ({ ctx: { prisma, session }, input }) => {
       const events = await prisma.event.findMany({
         where: {
+          groupId: input.groupId,
           participants: { some: { id: session.user.id } },
         },
         include: { payments: true },
@@ -86,24 +88,19 @@ export const paymentRouter = router({
           (payment) => payment.userId === session.user.id,
         )
 
-        if (!event) return acc
-
-        const cost: number = event?.cost / event.maxParticipants
+        const cost: number = event.cost / event.maxParticipants
 
         if (userEvent.userEventStatus === 'JOINED') {
-          if (payment) return acc
           if (!payment) return acc - cost
         }
         if (userEvent.userEventStatus === 'CANCELED') {
           if (payment) return acc + cost
-          if (!payment) return acc
         }
         return acc
       }, 0)
 
       return balance
-    },
-  ),
+    }),
   getAllPaymentsForEventFromNotParticipants: protectedProcedure
     .input(
       z.object({
@@ -132,7 +129,6 @@ export const paymentRouter = router({
                   })
                   return { ...payment, user }
                 }
-                return undefined
               })
               .filter((x) => Boolean(x))
           : [],

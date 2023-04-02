@@ -13,7 +13,7 @@ export const sendWelcomeMail = async (user: User | null) => {
   sendSmptMail.htmlContent = html
   sendSmptMail.sender = {
     email: 'eniszej@gmail.com',
-    name: 'Football Organizer',
+    name: 'Event Wizard',
   }
   sendSmptMail.subject = 'Erfolgreich Registriert :)'
 

@@ -1,3 +1,4 @@
+import { sendGroupRequestEmail } from '@/inngest/sendGroupRequestEmail'
 import { sendPaidButCanceledMail } from '@/inngest/sendPaidButCanceledMail'
 import { sendPaymentAndEventReminderEmails } from '@/inngest/sendPaymentAndEventReminderEmails'
 import { sendWelcomeMail } from '@/inngest/sendWelcomeMail'
@@ -9,7 +10,7 @@ import type { gmail_v1 } from 'googleapis'
 import { google } from 'googleapis'
 import { z } from 'zod'
 
-import { protectedProcedure, router } from '../trpc'
+import { protectedProcedure, rateLimitedProcedure, router } from '../trpc'
 
 const credentials: OAuth2ClientOptions = {
   clientId: process.env.GMAIL_CLIENT_ID,
@@ -36,24 +37,25 @@ export const gmailRouter = router({
 
   setToken: protectedProcedure
     .input(z.object({ code: z.string() }))
-    .query(async ({ input: { code }, ctx: { prisma } }) => {
+    .query(async ({ input: { code }, ctx: { prisma, session } }) => {
       const { tokens } = await oAuth2Client.getToken(code)
 
       const { expiry_date, access_token, refresh_token } = tokens
 
-      if (!expiry_date || !refresh_token || !access_token)
+      if (!expiry_date || !refresh_token || !access_token || !session.user.id)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Access revoked',
         })
 
-      await prisma.tokens.deleteMany()
+      await prisma.tokens.deleteMany({ where: { ownerId: session.user.id } })
 
       return await prisma.tokens.create({
         data: {
           expiry_date: new Date(expiry_date),
           access_token,
           refresh_token,
+          ownerId: session.user.id,
         },
       })
     }),
@@ -92,15 +94,13 @@ export const gmailRouter = router({
         })
 
         const result = await Promise.all(
-          data.messages
-            ? data.messages?.map(async (label) => {
-                const res = await gmail.users.messages.get({
-                  userId: 'me',
-                  id: label.id ?? undefined,
-                })
-                return res.data
-              })
-            : [],
+          data.messages?.map(async (message) => {
+            const res = await gmail.users.messages.get({
+              userId: 'me',
+              id: message.id ?? undefined,
+            })
+            return res.data
+          }) ?? [],
         )
 
         if (!result)
@@ -135,7 +135,12 @@ export const gmailRouter = router({
         where: { id: session.user.id },
       })
 
-      return await sendPaidButCanceledMail(event, user)
+      const group = await prisma.group.findUnique({
+        where: { id: event?.groupId ?? '' },
+        include: { owner: { select: { email: true, name: true } } },
+      })
+
+      return await sendPaidButCanceledMail(event, user, group?.owner ?? null)
     }),
   sendWelcomeMail: protectedProcedure.mutation(
     async ({ ctx: { prisma, session } }) => {
@@ -146,6 +151,11 @@ export const gmailRouter = router({
       return await sendWelcomeMail(user)
     },
   ),
+  sendGroupRequestMail: rateLimitedProcedure
+    .input(z.object({ email: z.string().email() }))
+    .mutation(async ({ ctx: { req }, input: { email } }) => {
+      return await sendGroupRequestEmail({ requester: email })
+    }),
   sendPaymentAndEventReminder: protectedProcedure
     .input(z.object({ eventId: z.string() }))
     .mutation(async ({ input }) => {

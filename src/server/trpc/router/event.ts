@@ -18,6 +18,7 @@ export const eventRouter = router({
           endTime: z.string(),
           cost: z.number(),
           maxParticipants: z.number(),
+          groupId: z.string(),
         })
         .nullish(),
     )
@@ -32,12 +33,19 @@ export const eventRouter = router({
 
       return event
     }),
-  getAll: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.event.findMany({
-      take: 10,
-      include: { participants: true },
-    })
-  }),
+  getAllByGroup: protectedProcedure
+    .input(
+      z.object({
+        groupId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { groupId } = input
+      return await ctx.prisma.event.findMany({
+        where: { groupId },
+        include: { participants: true },
+      })
+    }),
   getById: protectedProcedure
     .input(
       z.object({

@@ -12,9 +12,15 @@ datasource db {
 }
 
 model Tokens {
+
+  id            String                 @id @default(cuid())
   access_token  String   @db.Text
-  refresh_token String   @id
+  refresh_token String   @unique 
   expiry_date   DateTime
+  ownerId       String   
+  user          User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
 }
 
 model Event {
@@ -31,6 +37,10 @@ model Event {
   maxParticipants Int                    @default(10)
   payments        Payment[]
   participants    ParticipantsOnEvents[]
+  Group           Group?                 @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId         String?
+
+  @@index([groupId])
 }
 
 model ParticipantsOnEvents {
@@ -42,6 +52,8 @@ model ParticipantsOnEvents {
   event           Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@id([id, eventId])
+  @@index([id])
+  @@index([eventId])
 }
 
 model Payment {
@@ -55,6 +67,9 @@ model Payment {
   gmailMailId String
   event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@index([userId])
 }
 
 model Account {
@@ -73,6 +88,7 @@ model Account {
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -81,22 +97,54 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Group {
+  id           String         @id @default(cuid())
+  ownerId      String
+  name         String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  events       Event[]
+  users        UserOnGroups[]
+  pricingModel PricingModel   @default(FREE)
+  owner        User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
 }
 
 model User {
   id                   String                 @id @default(cuid())
-  name                 String                 @unique
+  name                 String
   email                String                 @unique
   emailVerified        DateTime?
   image                String?
-  role                 String
+  role                 String                 @default("user")
   createdAt            DateTime               @default(now())
-  password             String
+  password             String?
   notificationsEnabled Boolean                @default(true)
+  paypalName           String?
   accounts             Account[]
   sessions             Session[]
   payments             Payment[]
   events               ParticipantsOnEvents[]
+  groups               UserOnGroups[]
+  ownedGroups          Group[]
+  Tokens               Tokens[]
+}
+
+model UserOnGroups {
+  id      String
+  groupId String
+  role    GroupRole @default(USER)
+  user    User      @relation(fields: [id], references: [id], onDelete: Cascade)
+  group   Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@id([id, groupId])
+  @@index([id])
+  @@index([groupId])
 }
 
 model VerificationToken {
@@ -131,6 +179,12 @@ model edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl {
   @@map("_4edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl")
 }
 
+enum GroupRole {
+  OWNER
+  ADMIN
+  USER
+}
+
 enum EventStatus {
   CANCELED
   CREATED
@@ -142,4 +196,10 @@ enum UserEventStatus {
   AVAILABLE
   JOINED
   CANCELED
+}
+
+enum PricingModel {
+  FREE
+  SUPPORTER
+  PREMIUM
 }

@@ -135,7 +135,17 @@ exports.Prisma.EventScalarFieldEnum = makeEnum({
   bookingDate: 'bookingDate',
   cost: 'cost',
   status: 'status',
-  maxParticipants: 'maxParticipants'
+  maxParticipants: 'maxParticipants',
+  groupId: 'groupId'
+});
+
+exports.Prisma.GroupScalarFieldEnum = makeEnum({
+  id: 'id',
+  ownerId: 'ownerId',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  pricingModel: 'pricingModel'
 });
 
 exports.Prisma.ParticipantsOnEventsScalarFieldEnum = makeEnum({
@@ -169,9 +179,11 @@ exports.Prisma.SortOrder = makeEnum({
 });
 
 exports.Prisma.TokensScalarFieldEnum = makeEnum({
+  id: 'id',
   access_token: 'access_token',
   refresh_token: 'refresh_token',
-  expiry_date: 'expiry_date'
+  expiry_date: 'expiry_date',
+  ownerId: 'ownerId'
 });
 
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
@@ -179,6 +191,12 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   ReadCommitted: 'ReadCommitted',
   RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
+});
+
+exports.Prisma.UserOnGroupsScalarFieldEnum = makeEnum({
+  id: 'id',
+  groupId: 'groupId',
+  role: 'role'
 });
 
 exports.Prisma.UserScalarFieldEnum = makeEnum({
@@ -190,7 +208,8 @@ exports.Prisma.UserScalarFieldEnum = makeEnum({
   role: 'role',
   createdAt: 'createdAt',
   password: 'password',
-  notificationsEnabled: 'notificationsEnabled'
+  notificationsEnabled: 'notificationsEnabled',
+  paypalName: 'paypalName'
 });
 
 exports.Prisma.VerificationTokenScalarFieldEnum = makeEnum({
@@ -202,6 +221,18 @@ exports.EventStatus = makeEnum({
   CANCELED: 'CANCELED',
   CREATED: 'CREATED',
   BOOKED: 'BOOKED'
+});
+
+exports.GroupRole = makeEnum({
+  OWNER: 'OWNER',
+  ADMIN: 'ADMIN',
+  USER: 'USER'
+});
+
+exports.PricingModel = makeEnum({
+  FREE: 'FREE',
+  SUPPORTER: 'SUPPORTER',
+  PREMIUM: 'PREMIUM'
 });
 
 exports.UserEventStatus = makeEnum({
@@ -218,7 +249,9 @@ exports.Prisma.ModelName = makeEnum({
   Payment: 'Payment',
   Account: 'Account',
   Session: 'Session',
+  Group: 'Group',
   User: 'User',
+  UserOnGroups: 'UserOnGroups',
   VerificationToken: 'VerificationToken',
   d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl: 'd6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl',
   edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl: 'edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl'

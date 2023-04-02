@@ -31,7 +31,9 @@ const LogoutButton: FunctionComponent = () => {
     <Button
       aria-label="signout"
       className="px-4 py-2"
-      onClick={async () => await signOut()}
+      onClick={async () => {
+        await signOut({ callbackUrl: '/' })
+      }}
     >
       Ausloggen
     </Button>

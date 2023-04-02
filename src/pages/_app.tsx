@@ -6,6 +6,7 @@ import { Inter as FontSans } from '@next/font/google'
 import { trpc } from '../utils/trpc'
 
 import '@/styles/globals.css'
+import { Toaster } from '@/ui/base/Toaster'
 import { ThemeProvider } from 'next-themes'
 
 const fontSans = FontSans({
@@ -30,6 +31,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       `}</style>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <SessionProvider session={session}>
+          <Toaster />
           <Component {...pageProps} />
         </SessionProvider>
       </ThemeProvider>

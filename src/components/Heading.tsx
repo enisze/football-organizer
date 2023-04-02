@@ -16,10 +16,26 @@ export const Heading: FunctionComponent<{
         <span
           className={`cursor-pointer font-extrabold leading-normal ${fontSize} bg-gradient-to-r from-blue-400 to-blue-200 bg-clip-text text-transparent dark:from-blue-800 dark:to-slate-800`}
         >
-          Football
-          <span className="text-slate-900 dark:text-slate-100"> Organizer</span>
+          Event
+          <span className="text-slate-900 dark:text-slate-100"> Wizard</span>
         </span>
       </div>
     </Link>
+  )
+}
+
+export const Hero: FunctionComponent = () => {
+  return (
+    <div className="text-center p-5 flex-col">
+      <span className="text-3xl md:text-6xl text-slate-900 dark:text-slate-100 font-extrabold">
+        Events organisieren wie von&nbsp;
+        <span
+          className={`leading-normal bg-gradient-to-r from-yellow-400 to-yellow-200 bg-clip-text text-transparent dark:from-yellow-200 dark:to-yellow-800/80`}
+        >
+          Zauberhand&nbsp;
+        </span>
+        🪄
+      </span>
+    </div>
   )
 }

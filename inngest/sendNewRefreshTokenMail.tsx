@@ -3,17 +3,24 @@ import { render } from '@react-email/render'
 import { SendSmtpEmail } from '@sendinblue/client'
 import apiInstance from '../src/emails/transporter'
 
-export const sendNewRefreshTokenMail = async ({ link }: { link: string }) => {
-  //TODO: send username of the owner of the group here
-  const html = render(<NewRefreshToken link={link} userName="" />)
+export const sendNewRefreshTokenMail = async ({
+  link,
+  email,
+  name,
+}: {
+  link: string
+  email: string
+  name: string
+}) => {
+  const html = render(<NewRefreshToken link={link} userName={name} />)
 
   const sendSmptMail = new SendSmtpEmail()
 
-  sendSmptMail.to = [{ email: 'eniszej@gmail.com' }]
+  sendSmptMail.to = [{ email }]
   sendSmptMail.htmlContent = html
   sendSmptMail.sender = {
     email: 'eniszej@gmail.com',
-    name: 'Football Organizer',
+    name: 'Event Wizard',
   }
   sendSmptMail.subject = 'Neues Refresh Token benötigt'
 
