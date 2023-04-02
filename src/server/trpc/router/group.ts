@@ -32,8 +32,8 @@ export const groupRouter = router({
         id: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
-      const res = await ctx.prisma.group.findUnique({
+    .query(async ({ ctx: { prisma }, input }) => {
+      const res = await prisma.group.findUnique({
         where: { id: input.id },
         include: { users: true },
       })
@@ -41,7 +41,7 @@ export const groupRouter = router({
       const users = await Promise.all(
         res
           ? res?.users.map((user) => {
-              return prisma?.user.findUnique({ where: { id: user.id } })
+              return prisma.user.findUnique({ where: { id: user.id } })
             })
           : [],
       ).then((data) => {
