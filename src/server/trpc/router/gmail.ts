@@ -135,7 +135,12 @@ export const gmailRouter = router({
         where: { id: session.user.id },
       })
 
-      return await sendPaidButCanceledMail(event, user)
+      const group = await prisma.group.findUnique({
+        where: { id: event?.groupId ?? '' },
+        include: { owner: { select: { email: true, name: true } } },
+      })
+
+      return await sendPaidButCanceledMail(event, user, group?.owner ?? null)
     }),
   sendWelcomeMail: protectedProcedure.mutation(
     async ({ ctx: { prisma, session } }) => {

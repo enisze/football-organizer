@@ -1,8 +1,8 @@
+import { useToast } from '@/src/hooks/useToast'
 import { trpc } from '@/src/utils/trpc'
 import { Button } from '@/ui/base/Button'
 import { TextField } from '@/ui/base/TextField'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/router'
 import type { FunctionComponent } from 'react'
 import type { FieldValues } from 'react-hook-form'
 import { useForm } from 'react-hook-form'
@@ -18,23 +18,26 @@ export const NewGroup: FunctionComponent = () => {
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors },
   } = useForm({ resolver: zodResolver(newGroupSchema), mode: 'onBlur' })
 
   const trpcContext = trpc.useContext()
 
-  //TODO: set error and success
-
-  const router = useRouter()
+  const { toast } = useToast()
 
   const { mutate: createGroup } = trpc.group.create.useMutation({
-    onSuccess(data, variables, context) {
+    onSuccess(data) {
       trpcContext.invalidate()
-      const groupName = data.name
+      const groupName = data
+      toast({
+        title: `Gruppe ${groupName} erfolgreich erstellt`,
+      })
     },
-    onError(error, variables, context) {
-      console.log(error)
+    onError(error) {
+      toast({
+        title: 'Fehler beim Erstellen der Gruppe',
+        description: error.message,
+      })
     },
   })
 

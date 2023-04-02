@@ -6,12 +6,13 @@ import apiInstance from '../src/emails/transporter'
 export const sendNewRefreshTokenMail = async ({
   link,
   email,
+  name,
 }: {
   link: string
   email: string
+  name: string
 }) => {
-  //TODO: send username of the owner of the group here
-  const html = render(<NewRefreshToken link={link} userName="" />)
+  const html = render(<NewRefreshToken link={link} userName={name} />)
 
   const sendSmptMail = new SendSmtpEmail()
 

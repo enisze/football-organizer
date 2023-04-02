@@ -120,12 +120,14 @@ export const groupRouter = router({
           ownerId: id,
           users: { create: { id } },
         },
-        select: { id: true },
+        select: { id: true, name: true },
       })
 
-      return await prisma.userOnGroups.create({
+      await prisma.userOnGroups.create({
         data: { id, groupId: group.id, role: 'OWNER' },
       })
+
+      return group.name
     }),
   updateName: protectedProcedure
     .input(z.object({ id: z.string(), name: z.string() }))
