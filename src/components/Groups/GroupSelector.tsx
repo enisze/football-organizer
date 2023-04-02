@@ -7,7 +7,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/ui/base/Select'
-import { atom, useAtom } from 'jotai'
+import { atom } from 'jotai'
+import { useRouter } from 'next/router'
 import type { FunctionComponent } from 'react'
 import { useEffect, useRef } from 'react'
 import { LoadingWrapper } from '../LoadingWrapper'
@@ -20,15 +21,18 @@ export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
   const { data: groups, isLoading } = trpc.group.getGroupsOfUser.useQuery({
     owned: owned,
   })
-  const [group, setSelectedGroup] = useAtom(selectedGroupAtom)
+
+  const router = useRouter()
+
+  const group = router.query.groupId as string
 
   const isInitialGroupSet = useRef(false)
 
   useEffect(() => {
     if (isLoading || isInitialGroupSet.current) return
     isInitialGroupSet.current = true
-    setSelectedGroup(groups?.at(0)?.id)
-  }, [groups, group, isLoading, setSelectedGroup])
+    router.push(`/group/${groups?.at(0)?.id}`)
+  }, [groups, isLoading, router])
 
   return (
     <LoadingWrapper isLoading={isLoading}>
@@ -36,7 +40,7 @@ export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
       <Select
         value={group}
         onValueChange={(val) => {
-          setSelectedGroup(val)
+          router.push(`/group/${val}`)
         }}
       >
         <SelectTrigger className="w-[180px]">

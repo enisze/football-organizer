@@ -2,22 +2,13 @@ import type { FunctionComponent } from 'react'
 import { trpc } from '../../utils/trpc'
 
 import { OrganizerLink } from '@/ui/base/OrganizerLink'
-import { useAtomValue } from 'jotai'
 import { EventCard } from '../Events/EventCard'
-import { GroupSelector, selectedGroupAtom } from '../Groups/GroupSelector'
+import { GroupSelector } from '../Groups/GroupSelector'
 import { LoadingWrapper } from '../LoadingWrapper'
 
-export const Dashboard: FunctionComponent = () => {
-  return (
-    <div className="m-8 flex flex-col items-center justify-center">
-      <EventList />
-    </div>
-  )
-}
-
-const EventList: FunctionComponent = () => {
-  const groupId = useAtomValue(selectedGroupAtom)
-
+export const Dashboard: FunctionComponent<{ groupId?: string }> = ({
+  groupId,
+}) => {
   const { data: events, isLoading } = trpc.event.getAllByGroup.useQuery(
     {
       groupId: groupId ?? '',
@@ -31,32 +22,34 @@ const EventList: FunctionComponent = () => {
     })
 
   return (
-    <div className="flex flex-col gap-y-3 justify-center items-center">
+    <div className="m-8 flex flex-col gap-y-3 justify-center items-center">
       {groups && groups?.length > 0 && (
         <>
           <GroupSelector />
 
-          <LoadingWrapper isLoading={isLoading}>
-            <ul className="flex flex-col gap-y-2">
-              {events && events?.length > 0 ? (
-                events.map((event) => {
-                  const { participants, ...realEvent } = event
-                  return (
-                    <li key={realEvent.id}>
-                      <EventCard
-                        event={realEvent}
-                        participants={participants}
-                      />
-                    </li>
-                  )
-                })
-              ) : (
-                <div className="flex justify-center">
-                  <span>Keine Events</span>
-                </div>
-              )}
-            </ul>
-          </LoadingWrapper>
+          {groupId && (
+            <LoadingWrapper isLoading={isLoading}>
+              <ul className="flex flex-col gap-y-2">
+                {events && events?.length > 0 ? (
+                  events.map((event) => {
+                    const { participants, ...realEvent } = event
+                    return (
+                      <li key={realEvent.id}>
+                        <EventCard
+                          event={realEvent}
+                          participants={participants}
+                        />
+                      </li>
+                    )
+                  })
+                ) : (
+                  <div className="flex justify-center">
+                    <span>Keine Events</span>
+                  </div>
+                )}
+              </ul>
+            </LoadingWrapper>
+          )}
         </>
       )}
       {groups && groups?.length < 1 && (
