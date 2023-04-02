@@ -15,6 +15,7 @@ type UnwrapTuple<Tuple extends readonly unknown[]> = {
  * 
  */
 export type Tokens = {
+  id: string
   access_token: string
   refresh_token: string
   expiry_date: Date
@@ -1257,6 +1258,7 @@ export namespace Prisma {
   }
 
   export type TokensMinAggregateOutputType = {
+    id: string | null
     access_token: string | null
     refresh_token: string | null
     expiry_date: Date | null
@@ -1264,6 +1266,7 @@ export namespace Prisma {
   }
 
   export type TokensMaxAggregateOutputType = {
+    id: string | null
     access_token: string | null
     refresh_token: string | null
     expiry_date: Date | null
@@ -1271,6 +1274,7 @@ export namespace Prisma {
   }
 
   export type TokensCountAggregateOutputType = {
+    id: number
     access_token: number
     refresh_token: number
     expiry_date: number
@@ -1280,6 +1284,7 @@ export namespace Prisma {
 
 
   export type TokensMinAggregateInputType = {
+    id?: true
     access_token?: true
     refresh_token?: true
     expiry_date?: true
@@ -1287,6 +1292,7 @@ export namespace Prisma {
   }
 
   export type TokensMaxAggregateInputType = {
+    id?: true
     access_token?: true
     refresh_token?: true
     expiry_date?: true
@@ -1294,6 +1300,7 @@ export namespace Prisma {
   }
 
   export type TokensCountAggregateInputType = {
+    id?: true
     access_token?: true
     refresh_token?: true
     expiry_date?: true
@@ -1375,6 +1382,7 @@ export namespace Prisma {
 
 
   export type TokensGroupByOutputType = {
+    id: string
     access_token: string
     refresh_token: string
     expiry_date: Date
@@ -1399,6 +1407,7 @@ export namespace Prisma {
 
 
   export type TokensSelect = {
+    id?: boolean
     access_token?: boolean
     refresh_token?: boolean
     expiry_date?: boolean
@@ -1513,8 +1522,8 @@ export namespace Prisma {
      * // Get first 10 Tokens
      * const tokens = await prisma.tokens.findMany({ take: 10 })
      * 
-     * // Only select the `access_token`
-     * const tokensWithAccess_tokenOnly = await prisma.tokens.findMany({ select: { access_token: true } })
+     * // Only select the `id`
+     * const tokensWithIdOnly = await prisma.tokens.findMany({ select: { id: true } })
      * 
     **/
     findMany<T extends TokensFindManyArgs>(
@@ -13049,6 +13058,7 @@ export namespace Prisma {
 
 
   export const TokensScalarFieldEnum: {
+    id: 'id',
     access_token: 'access_token',
     refresh_token: 'refresh_token',
     expiry_date: 'expiry_date',
@@ -13111,6 +13121,7 @@ export namespace Prisma {
     AND?: Enumerable<TokensWhereInput>
     OR?: Enumerable<TokensWhereInput>
     NOT?: Enumerable<TokensWhereInput>
+    id?: StringFilter | string
     access_token?: StringFilter | string
     refresh_token?: StringFilter | string
     expiry_date?: DateTimeFilter | Date | string
@@ -13119,6 +13130,7 @@ export namespace Prisma {
   }
 
   export type TokensOrderByWithRelationInput = {
+    id?: SortOrder
     access_token?: SortOrder
     refresh_token?: SortOrder
     expiry_date?: SortOrder
@@ -13127,10 +13139,11 @@ export namespace Prisma {
   }
 
   export type TokensWhereUniqueInput = {
-    refresh_token?: string
+    id?: string
   }
 
   export type TokensOrderByWithAggregationInput = {
+    id?: SortOrder
     access_token?: SortOrder
     refresh_token?: SortOrder
     expiry_date?: SortOrder
@@ -13144,6 +13157,7 @@ export namespace Prisma {
     AND?: Enumerable<TokensScalarWhereWithAggregatesInput>
     OR?: Enumerable<TokensScalarWhereWithAggregatesInput>
     NOT?: Enumerable<TokensScalarWhereWithAggregatesInput>
+    id?: StringWithAggregatesFilter | string
     access_token?: StringWithAggregatesFilter | string
     refresh_token?: StringWithAggregatesFilter | string
     expiry_date?: DateTimeWithAggregatesFilter | Date | string
@@ -13786,6 +13800,7 @@ export namespace Prisma {
   }
 
   export type TokensCreateInput = {
+    id?: string
     access_token: string
     refresh_token: string
     expiry_date: Date | string
@@ -13793,6 +13808,7 @@ export namespace Prisma {
   }
 
   export type TokensUncheckedCreateInput = {
+    id?: string
     access_token: string
     refresh_token: string
     expiry_date: Date | string
@@ -13800,6 +13816,7 @@ export namespace Prisma {
   }
 
   export type TokensUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     access_token?: StringFieldUpdateOperationsInput | string
     refresh_token?: StringFieldUpdateOperationsInput | string
     expiry_date?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13807,6 +13824,7 @@ export namespace Prisma {
   }
 
   export type TokensUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     access_token?: StringFieldUpdateOperationsInput | string
     refresh_token?: StringFieldUpdateOperationsInput | string
     expiry_date?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13814,6 +13832,7 @@ export namespace Prisma {
   }
 
   export type TokensCreateManyInput = {
+    id?: string
     access_token: string
     refresh_token: string
     expiry_date: Date | string
@@ -13821,12 +13840,14 @@ export namespace Prisma {
   }
 
   export type TokensUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     access_token?: StringFieldUpdateOperationsInput | string
     refresh_token?: StringFieldUpdateOperationsInput | string
     expiry_date?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TokensUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
     access_token?: StringFieldUpdateOperationsInput | string
     refresh_token?: StringFieldUpdateOperationsInput | string
     expiry_date?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14661,6 +14682,7 @@ export namespace Prisma {
   }
 
   export type TokensCountOrderByAggregateInput = {
+    id?: SortOrder
     access_token?: SortOrder
     refresh_token?: SortOrder
     expiry_date?: SortOrder
@@ -14668,6 +14690,7 @@ export namespace Prisma {
   }
 
   export type TokensMaxOrderByAggregateInput = {
+    id?: SortOrder
     access_token?: SortOrder
     refresh_token?: SortOrder
     expiry_date?: SortOrder
@@ -14675,6 +14698,7 @@ export namespace Prisma {
   }
 
   export type TokensMinOrderByAggregateInput = {
+    id?: SortOrder
     access_token?: SortOrder
     refresh_token?: SortOrder
     expiry_date?: SortOrder
@@ -17478,12 +17502,14 @@ export namespace Prisma {
   }
 
   export type TokensCreateWithoutUserInput = {
+    id?: string
     access_token: string
     refresh_token: string
     expiry_date: Date | string
   }
 
   export type TokensUncheckedCreateWithoutUserInput = {
+    id?: string
     access_token: string
     refresh_token: string
     expiry_date: Date | string
@@ -17655,6 +17681,7 @@ export namespace Prisma {
     AND?: Enumerable<TokensScalarWhereInput>
     OR?: Enumerable<TokensScalarWhereInput>
     NOT?: Enumerable<TokensScalarWhereInput>
+    id?: StringFilter | string
     access_token?: StringFilter | string
     refresh_token?: StringFilter | string
     expiry_date?: DateTimeFilter | Date | string
@@ -17991,6 +18018,7 @@ export namespace Prisma {
   }
 
   export type TokensCreateManyUserInput = {
+    id?: string
     access_token: string
     refresh_token: string
     expiry_date: Date | string
@@ -18138,18 +18166,21 @@ export namespace Prisma {
   }
 
   export type TokensUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
     access_token?: StringFieldUpdateOperationsInput | string
     refresh_token?: StringFieldUpdateOperationsInput | string
     expiry_date?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TokensUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
     access_token?: StringFieldUpdateOperationsInput | string
     refresh_token?: StringFieldUpdateOperationsInput | string
     expiry_date?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TokensUncheckedUpdateManyWithoutTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
     access_token?: StringFieldUpdateOperationsInput | string
     refresh_token?: StringFieldUpdateOperationsInput | string
     expiry_date?: DateTimeFieldUpdateOperationsInput | Date | string

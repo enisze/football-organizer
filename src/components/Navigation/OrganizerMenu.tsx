@@ -11,20 +11,14 @@ import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import type { FunctionComponent } from 'react'
-import { useIsAdmin } from '../../hooks/useIsAdmin'
 import { trpc } from '../../utils/trpc'
 import { selectedGroupAtom } from '../Groups/GroupSelector'
 import { NotificationBubble } from '../NotificationBubble'
 
 export const OrganizerMenu: FunctionComponent = () => {
-  const isAdmin = useIsAdmin()
   const { data: userData } = useSession()
 
   const router = useRouter()
-
-  const { data: link } = trpc.gmail.generateAuthLink.useQuery(undefined, {
-    enabled: isAdmin,
-  })
 
   const selectedGroupId = useAtomValue(selectedGroupAtom)
 
@@ -60,15 +54,6 @@ export const OrganizerMenu: FunctionComponent = () => {
         <DropdownMenuItem>{userData?.user?.name}</DropdownMenuItem>
         <DropdownMenuItem>Kontostand: {balance}€</DropdownMenuItem>
         <Separator />
-        {isAdmin && (
-          <DropdownMenuItem hidden={!isAdmin}>
-            {link ? (
-              <Link href={link}>New gmail token</Link>
-            ) : (
-              <div>No link</div>
-            )}
-          </DropdownMenuItem>
-        )}
 
         <DropdownMenuItem>
           <div className="relative flex w-full">

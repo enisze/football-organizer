@@ -37,24 +37,25 @@ export const gmailRouter = router({
 
   setToken: protectedProcedure
     .input(z.object({ code: z.string() }))
-    .query(async ({ input: { code }, ctx: { prisma } }) => {
+    .query(async ({ input: { code }, ctx: { prisma, session } }) => {
       const { tokens } = await oAuth2Client.getToken(code)
 
       const { expiry_date, access_token, refresh_token } = tokens
 
-      if (!expiry_date || !refresh_token || !access_token)
+      if (!expiry_date || !refresh_token || !access_token || !session.user.id)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Access revoked',
         })
 
-      await prisma.tokens.deleteMany()
+      await prisma.tokens.deleteMany({ where: { ownerId: session.user.id } })
 
       return await prisma.tokens.create({
         data: {
           expiry_date: new Date(expiry_date),
           access_token,
           refresh_token,
+          ownerId: session.user.id,
         },
       })
     }),

@@ -179,6 +179,7 @@ exports.Prisma.SortOrder = makeEnum({
 });
 
 exports.Prisma.TokensScalarFieldEnum = makeEnum({
+  id: 'id',
   access_token: 'access_token',
   refresh_token: 'refresh_token',
   expiry_date: 'expiry_date',

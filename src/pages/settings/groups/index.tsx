@@ -5,6 +5,7 @@ import { Container } from '@/ui/base/Container'
 import { OrganizerLink } from '@/ui/base/OrganizerLink'
 import { Separator } from '@/ui/base/Separator'
 import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 import type { FunctionComponent } from 'react'
 
 import Navbar from '../../../components/Navigation/Navbar'
@@ -15,6 +16,10 @@ const GroupSettings: FunctionComponent = () => {
 
   const { data: groups, isLoading } = trpc.group.getGroupsOfUser.useQuery({
     owned: true,
+  })
+
+  const { data: link } = trpc.gmail.generateAuthLink.useQuery(undefined, {
+    enabled: groups && groups?.length > 0,
   })
 
   if (!userId) {
@@ -51,6 +56,11 @@ const GroupSettings: FunctionComponent = () => {
               ))}
             </div>
           )}
+
+          <div className="p-4">
+            {link && <Link href={link}>Neues gmail token</Link>}
+          </div>
+          <Separator />
           {/*TODO: Proper management Limited to one group per user currently */}
           {showNewGroup ? (
             <NewGroup />

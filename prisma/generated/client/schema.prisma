@@ -12,10 +12,12 @@ datasource db {
 }
 
 model Tokens {
+
+  id            String                 @id @default(cuid())
   access_token  String   @db.Text
-  refresh_token String   @id
+  refresh_token String   
   expiry_date   DateTime
-  ownerId       String
+  ownerId       String   
   user          User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
   @@index([ownerId])
