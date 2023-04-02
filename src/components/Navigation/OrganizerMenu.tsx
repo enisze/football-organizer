@@ -9,7 +9,6 @@ import { Separator } from '@/ui/base/Separator'
 import { useAtomValue } from 'jotai'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import type { FunctionComponent } from 'react'
 import { trpc } from '../../utils/trpc'
 import { selectedGroupAtom } from '../Groups/GroupSelector'
@@ -17,8 +16,6 @@ import { NotificationBubble } from '../NotificationBubble'
 
 export const OrganizerMenu: FunctionComponent = () => {
   const { data: userData } = useSession()
-
-  const router = useRouter()
 
   const selectedGroupId = useAtomValue(selectedGroupAtom)
 
@@ -63,9 +60,8 @@ export const OrganizerMenu: FunctionComponent = () => {
         </DropdownMenuItem>
         <Separator />
         <DropdownMenuItem
-          onClick={() => {
-            signOut()
-            router.push('/')
+          onClick={async () => {
+            await signOut({ callbackUrl: '/' })
           }}
         >
           Ausloggen

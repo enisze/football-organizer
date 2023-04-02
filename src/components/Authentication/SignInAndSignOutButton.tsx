@@ -1,7 +1,6 @@
 import { Button } from '@/ui/base/Button'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import type { FunctionComponent } from 'react'
 import { LoadingWrapper } from '../LoadingWrapper'
 
@@ -28,14 +27,12 @@ const SignInButton: FunctionComponent = () => {
 }
 
 const LogoutButton: FunctionComponent = () => {
-  const router = useRouter()
   return (
     <Button
       aria-label="signout"
       className="px-4 py-2"
       onClick={async () => {
-        await signOut()
-        router.push('/')
+        await signOut({ callbackUrl: '/' })
       }}
     >
       Ausloggen
