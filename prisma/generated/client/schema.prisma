@@ -15,6 +15,10 @@ model Tokens {
   access_token  String   @db.Text
   refresh_token String   @id
   expiry_date   DateTime
+  ownerId       String
+  user          User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
 }
 
 model Event {
@@ -111,7 +115,7 @@ model Group {
 
 model User {
   id                   String                 @id @default(cuid())
-  name                 String                 
+  name                 String
   email                String                 @unique
   emailVerified        DateTime?
   image                String?
@@ -126,14 +130,15 @@ model User {
   events               ParticipantsOnEvents[]
   groups               UserOnGroups[]
   ownedGroups          Group[]
+  Tokens               Tokens[]
 }
 
 model UserOnGroups {
   id      String
   groupId String
   role    GroupRole @default(USER)
-  user    User   @relation(fields: [id], references: [id], onDelete: Cascade)
-  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user    User      @relation(fields: [id], references: [id], onDelete: Cascade)
+  group   Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@id([id, groupId])
   @@index([id])

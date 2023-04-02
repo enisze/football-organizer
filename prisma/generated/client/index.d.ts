@@ -18,6 +18,7 @@ export type Tokens = {
   access_token: string
   refresh_token: string
   expiry_date: Date
+  ownerId: string
 }
 
 /**
@@ -1197,6 +1198,7 @@ export namespace Prisma {
     events: number
     groups: number
     ownedGroups: number
+    Tokens: number
   }
 
   export type UserCountOutputTypeSelect = {
@@ -1206,6 +1208,7 @@ export namespace Prisma {
     events?: boolean
     groups?: boolean
     ownedGroups?: boolean
+    Tokens?: boolean
   }
 
   export type UserCountOutputTypeGetPayload<S extends boolean | null | undefined | UserCountOutputTypeArgs> =
@@ -1257,18 +1260,21 @@ export namespace Prisma {
     access_token: string | null
     refresh_token: string | null
     expiry_date: Date | null
+    ownerId: string | null
   }
 
   export type TokensMaxAggregateOutputType = {
     access_token: string | null
     refresh_token: string | null
     expiry_date: Date | null
+    ownerId: string | null
   }
 
   export type TokensCountAggregateOutputType = {
     access_token: number
     refresh_token: number
     expiry_date: number
+    ownerId: number
     _all: number
   }
 
@@ -1277,18 +1283,21 @@ export namespace Prisma {
     access_token?: true
     refresh_token?: true
     expiry_date?: true
+    ownerId?: true
   }
 
   export type TokensMaxAggregateInputType = {
     access_token?: true
     refresh_token?: true
     expiry_date?: true
+    ownerId?: true
   }
 
   export type TokensCountAggregateInputType = {
     access_token?: true
     refresh_token?: true
     expiry_date?: true
+    ownerId?: true
     _all?: true
   }
 
@@ -1369,6 +1378,7 @@ export namespace Prisma {
     access_token: string
     refresh_token: string
     expiry_date: Date
+    ownerId: string
     _count: TokensCountAggregateOutputType | null
     _min: TokensMinAggregateOutputType | null
     _max: TokensMaxAggregateOutputType | null
@@ -1392,19 +1402,28 @@ export namespace Prisma {
     access_token?: boolean
     refresh_token?: boolean
     expiry_date?: boolean
+    ownerId?: boolean
+    user?: boolean | UserArgs
   }
 
+
+  export type TokensInclude = {
+    user?: boolean | UserArgs
+  }
 
   export type TokensGetPayload<S extends boolean | null | undefined | TokensArgs> =
     S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
     S extends true ? Tokens :
     S extends undefined ? never :
     S extends { include: any } & (TokensArgs | TokensFindManyArgs)
-    ? Tokens 
+    ? Tokens  & {
+    [P in TruthyKeys<S['include']>]:
+        P extends 'user' ? UserGetPayload<S['include'][P]> :  never
+  } 
     : S extends { select: any } & (TokensArgs | TokensFindManyArgs)
       ? {
     [P in TruthyKeys<S['select']>]:
-    P extends keyof Tokens ? Tokens[P] : never
+        P extends 'user' ? UserGetPayload<S['select'][P]> :  P extends keyof Tokens ? Tokens[P] : never
   } 
       : Tokens
 
@@ -1776,6 +1795,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: 'PrismaPromise';
     constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
 
+    user<T extends UserArgs= {}>(args?: Subset<T, UserArgs>): Prisma__UserClient<UserGetPayload<T> | Null>;
 
     private get _document();
     /**
@@ -1813,6 +1833,10 @@ export namespace Prisma {
      */
     select?: TokensSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: TokensInclude | null
+    /**
      * Filter, which Tokens to fetch.
      */
     where: TokensWhereUniqueInput
@@ -1839,6 +1863,10 @@ export namespace Prisma {
      */
     select?: TokensSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: TokensInclude | null
+    /**
      * Filter, which Tokens to fetch.
      */
     where: TokensWhereUniqueInput
@@ -1853,6 +1881,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Tokens
      */
     select?: TokensSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: TokensInclude | null
     /**
      * Filter, which Tokens to fetch.
      */
@@ -1910,6 +1942,10 @@ export namespace Prisma {
      */
     select?: TokensSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: TokensInclude | null
+    /**
      * Filter, which Tokens to fetch.
      */
     where?: TokensWhereInput
@@ -1955,6 +1991,10 @@ export namespace Prisma {
      */
     select?: TokensSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: TokensInclude | null
+    /**
      * Filter, which Tokens to fetch.
      */
     where?: TokensWhereInput
@@ -1995,6 +2035,10 @@ export namespace Prisma {
      */
     select?: TokensSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: TokensInclude | null
+    /**
      * The data needed to create a Tokens.
      */
     data: XOR<TokensCreateInput, TokensUncheckedCreateInput>
@@ -2021,6 +2065,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Tokens
      */
     select?: TokensSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: TokensInclude | null
     /**
      * The data needed to update a Tokens.
      */
@@ -2056,6 +2104,10 @@ export namespace Prisma {
      */
     select?: TokensSelect | null
     /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: TokensInclude | null
+    /**
      * The filter to search for the Tokens to update in case it exists.
      */
     where: TokensWhereUniqueInput
@@ -2078,6 +2130,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Tokens
      */
     select?: TokensSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: TokensInclude | null
     /**
      * Filter which Tokens to delete.
      */
@@ -2104,6 +2160,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Tokens
      */
     select?: TokensSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: TokensInclude | null
   }
 
 
@@ -8268,6 +8328,7 @@ export namespace Prisma {
     events?: boolean | User$eventsArgs
     groups?: boolean | User$groupsArgs
     ownedGroups?: boolean | User$ownedGroupsArgs
+    Tokens?: boolean | User$TokensArgs
     _count?: boolean | UserCountOutputTypeArgs
   }
 
@@ -8279,6 +8340,7 @@ export namespace Prisma {
     events?: boolean | User$eventsArgs
     groups?: boolean | User$groupsArgs
     ownedGroups?: boolean | User$ownedGroupsArgs
+    Tokens?: boolean | User$TokensArgs
     _count?: boolean | UserCountOutputTypeArgs
   }
 
@@ -8295,6 +8357,7 @@ export namespace Prisma {
         P extends 'events' ? Array < ParticipantsOnEventsGetPayload<S['include'][P]>>  :
         P extends 'groups' ? Array < UserOnGroupsGetPayload<S['include'][P]>>  :
         P extends 'ownedGroups' ? Array < GroupGetPayload<S['include'][P]>>  :
+        P extends 'Tokens' ? Array < TokensGetPayload<S['include'][P]>>  :
         P extends '_count' ? UserCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (UserArgs | UserFindManyArgs)
@@ -8306,6 +8369,7 @@ export namespace Prisma {
         P extends 'events' ? Array < ParticipantsOnEventsGetPayload<S['select'][P]>>  :
         P extends 'groups' ? Array < UserOnGroupsGetPayload<S['select'][P]>>  :
         P extends 'ownedGroups' ? Array < GroupGetPayload<S['select'][P]>>  :
+        P extends 'Tokens' ? Array < TokensGetPayload<S['select'][P]>>  :
         P extends '_count' ? UserCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof User ? User[P] : never
   } 
       : User
@@ -8689,6 +8753,8 @@ export namespace Prisma {
     groups<T extends User$groupsArgs= {}>(args?: Subset<T, User$groupsArgs>): Prisma.PrismaPromise<Array<UserOnGroupsGetPayload<T>>| Null>;
 
     ownedGroups<T extends User$ownedGroupsArgs= {}>(args?: Subset<T, User$ownedGroupsArgs>): Prisma.PrismaPromise<Array<GroupGetPayload<T>>| Null>;
+
+    Tokens<T extends User$TokensArgs= {}>(args?: Subset<T, User$TokensArgs>): Prisma.PrismaPromise<Array<TokensGetPayload<T>>| Null>;
 
     private get _document();
     /**
@@ -9168,6 +9234,27 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: Enumerable<GroupScalarFieldEnum>
+  }
+
+
+  /**
+   * User.Tokens
+   */
+  export type User$TokensArgs = {
+    /**
+     * Select specific fields to fetch from the Tokens
+     */
+    select?: TokensSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: TokensInclude | null
+    where?: TokensWhereInput
+    orderBy?: Enumerable<TokensOrderByWithRelationInput>
+    cursor?: TokensWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<TokensScalarFieldEnum>
   }
 
 
@@ -12964,7 +13051,8 @@ export namespace Prisma {
   export const TokensScalarFieldEnum: {
     access_token: 'access_token',
     refresh_token: 'refresh_token',
-    expiry_date: 'expiry_date'
+    expiry_date: 'expiry_date',
+    ownerId: 'ownerId'
   };
 
   export type TokensScalarFieldEnum = (typeof TokensScalarFieldEnum)[keyof typeof TokensScalarFieldEnum]
@@ -13026,12 +13114,16 @@ export namespace Prisma {
     access_token?: StringFilter | string
     refresh_token?: StringFilter | string
     expiry_date?: DateTimeFilter | Date | string
+    ownerId?: StringFilter | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
   }
 
   export type TokensOrderByWithRelationInput = {
     access_token?: SortOrder
     refresh_token?: SortOrder
     expiry_date?: SortOrder
+    ownerId?: SortOrder
+    user?: UserOrderByWithRelationInput
   }
 
   export type TokensWhereUniqueInput = {
@@ -13042,6 +13134,7 @@ export namespace Prisma {
     access_token?: SortOrder
     refresh_token?: SortOrder
     expiry_date?: SortOrder
+    ownerId?: SortOrder
     _count?: TokensCountOrderByAggregateInput
     _max?: TokensMaxOrderByAggregateInput
     _min?: TokensMinOrderByAggregateInput
@@ -13054,6 +13147,7 @@ export namespace Prisma {
     access_token?: StringWithAggregatesFilter | string
     refresh_token?: StringWithAggregatesFilter | string
     expiry_date?: DateTimeWithAggregatesFilter | Date | string
+    ownerId?: StringWithAggregatesFilter | string
   }
 
   export type EventWhereInput = {
@@ -13442,6 +13536,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsListRelationFilter
     groups?: UserOnGroupsListRelationFilter
     ownedGroups?: GroupListRelationFilter
+    Tokens?: TokensListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -13461,6 +13556,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsOrderByRelationAggregateInput
     groups?: UserOnGroupsOrderByRelationAggregateInput
     ownedGroups?: GroupOrderByRelationAggregateInput
+    Tokens?: TokensOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = {
@@ -13693,30 +13789,35 @@ export namespace Prisma {
     access_token: string
     refresh_token: string
     expiry_date: Date | string
+    user: UserCreateNestedOneWithoutTokensInput
   }
 
   export type TokensUncheckedCreateInput = {
     access_token: string
     refresh_token: string
     expiry_date: Date | string
+    ownerId: string
   }
 
   export type TokensUpdateInput = {
     access_token?: StringFieldUpdateOperationsInput | string
     refresh_token?: StringFieldUpdateOperationsInput | string
     expiry_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutTokensNestedInput
   }
 
   export type TokensUncheckedUpdateInput = {
     access_token?: StringFieldUpdateOperationsInput | string
     refresh_token?: StringFieldUpdateOperationsInput | string
     expiry_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: StringFieldUpdateOperationsInput | string
   }
 
   export type TokensCreateManyInput = {
     access_token: string
     refresh_token: string
     expiry_date: Date | string
+    ownerId: string
   }
 
   export type TokensUpdateManyMutationInput = {
@@ -13729,6 +13830,7 @@ export namespace Prisma {
     access_token?: StringFieldUpdateOperationsInput | string
     refresh_token?: StringFieldUpdateOperationsInput | string
     expiry_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: StringFieldUpdateOperationsInput | string
   }
 
   export type EventCreateInput = {
@@ -14204,6 +14306,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsCreateNestedManyWithoutUserInput
     ownedGroups?: GroupCreateNestedManyWithoutOwnerInput
+    Tokens?: TokensCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -14223,6 +14326,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
     ownedGroups?: GroupUncheckedCreateNestedManyWithoutOwnerInput
+    Tokens?: TokensUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -14242,6 +14346,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUpdateManyWithoutOwnerNestedInput
+    Tokens?: TokensUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -14261,6 +14366,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUncheckedUpdateManyWithoutOwnerNestedInput
+    Tokens?: TokensUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -14549,22 +14655,30 @@ export namespace Prisma {
     not?: NestedDateTimeFilter | Date | string
   }
 
+  export type UserRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
   export type TokensCountOrderByAggregateInput = {
     access_token?: SortOrder
     refresh_token?: SortOrder
     expiry_date?: SortOrder
+    ownerId?: SortOrder
   }
 
   export type TokensMaxOrderByAggregateInput = {
     access_token?: SortOrder
     refresh_token?: SortOrder
     expiry_date?: SortOrder
+    ownerId?: SortOrder
   }
 
   export type TokensMinOrderByAggregateInput = {
     access_token?: SortOrder
     refresh_token?: SortOrder
     expiry_date?: SortOrder
+    ownerId?: SortOrder
   }
 
   export type StringWithAggregatesFilter = {
@@ -14810,11 +14924,6 @@ export namespace Prisma {
     in?: Enumerable<UserEventStatus>
     notIn?: Enumerable<UserEventStatus>
     not?: NestedEnumUserEventStatusFilter | UserEventStatus
-  }
-
-  export type UserRelationFilter = {
-    is?: UserWhereInput
-    isNot?: UserWhereInput
   }
 
   export type EventRelationFilter = {
@@ -15092,6 +15201,12 @@ export namespace Prisma {
     none?: GroupWhereInput
   }
 
+  export type TokensListRelationFilter = {
+    every?: TokensWhereInput
+    some?: TokensWhereInput
+    none?: TokensWhereInput
+  }
+
   export type AccountOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -15101,6 +15216,10 @@ export namespace Prisma {
   }
 
   export type GroupOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TokensOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -15290,12 +15409,26 @@ export namespace Prisma {
     amount?: SortOrder
   }
 
+  export type UserCreateNestedOneWithoutTokensInput = {
+    create?: XOR<UserCreateWithoutTokensInput, UserUncheckedCreateWithoutTokensInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTokensInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type UserUpdateOneRequiredWithoutTokensNestedInput = {
+    create?: XOR<UserCreateWithoutTokensInput, UserUncheckedCreateWithoutTokensInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTokensInput
+    upsert?: UserUpsertWithoutTokensInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<UserUpdateWithoutTokensInput, UserUncheckedUpdateWithoutTokensInput>
   }
 
   export type PaymentCreateNestedManyWithoutEventInput = {
@@ -15666,6 +15799,13 @@ export namespace Prisma {
     connect?: Enumerable<GroupWhereUniqueInput>
   }
 
+  export type TokensCreateNestedManyWithoutUserInput = {
+    create?: XOR<Enumerable<TokensCreateWithoutUserInput>, Enumerable<TokensUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<TokensCreateOrConnectWithoutUserInput>
+    createMany?: TokensCreateManyUserInputEnvelope
+    connect?: Enumerable<TokensWhereUniqueInput>
+  }
+
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<Enumerable<AccountCreateWithoutUserInput>, Enumerable<AccountUncheckedCreateWithoutUserInput>>
     connectOrCreate?: Enumerable<AccountCreateOrConnectWithoutUserInput>
@@ -15706,6 +15846,13 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<GroupCreateOrConnectWithoutOwnerInput>
     createMany?: GroupCreateManyOwnerInputEnvelope
     connect?: Enumerable<GroupWhereUniqueInput>
+  }
+
+  export type TokensUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<Enumerable<TokensCreateWithoutUserInput>, Enumerable<TokensUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<TokensCreateOrConnectWithoutUserInput>
+    createMany?: TokensCreateManyUserInputEnvelope
+    connect?: Enumerable<TokensWhereUniqueInput>
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -15796,6 +15943,20 @@ export namespace Prisma {
     deleteMany?: Enumerable<GroupScalarWhereInput>
   }
 
+  export type TokensUpdateManyWithoutUserNestedInput = {
+    create?: XOR<Enumerable<TokensCreateWithoutUserInput>, Enumerable<TokensUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<TokensCreateOrConnectWithoutUserInput>
+    upsert?: Enumerable<TokensUpsertWithWhereUniqueWithoutUserInput>
+    createMany?: TokensCreateManyUserInputEnvelope
+    set?: Enumerable<TokensWhereUniqueInput>
+    disconnect?: Enumerable<TokensWhereUniqueInput>
+    delete?: Enumerable<TokensWhereUniqueInput>
+    connect?: Enumerable<TokensWhereUniqueInput>
+    update?: Enumerable<TokensUpdateWithWhereUniqueWithoutUserInput>
+    updateMany?: Enumerable<TokensUpdateManyWithWhereWithoutUserInput>
+    deleteMany?: Enumerable<TokensScalarWhereInput>
+  }
+
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<Enumerable<AccountCreateWithoutUserInput>, Enumerable<AccountUncheckedCreateWithoutUserInput>>
     connectOrCreate?: Enumerable<AccountCreateOrConnectWithoutUserInput>
@@ -15878,6 +16039,20 @@ export namespace Prisma {
     update?: Enumerable<GroupUpdateWithWhereUniqueWithoutOwnerInput>
     updateMany?: Enumerable<GroupUpdateManyWithWhereWithoutOwnerInput>
     deleteMany?: Enumerable<GroupScalarWhereInput>
+  }
+
+  export type TokensUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<Enumerable<TokensCreateWithoutUserInput>, Enumerable<TokensUncheckedCreateWithoutUserInput>>
+    connectOrCreate?: Enumerable<TokensCreateOrConnectWithoutUserInput>
+    upsert?: Enumerable<TokensUpsertWithWhereUniqueWithoutUserInput>
+    createMany?: TokensCreateManyUserInputEnvelope
+    set?: Enumerable<TokensWhereUniqueInput>
+    disconnect?: Enumerable<TokensWhereUniqueInput>
+    delete?: Enumerable<TokensWhereUniqueInput>
+    connect?: Enumerable<TokensWhereUniqueInput>
+    update?: Enumerable<TokensUpdateWithWhereUniqueWithoutUserInput>
+    updateMany?: Enumerable<TokensUpdateManyWithWhereWithoutUserInput>
+    deleteMany?: Enumerable<TokensScalarWhereInput>
   }
 
   export type UserCreateNestedOneWithoutGroupsInput = {
@@ -16197,6 +16372,92 @@ export namespace Prisma {
     _max?: NestedEnumGroupRoleFilter
   }
 
+  export type UserCreateWithoutTokensInput = {
+    id?: string
+    name: string
+    email: string
+    emailVerified?: Date | string | null
+    image?: string | null
+    role?: string
+    createdAt?: Date | string
+    password?: string | null
+    notificationsEnabled?: boolean
+    paypalName?: string | null
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    payments?: PaymentCreateNestedManyWithoutUserInput
+    events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
+    groups?: UserOnGroupsCreateNestedManyWithoutUserInput
+    ownedGroups?: GroupCreateNestedManyWithoutOwnerInput
+  }
+
+  export type UserUncheckedCreateWithoutTokensInput = {
+    id?: string
+    name: string
+    email: string
+    emailVerified?: Date | string | null
+    image?: string | null
+    role?: string
+    createdAt?: Date | string
+    password?: string | null
+    notificationsEnabled?: boolean
+    paypalName?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
+    events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
+    groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
+    ownedGroups?: GroupUncheckedCreateNestedManyWithoutOwnerInput
+  }
+
+  export type UserCreateOrConnectWithoutTokensInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutTokensInput, UserUncheckedCreateWithoutTokensInput>
+  }
+
+  export type UserUpsertWithoutTokensInput = {
+    update: XOR<UserUpdateWithoutTokensInput, UserUncheckedUpdateWithoutTokensInput>
+    create: XOR<UserCreateWithoutTokensInput, UserUncheckedCreateWithoutTokensInput>
+  }
+
+  export type UserUpdateWithoutTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    payments?: PaymentUpdateManyWithoutUserNestedInput
+    events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
+    groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
+    ownedGroups?: GroupUpdateManyWithoutOwnerNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
+    events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
+    groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
+    ownedGroups?: GroupUncheckedUpdateManyWithoutOwnerNestedInput
+  }
+
   export type PaymentCreateWithoutEventInput = {
     id?: string
     createdAt?: Date | string
@@ -16371,6 +16632,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsCreateNestedManyWithoutUserInput
     ownedGroups?: GroupCreateNestedManyWithoutOwnerInput
+    Tokens?: TokensCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutEventsInput = {
@@ -16389,6 +16651,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
     ownedGroups?: GroupUncheckedCreateNestedManyWithoutOwnerInput
+    Tokens?: TokensUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutEventsInput = {
@@ -16454,6 +16717,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUpdateManyWithoutOwnerNestedInput
+    Tokens?: TokensUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutEventsInput = {
@@ -16472,6 +16736,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUncheckedUpdateManyWithoutOwnerNestedInput
+    Tokens?: TokensUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type EventUpsertWithoutParticipantsInput = {
@@ -16564,6 +16829,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsCreateNestedManyWithoutUserInput
     ownedGroups?: GroupCreateNestedManyWithoutOwnerInput
+    Tokens?: TokensCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPaymentsInput = {
@@ -16582,6 +16848,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
     ownedGroups?: GroupUncheckedCreateNestedManyWithoutOwnerInput
+    Tokens?: TokensUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPaymentsInput = {
@@ -16647,6 +16914,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUpdateManyWithoutOwnerNestedInput
+    Tokens?: TokensUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPaymentsInput = {
@@ -16665,6 +16933,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUncheckedUpdateManyWithoutOwnerNestedInput
+    Tokens?: TokensUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -16683,6 +16952,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsCreateNestedManyWithoutUserInput
     ownedGroups?: GroupCreateNestedManyWithoutOwnerInput
+    Tokens?: TokensCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -16701,6 +16971,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
     ownedGroups?: GroupUncheckedCreateNestedManyWithoutOwnerInput
+    Tokens?: TokensUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -16729,6 +17000,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUpdateManyWithoutOwnerNestedInput
+    Tokens?: TokensUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -16747,6 +17019,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUncheckedUpdateManyWithoutOwnerNestedInput
+    Tokens?: TokensUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -16765,6 +17038,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsCreateNestedManyWithoutUserInput
     ownedGroups?: GroupCreateNestedManyWithoutOwnerInput
+    Tokens?: TokensCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -16783,6 +17057,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
     ownedGroups?: GroupUncheckedCreateNestedManyWithoutOwnerInput
+    Tokens?: TokensUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -16811,6 +17086,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUpdateManyWithoutOwnerNestedInput
+    Tokens?: TokensUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -16829,6 +17105,7 @@ export namespace Prisma {
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUncheckedUpdateManyWithoutOwnerNestedInput
+    Tokens?: TokensUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type EventCreateWithoutGroupInput = {
@@ -16909,6 +17186,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsCreateNestedManyWithoutUserInput
+    Tokens?: TokensCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutOwnedGroupsInput = {
@@ -16927,6 +17205,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
+    Tokens?: TokensUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutOwnedGroupsInput = {
@@ -17014,6 +17293,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
+    Tokens?: TokensUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOwnedGroupsInput = {
@@ -17032,6 +17312,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
+    Tokens?: TokensUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -17196,6 +17477,28 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TokensCreateWithoutUserInput = {
+    access_token: string
+    refresh_token: string
+    expiry_date: Date | string
+  }
+
+  export type TokensUncheckedCreateWithoutUserInput = {
+    access_token: string
+    refresh_token: string
+    expiry_date: Date | string
+  }
+
+  export type TokensCreateOrConnectWithoutUserInput = {
+    where: TokensWhereUniqueInput
+    create: XOR<TokensCreateWithoutUserInput, TokensUncheckedCreateWithoutUserInput>
+  }
+
+  export type TokensCreateManyUserInputEnvelope = {
+    data: Enumerable<TokensCreateManyUserInput>
+    skipDuplicates?: boolean
+  }
+
   export type AccountUpsertWithWhereUniqueWithoutUserInput = {
     where: AccountWhereUniqueInput
     update: XOR<AccountUpdateWithoutUserInput, AccountUncheckedUpdateWithoutUserInput>
@@ -17332,6 +17635,32 @@ export namespace Prisma {
     pricingModel?: EnumPricingModelFilter | PricingModel
   }
 
+  export type TokensUpsertWithWhereUniqueWithoutUserInput = {
+    where: TokensWhereUniqueInput
+    update: XOR<TokensUpdateWithoutUserInput, TokensUncheckedUpdateWithoutUserInput>
+    create: XOR<TokensCreateWithoutUserInput, TokensUncheckedCreateWithoutUserInput>
+  }
+
+  export type TokensUpdateWithWhereUniqueWithoutUserInput = {
+    where: TokensWhereUniqueInput
+    data: XOR<TokensUpdateWithoutUserInput, TokensUncheckedUpdateWithoutUserInput>
+  }
+
+  export type TokensUpdateManyWithWhereWithoutUserInput = {
+    where: TokensScalarWhereInput
+    data: XOR<TokensUpdateManyMutationInput, TokensUncheckedUpdateManyWithoutTokensInput>
+  }
+
+  export type TokensScalarWhereInput = {
+    AND?: Enumerable<TokensScalarWhereInput>
+    OR?: Enumerable<TokensScalarWhereInput>
+    NOT?: Enumerable<TokensScalarWhereInput>
+    access_token?: StringFilter | string
+    refresh_token?: StringFilter | string
+    expiry_date?: DateTimeFilter | Date | string
+    ownerId?: StringFilter | string
+  }
+
   export type UserCreateWithoutGroupsInput = {
     id?: string
     name: string
@@ -17348,6 +17677,7 @@ export namespace Prisma {
     payments?: PaymentCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
     ownedGroups?: GroupCreateNestedManyWithoutOwnerInput
+    Tokens?: TokensCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutGroupsInput = {
@@ -17366,6 +17696,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
     ownedGroups?: GroupUncheckedCreateNestedManyWithoutOwnerInput
+    Tokens?: TokensUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutGroupsInput = {
@@ -17419,6 +17750,7 @@ export namespace Prisma {
     payments?: PaymentUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUpdateManyWithoutOwnerNestedInput
+    Tokens?: TokensUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGroupsInput = {
@@ -17437,6 +17769,7 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUncheckedUpdateManyWithoutOwnerNestedInput
+    Tokens?: TokensUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type GroupUpsertWithoutUsersInput = {
@@ -17657,6 +17990,12 @@ export namespace Prisma {
     pricingModel?: PricingModel
   }
 
+  export type TokensCreateManyUserInput = {
+    access_token: string
+    refresh_token: string
+    expiry_date: Date | string
+  }
+
   export type AccountUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
@@ -17796,6 +18135,24 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
+  }
+
+  export type TokensUpdateWithoutUserInput = {
+    access_token?: StringFieldUpdateOperationsInput | string
+    refresh_token?: StringFieldUpdateOperationsInput | string
+    expiry_date?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TokensUncheckedUpdateWithoutUserInput = {
+    access_token?: StringFieldUpdateOperationsInput | string
+    refresh_token?: StringFieldUpdateOperationsInput | string
+    expiry_date?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TokensUncheckedUpdateManyWithoutTokensInput = {
+    access_token?: StringFieldUpdateOperationsInput | string
+    refresh_token?: StringFieldUpdateOperationsInput | string
+    expiry_date?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

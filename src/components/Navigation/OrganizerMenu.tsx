@@ -6,12 +6,14 @@ import {
   DropdownMenuTrigger,
 } from '@/ui/base/DropDownMenu'
 import { Separator } from '@/ui/base/Separator'
+import { useAtomValue } from 'jotai'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import type { FunctionComponent } from 'react'
 import { useIsAdmin } from '../../hooks/useIsAdmin'
 import { trpc } from '../../utils/trpc'
+import { selectedGroupAtom } from '../Groups/GroupSelector'
 import { NotificationBubble } from '../NotificationBubble'
 
 export const OrganizerMenu: FunctionComponent = () => {
@@ -24,9 +26,14 @@ export const OrganizerMenu: FunctionComponent = () => {
     enabled: isAdmin,
   })
 
-  const { data: balance } = trpc.payment.getUserBalance.useQuery(undefined, {
-    enabled: Boolean(userData),
-  })
+  const selectedGroupId = useAtomValue(selectedGroupAtom)
+
+  const { data: balance } = trpc.payment.getUserBalance.useQuery(
+    { groupId: selectedGroupId ?? '' },
+    {
+      enabled: Boolean(userData) && Boolean(selectedGroupId),
+    },
+  )
 
   if (!userData) return null
 

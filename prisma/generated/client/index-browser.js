@@ -181,7 +181,8 @@ exports.Prisma.SortOrder = makeEnum({
 exports.Prisma.TokensScalarFieldEnum = makeEnum({
   access_token: 'access_token',
   refresh_token: 'refresh_token',
-  expiry_date: 'expiry_date'
+  expiry_date: 'expiry_date',
+  ownerId: 'ownerId'
 });
 
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({

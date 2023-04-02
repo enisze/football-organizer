@@ -65,10 +65,12 @@ export const paymentRouter = router({
         where: { eventId, userId: session.user.id },
       })
     }),
-  getUserBalance: protectedProcedure.query(
-    async ({ ctx: { prisma, session } }) => {
+  getUserBalance: protectedProcedure
+    .input(z.object({ groupId: z.string() }))
+    .query(async ({ ctx: { prisma, session }, input }) => {
       const events = await prisma.event.findMany({
         where: {
+          groupId: input.groupId,
           participants: { some: { id: session.user.id } },
         },
         include: { payments: true },
@@ -98,8 +100,7 @@ export const paymentRouter = router({
       }, 0)
 
       return balance
-    },
-  ),
+    }),
   getAllPaymentsForEventFromNotParticipants: protectedProcedure
     .input(
       z.object({
