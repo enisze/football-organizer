@@ -20,7 +20,7 @@ export const GroupRequestEmail = ({ email, token }: GroupRequestEmail) => {
   const previewText = `${email} wants to create a group on Event Wizard`
 
   const createGroupLink =
-    process.env.NEXT_PUBLIC_BASE_URL + '/groups/allow/' + token
+    process.env.NEXT_PUBLIC_BASE_URL + '/group/allow/' + token
 
   //TODO: Adjust UserSchema: allowedNumberOfGroups, paypalName
 
