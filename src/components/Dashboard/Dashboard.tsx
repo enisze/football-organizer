@@ -26,18 +26,23 @@ export const Dashboard: FunctionComponent = () => {
 const EventList: FunctionComponent = () => {
   const groupId = useAtomValue(selectedGroupAtom)
 
-  const { data: events, isLoading } = trpc.event.getAllByGroup.useQuery({
-    groupId: groupId ?? '',
-  })
+  const { data: events, isLoading } = trpc.event.getAllByGroup.useQuery(
+    {
+      groupId: groupId ?? '',
+    },
+    { enabled: Boolean(groupId) },
+  )
 
   const { data: groups, isLoading: groupsLoading } =
     trpc.group.getGroupsOfUser.useQuery({
       owned: false,
     })
 
+  console.log(groups)
+
   return (
     <div className="flex flex-col gap-y-3 justify-center items-center">
-      {groups && groups?.length > 1 && (
+      {groups && groups?.length > 0 && (
         <>
           <GroupSelector />
 

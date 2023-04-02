@@ -103,4 +103,14 @@ export const userRouter = router({
         data: { paypalName: name },
       })
     }),
+
+  getPaypalName: publicProcedure.query(async ({ ctx: { prisma, session } }) => {
+    const id = session?.user?.id
+    if (!id) throw new TRPCError({ code: 'UNAUTHORIZED' })
+
+    return await prisma.user.findUnique({
+      where: { id },
+      select: { paypalName: true },
+    })
+  }),
 })

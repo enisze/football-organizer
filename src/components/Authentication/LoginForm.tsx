@@ -1,3 +1,4 @@
+import { useToast } from '@/src/hooks/useToast'
 import { trpc } from '@/src/utils/trpc'
 import { Button } from '@/ui/base/Button'
 import { TextField } from '@/ui/base/TextField'
@@ -37,12 +38,11 @@ export const LoginForm: FunctionComponent<{ onSubmit?: () => void }> = ({
   const { theme } = useTheme()
   const [email, setEmail] = useState('')
   const [authState, setAuthState] = useState<'login' | 'register'>()
-
   const [password, setPassword] = useState('')
-
   const [username, setUsername] = useState('')
-
   const [authenticationError, setAuthenticationError] = useState('')
+
+  const { toast } = useToast()
 
   const submit = async () => {
     const res = await signIn('credentials', {
@@ -123,7 +123,14 @@ export const LoginForm: FunctionComponent<{ onSubmit?: () => void }> = ({
         className="self-center flex justify-center px-3 py-4 relative transition-all duration-100 ease-in-out
         bg-white text-[#7289DA] dark:bg-[#7289DA] dark:text-[#fff] rounded-lg p-2 w-[300px] items-center gap-x-2"
         onClick={async () => {
-          await signIn('discord', { callbackUrl: '/' })
+          try {
+            await signIn('discord', { callbackUrl: '/' })
+          } catch (e) {
+            toast({
+              title: 'Fehler beim Login',
+              description: 'Bitte versuche es später erneut.',
+            })
+          }
         }}
       >
         <Image

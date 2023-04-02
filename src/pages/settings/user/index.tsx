@@ -20,15 +20,23 @@ const Settings: FunctionComponent = () => {
   const userName = data?.user?.name
   const paypalName = data?.user?.paypalName
 
+  const { data: paypalNameDb } = trpc.user.getPaypalName.useQuery(undefined, {
+    enabled: Boolean(!paypalName) && Boolean(userId),
+  })
+
   const [userNameForDeletion, setUserNameForDeletion] = useState('')
 
   const [newPaypalName, setNewPaypalName] = useState('')
 
   useEffect(() => {
+    if (paypalNameDb?.paypalName) {
+      setNewPaypalName(paypalName ?? paypalNameDb?.paypalName)
+    }
+
     if (paypalName) {
       setNewPaypalName(paypalName)
     }
-  }, [paypalName])
+  }, [paypalName, paypalNameDb])
 
   const userCanBeDeleted = useMemo(() => {
     return userNameForDeletion === userName
