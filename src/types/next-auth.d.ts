@@ -13,6 +13,7 @@ declare module 'next-auth' {
 
   interface User {
     role: string
+    paypalName: string | null
   }
 }
 
@@ -21,6 +22,7 @@ declare module 'next-auth/jwt' {
   interface JWT {
     role: string
     id: string
+    paypalName: string | null
   }
 }
 

@@ -44,7 +44,6 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Passwort', type: 'password' },
       },
       async authorize(credentials) {
-        console.log(credentials)
         if (!credentials?.username) {
           const user = await prisma.user.findFirst({
             where: {
@@ -52,6 +51,8 @@ export const authOptions: NextAuthOptions = {
               password: credentials?.password,
             },
           })
+
+          console.log(user)
 
           return user
         }
@@ -80,20 +81,14 @@ export const authOptions: NextAuthOptions = {
   ],
   secret: process.env.JWT_SECRET,
   callbacks: {
-    async signIn({ account, user }) {
-      console.log(account, user)
+    async signIn({}) {
       return true
     },
-    async jwt({ token, user, account }) {
-      //TODO: add paypalUserName to user -> paypalUserName banner to show everytime -> a bobble should show up
-      //if the paypalName is empty, the user should be able to add it + it should explain
-      // that the user and the organizer cannot see the current state of the payment
-      //TODO: add bubble to show, it has to be set else no info on payment
-      //TOOD: change the paypal username in the settings as well as the username
-
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id
         token.role = user.role
+        token.paypalName = user.paypalName
       }
       return token
     },
@@ -101,6 +96,7 @@ export const authOptions: NextAuthOptions = {
       if (token && session.user) {
         session.user.id = token.id
         session.user.role = token.role
+        session.user.paypalName = token.paypalName
       }
       return session
     },
