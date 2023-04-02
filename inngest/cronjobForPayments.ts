@@ -12,10 +12,12 @@ import { sendNewRefreshTokenMail } from './sendNewRefreshTokenMail'
 const prisma = new PrismaClient()
 
 const job = async () => {
-  const ownerIds = await prisma.group.findMany({ select: { ownerId: true } })
+  const ownerIds = await prisma.group.findMany({
+    select: { ownerId: true, owner: { select: { email: true } } },
+  })
 
   ownerIds.forEach(async (data) => {
-    const result = await getPaypalEmails(data.ownerId)
+    const result = await getPaypalEmails(data.ownerId, data.owner.email)
 
     if (!result) return { message: 'No paypal emails' }
 
@@ -139,7 +141,7 @@ const PAYPAL_LABEL = 'Label_3926228921657449356'
 
 const oAuth2Client = new OAuth2Client(credentials)
 
-const getPaypalEmails = async (ownerId: string) => {
+const getPaypalEmails = async (ownerId: string, ownerEmail: string) => {
   const token = await prisma.tokens.findFirst({ where: { ownerId } })
 
   if (!token) throw new Error('No token found')
@@ -185,7 +187,7 @@ const getPaypalEmails = async (ownerId: string) => {
       prompt: 'consent',
       redirect_uri: process.env.NEXT_PUBLIC_BASE_URL + '/oauth2callback',
     })
-    await sendNewRefreshTokenMail({ link: authorizeUrl })
+    await sendNewRefreshTokenMail({ link: authorizeUrl, email: ownerEmail })
     console.log(error)
     return 'Token has expired'
   }
