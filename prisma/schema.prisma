@@ -155,30 +155,6 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl {
-  id          String   @id
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime
-  eventId     String
-  userId      String
-  amount      Float
-  paymentDate DateTime
-
-  @@map("_05d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl")
-}
-
-model edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl {
-  id          String   @id
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime
-  eventId     String
-  userId      String
-  amount      Float
-  paymentDate DateTime
-
-  @@map("_4edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl")
-}
-
 enum GroupRole {
   OWNER
   ADMIN

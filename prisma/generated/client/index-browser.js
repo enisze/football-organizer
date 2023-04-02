@@ -104,26 +104,6 @@ exports.Prisma.AccountScalarFieldEnum = makeEnum({
   session_state: 'session_state'
 });
 
-exports.Prisma.D6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vreplScalarFieldEnum = makeEnum({
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  eventId: 'eventId',
-  userId: 'userId',
-  amount: 'amount',
-  paymentDate: 'paymentDate'
-});
-
-exports.Prisma.Edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vreplScalarFieldEnum = makeEnum({
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  eventId: 'eventId',
-  userId: 'userId',
-  amount: 'amount',
-  paymentDate: 'paymentDate'
-});
-
 exports.Prisma.EventScalarFieldEnum = makeEnum({
   id: 'id',
   createdAt: 'createdAt',
@@ -252,9 +232,7 @@ exports.Prisma.ModelName = makeEnum({
   Group: 'Group',
   User: 'User',
   UserOnGroups: 'UserOnGroups',
-  VerificationToken: 'VerificationToken',
-  d6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl: 'd6bf9b_e9bb_5beb_beb7_b788875819cb_20221108200923_vrepl',
-  edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl: 'edd42fc_e6d5_54f8_8c3e_b7fbbb4c8905_20221108235218_vrepl'
+  VerificationToken: 'VerificationToken'
 });
 
 /**
