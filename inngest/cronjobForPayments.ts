@@ -2,122 +2,127 @@ import type { OAuth2ClientOptions } from 'google-auth-library'
 import { OAuth2Client } from 'google-auth-library'
 import type { gmail_v1 } from 'googleapis'
 import { google } from 'googleapis'
-import { createScheduledFunction } from 'inngest'
+import { Inngest } from 'inngest'
 import type { Event, Payment } from '../prisma/generated/client'
 import { PrismaClient } from '../prisma/generated/client'
 import { getEuroAmount } from '../src/helpers/getEuroAmount'
 import { isDateInCertainRange } from '../src/helpers/isDateInCertainRange'
 import { sendNewRefreshTokenMail } from './sendNewRefreshTokenMail'
 
+const inngest = new Inngest({ name: 'Event Wizard' })
+
 const prisma = new PrismaClient()
 
-const job = async () => {
-  const ownerIds = await prisma.group.findMany({
-    select: { ownerId: true, owner: { select: { email: true, name: true } } },
-  })
+export const cronJob = inngest.createFunction(
+  { name: 'Cronjob for payments' },
+  { cron: '0 11 * * *' },
+  async () => {
+    const ownerIds = await prisma.group.findMany({
+      select: { ownerId: true, owner: { select: { email: true, name: true } } },
+    })
 
-  ownerIds.forEach(async (data) => {
-    const result = await getPaypalEmails(
-      data.ownerId,
-      data.owner.email,
-      data.owner.name,
-    )
+    ownerIds.forEach(async (data) => {
+      const result = await getPaypalEmails(
+        data.ownerId,
+        data.owner.email,
+        data.owner.name,
+      )
 
-    if (!result) return { message: 'No paypal emails' }
+      if (!result) return { message: 'No paypal emails' }
 
-    if (result === 'Token has expired') return { message: 'New token needed' }
+      if (result === 'Token has expired') return { message: 'New token needed' }
 
-    const events = await prisma.event.findMany()
-    const users = await prisma.user.findMany()
-    const payments = await prisma.payment.findMany()
+      const events = await prisma.event.findMany()
+      const users = await prisma.user.findMany()
+      const payments = await prisma.payment.findMany()
 
-    const paymentsAddedForUser: {
-      eventId: string
-      amount: number
-      paymentDate: Date
-      gmailMailId: string
-      userId: string
-      name: string
-    }[] = []
+      const paymentsAddedForUser: {
+        eventId: string
+        amount: number
+        paymentDate: Date
+        gmailMailId: string
+        userId: string
+        name: string
+      }[] = []
 
-    let emailAmount = 0
+      let emailAmount = 0
 
-    const emailsAlreadyInDB: Payment[] = []
+      const emailsAlreadyInDB: Payment[] = []
 
-    let emailsWithConditions = 0
+      let emailsWithConditions = 0
 
-    users
-      .filter((user) => user.email !== 'eniszej@gmail.com')
-      .forEach((user) => {
-        //Get all paypal emails from specific user
+      users
+        .filter((user) => user.email !== 'eniszej@gmail.com')
+        .forEach((user) => {
+          //Get all paypal emails from specific user
 
-        const filteredByUser = result.filter((res) => {
-          if (!res.internalDate) return false
+          const filteredByUser = result.filter((res) => {
+            if (!res.internalDate) return false
 
-          return res.snippet?.toLowerCase().includes(user.name.toLowerCase())
-        }) as gmail_v1.Schema$Message[]
+            return res.snippet?.toLowerCase().includes(user.name.toLowerCase())
+          }) as gmail_v1.Schema$Message[]
 
-        console.log(
-          user.name + ' got ' + filteredByUser.length + ' paypalMails',
-        )
-
-        emailAmount += filteredByUser.length
-
-        filteredByUser.forEach((email) => {
-          const res = payments.find(
-            (payment) => payment.gmailMailId === email.id,
+          console.log(
+            user.name + ' got ' + filteredByUser.length + ' paypalMails',
           )
 
-          if (res) {
-            emailsAlreadyInDB.push(res)
-            console.log('payment already exists')
-            return
-          }
+          emailAmount += filteredByUser.length
 
-          const result = isInAmountRangeAndEventBookingDate(email, events)
+          filteredByUser.forEach((email) => {
+            const res = payments.find(
+              (payment) => payment.gmailMailId === email.id,
+            )
 
-          if (!result || !email.snippet || !email.id) {
-            console.log('email data missing')
-            return
-          }
+            if (res) {
+              emailsAlreadyInDB.push(res)
+              console.log('payment already exists')
+              return
+            }
 
-          const { conditionFulfilled, event } = result
+            const result = isInAmountRangeAndEventBookingDate(email, events)
 
-          if (!event?.id || !conditionFulfilled) {
-            console.log('No event id or condition failed')
-            return
-          }
-          emailsWithConditions += 1
+            if (!result || !email.snippet || !email.id) {
+              console.log('email data missing')
+              return
+            }
 
-          const amount = getEuroAmount(email.snippet)
+            const { conditionFulfilled, event } = result
 
-          paymentsAddedForUser.push({
-            eventId: event.id,
-            amount,
-            paymentDate: new Date(Number(email.internalDate)),
-            gmailMailId: email.id,
-            userId: user.id,
-            name: user.name,
+            if (!event?.id || !conditionFulfilled) {
+              console.log('No event id or condition failed')
+              return
+            }
+            emailsWithConditions += 1
+
+            const amount = getEuroAmount(email.snippet)
+
+            paymentsAddedForUser.push({
+              eventId: event.id,
+              amount,
+              paymentDate: new Date(Number(email.internalDate)),
+              gmailMailId: email.id,
+              userId: user.id,
+              name: user.name,
+            })
           })
         })
-      })
 
-    try {
-      await Promise.all(
-        paymentsAddedForUser.map((payment) =>
-          prisma.payment.create({
-            data: {
-              ...omit(payment, 'name'),
-            },
-          }),
-        ),
-      )
-    } catch (error) {
-      console.log(error)
-    }
-    //TODO: Delete all events older than a week
+      try {
+        await Promise.all(
+          paymentsAddedForUser.map((payment) =>
+            prisma.payment.create({
+              data: {
+                ...omit(payment, 'name'),
+              },
+            }),
+          ),
+        )
+      } catch (error) {
+        console.log(error)
+      }
+      //TODO: Delete all events older than a week
 
-    return `
+      return `
   Email amount: ${emailAmount}
   Emails found already in DB: ${
     emailsAlreadyInDB.length
@@ -126,13 +131,8 @@ const job = async () => {
   Users with payments: ${
     paymentsAddedForUser.length
   } ${paymentsAddedForUser.map((user) => user.name)}`
-  })
-}
-
-export const cronjobForPayments = createScheduledFunction(
-  'Cronjob for emails to payments',
-  '0 11 * * *', // The cron syntax for the function
-  job,
+    })
+  },
 )
 
 const credentials: OAuth2ClientOptions = {

@@ -10,105 +10,82 @@ import PaymentReminder from '@/emails/PaymentReminder'
 import { render } from '@react-email/render'
 import { SendSmtpEmail } from '@sendinblue/client'
 import { differenceInCalendarDays } from 'date-fns'
+import { Inngest } from 'inngest'
 
 const prisma = new PrismaClient()
 
-export const sendPaymentAndEventReminderEmails = async ({
-  id,
-}: {
-  id: string
-}) => {
-  const event = await prisma.event.findUnique({
-    where: { id },
-    include: { participants: true, payments: true },
-  })
+const inngest = new Inngest({ name: 'Event Wizard' })
 
-  if (!event)
-    return {
-      message: 'No event',
-    }
+export const sendPaymentAndEventReminderEmails = inngest.createFunction(
+  { name: 'Send Payment and Events' },
+  { event: 'event/reminder' },
+  async ({ event: inngestEvent, step }) => {
+    const id = inngestEvent.data.id
 
-  const usersOnGroup = await prisma.userOnGroups.findMany({
-    where: { groupId: event.groupId ?? '' },
-  })
+    const event = await prisma.event.findUnique({
+      where: { id },
+      include: { participants: true, payments: true },
+    })
 
-  if (!usersOnGroup)
-    return {
-      message: `No users found`,
-    }
-
-  const usersOfGroup = await Promise.all(
-    usersOnGroup.map(async (user) => {
-      return await prisma.user.findUnique({ where: { id: user.id } })
-    }),
-  )
-
-  const { participants } = event
-
-  //Ids which are available
-  const canceledParticipantIds = getParticipantIdsByStatus(
-    event.participants,
-    'CANCELED',
-  )
-
-  const joinedParticipantIds = getParticipantIdsByStatus(
-    event.participants,
-    'JOINED',
-  )
-
-  const usersEventReminder: string[] = []
-  const usersPaymentReminder: string[] = []
-
-  const promises = usersOfGroup
-    .filter((user) => user?.notificationsEnabled)
-    .map(async (user) => {
-      if (!user) return
-      //Did not interact with the event at all
-      if (
-        !joinedParticipantIds.includes(user.id) &&
-        !canceledParticipantIds.includes(user.id) &&
-        participants.length < event.maxParticipants
-      ) {
-        //Send event reminder
-
-        const html = render(
-          <EventReminder
-            event={event}
-            userName={user.name}
-            participantsAmount={joinedParticipantIds.length}
-          />,
-        )
-
-        const sendSmptMail = new SendSmtpEmail()
-
-        const days = differenceInCalendarDays(event.date, new Date())
-
-        sendSmptMail.to = [{ email: user.email }]
-        sendSmptMail.htmlContent = html
-        sendSmptMail.sender = {
-          email: 'eniszej@gmail.com',
-          name: 'Event Wizard',
-        }
-        sendSmptMail.subject = `Erinnerung: Fussball in ${days} Tagen, ${joinedParticipantIds.length}/${event.maxParticipants} Teilnehmer!`
-
-        usersEventReminder.push(user.email)
-
-        return apiInstance.sendTransacEmail(sendSmptMail)
+    if (!event)
+      return {
+        message: 'No event',
       }
 
-      if (event.bookingDate && joinedParticipantIds.includes(user.id)) {
-        const payment = event.payments.find(
-          (payment) => payment.userId === user.id,
-        )
+    const usersOnGroup = await prisma.userOnGroups.findMany({
+      where: { groupId: event.groupId ?? '' },
+    })
 
-        if (!payment) {
-          //Send payment reminder
+    if (!usersOnGroup)
+      return {
+        message: `No users found`,
+      }
+
+    const usersOfGroup = await Promise.all(
+      usersOnGroup.map(async (user) => {
+        return await prisma.user.findUnique({ where: { id: user.id } })
+      }),
+    )
+
+    const { participants } = event
+
+    //Ids which are available
+    const canceledParticipantIds = getParticipantIdsByStatus(
+      event.participants,
+      'CANCELED',
+    )
+
+    const joinedParticipantIds = getParticipantIdsByStatus(
+      event.participants,
+      'JOINED',
+    )
+
+    const usersEventReminder: string[] = []
+    const usersPaymentReminder: string[] = []
+
+    const promises = usersOfGroup
+      .filter((user) => user?.notificationsEnabled)
+      .map(async (user) => {
+        if (!user) return
+        //Did not interact with the event at all
+        if (
+          !joinedParticipantIds.includes(user.id) &&
+          !canceledParticipantIds.includes(user.id) &&
+          participants.length < event.maxParticipants
+        ) {
+          //Send event reminder
 
           const html = render(
-            <PaymentReminder event={event} userName={user.name} />,
+            <EventReminder
+              event={event}
+              userName={user.name}
+              participantsAmount={joinedParticipantIds.length}
+            />,
           )
 
           const sendSmptMail = new SendSmtpEmail()
+
+          const days = differenceInCalendarDays(event.date, new Date())
 
           sendSmptMail.to = [{ email: user.email }]
           sendSmptMail.htmlContent = html
@@ -116,33 +93,61 @@ export const sendPaymentAndEventReminderEmails = async ({
             email: 'eniszej@gmail.com',
             name: 'Event Wizard',
           }
-          sendSmptMail.subject = 'Erinnerung: Fussball bezahlen'
+          sendSmptMail.subject = `Erinnerung: Fussball in ${days} Tagen, ${joinedParticipantIds.length}/${event.maxParticipants} Teilnehmer!`
 
-          usersPaymentReminder.push(user.email)
+          usersEventReminder.push(user.email)
 
           return apiInstance.sendTransacEmail(sendSmptMail)
         }
-      }
-    })
 
-  const responses = await Promise.all(promises)
+        if (event.bookingDate && joinedParticipantIds.includes(user.id)) {
+          const payment = event.payments.find(
+            (payment) => payment.userId === user.id,
+          )
 
-  const codes = responses.map((res) =>
-    res
-      ? res.response.statusCode + ' ' + res.response.statusMessage
-      : 'No status',
-  )
+          if (!payment) {
+            //Send payment reminder
 
-  console.log(
-    `Event reminders: ${JSON.stringify(
-      usersEventReminder,
-    )}, Payment reminders: ${usersPaymentReminder},
+            const html = render(
+              <PaymentReminder event={event} userName={user.name} />,
+            )
+
+            const sendSmptMail = new SendSmtpEmail()
+
+            sendSmptMail.to = [{ email: user.email }]
+            sendSmptMail.htmlContent = html
+            sendSmptMail.sender = {
+              email: 'eniszej@gmail.com',
+              name: 'Event Wizard',
+            }
+            sendSmptMail.subject = 'Erinnerung: Fussball bezahlen'
+
+            usersPaymentReminder.push(user.email)
+
+            return apiInstance.sendTransacEmail(sendSmptMail)
+          }
+        }
+      })
+
+    const responses = await Promise.all(promises)
+
+    const codes = responses.map((res) =>
+      res
+        ? res.response.statusCode + ' ' + res.response.statusMessage
+        : 'No status',
+    )
+
+    console.log(
+      `Event reminders: ${JSON.stringify(
+        usersEventReminder,
+      )}, Payment reminders: ${usersPaymentReminder},
     Message results: ${codes}`,
-  )
-  return {
-    success: true,
-  }
-}
+    )
+    return {
+      success: true,
+    }
+  },
+)
 
 const getParticipantIdsByStatus = (
   participants: ParticipantsOnEvents[],

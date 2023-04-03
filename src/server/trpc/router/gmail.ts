@@ -1,6 +1,5 @@
 import { sendGroupRequestEmail } from '@/inngest/sendGroupRequestEmail'
 import { sendPaidButCanceledMail } from '@/inngest/sendPaidButCanceledMail'
-import { sendPaymentAndEventReminderEmails } from '@/inngest/sendPaymentAndEventReminderEmails'
 import { sendWelcomeMail } from '@/inngest/sendWelcomeMail'
 import { TRPCError } from '@trpc/server'
 import { isAfter } from 'date-fns'
@@ -8,6 +7,7 @@ import type { OAuth2ClientOptions } from 'google-auth-library'
 import { OAuth2Client } from 'google-auth-library'
 import type { gmail_v1 } from 'googleapis'
 import { google } from 'googleapis'
+import { Inngest } from 'inngest'
 import { z } from 'zod'
 
 import { protectedProcedure, rateLimitedProcedure, router } from '../trpc'
@@ -23,6 +23,10 @@ const oAuth2Client = new OAuth2Client(credentials)
 const PAYPAL_LABEL = 'Label_3926228921657449356'
 
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+
+const inngest = new Inngest({
+  name: 'Event Wizard',
+})
 
 export const gmailRouter = router({
   generateAuthLink: protectedProcedure.query(() => {
@@ -157,6 +161,11 @@ export const gmailRouter = router({
   sendPaymentAndEventReminder: protectedProcedure
     .input(z.object({ eventId: z.string() }))
     .mutation(async ({ input }) => {
-      return sendPaymentAndEventReminderEmails({ id: input.eventId })
+      await inngest.send({
+        name: 'event/reminder',
+        data: {
+          id: input.eventId,
+        },
+      })
     }),
 })

@@ -1,5 +1,6 @@
-import { cronjobForPayments } from './cronjobForPayments'
+import { cronJob } from './cronjobForPayments'
+import { sendPaymentAndEventReminderEmails } from './sendPaymentAndEventReminderEmails'
 
-const functions = [cronjobForPayments]
+const functions = [cronJob, sendPaymentAndEventReminderEmails]
 
 export default functions
