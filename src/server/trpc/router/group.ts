@@ -118,13 +118,9 @@ export const groupRouter = router({
         data: {
           name: input.name,
           ownerId: id,
-          users: { create: { id } },
+          users: { create: { id, role: 'OWNER' } },
         },
         select: { id: true, name: true },
-      })
-
-      await prisma.userOnGroups.create({
-        data: { id, groupId: group.id, role: 'OWNER' },
       })
 
       return group.name
