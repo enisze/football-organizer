@@ -28,7 +28,7 @@ const GroupSettings: FunctionComponent = () => {
     return null
   }
 
-  const showNewGroup = (groups?.length ?? 0) < 1
+  const showNewGroup = (groups?.length ?? 0) < 1 || data.user?.role === 'admin'
 
   return (
     <>
