@@ -24,7 +24,8 @@ export default async function job() {
 
     if (!result) return { message: 'No paypal emails' }
 
-    if (result === 'Token has expired') return { message: 'New token needed' }
+    if (result === 'Token has expired' || result === 'No token found')
+      return { message: 'New token needed' }
 
     const events = await prisma.event.findMany()
     const users = await prisma.user.findMany()
@@ -145,7 +146,7 @@ const getPaypalEmails = async (
 ) => {
   const token = await prisma.tokens.findFirst({ where: { ownerId } })
 
-  if (!token) throw new Error('No token found')
+  if (!token) return 'No token found'
 
   const { access_token, expiry_date, refresh_token } = token
 
