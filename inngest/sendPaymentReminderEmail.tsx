@@ -15,10 +15,10 @@ export const sendPaymentReminderEmail = inngest.createFunction(
   async ({ event: inngestEvent, step }) => {
     const id = inngestEvent.data.id as string
 
-    const users = inngestEvent.data.usersPaymentReminder as {
+    const user = inngestEvent.data.user as {
       name: string
       email: string
-    }[]
+    }
 
     const event = await prisma.event.findUnique({
       where: { id },
@@ -27,24 +27,18 @@ export const sendPaymentReminderEmail = inngest.createFunction(
 
     if (!event) return
 
-    const promises = users.map(async (user) => {
-      const html = render(
-        <PaymentReminder event={event} userName={user.name} />,
-      )
+    const html = render(<PaymentReminder event={event} userName={user.name} />)
 
-      const sendSmptMail = new SendSmtpEmail()
+    const sendSmptMail = new SendSmtpEmail()
 
-      sendSmptMail.to = [{ email: user.email }]
-      sendSmptMail.htmlContent = html
-      sendSmptMail.sender = {
-        email: 'eniszej@gmail.com',
-        name: 'Event Wizard',
-      }
-      sendSmptMail.subject = 'Erinnerung: Fussball bezahlen'
+    sendSmptMail.to = [{ email: user.email }]
+    sendSmptMail.htmlContent = html
+    sendSmptMail.sender = {
+      email: 'eniszej@gmail.com',
+      name: 'Event Wizard',
+    }
+    sendSmptMail.subject = 'Erinnerung: Fussball bezahlen'
 
-      return apiInstance.sendTransacEmail(sendSmptMail)
-    })
-
-    await Promise.all(promises)
+    await apiInstance.sendTransacEmail(sendSmptMail)
   },
 )
