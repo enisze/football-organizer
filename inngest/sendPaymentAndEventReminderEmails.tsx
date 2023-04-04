@@ -83,12 +83,14 @@ export const sendPaymentAndEventReminderEmails = inngest.createFunction(
         }
       })
 
-    await inngest.send('event/reminderEmail', {
-      data: {
-        usersEventReminder,
-        id: event.id,
-        participantsAmount: joinedParticipantIds.length,
-      },
+    usersEventReminder.forEach(async (user) => {
+      await inngest.send('event/reminderEmail', {
+        data: {
+          user,
+          id: event.id,
+          participantsAmount: joinedParticipantIds.length,
+        },
+      })
     })
 
     if (usersPaymentReminder.length > 0) {

@@ -16,10 +16,10 @@ export const sendEventReminderEmail = inngest.createFunction(
   async ({ event: inngestEvent, step }) => {
     const id = inngestEvent.data.id as string
 
-    const users = inngestEvent.data.usersEventReminder as {
+    const user = inngestEvent.data.user as {
       name: string
       email: string
-    }[]
+    }
 
     const participantsAmount = inngestEvent.data.participantsAmount as number
 
@@ -30,30 +30,26 @@ export const sendEventReminderEmail = inngest.createFunction(
 
     if (!event) return
 
-    const promises = users.map(async (user) => {
-      const html = render(
-        <EventReminder
-          event={event}
-          userName={user.name}
-          participantsAmount={participantsAmount}
-        />,
-      )
+    const html = render(
+      <EventReminder
+        event={event}
+        userName={user.name}
+        participantsAmount={participantsAmount}
+      />,
+    )
 
-      const sendSmptMail = new SendSmtpEmail()
+    const sendSmptMail = new SendSmtpEmail()
 
-      const days = differenceInCalendarDays(event.date, new Date())
+    const days = differenceInCalendarDays(event.date, new Date())
 
-      sendSmptMail.to = [{ email: user.email }]
-      sendSmptMail.htmlContent = html
-      sendSmptMail.sender = {
-        email: 'eniszej@gmail.com',
-        name: 'Event Wizard',
-      }
-      sendSmptMail.subject = `Erinnerung: Fussball in ${days} Tagen, ${participantsAmount}/${event.maxParticipants} Teilnehmer!`
+    sendSmptMail.to = [{ email: user.email }]
+    sendSmptMail.htmlContent = html
+    sendSmptMail.sender = {
+      email: 'eniszej@gmail.com',
+      name: 'Event Wizard',
+    }
+    sendSmptMail.subject = `Erinnerung: Fussball in ${days} Tagen, ${participantsAmount}/${event.maxParticipants} Teilnehmer!`
 
-      return apiInstance.sendTransacEmail(sendSmptMail)
-    })
-
-    await Promise.all(promises)
+    await apiInstance.sendTransacEmail(sendSmptMail)
   },
 )
