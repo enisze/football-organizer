@@ -3,13 +3,7 @@ import type {
   UserEventStatus,
 } from '../prisma/generated/client'
 import { PrismaClient } from '../prisma/generated/client'
-import apiInstance from '../src/emails/transporter'
 
-import EventReminder from '@/emails/EventReminder'
-import PaymentReminder from '@/emails/PaymentReminder'
-import { render } from '@react-email/render'
-import { SendSmtpEmail } from '@sendinblue/client'
-import { differenceInCalendarDays } from 'date-fns'
 import { Inngest } from 'inngest'
 
 const prisma = new PrismaClient()
@@ -60,12 +54,12 @@ export const sendPaymentAndEventReminderEmails = inngest.createFunction(
       'JOINED',
     )
 
-    const usersEventReminder: string[] = []
-    const usersPaymentReminder: string[] = []
+    const usersEventReminder: { name: string; email: string }[] = []
+    const usersPaymentReminder: { name: string; email: string }[] = []
 
-    const promises = usersOfGroup
+    usersOfGroup
       .filter((user) => user?.notificationsEnabled)
-      .map(async (user) => {
+      .forEach(async (user) => {
         if (!user) return
         //Did not interact with the event at all
         if (
@@ -73,31 +67,7 @@ export const sendPaymentAndEventReminderEmails = inngest.createFunction(
           !canceledParticipantIds.includes(user.id) &&
           participants.length < event.maxParticipants
         ) {
-          //Send event reminder
-
-          const html = render(
-            <EventReminder
-              event={event}
-              userName={user.name}
-              participantsAmount={joinedParticipantIds.length}
-            />,
-          )
-
-          const sendSmptMail = new SendSmtpEmail()
-
-          const days = differenceInCalendarDays(event.date, new Date())
-
-          sendSmptMail.to = [{ email: user.email }]
-          sendSmptMail.htmlContent = html
-          sendSmptMail.sender = {
-            email: 'eniszej@gmail.com',
-            name: 'Event Wizard',
-          }
-          sendSmptMail.subject = `Erinnerung: Fussball in ${days} Tagen, ${joinedParticipantIds.length}/${event.maxParticipants} Teilnehmer!`
-
-          usersEventReminder.push(user.email)
-
-          return apiInstance.sendTransacEmail(sendSmptMail)
+          usersEventReminder.push({ email: user.email, name: user.name })
         }
 
         if (event.bookingDate && joinedParticipantIds.includes(user.id)) {
@@ -108,41 +78,28 @@ export const sendPaymentAndEventReminderEmails = inngest.createFunction(
           if (!payment) {
             //Send payment reminder
 
-            const html = render(
-              <PaymentReminder event={event} userName={user.name} />,
-            )
-
-            const sendSmptMail = new SendSmtpEmail()
-
-            sendSmptMail.to = [{ email: user.email }]
-            sendSmptMail.htmlContent = html
-            sendSmptMail.sender = {
-              email: 'eniszej@gmail.com',
-              name: 'Event Wizard',
-            }
-            sendSmptMail.subject = 'Erinnerung: Fussball bezahlen'
-
-            usersPaymentReminder.push(user.email)
-
-            return apiInstance.sendTransacEmail(sendSmptMail)
+            usersPaymentReminder.push({ email: user.email, name: user.name })
           }
         }
       })
 
-    const responses = await Promise.all(promises)
-
-    const codes = responses.map((res) =>
-      res
-        ? res.response.statusCode + ' ' + res.response.statusMessage
-        : 'No status',
-    )
-
-    console.log(
-      `Event reminders: ${JSON.stringify(
+    await inngest.send('event/reminderEmail', {
+      data: {
         usersEventReminder,
-      )}, Payment reminders: ${usersPaymentReminder},
-    Message results: ${codes}`,
-    )
+        id: event.id,
+        participantsAmount: joinedParticipantIds.length,
+      },
+    })
+
+    if (usersPaymentReminder.length > 0) {
+      await inngest.send('event/paymentReminderEmail', {
+        data: {
+          usersPaymentReminder,
+          id: event.id,
+        },
+      })
+    }
+
     return {
       success: true,
     }
