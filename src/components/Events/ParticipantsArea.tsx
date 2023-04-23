@@ -82,6 +82,10 @@ export const ParticipantsArea: FunctionComponent<{
                 const first = res[0]?.charAt(0) ?? 'X'
                 const second = res[1]?.charAt(0) ?? 'X'
 
+                const user = participants.find(
+                  (user) => user.id === participant?.user?.id,
+                )
+
                 return (
                   <div
                     key={participant?.user.id}
@@ -92,6 +96,8 @@ export const ParticipantsArea: FunctionComponent<{
                       shortName={`${first}${second}`}
                       userEventStatus={participant?.userEventStatus}
                     />
+
+                    <span>{user?.comment}</span>
                     <EventCardAdminPaymentArea
                       eventId={eventId}
                       userId={participant?.user.id ?? ''}

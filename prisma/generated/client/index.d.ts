@@ -51,6 +51,7 @@ export type ParticipantsOnEvents = {
   eventId: string
   date: Date
   id: string
+  comment: string | null
   userEventStatus: UserEventStatus
 }
 
@@ -3227,6 +3228,7 @@ export namespace Prisma {
     eventId: string | null
     date: Date | null
     id: string | null
+    comment: string | null
     userEventStatus: UserEventStatus | null
   }
 
@@ -3234,6 +3236,7 @@ export namespace Prisma {
     eventId: string | null
     date: Date | null
     id: string | null
+    comment: string | null
     userEventStatus: UserEventStatus | null
   }
 
@@ -3241,6 +3244,7 @@ export namespace Prisma {
     eventId: number
     date: number
     id: number
+    comment: number
     userEventStatus: number
     _all: number
   }
@@ -3250,6 +3254,7 @@ export namespace Prisma {
     eventId?: true
     date?: true
     id?: true
+    comment?: true
     userEventStatus?: true
   }
 
@@ -3257,6 +3262,7 @@ export namespace Prisma {
     eventId?: true
     date?: true
     id?: true
+    comment?: true
     userEventStatus?: true
   }
 
@@ -3264,6 +3270,7 @@ export namespace Prisma {
     eventId?: true
     date?: true
     id?: true
+    comment?: true
     userEventStatus?: true
     _all?: true
   }
@@ -3345,6 +3352,7 @@ export namespace Prisma {
     eventId: string
     date: Date
     id: string
+    comment: string | null
     userEventStatus: UserEventStatus
     _count: ParticipantsOnEventsCountAggregateOutputType | null
     _min: ParticipantsOnEventsMinAggregateOutputType | null
@@ -3369,6 +3377,7 @@ export namespace Prisma {
     eventId?: boolean
     date?: boolean
     id?: boolean
+    comment?: boolean
     userEventStatus?: boolean
     user?: boolean | UserArgs
     event?: boolean | EventArgs
@@ -11081,6 +11090,7 @@ export namespace Prisma {
     eventId: 'eventId',
     date: 'date',
     id: 'id',
+    comment: 'comment',
     userEventStatus: 'userEventStatus'
   };
 
@@ -11315,6 +11325,7 @@ export namespace Prisma {
     eventId?: StringFilter | string
     date?: DateTimeFilter | Date | string
     id?: StringFilter | string
+    comment?: StringNullableFilter | string | null
     userEventStatus?: EnumUserEventStatusFilter | UserEventStatus
     user?: XOR<UserRelationFilter, UserWhereInput>
     event?: XOR<EventRelationFilter, EventWhereInput>
@@ -11324,6 +11335,7 @@ export namespace Prisma {
     eventId?: SortOrder
     date?: SortOrder
     id?: SortOrder
+    comment?: SortOrder
     userEventStatus?: SortOrder
     user?: UserOrderByWithRelationInput
     event?: EventOrderByWithRelationInput
@@ -11337,6 +11349,7 @@ export namespace Prisma {
     eventId?: SortOrder
     date?: SortOrder
     id?: SortOrder
+    comment?: SortOrder
     userEventStatus?: SortOrder
     _count?: ParticipantsOnEventsCountOrderByAggregateInput
     _max?: ParticipantsOnEventsMaxOrderByAggregateInput
@@ -11350,6 +11363,7 @@ export namespace Prisma {
     eventId?: StringWithAggregatesFilter | string
     date?: DateTimeWithAggregatesFilter | Date | string
     id?: StringWithAggregatesFilter | string
+    comment?: StringNullableWithAggregatesFilter | string | null
     userEventStatus?: EnumUserEventStatusWithAggregatesFilter | UserEventStatus
   }
 
@@ -11921,6 +11935,7 @@ export namespace Prisma {
 
   export type ParticipantsOnEventsCreateInput = {
     date?: Date | string
+    comment?: string | null
     userEventStatus?: UserEventStatus
     user: UserCreateNestedOneWithoutEventsInput
     event: EventCreateNestedOneWithoutParticipantsInput
@@ -11930,11 +11945,13 @@ export namespace Prisma {
     eventId: string
     date?: Date | string
     id: string
+    comment?: string | null
     userEventStatus?: UserEventStatus
   }
 
   export type ParticipantsOnEventsUpdateInput = {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
     user?: UserUpdateOneRequiredWithoutEventsNestedInput
     event?: EventUpdateOneRequiredWithoutParticipantsNestedInput
@@ -11944,6 +11961,7 @@ export namespace Prisma {
     eventId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     id?: StringFieldUpdateOperationsInput | string
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
@@ -11951,11 +11969,13 @@ export namespace Prisma {
     eventId: string
     date?: Date | string
     id: string
+    comment?: string | null
     userEventStatus?: UserEventStatus
   }
 
   export type ParticipantsOnEventsUpdateManyMutationInput = {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
@@ -11963,6 +11983,7 @@ export namespace Prisma {
     eventId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     id?: StringFieldUpdateOperationsInput | string
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
@@ -12777,6 +12798,7 @@ export namespace Prisma {
     eventId?: SortOrder
     date?: SortOrder
     id?: SortOrder
+    comment?: SortOrder
     userEventStatus?: SortOrder
   }
 
@@ -12784,6 +12806,7 @@ export namespace Prisma {
     eventId?: SortOrder
     date?: SortOrder
     id?: SortOrder
+    comment?: SortOrder
     userEventStatus?: SortOrder
   }
 
@@ -12791,6 +12814,7 @@ export namespace Prisma {
     eventId?: SortOrder
     date?: SortOrder
     id?: SortOrder
+    comment?: SortOrder
     userEventStatus?: SortOrder
   }
 
@@ -14251,6 +14275,7 @@ export namespace Prisma {
 
   export type ParticipantsOnEventsCreateWithoutEventInput = {
     date?: Date | string
+    comment?: string | null
     userEventStatus?: UserEventStatus
     user: UserCreateNestedOneWithoutEventsInput
   }
@@ -14258,6 +14283,7 @@ export namespace Prisma {
   export type ParticipantsOnEventsUncheckedCreateWithoutEventInput = {
     date?: Date | string
     id: string
+    comment?: string | null
     userEventStatus?: UserEventStatus
   }
 
@@ -14349,6 +14375,7 @@ export namespace Prisma {
     eventId?: StringFilter | string
     date?: DateTimeFilter | Date | string
     id?: StringFilter | string
+    comment?: StringNullableFilter | string | null
     userEventStatus?: EnumUserEventStatusFilter | UserEventStatus
   }
 
@@ -15168,6 +15195,7 @@ export namespace Prisma {
 
   export type ParticipantsOnEventsCreateWithoutUserInput = {
     date?: Date | string
+    comment?: string | null
     userEventStatus?: UserEventStatus
     event: EventCreateNestedOneWithoutParticipantsInput
   }
@@ -15175,6 +15203,7 @@ export namespace Prisma {
   export type ParticipantsOnEventsUncheckedCreateWithoutUserInput = {
     eventId: string
     date?: Date | string
+    comment?: string | null
     userEventStatus?: UserEventStatus
   }
 
@@ -15574,6 +15603,7 @@ export namespace Prisma {
   export type ParticipantsOnEventsCreateManyEventInput = {
     date?: Date | string
     id: string
+    comment?: string | null
     userEventStatus?: UserEventStatus
   }
 
@@ -15609,6 +15639,7 @@ export namespace Prisma {
 
   export type ParticipantsOnEventsUpdateWithoutEventInput = {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
     user?: UserUpdateOneRequiredWithoutEventsNestedInput
   }
@@ -15616,12 +15647,14 @@ export namespace Prisma {
   export type ParticipantsOnEventsUncheckedUpdateWithoutEventInput = {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     id?: StringFieldUpdateOperationsInput | string
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsUncheckedUpdateManyWithoutParticipantsInput = {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     id?: StringFieldUpdateOperationsInput | string
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
@@ -15738,6 +15771,7 @@ export namespace Prisma {
   export type ParticipantsOnEventsCreateManyUserInput = {
     eventId: string
     date?: Date | string
+    comment?: string | null
     userEventStatus?: UserEventStatus
   }
 
@@ -15843,6 +15877,7 @@ export namespace Prisma {
 
   export type ParticipantsOnEventsUpdateWithoutUserInput = {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
     event?: EventUpdateOneRequiredWithoutParticipantsNestedInput
   }
@@ -15850,12 +15885,14 @@ export namespace Prisma {
   export type ParticipantsOnEventsUncheckedUpdateWithoutUserInput = {
     eventId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsUncheckedUpdateManyWithoutEventsInput = {
     eventId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 

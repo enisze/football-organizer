@@ -8,6 +8,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/ui/base/Dialog'
+import { TextField } from '@/ui/base/TextField'
+import { DialogTrigger } from '@radix-ui/react-dialog'
 import { TRPCError } from '@trpc/server'
 import { Check, XIcon } from 'lucide-react'
 import { useSession } from 'next-auth/react'
@@ -22,6 +24,16 @@ export const EventStatusArea: FunctionComponent<{
   const trpcContext = trpc.useContext()
 
   const { data: session } = useSession()
+
+  const { mutate: setEventComment } = trpc.user.setEventComment.useMutation({
+    onSuccess: () => {
+      trpcContext.invalidate()
+    },
+  })
+
+  const [comment, setComment] = useState('')
+
+  const [showCommentModal, setShowCommentModal] = useState(false)
 
   const userStatus = participants.find(
     (user) => user.id === session?.user?.id,
@@ -81,6 +93,7 @@ export const EventStatusArea: FunctionComponent<{
         >
           <Check className={checkMarkColor} />
         </Button>
+
         <Button
           aria-label="maybe-button"
           variant="outline"
@@ -91,14 +104,51 @@ export const EventStatusArea: FunctionComponent<{
             className={`fill-black dark:fill-white ${maybeMarkColor}`}
           />
         </Button>
-        <Button
-          aria-label="cancel-button"
-          variant="outline"
-          onClick={leave}
-          className="w-full"
+
+        <Dialog
+          open={showCommentModal}
+          onOpenChange={(open) => setShowCommentModal(open)}
         >
-          <XIcon className={canceledMarkColor} />
-        </Button>
+          <DialogTrigger asChild>
+            <Button
+              aria-label="cancel-button"
+              variant="outline"
+              onClick={leave}
+              className="w-full"
+            >
+              <XIcon className={canceledMarkColor} />
+            </Button>
+          </DialogTrigger>
+
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                <h2 id="modal-title">Bitte gib einen Grund an (optional)</h2>
+              </DialogTitle>
+            </DialogHeader>
+            <div className="flex flex-col w-full gap-y-2">
+              <TextField
+                label="Warum kannst du nicht teilnehmen?"
+                text={''}
+                onChange={(e) => setComment(e.target.value)}
+                maxLength={35}
+              />
+
+              <Button
+                variant="outline"
+                color="info"
+                type="submit"
+                onClick={() => {
+                  setEventComment({ comment, eventId: id })
+                  setShowCommentModal(false)
+                }}
+                className="w-full"
+              >
+                Speichern
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
       <DialogContent>
         <DialogHeader>

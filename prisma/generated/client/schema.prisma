@@ -47,6 +47,7 @@ model ParticipantsOnEvents {
   eventId         String
   date            DateTime        @default(now())
   id              String
+  comment         String?
   userEventStatus UserEventStatus @default(AVAILABLE)
   user            User            @relation(fields: [id], references: [id], onDelete: Cascade)
   event           Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)

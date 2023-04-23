@@ -25,6 +25,7 @@ export const userRouter = router({
     .input(z.object({ ids: z.string().array(), eventId: z.string() }))
     .query(async ({ ctx: { prisma }, input }) => {
       const { eventId, ids } = input
+
       const res = await Promise.all(
         ids.map((id) =>
           prisma.participantsOnEvents.findUnique({
@@ -91,7 +92,7 @@ export const userRouter = router({
       return Boolean(user)
     }),
 
-  updatePaypalName: publicProcedure
+  updatePaypalName: protectedProcedure
     .input(z.object({ name: z.string() }))
     .mutation(async ({ input, ctx: { prisma, session } }) => {
       const { name } = input
@@ -113,4 +114,16 @@ export const userRouter = router({
       select: { paypalName: true },
     })
   }),
+  setEventComment: publicProcedure
+    .input(z.object({ comment: z.string().nullable(), eventId: z.string() }))
+    .mutation(async ({ ctx: { prisma, session }, input }) => {
+      const { comment, eventId } = input
+      const id = session?.user?.id
+      if (!id) throw new TRPCError({ code: 'UNAUTHORIZED' })
+
+      return await prisma.participantsOnEvents.update({
+        where: { id_eventId: { id, eventId } },
+        data: { comment },
+      })
+    }),
 })
