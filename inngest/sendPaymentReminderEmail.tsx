@@ -11,7 +11,7 @@ export const sendPaymentReminderEmail = inngest.createFunction(
   { name: 'Send Payment Reminder Email' },
   { event: 'event/paymentReminderEmail' },
 
-  async ({ event: inngestEvent, step }) => {
+  async ({ event: inngestEvent }) => {
     const id = inngestEvent.data.id as string
 
     const user = inngestEvent.data.user as {

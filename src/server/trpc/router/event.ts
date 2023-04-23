@@ -4,7 +4,6 @@ import { z } from 'zod'
 import { getAddressAndCoordinatesRedisKeys } from '../../../helpers/getAddressAndCoordinatesRedisKeys'
 import { redis } from '../../redis/redis'
 
-import inngest from '@/inngest'
 import { protectedProcedure, router } from '../trpc'
 
 export const eventRouter = router({
@@ -22,17 +21,16 @@ export const eventRouter = router({
         })
         .nullish(),
     )
-    .mutation(async ({ ctx: { prisma }, input }) => {
+    .mutation(async ({ ctx: { prisma, inngest }, input }) => {
       if (!input) throw new TRPCError({ code: 'BAD_REQUEST' })
 
       const event = await prisma.event.create({
         data: { ...input },
       })
 
-      await inngest.send('event/new', {
+      await inngest?.send('event/new', {
         data: {
           id: event.id,
-          participantsAmount: joinedParticipantIds.length,
         },
       })
 

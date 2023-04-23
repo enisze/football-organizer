@@ -7,11 +7,11 @@ import { sendEmail } from './createSendEmail'
 const prisma = new PrismaClient()
 const inngest = new Inngest({ name: 'Event Wizard' })
 
-export const sendPaymentReminderEmail = inngest.createFunction(
+export const sendNewEventEmail = inngest.createFunction(
   { name: 'Send new Event Email' },
   { event: 'event/newEmail' },
 
-  async ({ event: inngestEvent, step }) => {
+  async ({ event: inngestEvent }) => {
     const id = inngestEvent.data.id as string
 
     const user = inngestEvent.data.user as {

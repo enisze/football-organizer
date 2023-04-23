@@ -12,7 +12,7 @@ export const sendEventReminderEmail = inngest.createFunction(
   { name: 'Send Event Reminder Email' },
   { event: 'event/reminderEmail' },
 
-  async ({ event: inngestEvent, step }) => {
+  async ({ event: inngestEvent }) => {
     const id = inngestEvent.data.id as string
 
     const user = inngestEvent.data.user as {
