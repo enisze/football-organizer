@@ -1,3 +1,4 @@
+import { Events } from '@/inngest/__generated__/types.js'
 import { Inngest } from 'inngest'
 import { PrismaClient } from '../../../prisma/generated/client/index.js'
 import { env } from '../../env/server.mjs'
@@ -7,7 +8,7 @@ declare global {
   var prisma: PrismaClient | undefined
 
   // eslint-disable-next-line no-var
-  var inngest: Inngest | undefined
+  var inngest: Inngest<Events> | undefined
 }
 
 export const prisma =
@@ -17,7 +18,12 @@ export const prisma =
     //   env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
   })
 
-export const innget = global.inngest || new Inngest({ name: 'Event Wizard' })
+export const innget =
+  global.inngest ||
+  new Inngest<Events>({
+    name: 'Event Wizard',
+    eventKey: process.env.INNGEST_EVENT_KEY,
+  })
 
 if (env.NODE_ENV !== 'production') {
   global.prisma = prisma

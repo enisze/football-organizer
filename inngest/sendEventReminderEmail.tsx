@@ -2,11 +2,11 @@ import EventReminder from '@/emails/EventReminder'
 import { PrismaClient } from '@/prisma/generated/client'
 import { render } from '@react-email/components'
 import { differenceInCalendarDays } from 'date-fns'
-import { Inngest } from 'inngest'
 import { sendEmail } from './createSendEmail'
 
 const prisma = new PrismaClient()
-const inngest = new Inngest({ name: 'Event Wizard' })
+
+import { inngest } from './inngestClient'
 
 export const sendEventReminderEmail = inngest.createFunction(
   { name: 'Send Event Reminder Email' },

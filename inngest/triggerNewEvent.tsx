@@ -1,10 +1,9 @@
 import { differenceInCalendarDays } from 'date-fns'
-import { Inngest } from 'inngest'
 import { PrismaClient } from '../prisma/generated/client'
 
-const prisma = new PrismaClient()
+import { inngest } from './inngestClient'
 
-const inngest = new Inngest({ name: 'Event Wizard' })
+const prisma = new PrismaClient()
 
 export const triggerNewEvent = inngest.createFunction(
   { name: 'Send New Event Email' },

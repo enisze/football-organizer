@@ -4,16 +4,14 @@ import type {
 } from '../prisma/generated/client'
 import { PrismaClient } from '../prisma/generated/client'
 
-import { Inngest } from 'inngest'
+import { inngest } from './inngestClient'
 
 const prisma = new PrismaClient()
-
-const inngest = new Inngest({ name: 'Event Wizard' })
 
 export const triggerPaymentAndEventReminder = inngest.createFunction(
   { name: 'Trigger Payment and Event Reminder' },
   { event: 'event/reminder' },
-  async ({ event: inngestEvent, step }) => {
+  async ({ event: inngestEvent }) => {
     const id = inngestEvent.data.id
 
     const event = await prisma.event.findUnique({

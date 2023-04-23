@@ -2,14 +2,13 @@ import type { OAuth2ClientOptions } from 'google-auth-library'
 import { OAuth2Client } from 'google-auth-library'
 import type { gmail_v1 } from 'googleapis'
 import { google } from 'googleapis'
-import { Inngest } from 'inngest'
 import type { Event, Payment } from '../prisma/generated/client'
 import { PrismaClient } from '../prisma/generated/client'
 import { getEuroAmount } from '../src/helpers/getEuroAmount'
 import { isDateInCertainRange } from '../src/helpers/isDateInCertainRange'
 import { sendNewRefreshTokenMail } from './sendNewRefreshTokenMail'
 
-const inngest = new Inngest({ name: 'Event Wizard' })
+import { inngest } from './inngestClient'
 
 const prisma = new PrismaClient()
 
