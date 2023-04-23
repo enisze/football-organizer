@@ -6,7 +6,7 @@ import { inngest } from './inngestClient'
 const prisma = new PrismaClient()
 
 export const triggerNewEvent = inngest.createFunction(
-  { name: 'Send New Event Email' },
+  { name: 'Trigger New Event Email' },
   { event: 'event/new' },
   async ({ event: inngestEvent }) => {
     const eventId = inngestEvent.data.id
