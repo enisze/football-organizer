@@ -1,4 +1,4 @@
-import { Events } from '@/inngest/__generated__/types.js'
+import type { Events } from '@/inngest/__generated__/types.js'
 import { Inngest } from 'inngest'
 import { PrismaClient } from '../../../prisma/generated/client/index.js'
 import { env } from '../../env/server.mjs'
@@ -18,7 +18,7 @@ export const prisma =
     //   env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
   })
 
-export const innget =
+export const inngest =
   global.inngest ||
   new Inngest<Events>({
     name: 'Event Wizard',
