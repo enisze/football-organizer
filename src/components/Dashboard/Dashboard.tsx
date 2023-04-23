@@ -9,7 +9,11 @@ import { LoadingWrapper } from '../LoadingWrapper'
 export const Dashboard: FunctionComponent<{ groupId?: string }> = ({
   groupId,
 }) => {
-  const { data: events, isLoading } = trpc.event.getAllByGroup.useQuery(
+  const {
+    data: events,
+    isLoading,
+    isFetching,
+  } = trpc.event.getAllByGroup.useQuery(
     {
       groupId: groupId ?? '',
     },
@@ -20,6 +24,15 @@ export const Dashboard: FunctionComponent<{ groupId?: string }> = ({
     trpc.group.getGroupsOfUser.useQuery({
       owned: false,
     })
+
+  const loading = groupsLoading || (isLoading && isFetching)
+
+  if (loading)
+    return (
+      <div className="flex justify-center m-8">
+        <LoadingWrapper isLoading={loading} />
+      </div>
+    )
 
   return (
     <div className="m-8 flex flex-col gap-y-3 justify-center items-center">
