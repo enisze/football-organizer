@@ -1,8 +1,7 @@
 import { PaidButCanceled } from '@/emails/PaidButCanceled'
 import { render } from '@react-email/render'
-import { SendSmtpEmail } from '@sendinblue/client'
 import type { Event, User } from '../prisma/generated/client'
-import apiInstance from '../src/emails/transporter'
+import { sendEmail } from './createSendEmail'
 
 export const sendPaidButCanceledMail = async (
   event: Event | null,
@@ -20,17 +19,19 @@ export const sendPaidButCanceledMail = async (
     />,
   )
 
-  const sendSmptMail = new SendSmtpEmail()
+  if (!owner) return { success: false }
 
-  sendSmptMail.to = [{ email: owner?.email ?? '' }]
-  sendSmptMail.htmlContent = html
-  sendSmptMail.sender = {
-    email: 'eniszej@gmail.com',
-    name: 'Event Wizard',
-  }
-  sendSmptMail.subject = 'BEZAHLUNG TROTZ ABSAGE'
+  const { response } = await sendEmail(
+    owner.email,
+    html,
+    'BEZAHLUNG TROTZ ABSAGE',
+  )
 
-  const res = await apiInstance.sendTransacEmail(sendSmptMail)
+  console.log(
+    `Message sent to: ${JSON.stringify(owner.email)}, Code : ${
+      response.statusCode
+    }`,
+  )
 
-  return { success: res.response.statusCode === 201 }
+  return { success: response.statusCode === 201 }
 }

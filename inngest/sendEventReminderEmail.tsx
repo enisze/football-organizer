@@ -1,10 +1,9 @@
 import EventReminder from '@/emails/EventReminder'
 import { PrismaClient } from '@/prisma/generated/client'
-import apiInstance from '@/src/emails/transporter'
 import { render } from '@react-email/components'
-import { SendSmtpEmail } from '@sendinblue/client'
 import { differenceInCalendarDays } from 'date-fns'
 import { Inngest } from 'inngest'
+import { sendEmail } from './createSendEmail'
 
 const prisma = new PrismaClient()
 const inngest = new Inngest({ name: 'Event Wizard' })
@@ -38,18 +37,18 @@ export const sendEventReminderEmail = inngest.createFunction(
       />,
     )
 
-    const sendSmptMail = new SendSmtpEmail()
-
     const days = differenceInCalendarDays(event.date, new Date())
 
-    sendSmptMail.to = [{ email: user.email }]
-    sendSmptMail.htmlContent = html
-    sendSmptMail.sender = {
-      email: 'eniszej@gmail.com',
-      name: 'Event Wizard',
-    }
-    sendSmptMail.subject = `Erinnerung: Fussball in ${days} Tagen, ${participantsAmount}/${event.maxParticipants} Teilnehmer!`
+    const { response } = await sendEmail(
+      user.email,
+      html,
+      `Erinnerung: Fussball in ${days} Tagen, ${participantsAmount}/${event.maxParticipants} Teilnehmer!`,
+    )
 
-    await apiInstance.sendTransacEmail(sendSmptMail)
+    console.log(
+      `Message sent to: ${JSON.stringify(user.email)}, Code : ${
+        response.statusCode
+      }`,
+    )
   },
 )

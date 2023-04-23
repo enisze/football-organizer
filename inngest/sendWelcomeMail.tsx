@@ -1,23 +1,20 @@
 import { WelcomeEmail } from '@/emails/Welcome'
 import { render } from '@react-email/render'
-import { SendSmtpEmail } from '@sendinblue/client'
 import type { User } from '../prisma/generated/client'
-import apiInstance from '../src/emails/transporter'
+import { sendEmail } from './createSendEmail'
 
 export const sendWelcomeMail = async (user: User | null) => {
   const html = render(<WelcomeEmail userFirstname={user?.name ?? ''} />)
 
-  const sendSmptMail = new SendSmtpEmail()
+  if (!user?.email) return { success: false }
 
-  sendSmptMail.to = [{ email: user?.email ?? '' }]
-  sendSmptMail.htmlContent = html
-  sendSmptMail.sender = {
-    email: 'eniszej@gmail.com',
-    name: 'Event Wizard',
-  }
-  sendSmptMail.subject = 'Erfolgreich Registriert :)'
+  const { response } = await sendEmail(
+    user.email,
+    html,
+    'Erfolgreich Registriert :)',
+  )
 
-  const res = await apiInstance.sendTransacEmail(sendSmptMail)
+  console.log(`Message sent to: ${JSON.stringify(user.email)}`)
 
-  return { success: res.response.statusCode === 201 }
+  return { success: response.statusCode === 201 }
 }

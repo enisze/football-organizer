@@ -1,10 +1,10 @@
-import { sendNewEventEmail } from '@/inngest/sendNewEventEmail'
 import { TRPCError } from '@trpc/server'
 import { subDays } from 'date-fns'
 import { z } from 'zod'
 import { getAddressAndCoordinatesRedisKeys } from '../../../helpers/getAddressAndCoordinatesRedisKeys'
 import { redis } from '../../redis/redis'
 
+import inngest from '@/inngest'
 import { protectedProcedure, router } from '../trpc'
 
 export const eventRouter = router({
@@ -29,7 +29,12 @@ export const eventRouter = router({
         data: { ...input },
       })
 
-      await sendNewEventEmail({ event })
+      await inngest.send('event/new', {
+        data: {
+          id: event.id,
+          participantsAmount: joinedParticipantIds.length,
+        },
+      })
 
       return event
     }),

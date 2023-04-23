@@ -1,9 +1,8 @@
 import PaymentReminder from '@/emails/PaymentReminder'
 import { PrismaClient } from '@/prisma/generated/client'
-import apiInstance from '@/src/emails/transporter'
 import { render } from '@react-email/components'
-import { SendSmtpEmail } from '@sendinblue/client'
 import { Inngest } from 'inngest'
+import { sendEmail } from './createSendEmail'
 
 const prisma = new PrismaClient()
 const inngest = new Inngest({ name: 'Event Wizard' })
@@ -29,16 +28,16 @@ export const sendPaymentReminderEmail = inngest.createFunction(
 
     const html = render(<PaymentReminder event={event} userName={user.name} />)
 
-    const sendSmptMail = new SendSmtpEmail()
+    const { response } = await sendEmail(
+      user.email,
+      html,
+      'Erinnerung: Fussball bezahlen',
+    )
 
-    sendSmptMail.to = [{ email: user.email }]
-    sendSmptMail.htmlContent = html
-    sendSmptMail.sender = {
-      email: 'eniszej@gmail.com',
-      name: 'Event Wizard',
-    }
-    sendSmptMail.subject = 'Erinnerung: Fussball bezahlen'
-
-    await apiInstance.sendTransacEmail(sendSmptMail)
+    console.log(
+      `Message sent to: ${JSON.stringify(user.email)}, Code : ${
+        response.statusCode
+      }`,
+    )
   },
 )

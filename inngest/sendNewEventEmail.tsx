@@ -1,68 +1,45 @@
-import { render } from '@react-email/render'
-import { SendSmtpEmail } from '@sendinblue/client'
-import { differenceInCalendarDays } from 'date-fns'
-import { NewEvent } from '../emails/NewEvent'
-import type { Event } from '../prisma/generated/client'
-import { PrismaClient } from '../prisma/generated/client'
-import apiInstance from '../src/emails/transporter'
+import NewEvent from '@/emails/NewEvent'
+import { PrismaClient } from '@/prisma/generated/client'
+import { render } from '@react-email/components'
+import { Inngest } from 'inngest'
+import { sendEmail } from './createSendEmail'
 
 const prisma = new PrismaClient()
+const inngest = new Inngest({ name: 'Event Wizard' })
 
-export const sendNewEventEmail = async ({ event }: { event: Event }) => {
-  try {
-    const usersOnGroup = await prisma.userOnGroups.findMany({
-      where: { groupId: event.groupId ?? '' },
+export const sendPaymentReminderEmail = inngest.createFunction(
+  { name: 'Send new Event Email' },
+  { event: 'event/newEmail' },
+
+  async ({ event: inngestEvent, step }) => {
+    const id = inngestEvent.data.id as string
+
+    const user = inngestEvent.data.user as {
+      name: string
+      email: string
+    }
+
+    const days = inngestEvent.data.days as number
+
+    const event = await prisma.event.findUnique({
+      where: { id },
+      include: { participants: true, payments: true },
     })
 
-    if (!usersOnGroup)
-      return {
-        message: `No users found`,
-      }
+    if (!event) return
 
-    const usersWhoGotMails: string[] = []
+    const html = render(<NewEvent event={event} userName={user.name} />)
 
-    const days = differenceInCalendarDays(new Date(event.date), new Date())
-
-    const usersOfGroup = await Promise.all(
-      usersOnGroup.map(async (user) => {
-        return await prisma.user.findUnique({ where: { id: user.id } })
-      }),
+    const { response } = await sendEmail(
+      user.email,
+      html,
+      `NEUES FUSSBALL EVENT: In ${days} Tagen`,
     )
 
-    const promises = usersOfGroup
-      .filter((user) => user?.notificationsEnabled)
-      .map(async (user) => {
-        if (!user) return
-
-        const html = render(<NewEvent event={event} userName={user.name} />)
-
-        const sendSmptMail = new SendSmtpEmail()
-
-        sendSmptMail.to = [{ email: user.email }]
-        sendSmptMail.htmlContent = html
-        sendSmptMail.sender = {
-          email: 'eniszej@gmail.com',
-          name: 'Event Wizard',
-        }
-        sendSmptMail.subject = `NEUES FUSSBALL EVENT: In ${days} Tagen`
-
-        usersWhoGotMails.push(user.email)
-        return apiInstance.sendTransacEmail(sendSmptMail)
-      })
-
-    const responses = await Promise.all(promises)
-
-    const codes = responses.map(
-      (res) => res?.response.statusCode + ' ' + res?.response.statusMessage,
+    console.log(
+      `Message sent to: ${JSON.stringify(user.email)}, Code : ${
+        response.statusCode
+      }`,
     )
-
-    console.log(`Message sent to: ${JSON.stringify(usersWhoGotMails)},
-    Message results: ${codes}`)
-
-    return { success: true }
-  } catch (error: any) {
-    return {
-      message: `No users ${error}`,
-    }
-  }
-}
+  },
+)

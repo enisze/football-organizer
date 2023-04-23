@@ -10,8 +10,8 @@ const prisma = new PrismaClient()
 
 const inngest = new Inngest({ name: 'Event Wizard' })
 
-export const sendPaymentAndEventReminderEmails = inngest.createFunction(
-  { name: 'Send Payment and Events' },
+export const triggerPaymentAndEventReminder = inngest.createFunction(
+  { name: 'Trigger Payment and Event Reminder' },
   { event: 'event/reminder' },
   async ({ event: inngestEvent, step }) => {
     const id = inngestEvent.data.id
