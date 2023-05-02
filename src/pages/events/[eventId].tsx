@@ -16,7 +16,12 @@ const EventPage: FunctionComponent = () => {
 
   const { data, isLoading } = trpc.event.getById.useQuery(
     { id },
-    { enabled: Boolean(id) },
+    {
+      enabled: Boolean(id),
+      onError: () => {
+        router.push('/api/auth/signin')
+      },
+    },
   )
   const { status } = useSession()
 
