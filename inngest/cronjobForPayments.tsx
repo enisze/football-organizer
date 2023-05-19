@@ -13,11 +13,13 @@ import { sendNewRefreshTokenMail } from './sendNewRefreshTokenMail'
 const prisma = new PrismaClient()
 
 const runCron = async () => {
+  console.log('Starting cron')
   const ownerIds = await prisma.group.findMany({
     select: { ownerId: true, owner: { select: { email: true, name: true } } },
   })
 
   ownerIds.forEach(async (data) => {
+    console.log('Owner', data.ownerId)
     const result = await getPaypalEmails(
       data.ownerId,
       data.owner.email,
@@ -47,7 +49,7 @@ const runCron = async () => {
 
     let emailsWithConditions = 0
 
-    console.log('traversing each user')
+    console.log('Traversing each user')
 
     users
       .filter((user) => user.email !== 'eniszej@gmail.com')
@@ -187,8 +189,6 @@ const getPaypalEmails = async (
           })
         : [],
     )
-
-    console.log('Done')
 
     if (!result) {
       console.log('No Paypal data')
