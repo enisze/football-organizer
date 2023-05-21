@@ -37,6 +37,16 @@ export type Event__ReminderEmail = {
   name: 'event/reminderEmail'
 }
 
+export type Event__MissingTokenEmail = {
+  data: {
+    authorizeUrl: string
+    ownerEmail: string
+    ownerName: string
+  }
+  ts: number
+  name: 'event/missingTokenEmail'
+}
+
 export type Event__PaymentReminderEmail = {
   data: {
     user: {
@@ -2214,6 +2224,7 @@ type GeneratedEvents = Readonly<{
   'event/reminderEmail': Readonly<Event__ReminderEmail>
   'event/paymentReminderEmail': Readonly<Event__PaymentReminderEmail>
   'event/newEmail': Readonly<Event__NewEmail>
+  'event/missingTokenEmail': Readonly<Event__MissingTokenEmail>
   'github/check_suite': Readonly<Github__Check_Suite>
   'github/delete': Readonly<Github__Delete>
   'github/workflow_run': Readonly<Github__Workflow_Run>

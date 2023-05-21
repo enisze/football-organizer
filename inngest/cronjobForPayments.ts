@@ -7,13 +7,21 @@ import { PrismaClient } from '../prisma/generated/client'
 import { getEuroAmount } from '../src/helpers/getEuroAmount'
 import { isDateInCertainRange } from '../src/helpers/isDateInCertainRange'
 
+import { omit } from '@/src/helpers/omit'
 import { inngest } from './inngestClient'
-import { sendNewRefreshTokenMail } from './sendNewRefreshTokenMail'
 
 const prisma = new PrismaClient()
 
-const runCron = async () => {
+export const cronJob = inngest.createFunction(
+  { name: 'Cronjob for payments' },
+  { cron: '0 11,20 * * *' },
+  ({ step }) => {
+    runCron(step)
+  },
+)
+const runCron = async (step?: any) => {
   console.log('Starting cron')
+
   const ownerIds = await prisma.group.findMany({
     select: { ownerId: true, owner: { select: { email: true, name: true } } },
   })
@@ -26,9 +34,26 @@ const runCron = async () => {
       data.owner.name,
     )
 
-    if (!result) return { message: 'No paypal emails' }
+    if (!result?.result) return { message: 'No paypal emails' }
 
-    if (result === 'Token has expired') return { message: 'New token needed' }
+    if (result.error) {
+      const { authorizeUrl, ownerEmail, ownerName } = result
+
+      if (step) {
+        ;(await step.sendEvent({
+          name: 'event/missingTokenEmail',
+          data: {
+            authorizeUrl,
+            ownerEmail,
+            ownerName,
+          },
+        })) as Promise<void>
+      }
+
+      return {
+        message: 'New token needed',
+      }
+    }
 
     const events = await prisma.event.findMany()
     const users = await prisma.user.findMany()
@@ -56,7 +81,7 @@ const runCron = async () => {
       .forEach((user) => {
         //Get all paypal emails from specific user
 
-        const filteredByUser = result.filter((res) => {
+        const filteredByUser = result.result.filter((res) => {
           if (!res.internalDate) return false
 
           return res.snippet?.toLowerCase().includes(user.name.toLowerCase())
@@ -134,12 +159,6 @@ const runCron = async () => {
   })
 }
 
-export const cronJob = inngest.createFunction(
-  { name: 'Cronjob for payments' },
-  { cron: '0 11,20 * * *' },
-  runCron,
-)
-
 const credentials: OAuth2ClientOptions = {
   clientId: process.env.GMAIL_CLIENT_ID,
   clientSecret: process.env.GMAIL_CLIENT_SECRET,
@@ -195,7 +214,7 @@ const getPaypalEmails = async (
       return
     }
 
-    return result
+    return { result, success: true }
   } catch (error) {
     const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
     const authorizeUrl = oAuth2Client.generateAuthUrl({
@@ -204,13 +223,8 @@ const getPaypalEmails = async (
       prompt: 'consent',
       redirect_uri: process.env.NEXT_PUBLIC_BASE_URL + '/oauth2callback',
     })
-    await sendNewRefreshTokenMail({
-      link: authorizeUrl,
-      email: ownerEmail,
-      name: ownerName,
-    })
-    console.log(error)
-    return 'Token has expired'
+
+    return { authorizeUrl, ownerEmail, ownerName, error: 'Token has expired' }
   }
 }
 
@@ -241,13 +255,3 @@ const isInAmountRangeAndEventBookingDate = (
     event: eventWithBookingDateInRange,
   }
 }
-
-export const omit = <T extends object, K extends keyof T>(
-  obj: T,
-  ...keys: K[]
-): Omit<T, K> => {
-  keys.forEach((key) => delete obj[key])
-  return obj
-}
-
-runCron()
