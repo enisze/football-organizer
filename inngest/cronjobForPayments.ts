@@ -1,13 +1,13 @@
-import type { OAuth2ClientOptions } from 'google-auth-library'
-import { OAuth2Client } from 'google-auth-library'
 import type { gmail_v1 } from 'googleapis'
 import { google } from 'googleapis'
-import type { Event, Payment } from '../prisma/generated/client'
 import { PrismaClient } from '../prisma/generated/client'
 import { getEuroAmount } from '../src/helpers/getEuroAmount'
-import { isDateInCertainRange } from '../src/helpers/isDateInCertainRange'
 
-import { omit } from '@/src/helpers/omit'
+import { isDateInCertainRange } from '@/src/helpers/isDateInCertainRange'
+import { differenceInDays, subDays } from 'date-fns'
+import type { OAuth2ClientOptions } from 'google-auth-library'
+import { OAuth2Client } from 'google-auth-library'
+import type { Event, Payment } from '../prisma/generated/client'
 import { inngest } from './inngestClient'
 
 const prisma = new PrismaClient()
@@ -63,21 +63,9 @@ const runCron = async (step?: any) => {
 
     const filteredEvents = events.filter((event) => Boolean(event.bookingDate))
 
-    const paymentsAddedForUser: {
-      eventId: string
-      amount: number
-      paymentDate: Date
-      gmailMailId: string
-      userId: string
-      name: string
-    }[] = []
-
     let emailAmount = 0
-
     const emailsAlreadyInDB: Payment[] = []
-
     let emailsWithConditions = 0
-
     console.log('Traversing each user')
 
     filteredEvents.forEach(async (event) => {
@@ -116,7 +104,7 @@ const runCron = async (step?: any) => {
 
           if (res) {
             emailsAlreadyInDB.push(res)
-            console.log('payment already exists')
+            console.log('payment already exists for ' + user.name)
             return
           }
 
@@ -137,42 +125,30 @@ const runCron = async (step?: any) => {
 
           const amount = getEuroAmount(email.snippet)
 
-          paymentsAddedForUser.push({
-            eventId: event.id,
-            amount,
-            paymentDate: new Date(Number(email.internalDate)),
-            gmailMailId: email.id,
-            userId: user.id,
-            name: user.name,
+          await prisma.payment.create({
+            data: {
+              eventId: event.id,
+              amount,
+              paymentDate: new Date(Number(email.internalDate)),
+              gmailMailId: email.id,
+              userId: user.id,
+            },
           })
+
+          console.log('added for ', user.name)
         })
       })
     })
 
-    try {
-      await Promise.all(
-        paymentsAddedForUser.map((payment) =>
-          prisma.payment.create({
-            data: {
-              ...omit(payment, 'name'),
-            },
-          }),
-        ),
-      )
-    } catch (error) {
-      console.log(error)
-    }
     //TODO: Delete all events older than a week
 
     return `
-  Email amount: ${emailAmount}
-  Emails found already in DB: ${
-    emailsAlreadyInDB.length
-  } ${emailsAlreadyInDB.map((mail) => mail.gmailMailId)}
-  Amount of emails that fulfill conditions and are not in DB yet: ${emailsWithConditions}
-  Users with payments: ${
-    paymentsAddedForUser.length
-  } ${paymentsAddedForUser.map((user) => user.name)}`
+    Email amount: ${emailAmount}
+    Emails found already in DB: ${
+      emailsAlreadyInDB.length
+    } ${emailsAlreadyInDB.map((mail) => mail.gmailMailId)}
+    Amount of emails that fulfill conditions and are not in DB yet: ${emailsWithConditions}
+    `
   })
 }
 
@@ -226,12 +202,22 @@ const getPaypalEmails = async (
         : [],
     )
 
-    if (!result) {
+    const filteredResult = result.filter((res) => {
+      const date = new Date(Number(res.internalDate))
+      const dateNow = new Date()
+
+      const nowLastWeek = subDays(dateNow, 7)
+      const dateDiff = differenceInDays(nowLastWeek, date)
+
+      return dateDiff < 0
+    })
+
+    if (!filteredResult) {
       console.log('No Paypal data')
       return
     }
 
-    return { result, success: true }
+    return { result: filteredResult, success: true }
   } catch (error) {
     const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
     const authorizeUrl = oAuth2Client.generateAuthUrl({
