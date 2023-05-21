@@ -12,12 +12,11 @@ datasource db {
 }
 
 model Tokens {
-
-  id            String                 @id @default(cuid())
+  id            String   @id @default(cuid())
   access_token  String   @db.Text
-  refresh_token String   @unique 
+  refresh_token String   @unique
   expiry_date   DateTime
-  ownerId       String   
+  ownerId       String
   user          User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
   @@index([ownerId])
@@ -35,7 +34,6 @@ model Event {
   cost            Float
   status          EventStatus            @default(CREATED)
   maxParticipants Int                    @default(10)
-  payments        Payment[]
   participants    ParticipantsOnEvents[]
   Group           Group?                 @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId         String?
@@ -44,10 +42,13 @@ model Event {
 }
 
 model ParticipantsOnEvents {
-  eventId         String
-  date            DateTime        @default(now())
-  id              String
-  comment         String?
+  eventId   String
+  date      DateTime @default(now())
+  id        String
+  comment   String?
+  paymentId String?
+
+  payment         Payment?        @relation(fields: [paymentId], references: [id], onDelete: Cascade)
   userEventStatus UserEventStatus @default(AVAILABLE)
   user            User            @relation(fields: [id], references: [id], onDelete: Cascade)
   event           Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
@@ -55,19 +56,19 @@ model ParticipantsOnEvents {
   @@id([id, eventId])
   @@index([id])
   @@index([eventId])
+  @@index([paymentId])
 }
 
 model Payment {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  eventId     String
-  userId      String
-  amount      Float
-  paymentDate DateTime
-  gmailMailId String
-  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                   String                 @id @default(cuid())
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  eventId              String
+  userId               String
+  amount               Float
+  paymentDate          DateTime
+  gmailMailId          String
+  ParticipantsOnEvents ParticipantsOnEvents[]
 
   @@index([eventId])
   @@index([userId])
@@ -129,7 +130,6 @@ model User {
   paypalName           String?
   accounts             Account[]
   sessions             Session[]
-  payments             Payment[]
   events               ParticipantsOnEvents[]
   groups               UserOnGroups[]
   ownedGroups          Group[]

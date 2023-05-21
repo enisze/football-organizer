@@ -23,7 +23,11 @@ const runCron = async (step?: any) => {
   console.log('Starting cron')
 
   const ownerIds = await prisma.group.findMany({
-    select: { ownerId: true, owner: { select: { email: true, name: true } } },
+    select: {
+      ownerId: true,
+      id: true,
+      owner: { select: { email: true, name: true } },
+    },
   })
 
   ownerIds.forEach(async (data) => {
@@ -55,9 +59,9 @@ const runCron = async (step?: any) => {
       }
     }
 
-    const events = await prisma.event.findMany()
-    const users = await prisma.user.findMany()
-    const payments = await prisma.payment.findMany()
+    const events = await prisma.event.findMany({ where: { groupId: data.id } })
+
+    const filteredEvents = events.filter((event) => Boolean(event.bookingDate))
 
     const paymentsAddedForUser: {
       eventId: string
@@ -76,11 +80,19 @@ const runCron = async (step?: any) => {
 
     console.log('Traversing each user')
 
-    users
-      .filter((user) => user.email !== 'eniszej@gmail.com')
-      .forEach((user) => {
-        //Get all paypal emails from specific user
+    filteredEvents.forEach(async (event) => {
+      const participants = await prisma.participantsOnEvents.findMany({
+        where: { eventId: event.id, userEventStatus: 'JOINED' },
+      })
 
+      participants.forEach(async (participant) => {
+        const user = await prisma.user.findUnique({
+          where: { id: participant.id },
+        })
+
+        if (!user) return
+
+        //Get all paypal emails from specific user
         const filteredByUser = result.result.filter((res) => {
           if (!res.internalDate) return false
 
@@ -93,10 +105,14 @@ const runCron = async (step?: any) => {
 
         emailAmount += filteredByUser.length
 
-        filteredByUser.forEach((email) => {
-          const res = payments.find(
-            (payment) => payment.gmailMailId === email.id,
-          )
+        filteredByUser.forEach(async (email) => {
+          const mailId = email.id
+
+          if (!mailId) return
+
+          const res = await prisma.payment.findFirst({
+            where: { gmailMailId: mailId, userId: user.id },
+          })
 
           if (res) {
             emailsAlreadyInDB.push(res)
@@ -131,6 +147,7 @@ const runCron = async (step?: any) => {
           })
         })
       })
+    })
 
     try {
       await Promise.all(

@@ -133,6 +133,7 @@ exports.Prisma.ParticipantsOnEventsScalarFieldEnum = makeEnum({
   date: 'date',
   id: 'id',
   comment: 'comment',
+  paymentId: 'paymentId',
   userEventStatus: 'userEventStatus'
 });
 

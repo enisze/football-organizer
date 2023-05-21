@@ -52,6 +52,7 @@ export type ParticipantsOnEvents = {
   date: Date
   id: string
   comment: string | null
+  paymentId: string | null
   userEventStatus: UserEventStatus
 }
 
@@ -1056,12 +1057,10 @@ export namespace Prisma {
 
 
   export type EventCountOutputType = {
-    payments: number
     participants: number
   }
 
   export type EventCountOutputTypeSelect = {
-    payments?: boolean
     participants?: boolean
   }
 
@@ -1091,6 +1090,49 @@ export namespace Prisma {
      * Select specific fields to fetch from the EventCountOutputType
      */
     select?: EventCountOutputTypeSelect | null
+  }
+
+
+
+  /**
+   * Count Type PaymentCountOutputType
+   */
+
+
+  export type PaymentCountOutputType = {
+    ParticipantsOnEvents: number
+  }
+
+  export type PaymentCountOutputTypeSelect = {
+    ParticipantsOnEvents?: boolean
+  }
+
+  export type PaymentCountOutputTypeGetPayload<S extends boolean | null | undefined | PaymentCountOutputTypeArgs> =
+    S extends { select: any, include: any } ? 'Please either choose `select` or `include`' :
+    S extends true ? PaymentCountOutputType :
+    S extends undefined ? never :
+    S extends { include: any } & (PaymentCountOutputTypeArgs)
+    ? PaymentCountOutputType 
+    : S extends { select: any } & (PaymentCountOutputTypeArgs)
+      ? {
+    [P in TruthyKeys<S['select']>]:
+    P extends keyof PaymentCountOutputType ? PaymentCountOutputType[P] : never
+  } 
+      : PaymentCountOutputType
+
+
+
+
+  // Custom InputTypes
+
+  /**
+   * PaymentCountOutputType without action
+   */
+  export type PaymentCountOutputTypeArgs = {
+    /**
+     * Select specific fields to fetch from the PaymentCountOutputType
+     */
+    select?: PaymentCountOutputTypeSelect | null
   }
 
 
@@ -1148,7 +1190,6 @@ export namespace Prisma {
   export type UserCountOutputType = {
     accounts: number
     sessions: number
-    payments: number
     events: number
     groups: number
     ownedGroups: number
@@ -1158,7 +1199,6 @@ export namespace Prisma {
   export type UserCountOutputTypeSelect = {
     accounts?: boolean
     sessions?: boolean
-    payments?: boolean
     events?: boolean
     groups?: boolean
     ownedGroups?: boolean
@@ -2390,7 +2430,6 @@ export namespace Prisma {
     status?: boolean
     maxParticipants?: boolean
     groupId?: boolean
-    payments?: boolean | Event$paymentsArgs
     participants?: boolean | Event$participantsArgs
     Group?: boolean | GroupArgs
     _count?: boolean | EventCountOutputTypeArgs
@@ -2398,7 +2437,6 @@ export namespace Prisma {
 
 
   export type EventInclude = {
-    payments?: boolean | Event$paymentsArgs
     participants?: boolean | Event$participantsArgs
     Group?: boolean | GroupArgs
     _count?: boolean | EventCountOutputTypeArgs
@@ -2411,7 +2449,6 @@ export namespace Prisma {
     S extends { include: any } & (EventArgs | EventFindManyArgs)
     ? Event  & {
     [P in TruthyKeys<S['include']>]:
-        P extends 'payments' ? Array < PaymentGetPayload<S['include'][P]>>  :
         P extends 'participants' ? Array < ParticipantsOnEventsGetPayload<S['include'][P]>>  :
         P extends 'Group' ? GroupGetPayload<S['include'][P]> | null :
         P extends '_count' ? EventCountOutputTypeGetPayload<S['include'][P]> :  never
@@ -2419,7 +2456,6 @@ export namespace Prisma {
     : S extends { select: any } & (EventArgs | EventFindManyArgs)
       ? {
     [P in TruthyKeys<S['select']>]:
-        P extends 'payments' ? Array < PaymentGetPayload<S['select'][P]>>  :
         P extends 'participants' ? Array < ParticipantsOnEventsGetPayload<S['select'][P]>>  :
         P extends 'Group' ? GroupGetPayload<S['select'][P]> | null :
         P extends '_count' ? EventCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Event ? Event[P] : never
@@ -2794,8 +2830,6 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: 'PrismaPromise';
     constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
 
-    payments<T extends Event$paymentsArgs= {}>(args?: Subset<T, Event$paymentsArgs>): Prisma.PrismaPromise<Array<PaymentGetPayload<T>>| Null>;
-
     participants<T extends Event$participantsArgs= {}>(args?: Subset<T, Event$participantsArgs>): Prisma.PrismaPromise<Array<ParticipantsOnEventsGetPayload<T>>| Null>;
 
     Group<T extends GroupArgs= {}>(args?: Subset<T, GroupArgs>): Prisma__GroupClient<GroupGetPayload<T> | Null>;
@@ -3156,27 +3190,6 @@ export namespace Prisma {
 
 
   /**
-   * Event.payments
-   */
-  export type Event$paymentsArgs = {
-    /**
-     * Select specific fields to fetch from the Payment
-     */
-    select?: PaymentSelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-     */
-    include?: PaymentInclude | null
-    where?: PaymentWhereInput
-    orderBy?: Enumerable<PaymentOrderByWithRelationInput>
-    cursor?: PaymentWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: Enumerable<PaymentScalarFieldEnum>
-  }
-
-
-  /**
    * Event.participants
    */
   export type Event$participantsArgs = {
@@ -3229,6 +3242,7 @@ export namespace Prisma {
     date: Date | null
     id: string | null
     comment: string | null
+    paymentId: string | null
     userEventStatus: UserEventStatus | null
   }
 
@@ -3237,6 +3251,7 @@ export namespace Prisma {
     date: Date | null
     id: string | null
     comment: string | null
+    paymentId: string | null
     userEventStatus: UserEventStatus | null
   }
 
@@ -3245,6 +3260,7 @@ export namespace Prisma {
     date: number
     id: number
     comment: number
+    paymentId: number
     userEventStatus: number
     _all: number
   }
@@ -3255,6 +3271,7 @@ export namespace Prisma {
     date?: true
     id?: true
     comment?: true
+    paymentId?: true
     userEventStatus?: true
   }
 
@@ -3263,6 +3280,7 @@ export namespace Prisma {
     date?: true
     id?: true
     comment?: true
+    paymentId?: true
     userEventStatus?: true
   }
 
@@ -3271,6 +3289,7 @@ export namespace Prisma {
     date?: true
     id?: true
     comment?: true
+    paymentId?: true
     userEventStatus?: true
     _all?: true
   }
@@ -3353,6 +3372,7 @@ export namespace Prisma {
     date: Date
     id: string
     comment: string | null
+    paymentId: string | null
     userEventStatus: UserEventStatus
     _count: ParticipantsOnEventsCountAggregateOutputType | null
     _min: ParticipantsOnEventsMinAggregateOutputType | null
@@ -3378,13 +3398,16 @@ export namespace Prisma {
     date?: boolean
     id?: boolean
     comment?: boolean
+    paymentId?: boolean
     userEventStatus?: boolean
+    payment?: boolean | PaymentArgs
     user?: boolean | UserArgs
     event?: boolean | EventArgs
   }
 
 
   export type ParticipantsOnEventsInclude = {
+    payment?: boolean | PaymentArgs
     user?: boolean | UserArgs
     event?: boolean | EventArgs
   }
@@ -3396,12 +3419,14 @@ export namespace Prisma {
     S extends { include: any } & (ParticipantsOnEventsArgs | ParticipantsOnEventsFindManyArgs)
     ? ParticipantsOnEvents  & {
     [P in TruthyKeys<S['include']>]:
+        P extends 'payment' ? PaymentGetPayload<S['include'][P]> | null :
         P extends 'user' ? UserGetPayload<S['include'][P]> :
         P extends 'event' ? EventGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (ParticipantsOnEventsArgs | ParticipantsOnEventsFindManyArgs)
       ? {
     [P in TruthyKeys<S['select']>]:
+        P extends 'payment' ? PaymentGetPayload<S['select'][P]> | null :
         P extends 'user' ? UserGetPayload<S['select'][P]> :
         P extends 'event' ? EventGetPayload<S['select'][P]> :  P extends keyof ParticipantsOnEvents ? ParticipantsOnEvents[P] : never
   } 
@@ -3774,6 +3799,8 @@ export namespace Prisma {
     private _requestPromise?;
     readonly [Symbol.toStringTag]: 'PrismaPromise';
     constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
+
+    payment<T extends PaymentArgs= {}>(args?: Subset<T, PaymentArgs>): Prisma__PaymentClient<PaymentGetPayload<T> | Null>;
 
     user<T extends UserArgs= {}>(args?: Subset<T, UserArgs>): Prisma__UserClient<UserGetPayload<T> | Null>;
 
@@ -4374,14 +4401,14 @@ export namespace Prisma {
     amount?: boolean
     paymentDate?: boolean
     gmailMailId?: boolean
-    event?: boolean | EventArgs
-    user?: boolean | UserArgs
+    ParticipantsOnEvents?: boolean | Payment$ParticipantsOnEventsArgs
+    _count?: boolean | PaymentCountOutputTypeArgs
   }
 
 
   export type PaymentInclude = {
-    event?: boolean | EventArgs
-    user?: boolean | UserArgs
+    ParticipantsOnEvents?: boolean | Payment$ParticipantsOnEventsArgs
+    _count?: boolean | PaymentCountOutputTypeArgs
   }
 
   export type PaymentGetPayload<S extends boolean | null | undefined | PaymentArgs> =
@@ -4391,14 +4418,14 @@ export namespace Prisma {
     S extends { include: any } & (PaymentArgs | PaymentFindManyArgs)
     ? Payment  & {
     [P in TruthyKeys<S['include']>]:
-        P extends 'event' ? EventGetPayload<S['include'][P]> :
-        P extends 'user' ? UserGetPayload<S['include'][P]> :  never
+        P extends 'ParticipantsOnEvents' ? Array < ParticipantsOnEventsGetPayload<S['include'][P]>>  :
+        P extends '_count' ? PaymentCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : S extends { select: any } & (PaymentArgs | PaymentFindManyArgs)
       ? {
     [P in TruthyKeys<S['select']>]:
-        P extends 'event' ? EventGetPayload<S['select'][P]> :
-        P extends 'user' ? UserGetPayload<S['select'][P]> :  P extends keyof Payment ? Payment[P] : never
+        P extends 'ParticipantsOnEvents' ? Array < ParticipantsOnEventsGetPayload<S['select'][P]>>  :
+        P extends '_count' ? PaymentCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Payment ? Payment[P] : never
   } 
       : Payment
 
@@ -4770,9 +4797,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: 'PrismaPromise';
     constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
 
-    event<T extends EventArgs= {}>(args?: Subset<T, EventArgs>): Prisma__EventClient<EventGetPayload<T> | Null>;
-
-    user<T extends UserArgs= {}>(args?: Subset<T, UserArgs>): Prisma__UserClient<UserGetPayload<T> | Null>;
+    ParticipantsOnEvents<T extends Payment$ParticipantsOnEventsArgs= {}>(args?: Subset<T, Payment$ParticipantsOnEventsArgs>): Prisma.PrismaPromise<Array<ParticipantsOnEventsGetPayload<T>>| Null>;
 
     private get _document();
     /**
@@ -5126,6 +5151,27 @@ export namespace Prisma {
      * Filter which Payments to delete
      */
     where?: PaymentWhereInput
+  }
+
+
+  /**
+   * Payment.ParticipantsOnEvents
+   */
+  export type Payment$ParticipantsOnEventsArgs = {
+    /**
+     * Select specific fields to fetch from the ParticipantsOnEvents
+     */
+    select?: ParticipantsOnEventsSelect | null
+    /**
+     * Choose, which related nodes to fetch as well.
+     */
+    include?: ParticipantsOnEventsInclude | null
+    where?: ParticipantsOnEventsWhereInput
+    orderBy?: Enumerable<ParticipantsOnEventsOrderByWithRelationInput>
+    cursor?: ParticipantsOnEventsWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Enumerable<ParticipantsOnEventsScalarFieldEnum>
   }
 
 
@@ -8294,7 +8340,6 @@ export namespace Prisma {
     paypalName?: boolean
     accounts?: boolean | User$accountsArgs
     sessions?: boolean | User$sessionsArgs
-    payments?: boolean | User$paymentsArgs
     events?: boolean | User$eventsArgs
     groups?: boolean | User$groupsArgs
     ownedGroups?: boolean | User$ownedGroupsArgs
@@ -8306,7 +8351,6 @@ export namespace Prisma {
   export type UserInclude = {
     accounts?: boolean | User$accountsArgs
     sessions?: boolean | User$sessionsArgs
-    payments?: boolean | User$paymentsArgs
     events?: boolean | User$eventsArgs
     groups?: boolean | User$groupsArgs
     ownedGroups?: boolean | User$ownedGroupsArgs
@@ -8323,7 +8367,6 @@ export namespace Prisma {
     [P in TruthyKeys<S['include']>]:
         P extends 'accounts' ? Array < AccountGetPayload<S['include'][P]>>  :
         P extends 'sessions' ? Array < SessionGetPayload<S['include'][P]>>  :
-        P extends 'payments' ? Array < PaymentGetPayload<S['include'][P]>>  :
         P extends 'events' ? Array < ParticipantsOnEventsGetPayload<S['include'][P]>>  :
         P extends 'groups' ? Array < UserOnGroupsGetPayload<S['include'][P]>>  :
         P extends 'ownedGroups' ? Array < GroupGetPayload<S['include'][P]>>  :
@@ -8335,7 +8378,6 @@ export namespace Prisma {
     [P in TruthyKeys<S['select']>]:
         P extends 'accounts' ? Array < AccountGetPayload<S['select'][P]>>  :
         P extends 'sessions' ? Array < SessionGetPayload<S['select'][P]>>  :
-        P extends 'payments' ? Array < PaymentGetPayload<S['select'][P]>>  :
         P extends 'events' ? Array < ParticipantsOnEventsGetPayload<S['select'][P]>>  :
         P extends 'groups' ? Array < UserOnGroupsGetPayload<S['select'][P]>>  :
         P extends 'ownedGroups' ? Array < GroupGetPayload<S['select'][P]>>  :
@@ -8715,8 +8757,6 @@ export namespace Prisma {
     accounts<T extends User$accountsArgs= {}>(args?: Subset<T, User$accountsArgs>): Prisma.PrismaPromise<Array<AccountGetPayload<T>>| Null>;
 
     sessions<T extends User$sessionsArgs= {}>(args?: Subset<T, User$sessionsArgs>): Prisma.PrismaPromise<Array<SessionGetPayload<T>>| Null>;
-
-    payments<T extends User$paymentsArgs= {}>(args?: Subset<T, User$paymentsArgs>): Prisma.PrismaPromise<Array<PaymentGetPayload<T>>| Null>;
 
     events<T extends User$eventsArgs= {}>(args?: Subset<T, User$eventsArgs>): Prisma.PrismaPromise<Array<ParticipantsOnEventsGetPayload<T>>| Null>;
 
@@ -9120,27 +9160,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: Enumerable<SessionScalarFieldEnum>
-  }
-
-
-  /**
-   * User.payments
-   */
-  export type User$paymentsArgs = {
-    /**
-     * Select specific fields to fetch from the Payment
-     */
-    select?: PaymentSelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-     */
-    include?: PaymentInclude | null
-    where?: PaymentWhereInput
-    orderBy?: Enumerable<PaymentOrderByWithRelationInput>
-    cursor?: PaymentWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: Enumerable<PaymentScalarFieldEnum>
   }
 
 
@@ -11091,6 +11110,7 @@ export namespace Prisma {
     date: 'date',
     id: 'id',
     comment: 'comment',
+    paymentId: 'paymentId',
     userEventStatus: 'userEventStatus'
   };
 
@@ -11253,7 +11273,6 @@ export namespace Prisma {
     status?: EnumEventStatusFilter | EventStatus
     maxParticipants?: IntFilter | number
     groupId?: StringNullableFilter | string | null
-    payments?: PaymentListRelationFilter
     participants?: ParticipantsOnEventsListRelationFilter
     Group?: XOR<GroupRelationFilter, GroupWhereInput> | null
   }
@@ -11271,7 +11290,6 @@ export namespace Prisma {
     status?: SortOrder
     maxParticipants?: SortOrder
     groupId?: SortOrder
-    payments?: PaymentOrderByRelationAggregateInput
     participants?: ParticipantsOnEventsOrderByRelationAggregateInput
     Group?: GroupOrderByWithRelationInput
   }
@@ -11326,7 +11344,9 @@ export namespace Prisma {
     date?: DateTimeFilter | Date | string
     id?: StringFilter | string
     comment?: StringNullableFilter | string | null
+    paymentId?: StringNullableFilter | string | null
     userEventStatus?: EnumUserEventStatusFilter | UserEventStatus
+    payment?: XOR<PaymentRelationFilter, PaymentWhereInput> | null
     user?: XOR<UserRelationFilter, UserWhereInput>
     event?: XOR<EventRelationFilter, EventWhereInput>
   }
@@ -11336,7 +11356,9 @@ export namespace Prisma {
     date?: SortOrder
     id?: SortOrder
     comment?: SortOrder
+    paymentId?: SortOrder
     userEventStatus?: SortOrder
+    payment?: PaymentOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
     event?: EventOrderByWithRelationInput
   }
@@ -11350,6 +11372,7 @@ export namespace Prisma {
     date?: SortOrder
     id?: SortOrder
     comment?: SortOrder
+    paymentId?: SortOrder
     userEventStatus?: SortOrder
     _count?: ParticipantsOnEventsCountOrderByAggregateInput
     _max?: ParticipantsOnEventsMaxOrderByAggregateInput
@@ -11364,6 +11387,7 @@ export namespace Prisma {
     date?: DateTimeWithAggregatesFilter | Date | string
     id?: StringWithAggregatesFilter | string
     comment?: StringNullableWithAggregatesFilter | string | null
+    paymentId?: StringNullableWithAggregatesFilter | string | null
     userEventStatus?: EnumUserEventStatusWithAggregatesFilter | UserEventStatus
   }
 
@@ -11379,8 +11403,7 @@ export namespace Prisma {
     amount?: FloatFilter | number
     paymentDate?: DateTimeFilter | Date | string
     gmailMailId?: StringFilter | string
-    event?: XOR<EventRelationFilter, EventWhereInput>
-    user?: XOR<UserRelationFilter, UserWhereInput>
+    ParticipantsOnEvents?: ParticipantsOnEventsListRelationFilter
   }
 
   export type PaymentOrderByWithRelationInput = {
@@ -11392,8 +11415,7 @@ export namespace Prisma {
     amount?: SortOrder
     paymentDate?: SortOrder
     gmailMailId?: SortOrder
-    event?: EventOrderByWithRelationInput
-    user?: UserOrderByWithRelationInput
+    ParticipantsOnEvents?: ParticipantsOnEventsOrderByRelationAggregateInput
   }
 
   export type PaymentWhereUniqueInput = {
@@ -11623,7 +11645,6 @@ export namespace Prisma {
     paypalName?: StringNullableFilter | string | null
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
-    payments?: PaymentListRelationFilter
     events?: ParticipantsOnEventsListRelationFilter
     groups?: UserOnGroupsListRelationFilter
     ownedGroups?: GroupListRelationFilter
@@ -11643,7 +11664,6 @@ export namespace Prisma {
     paypalName?: SortOrder
     accounts?: AccountOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
-    payments?: PaymentOrderByRelationAggregateInput
     events?: ParticipantsOnEventsOrderByRelationAggregateInput
     groups?: UserOnGroupsOrderByRelationAggregateInput
     ownedGroups?: GroupOrderByRelationAggregateInput
@@ -11833,7 +11853,6 @@ export namespace Prisma {
     cost: number
     status?: EventStatus
     maxParticipants?: number
-    payments?: PaymentCreateNestedManyWithoutEventInput
     participants?: ParticipantsOnEventsCreateNestedManyWithoutEventInput
     Group?: GroupCreateNestedOneWithoutEventsInput
   }
@@ -11851,7 +11870,6 @@ export namespace Prisma {
     status?: EventStatus
     maxParticipants?: number
     groupId?: string | null
-    payments?: PaymentUncheckedCreateNestedManyWithoutEventInput
     participants?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutEventInput
   }
 
@@ -11867,7 +11885,6 @@ export namespace Prisma {
     cost?: FloatFieldUpdateOperationsInput | number
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     maxParticipants?: IntFieldUpdateOperationsInput | number
-    payments?: PaymentUpdateManyWithoutEventNestedInput
     participants?: ParticipantsOnEventsUpdateManyWithoutEventNestedInput
     Group?: GroupUpdateOneWithoutEventsNestedInput
   }
@@ -11885,7 +11902,6 @@ export namespace Prisma {
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     maxParticipants?: IntFieldUpdateOperationsInput | number
     groupId?: NullableStringFieldUpdateOperationsInput | string | null
-    payments?: PaymentUncheckedUpdateManyWithoutEventNestedInput
     participants?: ParticipantsOnEventsUncheckedUpdateManyWithoutEventNestedInput
   }
 
@@ -11937,6 +11953,7 @@ export namespace Prisma {
     date?: Date | string
     comment?: string | null
     userEventStatus?: UserEventStatus
+    payment?: PaymentCreateNestedOneWithoutParticipantsOnEventsInput
     user: UserCreateNestedOneWithoutEventsInput
     event: EventCreateNestedOneWithoutParticipantsInput
   }
@@ -11946,6 +11963,7 @@ export namespace Prisma {
     date?: Date | string
     id: string
     comment?: string | null
+    paymentId?: string | null
     userEventStatus?: UserEventStatus
   }
 
@@ -11953,6 +11971,7 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+    payment?: PaymentUpdateOneWithoutParticipantsOnEventsNestedInput
     user?: UserUpdateOneRequiredWithoutEventsNestedInput
     event?: EventUpdateOneRequiredWithoutParticipantsNestedInput
   }
@@ -11962,6 +11981,7 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     id?: StringFieldUpdateOperationsInput | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
@@ -11970,6 +11990,7 @@ export namespace Prisma {
     date?: Date | string
     id: string
     comment?: string | null
+    paymentId?: string | null
     userEventStatus?: UserEventStatus
   }
 
@@ -11984,6 +12005,7 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     id?: StringFieldUpdateOperationsInput | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
@@ -11991,11 +12013,12 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    eventId: string
+    userId: string
     amount: number
     paymentDate: Date | string
     gmailMailId: string
-    event: EventCreateNestedOneWithoutPaymentsInput
-    user: UserCreateNestedOneWithoutPaymentsInput
+    ParticipantsOnEvents?: ParticipantsOnEventsCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentUncheckedCreateInput = {
@@ -12007,17 +12030,19 @@ export namespace Prisma {
     amount: number
     paymentDate: Date | string
     gmailMailId: string
+    ParticipantsOnEvents?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutPaymentInput
   }
 
   export type PaymentUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     gmailMailId?: StringFieldUpdateOperationsInput | string
-    event?: EventUpdateOneRequiredWithoutPaymentsNestedInput
-    user?: UserUpdateOneRequiredWithoutPaymentsNestedInput
+    ParticipantsOnEvents?: ParticipantsOnEventsUpdateManyWithoutPaymentNestedInput
   }
 
   export type PaymentUncheckedUpdateInput = {
@@ -12029,6 +12054,7 @@ export namespace Prisma {
     amount?: FloatFieldUpdateOperationsInput | number
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     gmailMailId?: StringFieldUpdateOperationsInput | string
+    ParticipantsOnEvents?: ParticipantsOnEventsUncheckedUpdateManyWithoutPaymentNestedInput
   }
 
   export type PaymentCreateManyInput = {
@@ -12046,6 +12072,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
     gmailMailId?: StringFieldUpdateOperationsInput | string
@@ -12297,7 +12325,6 @@ export namespace Prisma {
     paypalName?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
-    payments?: PaymentCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsCreateNestedManyWithoutUserInput
     ownedGroups?: GroupCreateNestedManyWithoutOwnerInput
@@ -12317,7 +12344,6 @@ export namespace Prisma {
     paypalName?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
     ownedGroups?: GroupUncheckedCreateNestedManyWithoutOwnerInput
@@ -12337,7 +12363,6 @@ export namespace Prisma {
     paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
-    payments?: PaymentUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUpdateManyWithoutOwnerNestedInput
@@ -12357,7 +12382,6 @@ export namespace Prisma {
     paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUncheckedUpdateManyWithoutOwnerNestedInput
@@ -12624,12 +12648,6 @@ export namespace Prisma {
     not?: NestedStringNullableFilter | string | null
   }
 
-  export type PaymentListRelationFilter = {
-    every?: PaymentWhereInput
-    some?: PaymentWhereInput
-    none?: PaymentWhereInput
-  }
-
   export type ParticipantsOnEventsListRelationFilter = {
     every?: ParticipantsOnEventsWhereInput
     some?: ParticipantsOnEventsWhereInput
@@ -12637,12 +12655,8 @@ export namespace Prisma {
   }
 
   export type GroupRelationFilter = {
-    is?: GroupWhereInput
-    isNot?: GroupWhereInput
-  }
-
-  export type PaymentOrderByRelationAggregateInput = {
-    _count?: SortOrder
+    is?: GroupWhereInput | null
+    isNot?: GroupWhereInput | null
   }
 
   export type ParticipantsOnEventsOrderByRelationAggregateInput = {
@@ -12784,6 +12798,11 @@ export namespace Prisma {
     not?: NestedEnumUserEventStatusFilter | UserEventStatus
   }
 
+  export type PaymentRelationFilter = {
+    is?: PaymentWhereInput | null
+    isNot?: PaymentWhereInput | null
+  }
+
   export type EventRelationFilter = {
     is?: EventWhereInput
     isNot?: EventWhereInput
@@ -12799,6 +12818,7 @@ export namespace Prisma {
     date?: SortOrder
     id?: SortOrder
     comment?: SortOrder
+    paymentId?: SortOrder
     userEventStatus?: SortOrder
   }
 
@@ -12807,6 +12827,7 @@ export namespace Prisma {
     date?: SortOrder
     id?: SortOrder
     comment?: SortOrder
+    paymentId?: SortOrder
     userEventStatus?: SortOrder
   }
 
@@ -12815,6 +12836,7 @@ export namespace Prisma {
     date?: SortOrder
     id?: SortOrder
     comment?: SortOrder
+    paymentId?: SortOrder
     userEventStatus?: SortOrder
   }
 
@@ -13216,13 +13238,6 @@ export namespace Prisma {
     update?: XOR<UserUpdateWithoutTokensInput, UserUncheckedUpdateWithoutTokensInput>
   }
 
-  export type PaymentCreateNestedManyWithoutEventInput = {
-    create?: XOR<Enumerable<PaymentCreateWithoutEventInput>, Enumerable<PaymentUncheckedCreateWithoutEventInput>>
-    connectOrCreate?: Enumerable<PaymentCreateOrConnectWithoutEventInput>
-    createMany?: PaymentCreateManyEventInputEnvelope
-    connect?: Enumerable<PaymentWhereUniqueInput>
-  }
-
   export type ParticipantsOnEventsCreateNestedManyWithoutEventInput = {
     create?: XOR<Enumerable<ParticipantsOnEventsCreateWithoutEventInput>, Enumerable<ParticipantsOnEventsUncheckedCreateWithoutEventInput>>
     connectOrCreate?: Enumerable<ParticipantsOnEventsCreateOrConnectWithoutEventInput>
@@ -13234,13 +13249,6 @@ export namespace Prisma {
     create?: XOR<GroupCreateWithoutEventsInput, GroupUncheckedCreateWithoutEventsInput>
     connectOrCreate?: GroupCreateOrConnectWithoutEventsInput
     connect?: GroupWhereUniqueInput
-  }
-
-  export type PaymentUncheckedCreateNestedManyWithoutEventInput = {
-    create?: XOR<Enumerable<PaymentCreateWithoutEventInput>, Enumerable<PaymentUncheckedCreateWithoutEventInput>>
-    connectOrCreate?: Enumerable<PaymentCreateOrConnectWithoutEventInput>
-    createMany?: PaymentCreateManyEventInputEnvelope
-    connect?: Enumerable<PaymentWhereUniqueInput>
   }
 
   export type ParticipantsOnEventsUncheckedCreateNestedManyWithoutEventInput = {
@@ -13274,20 +13282,6 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type PaymentUpdateManyWithoutEventNestedInput = {
-    create?: XOR<Enumerable<PaymentCreateWithoutEventInput>, Enumerable<PaymentUncheckedCreateWithoutEventInput>>
-    connectOrCreate?: Enumerable<PaymentCreateOrConnectWithoutEventInput>
-    upsert?: Enumerable<PaymentUpsertWithWhereUniqueWithoutEventInput>
-    createMany?: PaymentCreateManyEventInputEnvelope
-    set?: Enumerable<PaymentWhereUniqueInput>
-    disconnect?: Enumerable<PaymentWhereUniqueInput>
-    delete?: Enumerable<PaymentWhereUniqueInput>
-    connect?: Enumerable<PaymentWhereUniqueInput>
-    update?: Enumerable<PaymentUpdateWithWhereUniqueWithoutEventInput>
-    updateMany?: Enumerable<PaymentUpdateManyWithWhereWithoutEventInput>
-    deleteMany?: Enumerable<PaymentScalarWhereInput>
-  }
-
   export type ParticipantsOnEventsUpdateManyWithoutEventNestedInput = {
     create?: XOR<Enumerable<ParticipantsOnEventsCreateWithoutEventInput>, Enumerable<ParticipantsOnEventsUncheckedCreateWithoutEventInput>>
     connectOrCreate?: Enumerable<ParticipantsOnEventsCreateOrConnectWithoutEventInput>
@@ -13316,20 +13310,6 @@ export namespace Prisma {
     set?: string | null
   }
 
-  export type PaymentUncheckedUpdateManyWithoutEventNestedInput = {
-    create?: XOR<Enumerable<PaymentCreateWithoutEventInput>, Enumerable<PaymentUncheckedCreateWithoutEventInput>>
-    connectOrCreate?: Enumerable<PaymentCreateOrConnectWithoutEventInput>
-    upsert?: Enumerable<PaymentUpsertWithWhereUniqueWithoutEventInput>
-    createMany?: PaymentCreateManyEventInputEnvelope
-    set?: Enumerable<PaymentWhereUniqueInput>
-    disconnect?: Enumerable<PaymentWhereUniqueInput>
-    delete?: Enumerable<PaymentWhereUniqueInput>
-    connect?: Enumerable<PaymentWhereUniqueInput>
-    update?: Enumerable<PaymentUpdateWithWhereUniqueWithoutEventInput>
-    updateMany?: Enumerable<PaymentUpdateManyWithWhereWithoutEventInput>
-    deleteMany?: Enumerable<PaymentScalarWhereInput>
-  }
-
   export type ParticipantsOnEventsUncheckedUpdateManyWithoutEventNestedInput = {
     create?: XOR<Enumerable<ParticipantsOnEventsCreateWithoutEventInput>, Enumerable<ParticipantsOnEventsUncheckedCreateWithoutEventInput>>
     connectOrCreate?: Enumerable<ParticipantsOnEventsCreateOrConnectWithoutEventInput>
@@ -13342,6 +13322,12 @@ export namespace Prisma {
     update?: Enumerable<ParticipantsOnEventsUpdateWithWhereUniqueWithoutEventInput>
     updateMany?: Enumerable<ParticipantsOnEventsUpdateManyWithWhereWithoutEventInput>
     deleteMany?: Enumerable<ParticipantsOnEventsScalarWhereInput>
+  }
+
+  export type PaymentCreateNestedOneWithoutParticipantsOnEventsInput = {
+    create?: XOR<PaymentCreateWithoutParticipantsOnEventsInput, PaymentUncheckedCreateWithoutParticipantsOnEventsInput>
+    connectOrCreate?: PaymentCreateOrConnectWithoutParticipantsOnEventsInput
+    connect?: PaymentWhereUniqueInput
   }
 
   export type UserCreateNestedOneWithoutEventsInput = {
@@ -13360,6 +13346,16 @@ export namespace Prisma {
     set?: UserEventStatus
   }
 
+  export type PaymentUpdateOneWithoutParticipantsOnEventsNestedInput = {
+    create?: XOR<PaymentCreateWithoutParticipantsOnEventsInput, PaymentUncheckedCreateWithoutParticipantsOnEventsInput>
+    connectOrCreate?: PaymentCreateOrConnectWithoutParticipantsOnEventsInput
+    upsert?: PaymentUpsertWithoutParticipantsOnEventsInput
+    disconnect?: boolean
+    delete?: boolean
+    connect?: PaymentWhereUniqueInput
+    update?: XOR<PaymentUpdateWithoutParticipantsOnEventsInput, PaymentUncheckedUpdateWithoutParticipantsOnEventsInput>
+  }
+
   export type UserUpdateOneRequiredWithoutEventsNestedInput = {
     create?: XOR<UserCreateWithoutEventsInput, UserUncheckedCreateWithoutEventsInput>
     connectOrCreate?: UserCreateOrConnectWithoutEventsInput
@@ -13376,32 +13372,46 @@ export namespace Prisma {
     update?: XOR<EventUpdateWithoutParticipantsInput, EventUncheckedUpdateWithoutParticipantsInput>
   }
 
-  export type EventCreateNestedOneWithoutPaymentsInput = {
-    create?: XOR<EventCreateWithoutPaymentsInput, EventUncheckedCreateWithoutPaymentsInput>
-    connectOrCreate?: EventCreateOrConnectWithoutPaymentsInput
-    connect?: EventWhereUniqueInput
+  export type ParticipantsOnEventsCreateNestedManyWithoutPaymentInput = {
+    create?: XOR<Enumerable<ParticipantsOnEventsCreateWithoutPaymentInput>, Enumerable<ParticipantsOnEventsUncheckedCreateWithoutPaymentInput>>
+    connectOrCreate?: Enumerable<ParticipantsOnEventsCreateOrConnectWithoutPaymentInput>
+    createMany?: ParticipantsOnEventsCreateManyPaymentInputEnvelope
+    connect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
   }
 
-  export type UserCreateNestedOneWithoutPaymentsInput = {
-    create?: XOR<UserCreateWithoutPaymentsInput, UserUncheckedCreateWithoutPaymentsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutPaymentsInput
-    connect?: UserWhereUniqueInput
+  export type ParticipantsOnEventsUncheckedCreateNestedManyWithoutPaymentInput = {
+    create?: XOR<Enumerable<ParticipantsOnEventsCreateWithoutPaymentInput>, Enumerable<ParticipantsOnEventsUncheckedCreateWithoutPaymentInput>>
+    connectOrCreate?: Enumerable<ParticipantsOnEventsCreateOrConnectWithoutPaymentInput>
+    createMany?: ParticipantsOnEventsCreateManyPaymentInputEnvelope
+    connect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
   }
 
-  export type EventUpdateOneRequiredWithoutPaymentsNestedInput = {
-    create?: XOR<EventCreateWithoutPaymentsInput, EventUncheckedCreateWithoutPaymentsInput>
-    connectOrCreate?: EventCreateOrConnectWithoutPaymentsInput
-    upsert?: EventUpsertWithoutPaymentsInput
-    connect?: EventWhereUniqueInput
-    update?: XOR<EventUpdateWithoutPaymentsInput, EventUncheckedUpdateWithoutPaymentsInput>
+  export type ParticipantsOnEventsUpdateManyWithoutPaymentNestedInput = {
+    create?: XOR<Enumerable<ParticipantsOnEventsCreateWithoutPaymentInput>, Enumerable<ParticipantsOnEventsUncheckedCreateWithoutPaymentInput>>
+    connectOrCreate?: Enumerable<ParticipantsOnEventsCreateOrConnectWithoutPaymentInput>
+    upsert?: Enumerable<ParticipantsOnEventsUpsertWithWhereUniqueWithoutPaymentInput>
+    createMany?: ParticipantsOnEventsCreateManyPaymentInputEnvelope
+    set?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    disconnect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    delete?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    connect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    update?: Enumerable<ParticipantsOnEventsUpdateWithWhereUniqueWithoutPaymentInput>
+    updateMany?: Enumerable<ParticipantsOnEventsUpdateManyWithWhereWithoutPaymentInput>
+    deleteMany?: Enumerable<ParticipantsOnEventsScalarWhereInput>
   }
 
-  export type UserUpdateOneRequiredWithoutPaymentsNestedInput = {
-    create?: XOR<UserCreateWithoutPaymentsInput, UserUncheckedCreateWithoutPaymentsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutPaymentsInput
-    upsert?: UserUpsertWithoutPaymentsInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<UserUpdateWithoutPaymentsInput, UserUncheckedUpdateWithoutPaymentsInput>
+  export type ParticipantsOnEventsUncheckedUpdateManyWithoutPaymentNestedInput = {
+    create?: XOR<Enumerable<ParticipantsOnEventsCreateWithoutPaymentInput>, Enumerable<ParticipantsOnEventsUncheckedCreateWithoutPaymentInput>>
+    connectOrCreate?: Enumerable<ParticipantsOnEventsCreateOrConnectWithoutPaymentInput>
+    upsert?: Enumerable<ParticipantsOnEventsUpsertWithWhereUniqueWithoutPaymentInput>
+    createMany?: ParticipantsOnEventsCreateManyPaymentInputEnvelope
+    set?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    disconnect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    delete?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    connect?: Enumerable<ParticipantsOnEventsWhereUniqueInput>
+    update?: Enumerable<ParticipantsOnEventsUpdateWithWhereUniqueWithoutPaymentInput>
+    updateMany?: Enumerable<ParticipantsOnEventsUpdateManyWithWhereWithoutPaymentInput>
+    deleteMany?: Enumerable<ParticipantsOnEventsScalarWhereInput>
   }
 
   export type UserCreateNestedOneWithoutAccountsInput = {
@@ -13556,13 +13566,6 @@ export namespace Prisma {
     connect?: Enumerable<SessionWhereUniqueInput>
   }
 
-  export type PaymentCreateNestedManyWithoutUserInput = {
-    create?: XOR<Enumerable<PaymentCreateWithoutUserInput>, Enumerable<PaymentUncheckedCreateWithoutUserInput>>
-    connectOrCreate?: Enumerable<PaymentCreateOrConnectWithoutUserInput>
-    createMany?: PaymentCreateManyUserInputEnvelope
-    connect?: Enumerable<PaymentWhereUniqueInput>
-  }
-
   export type ParticipantsOnEventsCreateNestedManyWithoutUserInput = {
     create?: XOR<Enumerable<ParticipantsOnEventsCreateWithoutUserInput>, Enumerable<ParticipantsOnEventsUncheckedCreateWithoutUserInput>>
     connectOrCreate?: Enumerable<ParticipantsOnEventsCreateOrConnectWithoutUserInput>
@@ -13603,13 +13606,6 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<SessionCreateOrConnectWithoutUserInput>
     createMany?: SessionCreateManyUserInputEnvelope
     connect?: Enumerable<SessionWhereUniqueInput>
-  }
-
-  export type PaymentUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<Enumerable<PaymentCreateWithoutUserInput>, Enumerable<PaymentUncheckedCreateWithoutUserInput>>
-    connectOrCreate?: Enumerable<PaymentCreateOrConnectWithoutUserInput>
-    createMany?: PaymentCreateManyUserInputEnvelope
-    connect?: Enumerable<PaymentWhereUniqueInput>
   }
 
   export type ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput = {
@@ -13670,20 +13666,6 @@ export namespace Prisma {
     update?: Enumerable<SessionUpdateWithWhereUniqueWithoutUserInput>
     updateMany?: Enumerable<SessionUpdateManyWithWhereWithoutUserInput>
     deleteMany?: Enumerable<SessionScalarWhereInput>
-  }
-
-  export type PaymentUpdateManyWithoutUserNestedInput = {
-    create?: XOR<Enumerable<PaymentCreateWithoutUserInput>, Enumerable<PaymentUncheckedCreateWithoutUserInput>>
-    connectOrCreate?: Enumerable<PaymentCreateOrConnectWithoutUserInput>
-    upsert?: Enumerable<PaymentUpsertWithWhereUniqueWithoutUserInput>
-    createMany?: PaymentCreateManyUserInputEnvelope
-    set?: Enumerable<PaymentWhereUniqueInput>
-    disconnect?: Enumerable<PaymentWhereUniqueInput>
-    delete?: Enumerable<PaymentWhereUniqueInput>
-    connect?: Enumerable<PaymentWhereUniqueInput>
-    update?: Enumerable<PaymentUpdateWithWhereUniqueWithoutUserInput>
-    updateMany?: Enumerable<PaymentUpdateManyWithWhereWithoutUserInput>
-    deleteMany?: Enumerable<PaymentScalarWhereInput>
   }
 
   export type ParticipantsOnEventsUpdateManyWithoutUserNestedInput = {
@@ -13768,20 +13750,6 @@ export namespace Prisma {
     update?: Enumerable<SessionUpdateWithWhereUniqueWithoutUserInput>
     updateMany?: Enumerable<SessionUpdateManyWithWhereWithoutUserInput>
     deleteMany?: Enumerable<SessionScalarWhereInput>
-  }
-
-  export type PaymentUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<Enumerable<PaymentCreateWithoutUserInput>, Enumerable<PaymentUncheckedCreateWithoutUserInput>>
-    connectOrCreate?: Enumerable<PaymentCreateOrConnectWithoutUserInput>
-    upsert?: Enumerable<PaymentUpsertWithWhereUniqueWithoutUserInput>
-    createMany?: PaymentCreateManyUserInputEnvelope
-    set?: Enumerable<PaymentWhereUniqueInput>
-    disconnect?: Enumerable<PaymentWhereUniqueInput>
-    delete?: Enumerable<PaymentWhereUniqueInput>
-    connect?: Enumerable<PaymentWhereUniqueInput>
-    update?: Enumerable<PaymentUpdateWithWhereUniqueWithoutUserInput>
-    updateMany?: Enumerable<PaymentUpdateManyWithWhereWithoutUserInput>
-    deleteMany?: Enumerable<PaymentScalarWhereInput>
   }
 
   export type ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput = {
@@ -14170,7 +14138,6 @@ export namespace Prisma {
     paypalName?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
-    payments?: PaymentCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsCreateNestedManyWithoutUserInput
     ownedGroups?: GroupCreateNestedManyWithoutOwnerInput
@@ -14189,7 +14156,6 @@ export namespace Prisma {
     paypalName?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
     ownedGroups?: GroupUncheckedCreateNestedManyWithoutOwnerInput
@@ -14218,7 +14184,6 @@ export namespace Prisma {
     paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
-    payments?: PaymentUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUpdateManyWithoutOwnerNestedInput
@@ -14237,46 +14202,16 @@ export namespace Prisma {
     paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUncheckedUpdateManyWithoutOwnerNestedInput
-  }
-
-  export type PaymentCreateWithoutEventInput = {
-    id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    amount: number
-    paymentDate: Date | string
-    gmailMailId: string
-    user: UserCreateNestedOneWithoutPaymentsInput
-  }
-
-  export type PaymentUncheckedCreateWithoutEventInput = {
-    id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userId: string
-    amount: number
-    paymentDate: Date | string
-    gmailMailId: string
-  }
-
-  export type PaymentCreateOrConnectWithoutEventInput = {
-    where: PaymentWhereUniqueInput
-    create: XOR<PaymentCreateWithoutEventInput, PaymentUncheckedCreateWithoutEventInput>
-  }
-
-  export type PaymentCreateManyEventInputEnvelope = {
-    data: Enumerable<PaymentCreateManyEventInput>
-    skipDuplicates?: boolean
   }
 
   export type ParticipantsOnEventsCreateWithoutEventInput = {
     date?: Date | string
     comment?: string | null
     userEventStatus?: UserEventStatus
+    payment?: PaymentCreateNestedOneWithoutParticipantsOnEventsInput
     user: UserCreateNestedOneWithoutEventsInput
   }
 
@@ -14284,6 +14219,7 @@ export namespace Prisma {
     date?: Date | string
     id: string
     comment?: string | null
+    paymentId?: string | null
     userEventStatus?: UserEventStatus
   }
 
@@ -14322,36 +14258,6 @@ export namespace Prisma {
     create: XOR<GroupCreateWithoutEventsInput, GroupUncheckedCreateWithoutEventsInput>
   }
 
-  export type PaymentUpsertWithWhereUniqueWithoutEventInput = {
-    where: PaymentWhereUniqueInput
-    update: XOR<PaymentUpdateWithoutEventInput, PaymentUncheckedUpdateWithoutEventInput>
-    create: XOR<PaymentCreateWithoutEventInput, PaymentUncheckedCreateWithoutEventInput>
-  }
-
-  export type PaymentUpdateWithWhereUniqueWithoutEventInput = {
-    where: PaymentWhereUniqueInput
-    data: XOR<PaymentUpdateWithoutEventInput, PaymentUncheckedUpdateWithoutEventInput>
-  }
-
-  export type PaymentUpdateManyWithWhereWithoutEventInput = {
-    where: PaymentScalarWhereInput
-    data: XOR<PaymentUpdateManyMutationInput, PaymentUncheckedUpdateManyWithoutPaymentsInput>
-  }
-
-  export type PaymentScalarWhereInput = {
-    AND?: Enumerable<PaymentScalarWhereInput>
-    OR?: Enumerable<PaymentScalarWhereInput>
-    NOT?: Enumerable<PaymentScalarWhereInput>
-    id?: StringFilter | string
-    createdAt?: DateTimeFilter | Date | string
-    updatedAt?: DateTimeFilter | Date | string
-    eventId?: StringFilter | string
-    userId?: StringFilter | string
-    amount?: FloatFilter | number
-    paymentDate?: DateTimeFilter | Date | string
-    gmailMailId?: StringFilter | string
-  }
-
   export type ParticipantsOnEventsUpsertWithWhereUniqueWithoutEventInput = {
     where: ParticipantsOnEventsWhereUniqueInput
     update: XOR<ParticipantsOnEventsUpdateWithoutEventInput, ParticipantsOnEventsUncheckedUpdateWithoutEventInput>
@@ -14376,6 +14282,7 @@ export namespace Prisma {
     date?: DateTimeFilter | Date | string
     id?: StringFilter | string
     comment?: StringNullableFilter | string | null
+    paymentId?: StringNullableFilter | string | null
     userEventStatus?: EnumUserEventStatusFilter | UserEventStatus
   }
 
@@ -14404,6 +14311,33 @@ export namespace Prisma {
     users?: UserOnGroupsUncheckedUpdateManyWithoutGroupNestedInput
   }
 
+  export type PaymentCreateWithoutParticipantsOnEventsInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    eventId: string
+    userId: string
+    amount: number
+    paymentDate: Date | string
+    gmailMailId: string
+  }
+
+  export type PaymentUncheckedCreateWithoutParticipantsOnEventsInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    eventId: string
+    userId: string
+    amount: number
+    paymentDate: Date | string
+    gmailMailId: string
+  }
+
+  export type PaymentCreateOrConnectWithoutParticipantsOnEventsInput = {
+    where: PaymentWhereUniqueInput
+    create: XOR<PaymentCreateWithoutParticipantsOnEventsInput, PaymentUncheckedCreateWithoutParticipantsOnEventsInput>
+  }
+
   export type UserCreateWithoutEventsInput = {
     id?: string
     name: string
@@ -14417,7 +14351,6 @@ export namespace Prisma {
     paypalName?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
-    payments?: PaymentCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsCreateNestedManyWithoutUserInput
     ownedGroups?: GroupCreateNestedManyWithoutOwnerInput
     Tokens?: TokensCreateNestedManyWithoutUserInput
@@ -14436,7 +14369,6 @@ export namespace Prisma {
     paypalName?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
     ownedGroups?: GroupUncheckedCreateNestedManyWithoutOwnerInput
     Tokens?: TokensUncheckedCreateNestedManyWithoutUserInput
@@ -14459,7 +14391,6 @@ export namespace Prisma {
     cost: number
     status?: EventStatus
     maxParticipants?: number
-    payments?: PaymentCreateNestedManyWithoutEventInput
     Group?: GroupCreateNestedOneWithoutEventsInput
   }
 
@@ -14476,12 +14407,38 @@ export namespace Prisma {
     status?: EventStatus
     maxParticipants?: number
     groupId?: string | null
-    payments?: PaymentUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type EventCreateOrConnectWithoutParticipantsInput = {
     where: EventWhereUniqueInput
     create: XOR<EventCreateWithoutParticipantsInput, EventUncheckedCreateWithoutParticipantsInput>
+  }
+
+  export type PaymentUpsertWithoutParticipantsOnEventsInput = {
+    update: XOR<PaymentUpdateWithoutParticipantsOnEventsInput, PaymentUncheckedUpdateWithoutParticipantsOnEventsInput>
+    create: XOR<PaymentCreateWithoutParticipantsOnEventsInput, PaymentUncheckedCreateWithoutParticipantsOnEventsInput>
+  }
+
+  export type PaymentUpdateWithoutParticipantsOnEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    gmailMailId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PaymentUncheckedUpdateWithoutParticipantsOnEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    gmailMailId?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserUpsertWithoutEventsInput = {
@@ -14502,7 +14459,6 @@ export namespace Prisma {
     paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
-    payments?: PaymentUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUpdateManyWithoutOwnerNestedInput
     Tokens?: TokensUpdateManyWithoutUserNestedInput
@@ -14521,7 +14477,6 @@ export namespace Prisma {
     paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUncheckedUpdateManyWithoutOwnerNestedInput
     Tokens?: TokensUncheckedUpdateManyWithoutUserNestedInput
@@ -14544,7 +14499,6 @@ export namespace Prisma {
     cost?: FloatFieldUpdateOperationsInput | number
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     maxParticipants?: IntFieldUpdateOperationsInput | number
-    payments?: PaymentUpdateManyWithoutEventNestedInput
     Group?: GroupUpdateOneWithoutEventsNestedInput
   }
 
@@ -14561,167 +14515,48 @@ export namespace Prisma {
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     maxParticipants?: IntFieldUpdateOperationsInput | number
     groupId?: NullableStringFieldUpdateOperationsInput | string | null
-    payments?: PaymentUncheckedUpdateManyWithoutEventNestedInput
   }
 
-  export type EventCreateWithoutPaymentsInput = {
-    id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    address: string
-    date: Date | string
-    endTime: string
-    startTime: string
-    bookingDate?: Date | string | null
-    cost: number
-    status?: EventStatus
-    maxParticipants?: number
-    participants?: ParticipantsOnEventsCreateNestedManyWithoutEventInput
-    Group?: GroupCreateNestedOneWithoutEventsInput
+  export type ParticipantsOnEventsCreateWithoutPaymentInput = {
+    date?: Date | string
+    comment?: string | null
+    userEventStatus?: UserEventStatus
+    user: UserCreateNestedOneWithoutEventsInput
+    event: EventCreateNestedOneWithoutParticipantsInput
   }
 
-  export type EventUncheckedCreateWithoutPaymentsInput = {
-    id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    address: string
-    date: Date | string
-    endTime: string
-    startTime: string
-    bookingDate?: Date | string | null
-    cost: number
-    status?: EventStatus
-    maxParticipants?: number
-    groupId?: string | null
-    participants?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutEventInput
+  export type ParticipantsOnEventsUncheckedCreateWithoutPaymentInput = {
+    eventId: string
+    date?: Date | string
+    id: string
+    comment?: string | null
+    userEventStatus?: UserEventStatus
   }
 
-  export type EventCreateOrConnectWithoutPaymentsInput = {
-    where: EventWhereUniqueInput
-    create: XOR<EventCreateWithoutPaymentsInput, EventUncheckedCreateWithoutPaymentsInput>
+  export type ParticipantsOnEventsCreateOrConnectWithoutPaymentInput = {
+    where: ParticipantsOnEventsWhereUniqueInput
+    create: XOR<ParticipantsOnEventsCreateWithoutPaymentInput, ParticipantsOnEventsUncheckedCreateWithoutPaymentInput>
   }
 
-  export type UserCreateWithoutPaymentsInput = {
-    id?: string
-    name: string
-    email: string
-    emailVerified?: Date | string | null
-    image?: string | null
-    role?: string
-    createdAt?: Date | string
-    password?: string | null
-    notificationsEnabled?: boolean
-    paypalName?: string | null
-    accounts?: AccountCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
-    groups?: UserOnGroupsCreateNestedManyWithoutUserInput
-    ownedGroups?: GroupCreateNestedManyWithoutOwnerInput
-    Tokens?: TokensCreateNestedManyWithoutUserInput
+  export type ParticipantsOnEventsCreateManyPaymentInputEnvelope = {
+    data: Enumerable<ParticipantsOnEventsCreateManyPaymentInput>
+    skipDuplicates?: boolean
   }
 
-  export type UserUncheckedCreateWithoutPaymentsInput = {
-    id?: string
-    name: string
-    email: string
-    emailVerified?: Date | string | null
-    image?: string | null
-    role?: string
-    createdAt?: Date | string
-    password?: string | null
-    notificationsEnabled?: boolean
-    paypalName?: string | null
-    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
-    groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
-    ownedGroups?: GroupUncheckedCreateNestedManyWithoutOwnerInput
-    Tokens?: TokensUncheckedCreateNestedManyWithoutUserInput
+  export type ParticipantsOnEventsUpsertWithWhereUniqueWithoutPaymentInput = {
+    where: ParticipantsOnEventsWhereUniqueInput
+    update: XOR<ParticipantsOnEventsUpdateWithoutPaymentInput, ParticipantsOnEventsUncheckedUpdateWithoutPaymentInput>
+    create: XOR<ParticipantsOnEventsCreateWithoutPaymentInput, ParticipantsOnEventsUncheckedCreateWithoutPaymentInput>
   }
 
-  export type UserCreateOrConnectWithoutPaymentsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutPaymentsInput, UserUncheckedCreateWithoutPaymentsInput>
+  export type ParticipantsOnEventsUpdateWithWhereUniqueWithoutPaymentInput = {
+    where: ParticipantsOnEventsWhereUniqueInput
+    data: XOR<ParticipantsOnEventsUpdateWithoutPaymentInput, ParticipantsOnEventsUncheckedUpdateWithoutPaymentInput>
   }
 
-  export type EventUpsertWithoutPaymentsInput = {
-    update: XOR<EventUpdateWithoutPaymentsInput, EventUncheckedUpdateWithoutPaymentsInput>
-    create: XOR<EventCreateWithoutPaymentsInput, EventUncheckedCreateWithoutPaymentsInput>
-  }
-
-  export type EventUpdateWithoutPaymentsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    address?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    endTime?: StringFieldUpdateOperationsInput | string
-    startTime?: StringFieldUpdateOperationsInput | string
-    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
-    maxParticipants?: IntFieldUpdateOperationsInput | number
-    participants?: ParticipantsOnEventsUpdateManyWithoutEventNestedInput
-    Group?: GroupUpdateOneWithoutEventsNestedInput
-  }
-
-  export type EventUncheckedUpdateWithoutPaymentsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    address?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    endTime?: StringFieldUpdateOperationsInput | string
-    startTime?: StringFieldUpdateOperationsInput | string
-    bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
-    maxParticipants?: IntFieldUpdateOperationsInput | number
-    groupId?: NullableStringFieldUpdateOperationsInput | string | null
-    participants?: ParticipantsOnEventsUncheckedUpdateManyWithoutEventNestedInput
-  }
-
-  export type UserUpsertWithoutPaymentsInput = {
-    update: XOR<UserUpdateWithoutPaymentsInput, UserUncheckedUpdateWithoutPaymentsInput>
-    create: XOR<UserCreateWithoutPaymentsInput, UserUncheckedCreateWithoutPaymentsInput>
-  }
-
-  export type UserUpdateWithoutPaymentsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
-    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
-    accounts?: AccountUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
-    groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
-    ownedGroups?: GroupUpdateManyWithoutOwnerNestedInput
-    Tokens?: TokensUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutPaymentsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
-    paypalName?: NullableStringFieldUpdateOperationsInput | string | null
-    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
-    groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
-    ownedGroups?: GroupUncheckedUpdateManyWithoutOwnerNestedInput
-    Tokens?: TokensUncheckedUpdateManyWithoutUserNestedInput
+  export type ParticipantsOnEventsUpdateManyWithWhereWithoutPaymentInput = {
+    where: ParticipantsOnEventsScalarWhereInput
+    data: XOR<ParticipantsOnEventsUpdateManyMutationInput, ParticipantsOnEventsUncheckedUpdateManyWithoutParticipantsOnEventsInput>
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -14736,7 +14571,6 @@ export namespace Prisma {
     notificationsEnabled?: boolean
     paypalName?: string | null
     sessions?: SessionCreateNestedManyWithoutUserInput
-    payments?: PaymentCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsCreateNestedManyWithoutUserInput
     ownedGroups?: GroupCreateNestedManyWithoutOwnerInput
@@ -14755,7 +14589,6 @@ export namespace Prisma {
     notificationsEnabled?: boolean
     paypalName?: string | null
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
     ownedGroups?: GroupUncheckedCreateNestedManyWithoutOwnerInput
@@ -14784,7 +14617,6 @@ export namespace Prisma {
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     sessions?: SessionUpdateManyWithoutUserNestedInput
-    payments?: PaymentUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUpdateManyWithoutOwnerNestedInput
@@ -14803,7 +14635,6 @@ export namespace Prisma {
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUncheckedUpdateManyWithoutOwnerNestedInput
@@ -14822,7 +14653,6 @@ export namespace Prisma {
     notificationsEnabled?: boolean
     paypalName?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
-    payments?: PaymentCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsCreateNestedManyWithoutUserInput
     ownedGroups?: GroupCreateNestedManyWithoutOwnerInput
@@ -14841,7 +14671,6 @@ export namespace Prisma {
     notificationsEnabled?: boolean
     paypalName?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
     ownedGroups?: GroupUncheckedCreateNestedManyWithoutOwnerInput
@@ -14870,7 +14699,6 @@ export namespace Prisma {
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
-    payments?: PaymentUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUpdateManyWithoutOwnerNestedInput
@@ -14889,7 +14717,6 @@ export namespace Prisma {
     notificationsEnabled?: BoolFieldUpdateOperationsInput | boolean
     paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUncheckedUpdateManyWithoutOwnerNestedInput
@@ -14908,7 +14735,6 @@ export namespace Prisma {
     cost: number
     status?: EventStatus
     maxParticipants?: number
-    payments?: PaymentCreateNestedManyWithoutEventInput
     participants?: ParticipantsOnEventsCreateNestedManyWithoutEventInput
   }
 
@@ -14924,7 +14750,6 @@ export namespace Prisma {
     cost: number
     status?: EventStatus
     maxParticipants?: number
-    payments?: PaymentUncheckedCreateNestedManyWithoutEventInput
     participants?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutEventInput
   }
 
@@ -14971,7 +14796,6 @@ export namespace Prisma {
     paypalName?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
-    payments?: PaymentCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsCreateNestedManyWithoutUserInput
     Tokens?: TokensCreateNestedManyWithoutUserInput
@@ -14990,7 +14814,6 @@ export namespace Prisma {
     paypalName?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
     groups?: UserOnGroupsUncheckedCreateNestedManyWithoutUserInput
     Tokens?: TokensUncheckedCreateNestedManyWithoutUserInput
@@ -15078,7 +14901,6 @@ export namespace Prisma {
     paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
-    payments?: PaymentUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUpdateManyWithoutUserNestedInput
     Tokens?: TokensUpdateManyWithoutUserNestedInput
@@ -15097,7 +14919,6 @@ export namespace Prisma {
     paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
     groups?: UserOnGroupsUncheckedUpdateManyWithoutUserNestedInput
     Tokens?: TokensUncheckedUpdateManyWithoutUserNestedInput
@@ -15163,40 +14984,11 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type PaymentCreateWithoutUserInput = {
-    id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    amount: number
-    paymentDate: Date | string
-    gmailMailId: string
-    event: EventCreateNestedOneWithoutPaymentsInput
-  }
-
-  export type PaymentUncheckedCreateWithoutUserInput = {
-    id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    eventId: string
-    amount: number
-    paymentDate: Date | string
-    gmailMailId: string
-  }
-
-  export type PaymentCreateOrConnectWithoutUserInput = {
-    where: PaymentWhereUniqueInput
-    create: XOR<PaymentCreateWithoutUserInput, PaymentUncheckedCreateWithoutUserInput>
-  }
-
-  export type PaymentCreateManyUserInputEnvelope = {
-    data: Enumerable<PaymentCreateManyUserInput>
-    skipDuplicates?: boolean
-  }
-
   export type ParticipantsOnEventsCreateWithoutUserInput = {
     date?: Date | string
     comment?: string | null
     userEventStatus?: UserEventStatus
+    payment?: PaymentCreateNestedOneWithoutParticipantsOnEventsInput
     event: EventCreateNestedOneWithoutParticipantsInput
   }
 
@@ -15204,6 +14996,7 @@ export namespace Prisma {
     eventId: string
     date?: Date | string
     comment?: string | null
+    paymentId?: string | null
     userEventStatus?: UserEventStatus
   }
 
@@ -15351,22 +15144,6 @@ export namespace Prisma {
     expires?: DateTimeFilter | Date | string
   }
 
-  export type PaymentUpsertWithWhereUniqueWithoutUserInput = {
-    where: PaymentWhereUniqueInput
-    update: XOR<PaymentUpdateWithoutUserInput, PaymentUncheckedUpdateWithoutUserInput>
-    create: XOR<PaymentCreateWithoutUserInput, PaymentUncheckedCreateWithoutUserInput>
-  }
-
-  export type PaymentUpdateWithWhereUniqueWithoutUserInput = {
-    where: PaymentWhereUniqueInput
-    data: XOR<PaymentUpdateWithoutUserInput, PaymentUncheckedUpdateWithoutUserInput>
-  }
-
-  export type PaymentUpdateManyWithWhereWithoutUserInput = {
-    where: PaymentScalarWhereInput
-    data: XOR<PaymentUpdateManyMutationInput, PaymentUncheckedUpdateManyWithoutPaymentsInput>
-  }
-
   export type ParticipantsOnEventsUpsertWithWhereUniqueWithoutUserInput = {
     where: ParticipantsOnEventsWhereUniqueInput
     update: XOR<ParticipantsOnEventsUpdateWithoutUserInput, ParticipantsOnEventsUncheckedUpdateWithoutUserInput>
@@ -15467,7 +15244,6 @@ export namespace Prisma {
     paypalName?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
-    payments?: PaymentCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsCreateNestedManyWithoutUserInput
     ownedGroups?: GroupCreateNestedManyWithoutOwnerInput
     Tokens?: TokensCreateNestedManyWithoutUserInput
@@ -15486,7 +15262,6 @@ export namespace Prisma {
     paypalName?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     events?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutUserInput
     ownedGroups?: GroupUncheckedCreateNestedManyWithoutOwnerInput
     Tokens?: TokensUncheckedCreateNestedManyWithoutUserInput
@@ -15540,7 +15315,6 @@ export namespace Prisma {
     paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
-    payments?: PaymentUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUpdateManyWithoutOwnerNestedInput
     Tokens?: TokensUpdateManyWithoutUserNestedInput
@@ -15559,7 +15333,6 @@ export namespace Prisma {
     paypalName?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     events?: ParticipantsOnEventsUncheckedUpdateManyWithoutUserNestedInput
     ownedGroups?: GroupUncheckedUpdateManyWithoutOwnerNestedInput
     Tokens?: TokensUncheckedUpdateManyWithoutUserNestedInput
@@ -15590,57 +15363,19 @@ export namespace Prisma {
     events?: EventUncheckedUpdateManyWithoutGroupNestedInput
   }
 
-  export type PaymentCreateManyEventInput = {
-    id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userId: string
-    amount: number
-    paymentDate: Date | string
-    gmailMailId: string
-  }
-
   export type ParticipantsOnEventsCreateManyEventInput = {
     date?: Date | string
     id: string
     comment?: string | null
+    paymentId?: string | null
     userEventStatus?: UserEventStatus
-  }
-
-  export type PaymentUpdateWithoutEventInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    amount?: FloatFieldUpdateOperationsInput | number
-    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    gmailMailId?: StringFieldUpdateOperationsInput | string
-    user?: UserUpdateOneRequiredWithoutPaymentsNestedInput
-  }
-
-  export type PaymentUncheckedUpdateWithoutEventInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userId?: StringFieldUpdateOperationsInput | string
-    amount?: FloatFieldUpdateOperationsInput | number
-    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    gmailMailId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type PaymentUncheckedUpdateManyWithoutPaymentsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userId?: StringFieldUpdateOperationsInput | string
-    amount?: FloatFieldUpdateOperationsInput | number
-    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    gmailMailId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ParticipantsOnEventsUpdateWithoutEventInput = {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+    payment?: PaymentUpdateOneWithoutParticipantsOnEventsNestedInput
     user?: UserUpdateOneRequiredWithoutEventsNestedInput
   }
 
@@ -15648,10 +15383,44 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     id?: StringFieldUpdateOperationsInput | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsUncheckedUpdateManyWithoutParticipantsInput = {
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    id?: StringFieldUpdateOperationsInput | string
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+  }
+
+  export type ParticipantsOnEventsCreateManyPaymentInput = {
+    eventId: string
+    date?: Date | string
+    id: string
+    comment?: string | null
+    userEventStatus?: UserEventStatus
+  }
+
+  export type ParticipantsOnEventsUpdateWithoutPaymentInput = {
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+    user?: UserUpdateOneRequiredWithoutEventsNestedInput
+    event?: EventUpdateOneRequiredWithoutParticipantsNestedInput
+  }
+
+  export type ParticipantsOnEventsUncheckedUpdateWithoutPaymentInput = {
+    eventId?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    id?: StringFieldUpdateOperationsInput | string
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+  }
+
+  export type ParticipantsOnEventsUncheckedUpdateManyWithoutParticipantsOnEventsInput = {
+    eventId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     id?: StringFieldUpdateOperationsInput | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -15689,7 +15458,6 @@ export namespace Prisma {
     cost?: FloatFieldUpdateOperationsInput | number
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     maxParticipants?: IntFieldUpdateOperationsInput | number
-    payments?: PaymentUpdateManyWithoutEventNestedInput
     participants?: ParticipantsOnEventsUpdateManyWithoutEventNestedInput
   }
 
@@ -15705,7 +15473,6 @@ export namespace Prisma {
     cost?: FloatFieldUpdateOperationsInput | number
     status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     maxParticipants?: IntFieldUpdateOperationsInput | number
-    payments?: PaymentUncheckedUpdateManyWithoutEventNestedInput
     participants?: ParticipantsOnEventsUncheckedUpdateManyWithoutEventNestedInput
   }
 
@@ -15758,20 +15525,11 @@ export namespace Prisma {
     expires: Date | string
   }
 
-  export type PaymentCreateManyUserInput = {
-    id?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    eventId: string
-    amount: number
-    paymentDate: Date | string
-    gmailMailId: string
-  }
-
   export type ParticipantsOnEventsCreateManyUserInput = {
     eventId: string
     date?: Date | string
     comment?: string | null
+    paymentId?: string | null
     userEventStatus?: UserEventStatus
   }
 
@@ -15855,30 +15613,11 @@ export namespace Prisma {
     expires?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type PaymentUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    amount?: FloatFieldUpdateOperationsInput | number
-    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    gmailMailId?: StringFieldUpdateOperationsInput | string
-    event?: EventUpdateOneRequiredWithoutPaymentsNestedInput
-  }
-
-  export type PaymentUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    eventId?: StringFieldUpdateOperationsInput | string
-    amount?: FloatFieldUpdateOperationsInput | number
-    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    gmailMailId?: StringFieldUpdateOperationsInput | string
-  }
-
   export type ParticipantsOnEventsUpdateWithoutUserInput = {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
+    payment?: PaymentUpdateOneWithoutParticipantsOnEventsNestedInput
     event?: EventUpdateOneRequiredWithoutParticipantsNestedInput
   }
 
@@ -15886,6 +15625,7 @@ export namespace Prisma {
     eventId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
@@ -15893,6 +15633,7 @@ export namespace Prisma {
     eventId?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentId?: NullableStringFieldUpdateOperationsInput | string | null
     userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 

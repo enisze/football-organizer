@@ -16,7 +16,7 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 
     const event = await prisma.event.findUnique({
       where: { id },
-      include: { participants: true, payments: true },
+      include: { participants: true },
     })
 
     if (!event)
@@ -24,17 +24,13 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
         message: 'No event',
       }
 
-    const usersOnGroup = await prisma.userOnGroups.findMany({
-      where: { groupId: event.groupId ?? '' },
-    })
-
-    if (!usersOnGroup)
+    if (!event.participants)
       return {
         message: `No users found`,
       }
 
-    const usersOfGroup = await Promise.all(
-      usersOnGroup.map(async (user) => {
+    const allParticipants = await Promise.all(
+      event.participants.map(async (user) => {
         return await prisma.user.findUnique({ where: { id: user.id } })
       }),
     )
@@ -55,7 +51,7 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
     const usersEventReminder: { name: string; email: string }[] = []
     const usersPaymentReminder: { name: string; email: string }[] = []
 
-    usersOfGroup
+    allParticipants
       .filter((user) => user?.notificationsEnabled)
       .forEach(async (user) => {
         if (!user) return
@@ -69,9 +65,9 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
         }
 
         if (event.bookingDate && joinedParticipantIds.includes(user.id)) {
-          const payment = event.payments.find(
-            (payment) => payment.userId === user.id,
-          )
+          const payment = await prisma.participantsOnEvents.findUnique({
+            where: { id_eventId: { eventId: event.id, id: user.id } },
+          })
 
           if (!payment) {
             //Send payment reminder

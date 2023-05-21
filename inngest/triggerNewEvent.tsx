@@ -13,7 +13,7 @@ export const triggerNewEvent = inngest.createFunction(
 
     const event = await prisma.event.findUnique({
       where: { id: eventId },
-      include: { participants: true, payments: true },
+      include: { participants: true },
     })
 
     if (!event) return { message: `No event found ${eventId}` }

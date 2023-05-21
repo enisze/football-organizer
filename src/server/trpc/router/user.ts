@@ -33,6 +33,7 @@ export const userRouter = router({
             select: {
               userEventStatus: true,
               user: { select: { name: true, id: true } },
+              event: { select: { id: true } },
             },
           }),
         ),

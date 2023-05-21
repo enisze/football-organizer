@@ -48,7 +48,7 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
                     <div key={payment.id} className="flex items-center gap-x-2">
                       <div>{payment?.user.name}</div>
                       <div>{payment?.amount + ' €'}</div>
-                      <div>{payment?.paymentDate.toDateString()}</div>
+                      <div>{payment?.paymentDate?.toDateString()}</div>
                       <div color="success">Bezahlt</div>
                     </div>
                   </div>

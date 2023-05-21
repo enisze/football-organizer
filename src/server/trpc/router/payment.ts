@@ -73,31 +73,31 @@ export const paymentRouter = router({
           groupId: input.groupId,
           participants: { some: { id: session.user.id } },
         },
-        include: { payments: true },
       })
 
       const userEventStatus = await prisma.participantsOnEvents.findMany({
         where: { id: session.user.id },
       })
 
-      const balance = userEventStatus.reduce((acc, userEvent) => {
+      const balance = await userEventStatus.reduce(async (acc, userEvent) => {
         const event = events.find((event) => event.id === userEvent.eventId)
 
         if (!event) return acc
-        const payment = event?.payments.find(
-          (payment) => payment.userId === session.user.id,
-        )
+
+        const payment = await prisma.payment.findFirst({
+          where: { userId: session.user.id, eventId: event.id },
+        })
 
         const cost: number = event.cost / event.maxParticipants
 
         if (userEvent.userEventStatus === 'JOINED') {
-          if (!payment) return acc - cost
+          if (!payment) return (await acc) - cost
         }
         if (userEvent.userEventStatus === 'CANCELED') {
-          if (payment) return acc + cost
+          if (payment) return (await acc) + cost
         }
         return acc
-      }, 0)
+      }, Promise.resolve(0))
 
       return balance
     }),
@@ -108,33 +108,35 @@ export const paymentRouter = router({
       }),
     )
     .query(async ({ ctx: { prisma }, input }) => {
-      const event = await prisma.event.findUnique({
-        where: { id: input.eventId },
-        include: { participants: true, payments: true },
-      })
+      const participantsWithoutPayment =
+        await prisma.participantsOnEvents.findMany({
+          where: { eventId: input.eventId, paymentId: { not: null } },
+        })
 
-      const paymentsFromNotParticipants = await Promise.all(
-        event?.payments
-          ? event?.payments
-              .map(async (payment) => {
-                const participantIds = event?.participants.reduce(
-                  (acc: string[], user) => {
-                    return [...acc, user.id]
-                  },
-                  [],
-                )
-                if (!participantIds.includes(payment.userId)) {
-                  const user = await prisma.user.findUnique({
-                    where: { id: payment.userId },
-                  })
-                  return { ...payment, user }
-                }
-              })
-              .filter((x) => Boolean(x))
-          : [],
+      const paymentsFromNonparticipants = await Promise.all(
+        participantsWithoutPayment.map(async (participant) => {
+          const user = await prisma.user.findUnique({
+            where: { id: participant.id },
+          })
+
+          const paymentId = participant.paymentId
+
+          if (!paymentId) throw new TRPCError({ code: 'NOT_FOUND' })
+
+          const payment = await prisma.payment.findUnique({
+            where: { id: paymentId },
+          })
+
+          return {
+            id: paymentId,
+            user,
+            amount: payment?.amount,
+            paymentDate: payment?.paymentDate,
+          }
+        }),
       )
 
-      return paymentsFromNotParticipants
+      return paymentsFromNonparticipants
     }),
   deleteAllPayments: protectedProcedure.query(async ({ ctx: { prisma } }) => {
     return await prisma.payment.deleteMany({
