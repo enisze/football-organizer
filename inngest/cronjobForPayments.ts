@@ -10,6 +10,22 @@ import { OAuth2Client } from 'google-auth-library'
 import type { Event, Payment } from '../prisma/generated/client'
 import { inngest } from './inngestClient'
 
+const asyncForEach = async <T>(
+  array: (T | undefined)[],
+  callback: (
+    item: T,
+    index: number,
+    array: (T | undefined)[],
+  ) => Promise<{ message: string } | undefined>,
+) => {
+  for (let index = 0; index < array.length; index++) {
+    const item = array[index]
+    if (item !== undefined) {
+      await callback(item, index, array as T[])
+    }
+  }
+}
+
 const prisma = new PrismaClient()
 
 export const cronJob = inngest.createFunction(
@@ -30,8 +46,11 @@ const runCron = async (step?: any) => {
     },
   })
 
-  ownerIds.forEach(async (data) => {
-    console.log('Owner', data.ownerId)
+  let emailAmount = 0
+  const emailsAlreadyInDB: Payment[] = []
+  let emailsWithConditions = 0
+
+  await asyncForEach(ownerIds, async (data) => {
     const result = await getPaypalEmails(
       data.ownerId,
       data.owner.email,
@@ -62,11 +81,6 @@ const runCron = async (step?: any) => {
     const events = await prisma.event.findMany({ where: { groupId: data.id } })
 
     const filteredEvents = events.filter((event) => Boolean(event.bookingDate))
-
-    let emailAmount = 0
-    const emailsAlreadyInDB: Payment[] = []
-    let emailsWithConditions = 0
-    console.log('Traversing each user')
 
     filteredEvents.forEach(async (event) => {
       const participants = await prisma.participantsOnEvents.findMany({
@@ -139,17 +153,15 @@ const runCron = async (step?: any) => {
         })
       })
     })
+  })
 
-    //TODO: Delete all events older than a week
-
-    return `
+  return `
     Email amount: ${emailAmount}
     Emails found already in DB: ${
       emailsAlreadyInDB.length
     } ${emailsAlreadyInDB.map((mail) => mail.gmailMailId)}
     Amount of emails that fulfill conditions and are not in DB yet: ${emailsWithConditions}
     `
-  })
 }
 
 const credentials: OAuth2ClientOptions = {
