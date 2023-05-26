@@ -72,16 +72,16 @@ const runCron = async (step?: any) => {
     if (result.error) {
       const { authorizeUrl, ownerEmail, ownerName } = result
 
-      if (step) {
-        ;(await step.sendEvent({
-          name: 'event/missingTokenEmail',
-          data: {
-            authorizeUrl,
-            ownerEmail,
-            ownerName,
-          },
-        })) as Promise<void>
-      }
+      // if (step) {
+      //   ;(await step.sendEvent({
+      //     name: 'event/missingTokenEmail',
+      //     data: {
+      //       authorizeUrl,
+      //       ownerEmail,
+      //       ownerName,
+      //     },
+      //   })) as Promise<void>
+      // }
 
       return {
         message: 'New token needed',
