@@ -30,7 +30,7 @@ const prisma = new PrismaClient()
 
 export const cronJobTest = inngest.createFunction(
   { name: 'Cronjob test' },
-  { cron: '*/5 * * * *' },
+  { cron: '0 0 * * *' },
   ({ step }) => {
     runCron(step)
   },
