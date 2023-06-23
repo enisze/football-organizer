@@ -179,6 +179,7 @@ const getPaypalEmails = async (
   ownerEmail: string,
   ownerName: string,
 ) => {
+  console.log(ownerId)
   const token = await prisma.tokens.findFirst({ where: { ownerId } })
 
   if (!token) {
