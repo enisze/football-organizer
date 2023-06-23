@@ -17,7 +17,11 @@ export const Dashboard: FunctionComponent<{ groupId?: string }> = ({
     {
       groupId: groupId ?? '',
     },
-    { enabled: Boolean(groupId) },
+    {
+      enabled: Boolean(groupId),
+      select: (data) =>
+        data.sort((a, b) => a.date.getTime() - b.date.getTime()),
+    },
   )
 
   const { data: groups, isLoading: groupsLoading } =
