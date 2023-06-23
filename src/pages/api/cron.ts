@@ -45,7 +45,7 @@ export default async function handler(
   }
 }
 
-const runCron = async (step?: any) => {
+const runCron = async () => {
   console.log('Starting cron')
 
   const ownerIds = await prisma.group.findMany({
