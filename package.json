@@ -9,7 +9,7 @@
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start",
-    "cronjob": "ts-node -r dotenv-flow/config ./inngest/cronjobForPayments.ts",
+    "cronjob": "npx tsx -r dotenv-flow/config ./inngest/cronjobForPayments.ts",
     "email:dev": "email dev",
     "newEvent": "tsx -r dotenv-flow/config ./inngest/sendNewEventEmail.ts",
     "test": "ts-node --esm -r dotenv-flow/config ./inngest/test.mjs",
