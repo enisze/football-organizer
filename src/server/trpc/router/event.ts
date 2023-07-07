@@ -71,7 +71,10 @@ export const eventRouter = router({
     .mutation(async ({ ctx: { prisma, session }, input }) => {
       const { eventId, status } = input
       const userId = session.user.id
+
       if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED' })
+      const user = await prisma.user.findUnique({ where: { id: userId } })
+      if (!user) throw new TRPCError({ code: 'UNAUTHORIZED' })
 
       switch (status) {
         case 'JOINED':
