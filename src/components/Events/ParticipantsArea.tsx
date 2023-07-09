@@ -79,6 +79,8 @@ export const ParticipantsArea: FunctionComponent<{
             {users &&
               users.map((participant) => {
                 const res = participant?.user?.name?.split(' ') as string[]
+
+                if (!res) return null
                 const first = res[0]?.charAt(0) ?? 'X'
                 const second = res[1]?.charAt(0) ?? 'X'
 
