@@ -36,18 +36,6 @@ export const eventRouter = router({
 
       return event
     }),
-  getById: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      return await ctx.prisma.event.findUnique({
-        where: { id: input.id },
-        include: { participants: true },
-      })
-    }),
 
   getParticipants: protectedProcedure
     .input(z.object({ eventId: z.string() }))

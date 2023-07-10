@@ -1,30 +1,53 @@
-import { LoginForm } from '@/src/components/Authentication/LoginForm'
 import { EventCard } from '@/src/components/Events/EventCard'
-import { LoadingWrapper } from '@/src/components/LoadingWrapper'
 import { Button } from '@/ui/button'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import type { FunctionComponent } from 'react'
+import { prisma } from '../../../prisma/prisma'
 
+import type {
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType,
+} from 'next'
+import { getServerSession } from 'next-auth'
 import { trpc } from '../../utils/trpc'
+import { authOptions } from '../api/auth/[...nextauth]'
 
-const EventPage: FunctionComponent = () => {
-  const router = useRouter()
+const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  const id = context.params?.eventId as string
 
-  const id = router.query.eventId as string
+  const session = await getServerSession(context.req, context.res, authOptions)
 
-  const { data, isLoading } = trpc.event.getById.useQuery(
-    { id },
-    {
-      enabled: Boolean(id),
-      onError: () => {
-        router.push('/api/auth/signin')
+  if (!session || !session.user?.id) {
+    return {
+      redirect: {
+        destination: '/api/auth/signin',
+        permanent: false,
       },
-    },
-  )
-  const { status } = useSession()
+    }
+  }
 
+  const event = await prisma.event.findUnique({
+    where: {
+      id: id,
+    },
+  })
+
+  if (!event) {
+    return {
+      notFound: true,
+    }
+  }
+
+  return {
+    props: {
+      event: event,
+    },
+  }
+}
+
+const EventPage: FunctionComponent<
+  InferGetServerSidePropsType<typeof getServerSideProps>
+> = ({ event }) => {
   const trpcContext = trpc.useContext()
 
   const { mutate: setStatus, isSuccess } =
@@ -33,17 +56,6 @@ const EventPage: FunctionComponent = () => {
         trpcContext.invalidate()
       },
     })
-
-  if (isLoading)
-    return (
-      <div className="grid place-items-center h-full">
-        <LoadingWrapper isLoading={isLoading} />
-      </div>
-    )
-
-  if (!data) return <div>Wrong ID</div>
-
-  const { participants, ...event } = data
 
   const url = process.env.NEXT_PUBLIC_BASE_URL as string
 
@@ -59,32 +71,28 @@ const EventPage: FunctionComponent = () => {
       />
 
       <div className="mx-20 flex flex-col">
-        {status === 'unauthenticated' ? (
-          <LoginForm />
-        ) : (
-          <div className="flex flex-col items-center">
-            <div className="my-5 flex flex-col items-center justify-center gap-y-2 rounded p-5">
-              <Button
-                onClick={() =>
-                  setStatus({ eventId: event.id, status: 'CANCELED' })
-                }
-                variant="outline"
-              >
-                Keine Emails mehr erhalten
-              </Button>
+        <div className="flex flex-col items-center">
+          <div className="my-5 flex flex-col items-center justify-center gap-y-2 rounded p-5">
+            <Button
+              onClick={() =>
+                setStatus({ eventId: event.id, status: 'CANCELED' })
+              }
+              variant="outline"
+            >
+              Keine Emails mehr erhalten
+            </Button>
 
-              {isSuccess && (
-                <span className="text-green-500">
-                  Du hast dich erfolgreich abgemeldet.
-                </span>
-              )}
-              <Link href={link}>
-                <span>Zur Startseite</span>
-              </Link>
-            </div>
-            <EventCard event={event} participants={participants} />
+            {isSuccess && (
+              <span className="text-green-500">
+                Du hast dich erfolgreich abgemeldet.
+              </span>
+            )}
+            <Link href={link}>
+              <span>Zur Startseite</span>
+            </Link>
           </div>
-        )}
+          <EventCard event={event} />
+        </div>
       </div>
     </>
   )
