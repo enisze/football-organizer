@@ -3,7 +3,8 @@ import { trpc } from '@/src/utils/trpc'
 import { useSession } from 'next-auth/react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import { FunctionComponent, useMemo } from 'react'
+import type { FunctionComponent } from 'react'
+import { useMemo } from 'react'
 
 const NavBar = dynamic(() => import('@/src/components/Navigation/Navbar'), {
   ssr: false,

@@ -1,12 +1,12 @@
 import { trpc } from '@/src/utils/trpc'
-import { Label } from '@/ui/base/Label'
+import { Label } from '@/ui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/ui/base/Select'
+} from '@/ui/select'
 import { atom } from 'jotai'
 import { useRouter } from 'next/router'
 import type { FunctionComponent } from 'react'

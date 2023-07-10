@@ -1,5 +1,5 @@
 import { trpc } from '@/src/utils/trpc'
-import { Button } from '@/ui/base/Button'
+import { Button } from '@/ui/button'
 import type { FunctionComponent } from 'react'
 import { useIsAdmin } from '../../hooks/useIsAdmin'
 import { LoadingWrapper } from '../LoadingWrapper'

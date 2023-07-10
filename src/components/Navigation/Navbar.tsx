@@ -1,11 +1,11 @@
-import { Button } from '@/ui/base/Button'
+import { Button } from '@/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/ui/base/Dialog'
+} from '@/ui/dialog'
 import { ThemeToggle } from '@/ui/theme-toggle'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
@@ -37,7 +37,9 @@ export const Navbar: FunctionComponent = () => {
 
           <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
             <DialogTrigger>
-              {!data?.user && <Button>Login / Registrieren</Button>}
+              {!data?.user && (
+                <Button variant="outline">Login / Registrieren</Button>
+              )}
             </DialogTrigger>
 
             <DialogContent className="sm:max-w-[425px]">

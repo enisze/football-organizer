@@ -6,7 +6,7 @@ import { Inter as FontSans } from '@next/font/google'
 import { trpc } from '../utils/trpc'
 
 import '@/styles/globals.css'
-import { Toaster } from '@/ui/base/Toaster'
+import { Toaster } from '@/ui/toaster'
 import { ThemeProvider } from 'next-themes'
 
 const fontSans = FontSans({

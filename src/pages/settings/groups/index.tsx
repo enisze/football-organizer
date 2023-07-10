@@ -1,9 +1,9 @@
 import { NewGroup } from '@/src/components/Groups/NewGroup'
 import { SpecificSettings } from '@/src/components/SettingsSidebar'
 import { trpc } from '@/src/utils/trpc'
-import { Container } from '@/ui/base/Container'
-import { OrganizerLink } from '@/ui/base/OrganizerLink'
-import { Separator } from '@/ui/base/Separator'
+import { OrganizerLink } from '@/ui/OrganizerLink'
+import { Container } from '@/ui/container'
+import { Separator } from '@/ui/separator'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import type { FunctionComponent } from 'react'
@@ -14,7 +14,7 @@ const GroupSettings: FunctionComponent = () => {
   const { data } = useSession()
   const userId = data?.user?.id
 
-  const { data: groups, isLoading } = trpc.group.getGroupsOfUser.useQuery({
+  const { data: groups } = trpc.group.getGroupsOfUser.useQuery({
     owned: true,
   })
 

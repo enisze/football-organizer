@@ -1,13 +1,13 @@
 import { trpc } from '@/src/utils/trpc'
-import { Button } from '@/ui/base/Button'
+import { Button } from '@/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/ui/base/Dialog'
-import { TextField } from '@/ui/base/TextField'
+} from '@/ui/dialog'
+import { TextField } from '@/ui/TextField'
 import { format } from 'date-fns'
 import type { FunctionComponent } from 'react'
 import { useState } from 'react'
@@ -24,8 +24,10 @@ export const BookEventButton: FunctionComponent<{ id: string }> = ({ id }) => {
 
   return (
     <Dialog>
-      <DialogTrigger className="rounded-md border p-2 border-opacity-[1px]">
-        Book
+      <DialogTrigger>
+        <Button variant="outline" className="w-full">
+          Book
+        </Button>
       </DialogTrigger>
 
       <DialogContent className="w-50">

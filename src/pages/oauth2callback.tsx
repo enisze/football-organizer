@@ -1,5 +1,5 @@
 import { trpc } from '@/src/utils/trpc'
-import { OrganizerLink } from '@/ui/base/OrganizerLink'
+import { OrganizerLink } from '@/ui/ui/OrganizerLink'
 import { useRouter } from 'next/router'
 import type { FunctionComponent } from 'react'
 import { LoadingWrapper } from '../components/LoadingWrapper'

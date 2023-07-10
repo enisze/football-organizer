@@ -1,10 +1,5 @@
-import { Button } from '@/ui/base/Button'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/ui/base/Dialog'
+import { Button } from '@/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog'
 import { TRPCClientError } from '@trpc/client'
 import { useSession } from 'next-auth/react'
 

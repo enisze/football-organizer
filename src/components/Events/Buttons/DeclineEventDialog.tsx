@@ -1,14 +1,14 @@
 import type { UserEventStatus } from '@/prisma/generated/client'
 import { trpc } from '@/src/utils/trpc'
-import { Button } from '@/ui/base/Button'
+import { Button } from '@/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/ui/base/Dialog'
-import { TextField } from '@/ui/base/TextField'
+} from '@/ui/dialog'
+import { TextField } from '@/ui/TextField'
 import { X } from 'lucide-react'
 import type { FunctionComponent } from 'react'
 import { useState } from 'react'

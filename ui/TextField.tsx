@@ -3,9 +3,9 @@ import { Label } from '@radix-ui/react-label'
 import { InfoIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import React, { useState } from 'react'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from './HoverCard'
-import type { InputProps } from './Input'
-import { Input } from './Input'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from './hover-card'
+import type { InputProps } from './input'
+import { Input } from './input'
 
 type TextFieldProps = InputProps & {
   text: string

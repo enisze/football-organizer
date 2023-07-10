@@ -1,11 +1,11 @@
-import { Avatar, AvatarFallback } from '@/ui/base/Avatar'
+import { Avatar, AvatarFallback } from '@/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/ui/base/DropDownMenu'
-import { Separator } from '@/ui/base/Separator'
+} from '@/ui/dropdown-menu'
+import { Separator } from '@/ui/separator'
 import { useAtomValue } from 'jotai'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'

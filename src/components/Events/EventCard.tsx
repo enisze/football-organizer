@@ -50,7 +50,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({ event }) => {
 
   return (
     <div className="relative h-full w-full rounded-2xl bg-gradient-to-b from-purple-400 to-purple-100 p-[1px] md:w-[400px]">
-      <div className="flex w-full flex-col justify-center gap-2 rounded-2xl bg-gradient-to-tl from-white to-blue-100 shadow-xl dark:bg-gradient-to-tl dark:from-slate-900 dark:to-slate-700">
+      <div className="flex w-full flex-col justify-center gap-2 rounded-2xl bg-gradient-to-tl from-white to-blue-100 shadow-xl dark:bg-gradient-to-tl dark:from-slate-950 dark:to-slate-600">
         <div className="flex flex-col p-4 gap-y-2">
           <div className="flex justify-between gap-x-1 w-full">
             <DateInfo date={date} />

@@ -1,12 +1,12 @@
 import { trpc } from '@/src/utils/trpc'
-import { Button } from '@/ui/base/Button'
+import { Button } from '@/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/ui/base/Dialog'
+} from '@/ui/dialog'
 import { TRPCError } from '@trpc/server'
 import { Check } from 'lucide-react'
 import { useSession } from 'next-auth/react'

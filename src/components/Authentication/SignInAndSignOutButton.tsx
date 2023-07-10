@@ -1,4 +1,4 @@
-import { Button } from '@/ui/base/Button'
+import { Button } from '@/ui/button'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import type { FunctionComponent } from 'react'

@@ -1,4 +1,4 @@
-import { Button } from '@/ui/base/Button'
+import { Button } from '@/ui/button'
 import Link from 'next/link'
 import type { FunctionComponent } from 'react'
 

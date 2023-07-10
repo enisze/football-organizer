@@ -4,7 +4,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/ui/base/Accordion'
+} from '@/ui/accordion'
 import { User } from 'lucide-react'
 import type { FunctionComponent } from 'react'
 import { AvatarStatus } from './AvatarStatus'
@@ -53,12 +53,10 @@ export const ParticipantsArea: FunctionComponent<{
         {allUsersLength > 0 && (
           <AccordionTrigger className="p-0 hover:no-underline">
             <div
-              className={`rounded flex border w-full bg-gradient-to-b from mr-1`}
+              className="rounded flex border w-full mr-1"
+              style={{ border: 'solid' }}
             >
-              <div
-                className={`bg-green-400 overflow-hidden`}
-                style={joinedWidth}
-              >
+              <div className="bg-green-400 overflow-hidden" style={joinedWidth}>
                 {joinedUsersAmount}
               </div>
               <div className="bg-yellow-400 overflow-hidden" style={maybeWidth}>

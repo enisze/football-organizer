@@ -1,4 +1,4 @@
-import { Button } from '@/ui/base/Button'
+import { Button } from '@/ui/button'
 import type { FunctionComponent } from 'react'
 import { isDateInCertainRange } from '../helpers/isDateInCertainRange'
 import { trpc } from '../utils/trpc'

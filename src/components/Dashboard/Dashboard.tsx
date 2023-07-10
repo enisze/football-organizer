@@ -2,7 +2,7 @@ import type { FunctionComponent } from 'react'
 
 import type { Event } from '@/prisma/generated/client'
 import { useIsAdmin } from '@/src/hooks/useIsAdmin'
-import { OrganizerLink } from '@/ui/base/OrganizerLink'
+import { OrganizerLink } from '@/ui/OrganizerLink'
 import { addDays } from 'date-fns'
 import { EventCard } from '../Events/EventCard'
 import { GroupSelector } from '../Groups/GroupSelector'

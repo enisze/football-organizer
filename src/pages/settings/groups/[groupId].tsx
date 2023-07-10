@@ -1,6 +1,7 @@
 import { SpecificSettings } from '@/src/components/SettingsSidebar'
 import { useToast } from '@/src/hooks/useToast'
-import { Button } from '@/ui/base/Button'
+import { TextField } from '@/ui/TextField'
+import { Button } from '@/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -8,10 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/ui/base/Dialog'
-import { Label } from '@/ui/base/Label'
-import { Separator } from '@/ui/base/Separator'
-import { TextField } from '@/ui/base/TextField'
+} from '@/ui/dialog'
+import { Label } from '@/ui/label'
+import { Separator } from '@/ui/separator'
 import { useSession } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { useEffect, useMemo, useState } from 'react'
@@ -21,7 +21,7 @@ import { AddEventForm } from '@/src/components/Events/AddEventForm'
 import { selectedGroupAtom } from '@/src/components/Groups/GroupSelector'
 import Navbar from '@/src/components/Navigation/Navbar'
 import { trpc } from '@/src/utils/trpc'
-import { Container } from '@/ui/base/Container'
+import { Container } from '@/ui/container'
 import { useSetAtom } from 'jotai'
 import { Copy, XIcon } from 'lucide-react'
 import { useRouter } from 'next/router'

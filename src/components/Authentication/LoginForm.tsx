@@ -1,11 +1,12 @@
 import { useToast } from '@/src/hooks/useToast'
 import { trpc } from '@/src/utils/trpc'
-import { Button } from '@/ui/base/Button'
-import { TextField } from '@/ui/base/TextField'
+import { Button } from '@/ui/button'
+import { TextField } from '@/ui/TextField'
 import { signIn } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import Image from 'next/image'
-import { FunctionComponent, useState } from 'react'
+import type { FunctionComponent } from 'react'
+import { useState } from 'react'
 import { z } from 'zod'
 
 const discordStyles = {

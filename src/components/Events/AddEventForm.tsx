@@ -1,6 +1,6 @@
 import { trpc } from '@/src/utils/trpc'
-import { Button } from '@/ui/base/Button'
-import { TextField } from '@/ui/base/TextField'
+import { TextField } from '@/ui/TextField'
+import { Button } from '@/ui/button'
 import { Formik } from 'formik'
 import { useAtomValue } from 'jotai'
 import type { FunctionComponent } from 'react'

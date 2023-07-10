@@ -1,7 +1,7 @@
 import { LoginForm } from '@/src/components/Authentication/LoginForm'
 import { EventCard } from '@/src/components/Events/EventCard'
 import { LoadingWrapper } from '@/src/components/LoadingWrapper'
-import { Button } from '@/ui/base/Button'
+import { Button } from '@/ui/button'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'

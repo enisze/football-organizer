@@ -1,5 +1,5 @@
-import { OrganizerLink } from '@/ui/base/OrganizerLink'
-import { Separator } from '@/ui/base/Separator'
+import { OrganizerLink } from '@/ui/OrganizerLink'
+import { Separator } from '@/ui/separator'
 import { ArrowLeft } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
