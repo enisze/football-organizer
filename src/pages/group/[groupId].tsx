@@ -3,7 +3,7 @@ import Navbar from '@/src/components/Navigation/Navbar'
 import type { GetServerSidePropsContext } from 'next'
 import type { FunctionComponent } from 'react'
 
-import { Event } from '@/prisma/generated/client'
+import type { Event } from '@/prisma/generated/client'
 import type { InferGetServerSidePropsType } from 'next'
 import { getServerSession } from 'next-auth'
 import SuperJSON from 'superjson'
