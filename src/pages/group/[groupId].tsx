@@ -1,20 +1,73 @@
 import { Dashboard } from '@/src/components/Dashboard/Dashboard'
 import Navbar from '@/src/components/Navigation/Navbar'
-import { useRouter } from 'next/router'
+import type { GetServerSidePropsContext } from 'next'
 import type { FunctionComponent } from 'react'
 
-const Group: FunctionComponent = () => {
-  const router = useRouter()
+import type { EventWithParticipants } from '@/src/types/EventWithParticipants'
+import type { InferGetServerSidePropsType } from 'next'
+import { getServerSession } from 'next-auth'
+import SuperJSON from 'superjson'
+import { authOptions } from '../api/auth/[...nextauth]'
 
-  const groupId = router.query.groupId as string
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext,
+) => {
+  const groupId = context.params?.groupId as string
+
+  const session = await getServerSession(context.req, context.res, authOptions)
+
+  if (!session || !session.user?.id) {
+    return {
+      redirect: {
+        destination: '/api/auth/signin',
+        permanent: false,
+      },
+    }
+  }
+
+  const events = await prisma?.event.findMany({
+    where: { groupId },
+    include: { participants: true },
+    orderBy: { date: 'asc' },
+  })
+
+  const id = session.user.id
+
+  const groupNames = await prisma?.group.findMany({
+    where: { users: { some: { id } } },
+    select: {
+      name: true,
+    },
+  })
+
+  const names = groupNames?.map((group) => group.name)
+
+  if (!events) {
+    return {
+      notFound: true,
+    }
+  }
+
+  return {
+    props: {
+      events: SuperJSON.serialize(events),
+      groupNames: names,
+    },
+  }
+}
+
+const MainPage: FunctionComponent<
+  InferGetServerSidePropsType<typeof getServerSideProps>
+> = ({ events, groupNames }) => {
+  const res: EventWithParticipants = SuperJSON.deserialize(events)
 
   return (
     <div className="flex flex-col pb-2">
       <Navbar />
       <div className="p-8" />
-      <Dashboard groupId={groupId} />
+      <Dashboard events={res} groupNames={groupNames} />
     </div>
   )
 }
 
-export default Group
+export default MainPage
