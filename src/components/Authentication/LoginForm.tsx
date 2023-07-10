@@ -1,7 +1,7 @@
-import { useToast } from '@/src/hooks/useToast'
 import { trpc } from '@/src/utils/trpc'
 import { Button } from '@/ui/button'
 import { TextField } from '@/ui/TextField'
+import { useToast } from '@/ui/use-toast'
 import { signIn } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import Image from 'next/image'

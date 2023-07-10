@@ -1,7 +1,7 @@
-import { useToast } from '@/src/hooks/useToast'
 import { trpc } from '@/src/utils/trpc'
 import { Button } from '@/ui/button'
 import { TextField } from '@/ui/TextField'
+import { useToast } from '@/ui/use-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { FunctionComponent } from 'react'
 import type { FieldValues } from 'react-hook-form'

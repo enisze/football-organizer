@@ -4,9 +4,9 @@ import { TRPCClientError } from '@trpc/client'
 import { useSession } from 'next-auth/react'
 
 import { LoginForm } from '@/src/components/Authentication/LoginForm'
+import { useToast } from '@/ui/use-toast'
 import type { FunctionComponent } from 'react'
 import { useState } from 'react'
-import { useToast } from '../hooks/useToast'
 import { trpc } from '../utils/trpc'
 
 export const ContactForm: FunctionComponent<{ onSubmit?: () => void }> = ({

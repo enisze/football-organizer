@@ -1,5 +1,4 @@
 import { SpecificSettings } from '@/src/components/SettingsSidebar'
-import { useToast } from '@/src/hooks/useToast'
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
 import {
@@ -22,6 +21,7 @@ import { selectedGroupAtom } from '@/src/components/Groups/GroupSelector'
 import Navbar from '@/src/components/Navigation/Navbar'
 import { trpc } from '@/src/utils/trpc'
 import { Container } from '@/ui/container'
+import { useToast } from '@/ui/use-toast'
 import { useSetAtom } from 'jotai'
 import { Copy, XIcon } from 'lucide-react'
 import { useRouter } from 'next/router'
