@@ -8,6 +8,8 @@ import { getServerSession } from 'next-auth'
 import type { FunctionComponent } from 'react'
 import { authOptions } from '../api/auth/[...nextauth]'
 
+import { prisma } from '../../../prisma/prisma'
+
 export const getServerSideProps = async (
   context: GetServerSidePropsContext,
 ) => {
@@ -24,7 +26,7 @@ export const getServerSideProps = async (
 
   const id = session.user.id
 
-  const groupNames = await prisma?.group.findMany({
+  const groupNames = await prisma.group.findMany({
     where: { users: { some: { id } } },
     select: {
       name: true,

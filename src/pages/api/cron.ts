@@ -1,6 +1,5 @@
 import type { gmail_v1 } from 'googleapis'
 import { google } from 'googleapis'
-import { PrismaClient } from '../../../prisma/generated/client'
 import { getEuroAmount } from '../../../src/helpers/getEuroAmount'
 
 import { isDateInCertainRange } from '@/src/helpers/isDateInCertainRange'
@@ -9,6 +8,7 @@ import type { OAuth2ClientOptions } from 'google-auth-library'
 import { OAuth2Client } from 'google-auth-library'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Event, Payment } from '../../../prisma/generated/client'
+import { prisma } from '../../../prisma/prisma'
 
 const asyncForEach = async <T>(
   array: (T | undefined)[],
@@ -25,8 +25,6 @@ const asyncForEach = async <T>(
     }
   }
 }
-
-const prisma = new PrismaClient()
 
 export default async function handler(
   request: NextApiRequest,

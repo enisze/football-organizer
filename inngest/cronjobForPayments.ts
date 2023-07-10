@@ -1,6 +1,5 @@
 import type { gmail_v1 } from 'googleapis'
 import { google } from 'googleapis'
-import { PrismaClient } from '../prisma/generated/client'
 import { getEuroAmount } from '../src/helpers/getEuroAmount'
 
 import { isDateInCertainRange } from '@/src/helpers/isDateInCertainRange'
@@ -8,6 +7,7 @@ import { differenceInDays, subDays } from 'date-fns'
 import type { OAuth2ClientOptions } from 'google-auth-library'
 import { OAuth2Client } from 'google-auth-library'
 import type { Event, Payment } from '../prisma/generated/client'
+import { prisma } from '../prisma/prisma'
 import { inngest } from './inngestClient'
 
 const asyncForEach = async <T>(
@@ -25,8 +25,6 @@ const asyncForEach = async <T>(
     }
   }
 }
-
-const prisma = new PrismaClient()
 
 export const cronJob = inngest.createFunction(
   { name: 'Cronjob for payments' },

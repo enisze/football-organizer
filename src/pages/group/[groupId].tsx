@@ -7,6 +7,7 @@ import type { EventWithParticipants } from '@/src/types/EventWithParticipants'
 import type { InferGetServerSidePropsType } from 'next'
 import { getServerSession } from 'next-auth'
 import SuperJSON from 'superjson'
+import { prisma } from '../../../prisma/prisma'
 import { authOptions } from '../api/auth/[...nextauth]'
 
 export const getServerSideProps = async (
@@ -25,7 +26,7 @@ export const getServerSideProps = async (
     }
   }
 
-  const events = await prisma?.event.findMany({
+  const events = await prisma.event.findMany({
     where: { groupId },
     include: { participants: true },
     orderBy: { date: 'asc' },
@@ -33,7 +34,7 @@ export const getServerSideProps = async (
 
   const id = session.user.id
 
-  const groupNames = await prisma?.group.findMany({
+  const groupNames = await prisma.group.findMany({
     where: { users: { some: { id } } },
     select: {
       name: true,
