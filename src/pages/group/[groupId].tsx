@@ -3,7 +3,7 @@ import Navbar from '@/src/components/Navigation/Navbar'
 import type { GetServerSidePropsContext } from 'next'
 import type { FunctionComponent } from 'react'
 
-import type { EventWithParticipants } from '@/src/types/EventWithParticipants'
+import { Event } from '@/prisma/generated/client'
 import type { InferGetServerSidePropsType } from 'next'
 import { getServerSession } from 'next-auth'
 import SuperJSON from 'superjson'
@@ -28,7 +28,6 @@ export const getServerSideProps = async (
 
   const events = await prisma.event.findMany({
     where: { groupId },
-    include: { participants: true },
     orderBy: { date: 'asc' },
   })
 
@@ -60,7 +59,7 @@ export const getServerSideProps = async (
 const MainPage: FunctionComponent<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = ({ events, groupNames }) => {
-  const res: EventWithParticipants = SuperJSON.deserialize(events)
+  const res: Event[] = SuperJSON.deserialize(events)
 
   return (
     <div className="flex flex-col pb-2">

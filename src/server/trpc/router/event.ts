@@ -48,6 +48,45 @@ export const eventRouter = router({
         include: { participants: true },
       })
     }),
+
+  getParticipants: protectedProcedure
+    .input(z.object({ eventId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id
+
+      if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED' })
+
+      const participants = await ctx.prisma.participantsOnEvents.findMany({
+        where: { eventId: input.eventId },
+        select: {
+          userEventStatus: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      })
+
+      const joinedUsers = participants.filter(
+        (participant) => participant.userEventStatus === 'JOINED',
+      )
+      const canceledUsers = participants.filter(
+        (participant) => participant.userEventStatus === 'CANCELED',
+      )
+
+      const maybeUsers = participants.filter(
+        (participant) => participant.userEventStatus === 'MAYBE',
+      )
+
+      return {
+        participants,
+        joinedUsersAmount: joinedUsers.length,
+        canceledUsersAmount: canceledUsers.length,
+        maybeUsersAmount: maybeUsers.length,
+      }
+    }),
   setParticipatingStatus: protectedProcedure
     .input(
       z.object({

@@ -1,4 +1,3 @@
-import type { ParticipantsOnEvents } from '@/prisma/generated/client'
 import { trpc } from '@/src/utils/trpc'
 import { Button } from '@/ui/base/Button'
 import {
@@ -18,20 +17,17 @@ import { DeclineEventDialog } from './DeclineEventDialog'
 
 export const EventStatusArea: FunctionComponent<{
   id: string
-  participants: ParticipantsOnEvents[]
-}> = ({ id, participants }) => {
+}> = ({ id }) => {
   const trpcContext = trpc.useContext()
 
   const { data: session } = useSession()
 
-  const userStatus = participants.find(
-    (user) => user.id === session?.user?.id,
-  )?.userEventStatus
-
-  const checkMarkColor = userStatus === 'JOINED' ? 'text-green-500' : ''
-  const maybeMarkColor = userStatus === 'MAYBE' ? '!fill-yellow-500' : ''
+  const { data } = trpc.event.getParticipants.useQuery({
+    eventId: id,
+  })
 
   const [showLeaveModal, setShowLeaveModal] = useState(false)
+
   const { mutate: sendEmail } = trpc.gmail.sendPaidButCancledMail.useMutation()
 
   const { mutate: setEventStatus } =
@@ -40,6 +36,17 @@ export const EventStatusArea: FunctionComponent<{
         trpcContext.invalidate()
       },
     })
+
+  if (!data) return null
+
+  const { participants } = data
+
+  const userStatus = participants.find(
+    (participant) => participant.user.id === session?.user?.id,
+  )?.userEventStatus
+
+  const checkMarkColor = userStatus === 'JOINED' ? 'text-green-500' : ''
+  const maybeMarkColor = userStatus === 'MAYBE' ? '!fill-yellow-500' : ''
 
   const join = () => {
     try {

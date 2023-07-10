@@ -1,4 +1,4 @@
-import type { Event, ParticipantsOnEvents } from '@/prisma/generated/client'
+import type { Event } from '@/prisma/generated/client'
 import { trpc } from '@/src/utils/trpc'
 import { differenceInCalendarDays } from 'date-fns'
 import { CalendarDays, Euro } from 'lucide-react'
@@ -14,16 +14,12 @@ import { StatusChip } from './StatusChip'
 
 type EventCardProps = {
   event: Event
-  participants: ParticipantsOnEvents[]
 }
 
 //TODO: Adjust schema event thingy -> Warteliste status?
 //TODO: Show Warteliste, if we have participants which are on the waiting list too?
 
-export const EventCard: FunctionComponent<EventCardProps> = ({
-  event,
-  participants,
-}) => {
+export const EventCard: FunctionComponent<EventCardProps> = ({ event }) => {
   const {
     address,
     startTime,
@@ -90,15 +86,11 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
                 isLoading={isLoading}
               />
             )}
-            <ParticipantsArea
-              eventId={id}
-              participants={participants}
-              maxParticipants={maxParticipants}
-            />
+            <ParticipantsArea eventId={id} maxParticipants={maxParticipants} />
 
             <EventCardAdminArea eventId={id} />
             <PaymentArea eventId={id} bookingDate={bookingDate} />
-            <EventStatusArea id={id} participants={participants} />
+            <EventStatusArea id={id} />
           </div>
         </div>
       </div>

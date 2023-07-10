@@ -1,12 +1,12 @@
 import type { FunctionComponent } from 'react'
 
-import type { EventWithParticipants } from '@/src/types/EventWithParticipants'
+import type { Event } from '@/prisma/generated/client'
 import { OrganizerLink } from '@/ui/base/OrganizerLink'
 import { EventCard } from '../Events/EventCard'
 import { GroupSelector } from '../Groups/GroupSelector'
 
 export const Dashboard: FunctionComponent<{
-  events?: EventWithParticipants
+  events?: Event[]
   groupNames?: string[]
 }> = ({ events, groupNames }) => {
   return (
@@ -17,10 +17,9 @@ export const Dashboard: FunctionComponent<{
           <ul className="flex flex-col gap-y-2">
             {events && events?.length > 0 ? (
               events.map((event) => {
-                const { participants, ...realEvent } = event
                 return (
-                  <li key={realEvent.id}>
-                    <EventCard event={realEvent} participants={participants} />
+                  <li key={event.id}>
+                    <EventCard event={event} />
                   </li>
                 )
               })
