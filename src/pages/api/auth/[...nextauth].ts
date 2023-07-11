@@ -5,6 +5,7 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 
 import { sendWelcomeMail } from '@/inngest/sendWelcomeMail'
 import DiscordProvider from 'next-auth/providers/discord'
+import GoogleProvider from 'next-auth/providers/google'
 import { prisma } from '../../../server/db/client'
 
 export const authOptions: NextAuthOptions = {
@@ -24,6 +25,17 @@ export const authOptions: NextAuthOptions = {
       userinfo: 'https://discord.com/api/users/@me',
       name: 'Discord',
     }),
+    GoogleProvider({
+      clientId: process.env.NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID ?? '',
+      clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET ?? '',
+      authorization: {
+        params: {
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code',
+        },
+      },
+    }),
     CredentialsProvider({
       // The name to display on the sign in form (e.g. 'Sign in with...')
       name: 'Credentials',
@@ -37,9 +49,9 @@ export const authOptions: NextAuthOptions = {
           type: 'email',
         },
         username: {
-          label: 'Name',
+          label: 'Paypal Name',
           type: 'string',
-          placeholder: 'Dein Paypal Name',
+          placeholder: '(Nur, wenn nicht registriert)',
         },
         password: { label: 'Passwort', type: 'password' },
       },

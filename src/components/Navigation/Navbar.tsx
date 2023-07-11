@@ -1,24 +1,13 @@
 import { Button } from '@/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/ui/dialog'
 import { ThemeToggle } from '@/ui/theme-toggle'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import type { FunctionComponent } from 'react'
-import { useState } from 'react'
-import { LoginForm } from '../Authentication/LoginForm'
 import { Heading } from '../Heading'
 import { OrganizerMenu } from './OrganizerMenu'
 
 export const Navbar: FunctionComponent = () => {
-  const [open, setOpen] = useState(false)
-
   const router = useRouter()
 
   const onDashboard =
@@ -35,24 +24,16 @@ export const Navbar: FunctionComponent = () => {
           {/* <Link href={'/pricing'}>Pricing</Link> */}
           <OrganizerMenu />
 
-          <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
-            <DialogTrigger>
-              {!data?.user && (
-                <Button variant="outline">Login / Registrieren</Button>
-              )}
-            </DialogTrigger>
-
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Logge dich ein</DialogTitle>
-              </DialogHeader>
-              <LoginForm
-                onSubmit={() => {
-                  setOpen(false)
-                }}
-              />
-            </DialogContent>
-          </Dialog>
+          {!data?.user && (
+            <Button
+              variant="outline"
+              onClick={() => {
+                router.push('/api/auth/signin')
+              }}
+            >
+              Login / Registrieren
+            </Button>
+          )}
 
           {!onDashboard && !!data && <Link href="/group">Dashboard</Link>}
 
