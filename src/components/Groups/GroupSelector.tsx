@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from '@/ui/select'
 import { atom } from 'jotai'
-import { useRouter } from 'next/router'
+import { useParams, useRouter } from 'next/navigation'
 import type { FunctionComponent } from 'react'
 import { useEffect, useRef } from 'react'
 import { LoadingWrapper } from '../LoadingWrapper'
@@ -23,9 +23,10 @@ export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
     owned: owned,
   })
 
+  const params = useParams()
   const router = useRouter()
 
-  const group = router.query.groupId as string
+  const group = params.groupId as string
 
   const isInitialGroupSet = useRef(false)
 

@@ -26,15 +26,16 @@ import { Container } from '@/ui/container'
 import { useToast } from '@/ui/use-toast'
 import { useSetAtom } from 'jotai'
 import { Copy, XIcon } from 'lucide-react'
-import { useRouter } from 'next/router'
+import { useParams, useRouter } from 'next/navigation'
 
 const GroupSettings: FunctionComponent = () => {
   const { data } = useSession()
   const userId = data?.user?.id
 
+  const params = useParams()
   const router = useRouter()
 
-  const groupId = router.query.groupId as string
+  const groupId = params.groupId as string
 
   const setAtom = useSetAtom(selectedGroupAtom)
 

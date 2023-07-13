@@ -91,11 +91,9 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.JWT_SECRET,
   callbacks: {
     async signIn({}) {
-      console.log('here')
       return true
     },
     async jwt({ token, user, account }) {
-      console.log('here')
       const id = token.id
 
       let dbUser
@@ -116,7 +114,6 @@ export const authOptions: NextAuthOptions = {
       return token
     },
     async session({ session, token }) {
-      console.log('here')
       if (token && session.user) {
         session.user.id = token.id
         session.user.role = token.role

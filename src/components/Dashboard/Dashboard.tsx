@@ -10,10 +10,15 @@ import { SessionProvider } from 'next-auth/react'
 import { EventCard } from '../Events/EventCard'
 import { GroupSelector } from '../Groups/GroupSelector'
 
-const DashboardRaw: FunctionComponent<{
+type DashboardProps = {
   events?: Event[]
-  groupNames?: string[]
-}> = ({ events, groupNames }) => {
+  groupNames: string[]
+}
+
+const DashboardRaw: FunctionComponent<DashboardProps> = ({
+  events,
+  groupNames,
+}) => {
   const isAdmin = useIsAdmin()
   return (
     <div className="m-8 flex flex-col gap-y-3 justify-center items-center">
@@ -71,10 +76,13 @@ const DashboardRaw: FunctionComponent<{
   )
 }
 
-export const Dashboard = () => {
+export const Dashboard: FunctionComponent<DashboardProps> = ({
+  events,
+  groupNames,
+}) => {
   return (
     <SessionProvider>
-      <DashboardRaw />
+      <DashboardRaw events={events} groupNames={groupNames} />
     </SessionProvider>
   )
 }

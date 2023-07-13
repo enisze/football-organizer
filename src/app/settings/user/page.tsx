@@ -6,7 +6,7 @@ import { Label } from '@/ui/label'
 import { Separator } from '@/ui/separator'
 import { Switch } from '@/ui/switch'
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import type { FunctionComponent } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 

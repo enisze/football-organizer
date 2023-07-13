@@ -1,7 +1,7 @@
 'use client'
 import { Navbar } from '@/src/components/Navigation/Navbar'
 import { SettingsSidebar } from '@/src/components/SettingsSidebar'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import type { FunctionComponent } from 'react'
 import { useEffect } from 'react'
 
@@ -10,7 +10,8 @@ const Settings: FunctionComponent = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window && window.innerWidth > 768 && router.isReady) {
+      if (window && window.innerWidth > 768) {
+        //@ts-expect-error Fix this
         router.push('/settings/user')
       }
     }

@@ -2,13 +2,13 @@ import { LoadingWrapper } from '@/src/components/LoadingWrapper'
 import { Navbar } from '@/src/components/Navigation/Navbar'
 import { trpc } from '@/src/utils/trpc'
 import { OrganizerLink } from '@/ui/OrganizerLink'
-import { useRouter } from 'next/router'
+import { useParams } from 'next/navigation'
 import type { FunctionComponent } from 'react'
 
 const Oauth2Callback: FunctionComponent = () => {
-  const router = useRouter()
+  const params = useParams()
 
-  const { code } = router.query
+  const { code } = params
 
   const { error, isSuccess, isLoading } = trpc.gmail.setToken.useQuery(
     { code: code as string },

@@ -1,3 +1,4 @@
+'use client'
 import { trpc } from '@/src/utils/trpc'
 import { Button } from '@/ui/button'
 import { TextField } from '@/ui/TextField'

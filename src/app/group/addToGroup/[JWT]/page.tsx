@@ -1,17 +1,18 @@
+'use client'
 import { trpc } from '@/src/utils/trpc'
 import { Button } from '@/ui/button'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { useToast } from '@/ui/use-toast'
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/router'
+import { useParams } from 'next/navigation'
 import type { FunctionComponent } from 'react'
 
 import { Navbar } from '@/src/components/Navigation/Navbar'
 
 const AddToGroup: FunctionComponent = () => {
-  const router = useRouter()
+  const params = useParams()
 
-  const JWT = router.query.JWT as string
+  const JWT = params.JWT as string
 
   const { toast } = useToast()
 
