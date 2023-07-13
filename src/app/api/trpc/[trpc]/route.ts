@@ -10,6 +10,7 @@ const handler = (request: Request) => {
     endpoint: '/api/trpc',
     req: request,
     router: appRouter,
+    //@ts-expect-error TODO: fix this
     createContext: function (
       opts: FetchCreateContextFnOptions,
     ): object | Promise<object> {

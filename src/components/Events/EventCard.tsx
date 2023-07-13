@@ -1,3 +1,4 @@
+'use client'
 import type { Event } from '@/prisma/generated/client'
 import { trpc } from '@/src/utils/trpc'
 import { differenceInCalendarDays } from 'date-fns'

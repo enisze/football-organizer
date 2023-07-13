@@ -1,3 +1,4 @@
+'use client'
 import { initTRPC, TRPCError } from '@trpc/server'
 import superjson from 'superjson'
 

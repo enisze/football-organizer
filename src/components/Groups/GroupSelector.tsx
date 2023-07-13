@@ -1,3 +1,4 @@
+'use client'
 import { trpc } from '@/src/utils/trpc'
 import { Label } from '@/ui/label'
 import {

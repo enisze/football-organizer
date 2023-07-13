@@ -1,5 +1,6 @@
 import { trpc } from '@/src/utils/trpc'
 import { Button } from '@/ui/button'
+import { SessionProvider } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { useIsAdmin } from '../../hooks/useIsAdmin'
 import { LoadingWrapper } from '../LoadingWrapper'
@@ -10,7 +11,7 @@ type EventCardAdminAreaProps = {
   eventId: string
 }
 
-export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
+const EventCardAdminAreaRaw: FunctionComponent<EventCardAdminAreaProps> = ({
   eventId,
 }) => {
   const isAdmin = useIsAdmin()
@@ -72,5 +73,15 @@ export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
         </Button>
       </LoadingWrapper>
     </>
+  )
+}
+
+export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
+  eventId,
+}) => {
+  return (
+    <SessionProvider>
+      <EventCardAdminAreaRaw eventId={eventId} />
+    </SessionProvider>
   )
 }

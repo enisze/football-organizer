@@ -16,7 +16,6 @@ export const authOptions: NextAuthOptions = {
     updateAge: 1000 * 60 * 60 * 24,
   },
 
-  // pages: { signIn: '/', newUser: '/signUp' },
   providers: [
     DiscordProvider({
       clientId: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID ?? '',

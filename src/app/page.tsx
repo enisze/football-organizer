@@ -1,7 +1,12 @@
-import { type NextPage } from 'next'
+import { getServerSession } from 'next-auth'
 import { Hero } from '../components/Heading'
+import { authOptions } from '../lib/auth'
 
-const Home: NextPage = () => {
+const Home = async () => {
+  const a = await getServerSession(authOptions)
+
+  console.log(a)
+
   return (
     <div className="h-full">
       <title>Event Wizard</title>

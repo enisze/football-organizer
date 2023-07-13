@@ -1,3 +1,4 @@
+'use client'
 import type { FunctionComponent } from 'react'
 
 import type { Event } from '@/prisma/generated/client'
@@ -5,10 +6,11 @@ import { useIsAdmin } from '@/src/hooks/useIsAdmin'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { Skeleton } from '@/ui/skeleton'
 import { addDays } from 'date-fns'
+import { SessionProvider } from 'next-auth/react'
 import { EventCard } from '../Events/EventCard'
 import { GroupSelector } from '../Groups/GroupSelector'
 
-export const Dashboard: FunctionComponent<{
+const DashboardRaw: FunctionComponent<{
   events?: Event[]
   groupNames?: string[]
 }> = ({ events, groupNames }) => {
@@ -66,5 +68,13 @@ export const Dashboard: FunctionComponent<{
         </div>
       )}
     </div>
+  )
+}
+
+export const Dashboard = () => {
+  return (
+    <SessionProvider>
+      <DashboardRaw />
+    </SessionProvider>
   )
 }
