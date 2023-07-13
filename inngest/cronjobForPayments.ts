@@ -7,7 +7,7 @@ import { differenceInDays, subDays } from 'date-fns'
 import type { OAuth2ClientOptions } from 'google-auth-library'
 import { OAuth2Client } from 'google-auth-library'
 import type { Event, Payment } from '../prisma/generated/client'
-import { prisma } from '../prisma/prisma'
+import { prisma } from '../src/server/db/client'
 import { inngest } from './inngestClient'
 
 const asyncForEach = async <T>(

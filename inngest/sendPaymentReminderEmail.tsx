@@ -2,7 +2,7 @@ import PaymentReminder from '@/emails/PaymentReminder'
 import { render } from '@react-email/components'
 import { sendEmail } from './createSendEmail'
 
-import { prisma } from '../prisma/prisma'
+import { prisma } from '../src/server/db/client'
 import { inngest } from './inngestClient'
 
 export const sendPaymentReminderEmail = inngest.createFunction(

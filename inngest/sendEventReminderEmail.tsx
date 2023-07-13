@@ -1,7 +1,7 @@
 import EventReminder from '@/emails/EventReminder'
 import { render } from '@react-email/components'
 import { differenceInCalendarDays } from 'date-fns'
-import { prisma } from '../prisma/prisma'
+import { prisma } from '../src/server/db/client'
 import { sendEmail } from './createSendEmail'
 import { inngest } from './inngestClient'
 

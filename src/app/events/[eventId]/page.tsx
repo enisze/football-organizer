@@ -1,6 +1,6 @@
 import { EventCard } from '@/src/components/Events/EventCard'
 import Link from 'next/link'
-import { prisma } from '../../../../prisma/prisma'
+import { prisma } from '../../../server/db/client'
 
 import { getServerSession } from 'next-auth'
 import { RedirectType } from 'next/dist/client/components/redirect'

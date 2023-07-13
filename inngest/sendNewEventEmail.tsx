@@ -3,7 +3,7 @@ import { render } from '@react-email/components'
 import { sendEmail } from './createSendEmail'
 import { inngest } from './inngestClient'
 
-import { prisma } from '../prisma/prisma'
+import { prisma } from '../src/server/db/client'
 
 export const sendNewEventEmail = inngest.createFunction(
   { name: 'Send new Event Email' },

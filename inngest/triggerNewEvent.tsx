@@ -1,5 +1,5 @@
 import { differenceInCalendarDays } from 'date-fns'
-import { prisma } from '../prisma/prisma'
+import { prisma } from '../src/server/db/client'
 import { inngest } from './inngestClient'
 
 export const triggerNewEvent = inngest.createFunction(

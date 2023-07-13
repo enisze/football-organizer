@@ -5,7 +5,7 @@ import { getServerSession } from 'next-auth'
 import { Navbar } from '@/src/components/Navigation/Navbar'
 import { authOptions } from '@/src/lib/auth'
 import { notFound } from 'next/navigation'
-import { prisma } from '../../../../prisma/prisma'
+import { prisma } from '../../../server/db/client'
 
 const MainPage = async ({ params }: { params: { groupId: string } }) => {
   const groupId = params.groupId

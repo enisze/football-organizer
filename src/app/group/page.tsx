@@ -5,7 +5,7 @@ import { authOptions } from '../../lib/auth'
 import { Navbar } from '@/src/components/Navigation/Navbar'
 import { RedirectType } from 'next/dist/client/components/redirect'
 import { redirect } from 'next/navigation'
-import { prisma } from '../../../prisma/prisma'
+import { prisma } from '../../server/db/client'
 
 const MainPage = async () => {
   const session = await getServerSession(authOptions)
