@@ -1,12 +1,6 @@
-import { getServerSession } from 'next-auth'
 import { Hero } from '../components/Heading'
-import { authOptions } from '../lib/auth'
 
-const Home = async () => {
-  const a = await getServerSession(authOptions)
-
-  console.log(a)
-
+const Home = () => {
   return (
     <div className="h-full">
       <title>Event Wizard</title>
