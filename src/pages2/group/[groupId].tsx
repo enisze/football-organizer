@@ -8,7 +8,7 @@ import type { InferGetServerSidePropsType } from 'next'
 import { getServerSession } from 'next-auth'
 import SuperJSON from 'superjson'
 import { prisma } from '../../../prisma/prisma'
-import { authOptions } from '../api/auth/[...nextauth]'
+import { authOptions } from '../../lib/auth'
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext,

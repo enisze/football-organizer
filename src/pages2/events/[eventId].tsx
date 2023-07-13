@@ -11,8 +11,8 @@ import type {
 } from 'next'
 import { getServerSession } from 'next-auth'
 import SuperJSON from 'superjson'
+import { authOptions } from '../../lib/auth'
 import { trpc } from '../../utils/trpc'
-import { authOptions } from '../api/auth/[...nextauth]'
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext,

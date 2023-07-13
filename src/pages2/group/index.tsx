@@ -6,7 +6,7 @@ import type {
 } from 'next'
 import { getServerSession } from 'next-auth'
 import type { FunctionComponent } from 'react'
-import { authOptions } from '../api/auth/[...nextauth]'
+import { authOptions } from '../../lib/auth'
 
 import { prisma } from '../../../prisma/prisma'
 
