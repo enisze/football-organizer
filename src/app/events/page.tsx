@@ -4,7 +4,7 @@ import Link from 'next/link'
 import type { FunctionComponent } from 'react'
 import { prisma } from '../../../prisma/prisma'
 
-import { Event } from '@/prisma/generated/client'
+import type { Event } from '@/prisma/generated/client'
 import type {
   GetServerSidePropsContext,
   InferGetServerSidePropsType,

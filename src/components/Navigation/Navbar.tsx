@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import type { FunctionComponent } from 'react'
 import { Heading } from '../Heading'
+import { OrganizerMenu } from './OrganizerMenu'
 
 const NavbarRaw: FunctionComponent = () => {
   const pathname = usePathname()
@@ -26,7 +27,7 @@ const NavbarRaw: FunctionComponent = () => {
 
           <div className="flex gap-x-1 items-center cursor-pointer">
             {/* <Link href={'/pricing'}>Pricing</Link> */}
-            {/* <OrganizerMenu /> */}
+            <OrganizerMenu />
 
             {!data?.user && (
               <Button

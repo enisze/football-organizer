@@ -3,13 +3,10 @@ import { Button } from '@/ui/button'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { useToast } from '@/ui/use-toast'
 import { useSession } from 'next-auth/react'
-import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import type { FunctionComponent } from 'react'
 
-const NavBar = dynamic(() => import('@/src/components/Navigation/Navbar'), {
-  ssr: false,
-})
+import { Navbar } from '@/src/components/Navigation/Navbar'
 
 const AddToGroup: FunctionComponent = () => {
   const router = useRouter()
@@ -47,7 +44,7 @@ const AddToGroup: FunctionComponent = () => {
 
   return (
     <>
-      <NavBar />
+      <Navbar />
       <div className="flex flex-col justify-center items-center w-full">
         <div>{`${groupData?.ownerName} hat dich eingeladen seiner Gruppe ${groupData?.groupName} beizutreten.`}</div>
         <Button onClick={() => mutate({ JWT })}>Beitreten</Button>

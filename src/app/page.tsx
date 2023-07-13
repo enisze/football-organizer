@@ -1,28 +1,16 @@
-import { prisma } from '../../prisma/prisma'
+import { type NextPage } from 'next'
+import { Hero } from '../components/Heading'
 
-const Test = async () => {
-  const res = await prisma.user.findMany()
-
+const Home: NextPage = () => {
   return (
-    <div>
-      {res.map((x) => {
-        return <div key={x.id}>{x.email}</div>
-      })}
-
-      <>
-        <div className="font-thin">
-          Playground for Next.js 13 new App Directory.
-        </div>
-        <ul className="text-sm mt-4 self-start">
-          <li>• React Server Components</li>
-          <li>• Edge Runtime</li>
-          <li>• tRPC</li>
-          <li>• Kysely + Planetscale + Prisma</li>
-          <li>• Clerk</li>
-        </ul>
-      </>
+    <div className="h-full">
+      <title>Event Wizard</title>
+      <main className="absolute flex h-full w-full flex-col items-center justify-center">
+        <Hero />
+        {/* <ContactForm /> */}
+      </main>
     </div>
   )
 }
 
-export default Test
+export default Home
