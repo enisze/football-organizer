@@ -1,9 +1,9 @@
+import { LoadingWrapper } from '@/src/components/LoadingWrapper'
+import { Navbar } from '@/src/components/Navigation/Navbar'
 import { trpc } from '@/src/utils/trpc'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { useRouter } from 'next/router'
 import type { FunctionComponent } from 'react'
-import { LoadingWrapper } from '../components/LoadingWrapper'
-import Navbar from '../components/Navigation/Navbar'
 
 const Oauth2Callback: FunctionComponent = () => {
   const router = useRouter()

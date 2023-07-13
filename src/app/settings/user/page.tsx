@@ -1,3 +1,4 @@
+'use client'
 import { SpecificSettings } from '@/src/components/SettingsSidebar'
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
@@ -9,9 +10,9 @@ import { useRouter } from 'next/router'
 import type { FunctionComponent } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 
+import { Navbar } from '@/src/components/Navigation/Navbar'
 import { useToast } from '@/ui/use-toast'
 import { LoadingWrapper } from '../../../components/LoadingWrapper'
-import Navbar from '../../../components/Navigation/Navbar'
 import { trpc } from '../../../utils/trpc'
 
 const Settings: FunctionComponent = () => {

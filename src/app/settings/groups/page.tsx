@@ -1,14 +1,12 @@
 import { NewGroup } from '@/src/components/Groups/NewGroup'
+import { Navbar } from '@/src/components/Navigation/Navbar'
 import { SpecificSettings } from '@/src/components/SettingsSidebar'
 import { trpc } from '@/src/utils/trpc'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { Container } from '@/ui/container'
 import { Separator } from '@/ui/separator'
 import { useSession } from 'next-auth/react'
-import Link from 'next/link'
 import type { FunctionComponent } from 'react'
-
-import Navbar from '../../../components/Navigation/Navbar'
 
 const GroupSettings: FunctionComponent = () => {
   const { data } = useSession()
@@ -58,7 +56,7 @@ const GroupSettings: FunctionComponent = () => {
           )}
 
           <div className="p-4">
-            {link && <Link href={link}>Neues gmail token</Link>}
+            {link && <a href={link}>Neues gmail token</a>}
           </div>
           <Separator />
           {/*TODO: Proper management Limited to one group per user currently */}

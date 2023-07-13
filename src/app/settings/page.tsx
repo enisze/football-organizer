@@ -1,3 +1,4 @@
+'use client'
 import { Navbar } from '@/src/components/Navigation/Navbar'
 import { SettingsSidebar } from '@/src/components/SettingsSidebar'
 import { useRouter } from 'next/router'

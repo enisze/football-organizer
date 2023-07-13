@@ -1,21 +1,16 @@
 import { Dashboard } from '@/src/components/Dashboard/Dashboard'
-import Navbar from '@/src/components/Navigation/Navbar'
-import type { GetServerSidePropsContext } from 'next'
-import type { FunctionComponent } from 'react'
 
-import type { Event } from '@/prisma/generated/client'
-import type { InferGetServerSidePropsType } from 'next'
 import { getServerSession } from 'next-auth'
-import SuperJSON from 'superjson'
-import { prisma } from '../../../prisma/prisma'
-import { authOptions } from '../../lib/auth'
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext,
-) => {
-  const groupId = context.params?.groupId as string
+import { Navbar } from '@/src/components/Navigation/Navbar'
+import { authOptions } from '@/src/lib/auth'
+import { notFound } from 'next/navigation'
+import { prisma } from '../../../../prisma/prisma'
 
-  const session = await getServerSession(context.req, context.res, authOptions)
+const MainPage = async ({ params }: { params: { groupId: string } }) => {
+  const groupId = params.groupId
+
+  const session = await getServerSession(authOptions)
 
   if (!session || !session.user?.id) {
     return {
@@ -43,29 +38,14 @@ export const getServerSideProps = async (
   const names = groupNames?.map((group) => group.name)
 
   if (!events) {
-    return {
-      notFound: true,
-    }
+    notFound()
   }
-
-  return {
-    props: {
-      events: SuperJSON.serialize(events),
-      groupNames: names,
-    },
-  }
-}
-
-const MainPage: FunctionComponent<
-  InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({ events, groupNames }) => {
-  const res: Event[] = SuperJSON.deserialize(events)
 
   return (
     <div className="flex flex-col pb-2">
       <Navbar />
       <div className="p-8" />
-      <Dashboard events={res} groupNames={groupNames} />
+      <Dashboard events={events} groupNames={names} />
     </div>
   )
 }
