@@ -26,8 +26,8 @@ export const authOptions: NextAuthOptions = {
       name: 'Discord',
     }),
     GoogleProvider({
-      clientId: process.env.NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID ?? '',
-      clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET ?? '',
+      clientId: process.env.GOOGLE_CLIENT_ID ?? '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
       authorization: {
         params: {
           prompt: 'consent',

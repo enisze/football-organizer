@@ -12,8 +12,8 @@ import { z } from 'zod'
 import { protectedProcedure, rateLimitedProcedure, router } from '../trpc'
 
 const credentials: OAuth2ClientOptions = {
-  clientId: process.env.GMAIL_CLIENT_ID,
-  clientSecret: process.env.GMAIL_CLIENT_SECRET,
+  clientId: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   redirectUri: process.env.GMAIL_REDIRECT_URIS,
 }
 
