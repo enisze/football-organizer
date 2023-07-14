@@ -35,7 +35,7 @@ const GroupSettings: FunctionComponent = () => {
   const params = useParams()
   const router = useRouter()
 
-  const groupId = params.groupId as string
+  const groupId = params?.groupId as string
 
   const setAtom = useSetAtom(selectedGroupAtom)
 
