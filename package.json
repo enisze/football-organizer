@@ -52,6 +52,7 @@
     "datebook": "^7.1.0",
     "dotenv": "^16.0.3",
     "dotenv-flow": "^3.2.0",
+    "encoding": "^0.1.13",
     "formik": "^2.2.9",
     "google-auth-library": "^8.7.0",
     "googleapis": "114.0.0",

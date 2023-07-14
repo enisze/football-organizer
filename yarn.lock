@@ -8849,6 +8849,7 @@ __metadata:
     datebook: ^7.1.0
     dotenv: ^16.0.3
     dotenv-flow: ^3.2.0
+    encoding: ^0.1.13
     eslint: 8.37.0
     eslint-config-next: 13.2.4
     formik: ^2.2.9

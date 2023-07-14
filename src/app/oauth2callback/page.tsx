@@ -8,7 +8,7 @@ import type { FunctionComponent } from 'react'
 const Oauth2Callback: FunctionComponent = () => {
   const params = useParams()
 
-  const { code } = params
+  const code = params?.code as string
 
   const { error, isSuccess, isLoading } = trpc.gmail.setToken.useQuery(
     { code: code as string },

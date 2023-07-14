@@ -12,7 +12,7 @@ import { Navbar } from '@/src/components/Navigation/Navbar'
 const AddToGroup: FunctionComponent = () => {
   const params = useParams()
 
-  const JWT = params.JWT as string
+  const JWT = params?.JWT as string
 
   const { toast } = useToast()
 
