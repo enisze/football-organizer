@@ -11,7 +11,6 @@ const Settings: FunctionComponent = () => {
   useEffect(() => {
     const handleResize = () => {
       if (window && window.innerWidth > 768) {
-        //@ts-expect-error Fix this
         router.push('/settings/user')
       }
     }
