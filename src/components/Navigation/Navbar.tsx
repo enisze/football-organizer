@@ -9,13 +9,13 @@ import type { FunctionComponent } from 'react'
 import { Heading } from '../Heading'
 import { OrganizerMenu } from './OrganizerMenu'
 
-const NavbarRaw: FunctionComponent = () => {
+export const NavbarRaw: FunctionComponent = () => {
   const pathname = usePathname()
 
   const router = useRouter()
 
   const onDashboard =
-    pathname.includes('/group') && !pathname.includes('/settings')
+    pathname?.includes('/group') && !pathname?.includes('/settings')
 
   const { data } = useSession()
 

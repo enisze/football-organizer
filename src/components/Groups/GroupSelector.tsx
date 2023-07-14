@@ -26,7 +26,7 @@ export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
   const params = useParams()
   const router = useRouter()
 
-  const group = params.groupId as string
+  const group = params?.groupId as string
 
   const isInitialGroupSet = useRef(false)
 
