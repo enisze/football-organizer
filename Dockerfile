@@ -19,11 +19,11 @@ RUN apt-get update && apt-get -y install chromium-browser
 WORKDIR /app
 
 # Copy the script file and .env file into the container
-COPY script2.ts /app/script.ts
+COPY /src/scripts/script.ts /app/script.ts
 COPY tsconfig.json /app/tsconfig.json
-COPY transporter.ts /app/transporter.ts
-COPY createSendEmail.ts /app/createSendEmail.ts
-COPY getSoccerDate.ts /app/getSoccerDate.ts
+COPY /src/emails/transporter.ts /app/transporter.ts
+COPY /inngest/createSendEmail.ts /app/createSendEmail.ts
+COPY /src/scripts/getSoccerDate.ts /app/getSoccerDate.ts
 COPY .env /app/.env
 
 # Install project dependencies

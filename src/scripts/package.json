@@ -1,0 +1,18 @@
+{
+  "scripts": {
+    "start-script": "tsx -r dotenv-flow/config ./script.ts",
+    "start-script2": "tsx -r dotenv-flow/config ./script2.ts"
+  },
+  "dependencies": {
+    "@sendinblue/client": "^3.3.1",
+    "date-fns": "^2.30.0",
+    "dotenv": "^16.3.1",
+    "dotenv-flow": "^3.2.0",
+    "puppeteer": "^20.7.3",
+    "selenium-webdriver": "^4.10.0",
+    "tsx": "^3.12.7"
+  },
+  "devDependencies": {
+    "@types/selenium-webdriver": "^4.1.15"
+  }
+}
