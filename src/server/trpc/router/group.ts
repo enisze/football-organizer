@@ -14,7 +14,7 @@ export const groupRouter = router({
 
       if (!id) throw new TRPCError({ code: 'UNAUTHORIZED' })
 
-      return await ctx.prisma.group.findMany({
+      await ctx.prisma.group.findMany({
         where: input?.owned ? { ownerId: id } : { users: { some: { id } } },
         select: {
           name: true,

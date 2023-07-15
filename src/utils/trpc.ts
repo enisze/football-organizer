@@ -1,8 +1,8 @@
 'use client'
 import { createTRPCReact } from '@trpc/react-query'
-import type { AppRouter } from '../server/trpc/router/_app'
 
 import type { inferRouterMeta } from '@trpc/server'
+import type { AppRouter } from '../app/api/trpc/trpc-router'
 
 export const trpc = createTRPCReact<AppRouter>()
 

@@ -2,10 +2,10 @@ import { EventCard } from '@/src/components/Events/EventCard'
 import Link from 'next/link'
 import { prisma } from '../../../server/db/client'
 
+import { authOptions } from '@/src/pages/api/auth/[...nextauth]'
 import { getServerSession } from 'next-auth'
 import { RedirectType } from 'next/dist/client/components/redirect'
 import { notFound, redirect } from 'next/navigation'
-import { authOptions } from '../../../lib/auth'
 import { StatusButton } from './StatusButton'
 
 const EventPage = async ({ params }: { params: { eventId: string } }) => {

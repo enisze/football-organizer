@@ -1,6 +1,6 @@
 import { Hero } from '../components/Heading'
 
-const Home = () => {
+const Home = async () => {
   return (
     <div className="h-full">
       <title>Event Wizard</title>

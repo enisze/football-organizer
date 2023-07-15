@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from '@/ui/select'
 import { atom } from 'jotai'
+import { SessionProvider, useSession } from 'next-auth/react'
 import { useParams, useRouter } from 'next/navigation'
 import type { FunctionComponent } from 'react'
 import { useEffect, useRef } from 'react'
@@ -16,11 +17,13 @@ import { LoadingWrapper } from '../LoadingWrapper'
 
 export const selectedGroupAtom = atom<string | undefined>(undefined)
 
-export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
+const GroupSelectorRaw: FunctionComponent<{ owned?: boolean }> = ({
   owned = false,
 }) => {
+  const { data } = useSession()
   const { data: groups, isLoading } = trpc.group.getGroupsOfUser.useQuery({
     owned: owned,
+    id: data?.user?.id,
   })
 
   const params = useParams()
@@ -31,8 +34,10 @@ export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
   const isInitialGroupSet = useRef(false)
 
   useEffect(() => {
+    console.log(groups?.length)
     if (isLoading || isInitialGroupSet.current) return
     isInitialGroupSet.current = true
+    if ((groups?.length ?? [].length) < 1) return
     router.push(`/group/${groups?.at(0)?.id}`)
   }, [groups, isLoading, router])
 
@@ -57,5 +62,13 @@ export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
         </SelectContent>
       </Select>
     </LoadingWrapper>
+  )
+}
+
+export const GroupSelector = () => {
+  return (
+    <SessionProvider>
+      <GroupSelectorRaw />
+    </SessionProvider>
   )
 }

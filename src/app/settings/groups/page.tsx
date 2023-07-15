@@ -1,33 +1,42 @@
-'use client'
 import { NewGroup } from '@/src/components/Groups/NewGroup'
 import { Navbar } from '@/src/components/Navigation/Navbar'
 import { SpecificSettings } from '@/src/components/SettingsSidebar'
-import { trpc } from '@/src/utils/trpc'
+import { authOptions } from '@/src/server/auth/authOptions'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { Container } from '@/ui/container'
 import { Separator } from '@/ui/separator'
-import { useSession } from 'next-auth/react'
-import type { FunctionComponent } from 'react'
+import { getServerSession } from 'next-auth'
+import { notFound } from 'next/navigation'
+import { prisma } from '../../../server/db/client'
 
-const GroupSettings: FunctionComponent = () => {
-  const { data } = useSession()
-  const userId = data?.user?.id
+const GroupSettings = async () => {
+  const session = await getServerSession(authOptions)
+  const userId = session?.user?.id
 
-  const { data: groups } = trpc.group.getGroupsOfUser.useQuery({
-    owned: true,
+  const groups = await prisma.group.findMany({
+    where: { ownerId: userId },
+    select: {
+      name: true,
+      id: true,
+      createdAt: true,
+      events: true,
+      pricingModel: true,
+      users: true,
+    },
   })
 
-  const { data: link } = trpc.gmail.generateAuthLink.useQuery(undefined, {
-    enabled: groups && groups?.length > 0,
-  })
+  // const { data: link } = trpc.gmail.generateAuthLink.useQuery(undefined, {
+  //   enabled: groups && groups?.length > 0,
+  // })
 
   if (!userId) {
     // window.location.replace('/')
     // window.location.reload()
-    return null
+    notFound()
   }
 
-  const showNewGroup = (groups?.length ?? 0) < 1 || data.user?.role === 'admin'
+  const showNewGroup =
+    (groups?.length ?? 0) < 1 || session?.user?.role === 'admin'
 
   return (
     <>
@@ -61,7 +70,7 @@ const GroupSettings: FunctionComponent = () => {
           )}
 
           <div className="p-4">
-            {link && <a href={link}>Neues gmail token</a>}
+            {/* {link && <a href={link}>Neues gmail token</a>} */}
           </div>
           <Separator />
           {/*TODO: Proper management Limited to one group per user currently */}

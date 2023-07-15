@@ -1,5 +1,6 @@
 import '../../styles/globals.css'
 import { Navbar } from '../components/Navigation/Navbar'
+import { TrpcProvider } from '../utils/trpc-provider'
 import Providers from './Providers'
 
 export const metadata = {
@@ -19,8 +20,10 @@ export default function RootLayout({
     <html lang="en">
       <body className="h-full dark:bg-slate-900 dark:text-slate-50 min-h-screen bg-white font-sans text-slate-900 antialiased">
         <Providers>
-          <Navbar />
-          {children}
+          <TrpcProvider>
+            <Navbar />
+            {children}
+          </TrpcProvider>
         </Providers>
       </body>
     </html>

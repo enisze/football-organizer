@@ -7,6 +7,7 @@ import {
   AccordionTrigger,
 } from '@/ui/accordion'
 import { User } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { AvatarStatus } from './AvatarStatus'
 import { EventCardAdminPaymentArea } from './EventCardAdminPaymentArea'
@@ -15,8 +16,13 @@ export const ParticipantsArea: FunctionComponent<{
   eventId: string
   maxParticipants?: number
 }> = ({ eventId, maxParticipants }) => {
+  const session = useSession()
+
+  const userId = session.data?.user?.id ?? ''
+
   const { data } = trpc.event.getParticipants.useQuery({
     eventId,
+    userId,
   })
 
   if (!data) return null

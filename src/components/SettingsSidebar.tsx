@@ -1,15 +1,16 @@
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { Separator } from '@/ui/separator'
 import { ArrowLeft } from 'lucide-react'
-import { useSession } from 'next-auth/react'
+import { getServerSession } from 'next-auth'
 import Link from 'next/link'
 import type { FunctionComponent } from 'react'
+import { authOptions } from '../server/auth/authOptions'
 import { NotificationBubble } from './NotificationBubble'
 
-export const SettingsSidebar: FunctionComponent = () => {
-  const { data: userData } = useSession()
+export const SettingsSidebar = async () => {
+  const session = await getServerSession(authOptions)
 
-  const hasPaypalName = Boolean(userData?.user?.paypalName)
+  const hasPaypalName = Boolean(session?.user?.paypalName)
 
   return (
     <div className="m-2">
@@ -39,6 +40,7 @@ export const SpecificSettings: FunctionComponent = () => {
       </div>
 
       <div className="hidden md:block">
+        {/* @ts-expect-error Server Component */}
         <SettingsSidebar />
       </div>
     </>

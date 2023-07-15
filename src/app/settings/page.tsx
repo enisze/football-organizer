@@ -1,30 +1,13 @@
-'use client'
-import { Navbar } from '@/src/components/Navigation/Navbar'
 import { SettingsSidebar } from '@/src/components/SettingsSidebar'
-import { useRouter } from 'next/navigation'
 import type { FunctionComponent } from 'react'
-import { useEffect } from 'react'
+import { ResizeEffect } from './ResizeEffect'
 
 const Settings: FunctionComponent = () => {
-  const router = useRouter()
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window && window.innerWidth > 768) {
-        router.push('/settings/user')
-      }
-    }
-
-    handleResize()
-    window.addEventListener('resize', handleResize)
-
-    return () => window.removeEventListener('resize', handleResize)
-  }, [router])
-
   return (
     <>
-      <Navbar />
+      <ResizeEffect />
       <div className="md:hidden">
+        {/* @ts-expect-error Server Component */}
         <SettingsSidebar />
       </div>
     </>

@@ -10,21 +10,24 @@ import {
 } from '@/ui/dialog'
 import { TRPCError } from '@trpc/server'
 import { Check } from 'lucide-react'
-import { useSession } from 'next-auth/react'
+import { SessionProvider, useSession } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { useState } from 'react'
 import { QuestionMark } from '../../QuestionMark'
 import { DeclineEventDialog } from './DeclineEventDialog'
 
-export const EventStatusArea: FunctionComponent<{
+const EventStatusAreaRaw: FunctionComponent<{
   id: string
 }> = ({ id }) => {
   const trpcContext = trpc.useContext()
 
   const { data: session } = useSession()
 
+  const userId = session?.user?.id ?? ''
+
   const { data } = trpc.event.getParticipants.useQuery({
     eventId: id,
+    userId,
   })
 
   const [showLeaveModal, setShowLeaveModal] = useState(false)
@@ -51,7 +54,7 @@ export const EventStatusArea: FunctionComponent<{
 
   const join = () => {
     try {
-      setEventStatus({ eventId: id, status: 'JOINED' })
+      setEventStatus({ eventId: id, status: 'JOINED', userId })
     } catch (error) {
       if (error instanceof TRPCError) {
         error.code === 'PRECONDITION_FAILED'
@@ -61,7 +64,7 @@ export const EventStatusArea: FunctionComponent<{
   }
 
   const maybe = () => {
-    setEventStatus({ eventId: id, status: 'MAYBE' })
+    setEventStatus({ eventId: id, status: 'MAYBE', userId })
   }
 
   return (
@@ -114,8 +117,8 @@ export const EventStatusArea: FunctionComponent<{
             variant="outline"
             color="info"
             onClick={() => {
-              setEventStatus({ eventId: id, status: 'CANCELED' })
-              sendEmail({ eventId: id })
+              setEventStatus({ eventId: id, status: 'CANCELED', userId })
+              sendEmail({ eventId: id, userId })
               setShowLeaveModal(false)
             }}
             className="w-full"
@@ -134,5 +137,13 @@ export const EventStatusArea: FunctionComponent<{
         </div>
       </DialogContent>
     </Dialog>
+  )
+}
+
+export const EventStatusArea: FunctionComponent<{ id: string }> = ({ id }) => {
+  return (
+    <SessionProvider>
+      <EventStatusAreaRaw id={id} />
+    </SessionProvider>
   )
 }

@@ -217,7 +217,7 @@ const GroupSettings: FunctionComponent = () => {
               onClick={() => {
                 if (groupCanBeDeleted) {
                   deleteGroup(
-                    { id: groupId },
+                    { id: groupId, ownerId: userId },
                     {
                       onSuccess: () => {
                         router.push('/settings/groups')
