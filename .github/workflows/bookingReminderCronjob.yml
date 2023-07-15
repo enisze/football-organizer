@@ -1,0 +1,16 @@
+name: Cronjob for bookingReminder
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+
+jobs:
+  cronjob:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: isbang/compose-action@v1.4.1
+        env:
+          SENDINBLUE_API_KEY: ${{secrets.SENDINBLUE_API_KEY}}

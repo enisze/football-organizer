@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  chrome:
+    image: browserless/chrome:arm64
+    ports:
+      - "3000:3000"
+
+  node:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - chrome

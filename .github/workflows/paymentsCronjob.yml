@@ -1,4 +1,4 @@
-name: Cronjob
+name: Cronjob for payments
 
 on:
   schedule:
