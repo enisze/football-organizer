@@ -21,6 +21,7 @@ const GroupSelectorRaw: FunctionComponent<{ owned?: boolean }> = ({
   owned = false,
 }) => {
   const { data } = useSession()
+
   const { data: groups, isLoading } = trpc.group.getGroupsOfUser.useQuery({
     owned: owned,
     id: data?.user?.id,
@@ -34,7 +35,6 @@ const GroupSelectorRaw: FunctionComponent<{ owned?: boolean }> = ({
   const isInitialGroupSet = useRef(false)
 
   useEffect(() => {
-    console.log(groups?.length)
     if (isLoading || isInitialGroupSet.current) return
     isInitialGroupSet.current = true
     if ((groups?.length ?? [].length) < 1) return

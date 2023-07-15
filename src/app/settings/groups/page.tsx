@@ -1,6 +1,5 @@
 import { NewGroup } from '@/src/components/Groups/NewGroup'
 import { Navbar } from '@/src/components/Navigation/Navbar'
-import { SpecificSettings } from '@/src/components/SettingsSidebar'
 import { authOptions } from '@/src/server/auth/authOptions'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { Container } from '@/ui/container'
@@ -42,7 +41,6 @@ const GroupSettings = async () => {
     <>
       <Navbar />
       <div className="flex flex-col md:grid grid-cols-[220px_8px_auto]">
-        <SpecificSettings />
         <Separator orientation="vertical" />
         <div className="flex flex-col p-2">
           {(groups?.length ?? 0) > 0 && (

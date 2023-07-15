@@ -1,5 +1,4 @@
 'use client'
-import { SpecificSettings } from '@/src/components/SettingsSidebar'
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
 import { Label } from '@/ui/label'
@@ -17,13 +16,16 @@ import { trpc } from '../../../utils/trpc'
 
 const Settings: FunctionComponent = () => {
   const { data } = useSession()
-  const userId = data?.user?.id
+  const userId = data?.user?.id ?? ''
   const userName = data?.user?.name
   const paypalName = data?.user?.paypalName
 
-  const { data: paypalNameDb } = trpc.user.getPaypalName.useQuery(undefined, {
-    enabled: Boolean(!paypalName) && Boolean(userId),
-  })
+  const { data: paypalNameDb } = trpc.user.getPaypalName.useQuery(
+    { userId },
+    {
+      enabled: Boolean(!paypalName) && Boolean(userId),
+    },
+  )
 
   const [userNameForDeletion, setUserNameForDeletion] = useState('')
 
@@ -50,9 +52,12 @@ const Settings: FunctionComponent = () => {
   const trpcContext = trpc.useContext()
 
   const { data: notificationStatus, isLoading } =
-    trpc.user.getNotificationStatus.useQuery(undefined, {
-      enabled: Boolean(userId),
-    })
+    trpc.user.getNotificationStatus.useQuery(
+      { userId },
+      {
+        enabled: Boolean(userId),
+      },
+    )
 
   const { mutate: updateNotificationsEnabled } =
     trpc.user.updateNotifications.useMutation({
@@ -82,8 +87,6 @@ const Settings: FunctionComponent = () => {
     <>
       <Navbar />
       <div className="flex flex-col md:grid grid-cols-[220px_8px_auto]">
-        <SpecificSettings />
-
         <Separator orientation="vertical" />
 
         <div className="flex flex-col gap-y-2 p-2">
@@ -98,6 +101,7 @@ const Settings: FunctionComponent = () => {
                   updateNotificationsEnabled({
                     notificationsEnabled:
                       !notificationStatus?.notificationsEnabled,
+                    userId,
                   })
                 }}
               />
@@ -123,7 +127,7 @@ const Settings: FunctionComponent = () => {
 
           <Button
             onClick={() => {
-              updatePaypalName({ name: newPaypalName })
+              updatePaypalName({ name: newPaypalName, userId })
             }}
             className="w-fit"
           >
@@ -141,7 +145,7 @@ const Settings: FunctionComponent = () => {
           <Button
             onClick={() => {
               if (userCanBeDeleted) {
-                deleteUser()
+                deleteUser({ userId })
                 router.push('/')
               }
             }}

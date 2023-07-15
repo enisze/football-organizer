@@ -1,3 +1,4 @@
+'use client'
 import type { FunctionComponent } from 'react'
 import { useIsAdmin } from '../../hooks/useIsAdmin'
 import { trpc } from '../../utils/trpc'

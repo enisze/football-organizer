@@ -10,16 +10,27 @@ import {
 } from '@/ui/dialog'
 import { TextField } from '@/ui/TextField'
 import { X } from 'lucide-react'
+import { SessionProvider, useSession } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { useState } from 'react'
 
-export const DeclineEventDialog: FunctionComponent<{
+type DeclineEventDialogProps = {
   id: string
   userStatus?: UserEventStatus
   setShowLeaveModal: () => void
-}> = ({ id, userStatus, setShowLeaveModal }) => {
+}
+
+const DeclineEventDialogRaw: FunctionComponent<DeclineEventDialogProps> = ({
+  id,
+  userStatus,
+  setShowLeaveModal,
+}) => {
   const trpcContext = trpc.useContext()
   const [comment, setComment] = useState('')
+
+  const session = useSession()
+
+  const userId = session.data?.user?.id ?? ''
 
   const [showCommentModal, setShowCommentModal] = useState(false)
 
@@ -38,13 +49,16 @@ export const DeclineEventDialog: FunctionComponent<{
 
   const leave = () => {
     if (!payment) {
-      setEventStatus({ eventId: id, status: 'CANCELED' })
+      setEventStatus({ eventId: id, status: 'CANCELED', userId })
     } else {
       setShowLeaveModal()
     }
   }
 
-  const { data: payment } = trpc.payment.getByEventId.useQuery({ eventId: id })
+  const { data: payment } = trpc.payment.getByEventId.useQuery({
+    eventId: id,
+    userId,
+  })
 
   const canceledMarkColor = userStatus === 'CANCELED' ? 'text-red-500' : ''
 
@@ -83,7 +97,7 @@ export const DeclineEventDialog: FunctionComponent<{
             color="info"
             type="submit"
             onClick={() => {
-              setEventComment({ comment, eventId: id })
+              setEventComment({ comment, eventId: id, userId })
               setShowCommentModal(false)
             }}
             className="w-full"
@@ -93,5 +107,21 @@ export const DeclineEventDialog: FunctionComponent<{
         </div>
       </DialogContent>
     </Dialog>
+  )
+}
+
+export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
+  id,
+  userStatus,
+  setShowLeaveModal,
+}) => {
+  return (
+    <SessionProvider>
+      <DeclineEventDialogRaw
+        id={id}
+        userStatus={userStatus}
+        setShowLeaveModal={setShowLeaveModal}
+      />
+    </SessionProvider>
   )
 }

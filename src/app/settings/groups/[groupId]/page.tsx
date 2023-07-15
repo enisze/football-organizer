@@ -1,6 +1,5 @@
 'use client'
 
-import { SpecificSettings } from '@/src/components/SettingsSidebar'
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
 import {
@@ -108,8 +107,6 @@ const GroupSettings: FunctionComponent = () => {
     <>
       <Navbar />
       <div className="flex flex-col md:grid grid-cols-[220px_8px_auto]">
-        <SpecificSettings />
-
         <Separator orientation="vertical" />
 
         <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
