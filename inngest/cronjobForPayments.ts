@@ -8,7 +8,6 @@ import type { OAuth2ClientOptions } from 'google-auth-library'
 import { OAuth2Client } from 'google-auth-library'
 import type { Event, Payment } from '../prisma/generated/client'
 import { prisma } from '../prisma/prisma'
-import { inngest } from './inngestClient'
 
 const asyncForEach = async <T>(
   array: (T | undefined)[],
@@ -26,13 +25,6 @@ const asyncForEach = async <T>(
   }
 }
 
-export const cronJob = inngest.createFunction(
-  { name: 'Cronjob for payments' },
-  { cron: '0 10 * * *' },
-  ({ step }) => {
-    runCron(step)
-  },
-)
 const runCron = async (step?: any) => {
   console.log('Starting cron')
 
@@ -269,3 +261,5 @@ const isInAmountRangeAndEventBookingDate = (
     event: eventWithBookingDateInRange,
   }
 }
+
+runCron()
