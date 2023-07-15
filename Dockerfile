@@ -24,7 +24,6 @@ COPY tsconfig.json /app/tsconfig.json
 COPY /src/emails/transporter.ts /app/transporter.ts
 COPY /inngest/createSendEmail.ts /app/createSendEmail.ts
 COPY /src/scripts/getSoccerDate.ts /app/getSoccerDate.ts
-COPY .env /app/.env
 
 # Install project dependencies
 COPY package.json /app/package.json
