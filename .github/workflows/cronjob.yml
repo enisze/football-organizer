@@ -2,10 +2,10 @@ name: Cronjob
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Runs every day at midnight UTC
+    - cron: '*/5 * * * *'
 
 jobs:
-  build:
+  cronjob:
     runs-on: ubuntu-latest
 
     steps:
