@@ -15,8 +15,6 @@ apiInstance.setApiKey(
 const redColor = 'rgb(175, 18, 29)'
 const greenColor = 'rgb(131, 176, 34)'
 
-require('expect-puppeteer')
-
 const time = '20:00h'
 const time2 = '8:00:h'
 
