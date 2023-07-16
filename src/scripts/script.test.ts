@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 // import { sendEmail } from '@/inngest/createSendEmail'
 const test = require('date-fns')
 const locale = require('date-fns/locale')
@@ -9,8 +13,7 @@ const apiInstance = new client.TransactionalEmailsApi()
 
 apiInstance.setApiKey(
   client.TransactionalEmailsApiApiKeys.apiKey,
-  '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' ??
-    '',
+  process.env.SENDINBLUE_API_KEY ?? '',
 )
 
 const redColor = 'rgb(175, 18, 29)'
@@ -110,7 +113,6 @@ describe('Booking reminder', () => {
       if (colorValue === redColor) {
         console.log('Gebucht')
 
-        await sendEmail('eniszej@gmail.com', `GEBUCHT`, 'Soccer reminder')
         return
       }
 
