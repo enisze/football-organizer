@@ -24,11 +24,9 @@ const week = getWeek(date)
 
 describe('Booking reminder', () => {
   it('Should remind booking"', async () => {
-    console.log(week)
+    console.log(week + 1)
 
-    const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox1/index_ger.html?y=2023&w=${
-      week + 1
-    }`
+    const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox1/index_ger.html?y=2023&w=${week}`
 
     const soccerDate = getSoccerDate()
 
@@ -40,7 +38,7 @@ describe('Booking reminder', () => {
 
     try {
       const tdElement = await page.waitForSelector(cssSelector, {
-        timeout: 10000,
+        timeout: 15000,
       })
 
       if (!tdElement) {
@@ -147,7 +145,7 @@ const getSoccerDate = () => {
     locale: de,
   })
 
-  dateForSoccer.setHours(process.env.NODE_ENV === 'test' ? 18 : 20)
+  dateForSoccer.setHours(20)
   dateForSoccer.setMinutes(0)
   dateForSoccer.setSeconds(0)
   dateForSoccer.setMilliseconds(0)
