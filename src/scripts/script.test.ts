@@ -147,7 +147,7 @@ const getSoccerDate = () => {
     locale: de,
   })
 
-  dateForSoccer.setHours(20)
+  dateForSoccer.setHours(process.env.NODE_ENV === 'test' ? 18 : 20)
   dateForSoccer.setMinutes(0)
   dateForSoccer.setSeconds(0)
   dateForSoccer.setMilliseconds(0)
