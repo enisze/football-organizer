@@ -24,7 +24,9 @@ const week = getWeek(date)
 
 describe('Booking reminder', () => {
   it('Should remind booking"', async () => {
-    const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox1/index_ger.html?y=2023&w=${week}`
+    const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox1/index_ger.html?y=2023&w=${
+      week + 1
+    }`
 
     const soccerDate = getSoccerDate()
 
