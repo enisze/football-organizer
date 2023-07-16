@@ -72,6 +72,12 @@ const runCron = async (step?: any) => {
 
     const filteredEvents = events.filter((event) => Boolean(event.bookingDate))
 
+    console.log(
+      'filteredEvents',
+      filteredEvents.length,
+      filteredEvents.map((event) => event.id),
+    )
+
     filteredEvents.forEach(async (event) => {
       const participants = await prisma.participantsOnEvents.findMany({
         where: { eventId: event.id, userEventStatus: 'JOINED' },
@@ -215,6 +221,8 @@ const getPaypalEmails = async (
       return dateDiff < 0
     })
 
+    console.log('filteredResult', filteredResult.length)
+
     if (!filteredResult) {
       console.log('No Paypal data')
       return
@@ -229,6 +237,8 @@ const getPaypalEmails = async (
       prompt: 'consent',
       redirect_uri: process.env.NEXT_PUBLIC_BASE_URL + '/oauth2callback',
     })
+
+    console.log('token expired', authorizeUrl)
 
     return { authorizeUrl, ownerEmail, ownerName, error: 'Token has expired' }
   }
