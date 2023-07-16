@@ -42,7 +42,9 @@ const runScript = async () => {
 
     const classValue = 'Mo'
     const cssSelector = `td[class="${classValue}"][datetime="${soccerDate.toISOString()}"]`
-    const tdElement = await page.waitForSelector(cssSelector, { timeout: 5000 })
+    const tdElement = await page.waitForSelector(cssSelector, {
+      timeout: 10000,
+    })
 
     if (!tdElement) {
       console.log('Fehler, kein tdElement gefunden')
