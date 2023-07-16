@@ -5,7 +5,15 @@ const config: Config = {
   preset: 'jest-puppeteer',
   setupFilesAfterEnv: ['<rootDir>/setupJest.ts'],
   transform: {
-    '^.+\\.(js|jsx|ts|tsx|mjs)$': 'babel-jest',
+    '^.+\\.(js|jsx|ts|tsx|mjs)$': [
+      'ts-jest',
+      {
+        babelConfig: true,
+      },
+    ],
+  },
+  moduleNameMapper: {
+    '^@/(.*)': '<rootDir>/$1',
   },
 }
 

@@ -1,4 +1,5 @@
 import dotenv from 'dotenv'
+import 'jest-puppeteer'
 
 // order does matter. The first one has precedence.
 try {

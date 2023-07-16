@@ -1,12 +1,10 @@
+import { sendEmail } from '@/inngest/createSendEmail'
 import {
-  SendSmtpEmail,
   TransactionalEmailsApi,
   TransactionalEmailsApiApiKeys,
 } from '@sendinblue/client'
 import { addWeeks, getWeek, startOfWeek } from 'date-fns'
 import { de } from 'date-fns/locale'
-import 'jest-puppeteer'
-
 const apiInstance = new TransactionalEmailsApi()
 
 apiInstance.setApiKey(
@@ -30,7 +28,9 @@ describe('Booking reminder', () => {
   it('Should remind booking"', async () => {
     console.log(week)
 
-    const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox1/index_ger.html?y=2023&w=${week}`
+    const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox1/index_ger.html?y=2023&w=${
+      week + 1
+    }`
 
     const soccerDate = getSoccerDate()
 
@@ -111,7 +111,7 @@ describe('Booking reminder', () => {
 
         await sendEmail(
           'eniszej@gmail.com',
-          `<div>Fehler, falsche Uhrzeit gewaehlt</div>`,
+          `<div>Bereits gebucht</div>`,
           'Soccer Error',
         )
 
@@ -128,7 +128,12 @@ describe('Booking reminder', () => {
       }
     } catch (error) {
       console.log(error)
-      console.log(error.response.body)
+
+      //@ts-expect-error there is such at hing
+      if ('response' in error) {
+        //@ts-expect-error there is such at hing
+        console.log(error.response?.body)
+      }
     }
   })
 })
@@ -149,16 +154,15 @@ const getSoccerDate = () => {
   return dateForSoccer
 }
 
-const sendEmail = async (email, html, subject) => {
-  const sendSmptMail = new SendSmtpEmail()
+// const sendEmail = async (email, html, subject) => {
+//   const sendSmptMail = new SendSmtpEmail()
+//   sendSmptMail.to = [{ email }]
+//   sendSmptMail.htmlContent = html
+//   sendSmptMail.sender = {
+//     email: 'eniszej@gmail.com',
+//     name: 'Event Wizard',
+//   }
+//   sendSmptMail.subject = subject
 
-  sendSmptMail.to = [{ email }]
-  sendSmptMail.htmlContent = html
-  sendSmptMail.sender = {
-    email: 'eniszej@gmail.com',
-    name: 'Event Wizard',
-  }
-  sendSmptMail.subject = subject
-
-  return await apiInstance.sendTransacEmail(sendSmptMail)
-}
+//   return await apiInstance.sendTransacEmail(sendSmptMail)
+// }
