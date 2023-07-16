@@ -1,0 +1,28 @@
+name: Cronjob for bookingReminder
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    container: lironavon/docker-puppeteer-container:14.16.0
+    env:
+      SENDINBLUE_API_KEY: ${{secrets.SENDINBLUE_API_KEY}}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Node.js and Yarn
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+        env:
+          SENDINBLUE_API_KEY: ${{secrets.SENDINBLUE_API_KEY}}
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Run
+        run: yarn start-script
