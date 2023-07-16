@@ -13,7 +13,8 @@
     "email:dev": "email dev",
     "newEvent": "tsx -r dotenv-flow/config ./inngest/sendNewEventEmail.ts",
     "test": "ts-node --esm -r dotenv-flow/config ./inngest/test.mjs",
-    "sendPayment": "ts-node --esm -r dotenv-flow/config ./inngest/sendPaymentAndEventReminderEmails.ts"
+    "sendPayment": "ts-node --esm -r dotenv-flow/config ./inngest/sendPaymentAndEventReminderEmails.ts",
+    "start-script": "tsx -r dotenv-flow/config ./src/scripts/script.ts"
   },
   "dependencies": {
     "@google-cloud/local-auth": "2.1.1",
