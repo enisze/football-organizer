@@ -193,6 +193,23 @@ const getPaypalEmails = async (
       refresh_token,
     })
 
+    const token = await oAuth2Client.getAccessToken()
+
+    if (token.token) {
+      const tokenId = await prisma.tokens.findFirst({
+        where: { ownerId },
+        select: { id: true },
+      })
+
+      if (!tokenId) return
+      await prisma.tokens.update({
+        where: { id: tokenId.id },
+        data: {
+          access_token: token.token,
+        },
+      })
+    }
+
     const gmail = google.gmail({ version: 'v1', auth: oAuth2Client })
     const { data } = await gmail.users.messages.list({
       userId: 'me',
