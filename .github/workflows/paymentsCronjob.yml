@@ -2,7 +2,7 @@ name: Cronjob for payments
 
 on:
   schedule:
-    - cron: '* */4 * * *'
+    - cron: '*/5 * * * *'
 
 jobs:
   cronjob:
