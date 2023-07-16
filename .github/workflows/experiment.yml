@@ -2,7 +2,10 @@ name: Cronjob for bookingReminder
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/50 * * * *'
+
+    #TODO: change this
+    #*/10 10-14 * * 1
 
 jobs:
   ci:
