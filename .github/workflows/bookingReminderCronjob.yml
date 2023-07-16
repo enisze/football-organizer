@@ -24,7 +24,6 @@ jobs:
         with:
           node-version: '18'
         env:
-          SENDINBLUE_API_KEY: ${{secrets.SENDINBLUE_API_KEY}}
           NODE_OPTIONS: --max_old_space_size=4096
 
       - name: Install dependencies
@@ -32,5 +31,5 @@ jobs:
 
       - name: Run
         env:
-          NODE_OPTIONS: --max_old_space_size=4096
+          SENDINBLUE_API_KEY: ${{secrets.SENDINBLUE_API_KEY}}
         run: yarn test

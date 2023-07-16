@@ -24,8 +24,6 @@ const week = getWeek(date)
 
 describe('Booking reminder', () => {
   it('Should remind booking"', async () => {
-    console.log(week + 1)
-
     const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox1/index_ger.html?y=2023&w=${week}`
 
     const soccerDate = getSoccerDate()
@@ -38,7 +36,7 @@ describe('Booking reminder', () => {
 
     try {
       const tdElement = await page.waitForSelector(cssSelector, {
-        timeout: 15000,
+        timeout: 5000,
       })
 
       if (!tdElement) {
