@@ -49,25 +49,6 @@ const runCron = async (step?: any) => {
 
     if (!result?.result) return { message: 'No paypal emails' }
 
-    if (result.error) {
-      const { authorizeUrl, ownerEmail, ownerName } = result
-
-      if (step) {
-        ;(await step.sendEvent({
-          name: 'event/missingTokenEmail',
-          data: {
-            authorizeUrl,
-            ownerEmail,
-            ownerName,
-          },
-        })) as Promise<void>
-      }
-
-      return {
-        message: 'New token needed',
-      }
-    }
-
     const events = await prisma.event.findMany({ where: { groupId: data.id } })
 
     const filteredEvents = events.filter((event) => Boolean(event.bookingDate))
@@ -193,23 +174,6 @@ const getPaypalEmails = async (
       refresh_token,
     })
 
-    const token = await oAuth2Client.getAccessToken()
-
-    if (token.token) {
-      const tokenId = await prisma.tokens.findFirst({
-        where: { ownerId },
-        select: { id: true },
-      })
-
-      if (!tokenId) return
-      await prisma.tokens.update({
-        where: { id: tokenId.id },
-        data: {
-          access_token: token.token,
-        },
-      })
-    }
-
     const gmail = google.gmail({ version: 'v1', auth: oAuth2Client })
     const { data } = await gmail.users.messages.list({
       userId: 'me',
@@ -247,17 +211,32 @@ const getPaypalEmails = async (
 
     return { result: filteredResult, success: true }
   } catch (error) {
-    const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
-    const authorizeUrl = oAuth2Client.generateAuthUrl({
-      access_type: 'offline',
-      scope: SCOPES,
-      prompt: 'consent',
-      redirect_uri: process.env.NEXT_PUBLIC_BASE_URL + '/oauth2callback',
-    })
+    console.log('token expired')
+    console.log('fetching new token')
+    const token = await oAuth2Client.getAccessToken()
 
-    console.log('token expired', authorizeUrl)
+    if (token.token) {
+      const tokenId = await prisma.tokens.findFirst({
+        where: { ownerId },
+        select: { id: true },
+      })
 
-    return { authorizeUrl, ownerEmail, ownerName, error: 'Token has expired' }
+      if (!tokenId) {
+        console.log('No token found')
+        return
+      }
+
+      console.log('token found')
+      await prisma.tokens.update({
+        where: { id: tokenId.id },
+        data: {
+          access_token: token.token,
+        },
+      })
+      console.log('token updated')
+    }
+
+    return { ownerEmail, ownerName, error: 'Token has expired' }
   }
 }
 
