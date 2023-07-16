@@ -32,6 +32,7 @@ describe('Booking reminder', () => {
 
     const soccerDate = getSoccerDate()
 
+    console.log('date after transformation', soccerDate)
     await page.goto(url)
 
     const classValue = 'Mo'
@@ -138,6 +139,8 @@ describe('Booking reminder', () => {
 
 const getSoccerDate = () => {
   const date = new Date()
+
+  console.log('date here', date)
 
   const dateForSoccer = startOfWeek(addWeeks(date, 1), {
     weekStartsOn: 1,
