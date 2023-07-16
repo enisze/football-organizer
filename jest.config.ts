@@ -5,9 +5,8 @@ const config: Config = {
   preset: 'jest-puppeteer',
   setupFilesAfterEnv: ['<rootDir>/setupJest.ts'],
   transform: {
-    '^.+\\.(js|jsx|ts|tsx|mjs)$': '<rootDir>/node_modules/babel-jest',
+    '^.+\\.(js|jsx|ts|tsx|mjs)$': 'babel-jest',
   },
-  transformIgnorePatterns: ['/node_modules/(?!(redlock)/)'],
 }
 
 export default config

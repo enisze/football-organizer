@@ -79,6 +79,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.22.9",
     "@next/bundle-analyzer": "^13.2.4",
     "@types/jest": "^29.5.3",
     "@types/jsonwebtoken": "^9.0.1",

@@ -1,18 +1,16 @@
-/**
- * @jest-environment node
- */
+import {
+  SendSmtpEmail,
+  TransactionalEmailsApi,
+  TransactionalEmailsApiApiKeys,
+} from '@sendinblue/client'
+import { addWeeks, getWeek, startOfWeek } from 'date-fns'
+import { de } from 'date-fns/locale'
+import 'jest-puppeteer'
 
-// import { sendEmail } from '@/inngest/createSendEmail'
-const test = require('date-fns')
-const locale = require('date-fns/locale')
-require('dotenv').config({ path: '../.env' })
-
-const client = require('@sendinblue/client')
-
-const apiInstance = new client.TransactionalEmailsApi()
+const apiInstance = new TransactionalEmailsApi()
 
 apiInstance.setApiKey(
-  client.TransactionalEmailsApiApiKeys.apiKey,
+  TransactionalEmailsApiApiKeys.apiKey,
   process.env.SENDINBLUE_API_KEY ?? '',
 )
 
@@ -24,11 +22,9 @@ require('expect-puppeteer')
 const time = '20:00h'
 const time2 = '8:00:h'
 
-const dateTime = '20:00:00.000Z'
-
 // console.log('starting script')
 const date = new Date()
-const week = test.getWeek(date)
+const week = getWeek(date)
 
 describe('Booking reminder', () => {
   it('Should remind booking"', async () => {
@@ -113,6 +109,12 @@ describe('Booking reminder', () => {
       if (colorValue === redColor) {
         console.log('Gebucht')
 
+        await sendEmail(
+          'eniszej@gmail.com',
+          `<div>Fehler, falsche Uhrzeit gewaehlt</div>`,
+          'Soccer Error',
+        )
+
         return
       }
 
@@ -125,6 +127,7 @@ describe('Booking reminder', () => {
         )
       }
     } catch (error) {
+      console.log(error)
       console.log(error.response.body)
     }
   })
@@ -133,9 +136,9 @@ describe('Booking reminder', () => {
 const getSoccerDate = () => {
   const date = new Date()
 
-  const dateForSoccer = test.startOfWeek(test.addWeeks(date, 1), {
+  const dateForSoccer = startOfWeek(addWeeks(date, 1), {
     weekStartsOn: 1,
-    locale: locale.de,
+    locale: de,
   })
 
   dateForSoccer.setHours(20)
@@ -147,7 +150,7 @@ const getSoccerDate = () => {
 }
 
 const sendEmail = async (email, html, subject) => {
-  const sendSmptMail = new client.SendSmtpEmail()
+  const sendSmptMail = new SendSmtpEmail()
 
   sendSmptMail.to = [{ email }]
   sendSmptMail.htmlContent = html
