@@ -130,7 +130,7 @@ describe('Booking reminder', () => {
         console.log(error.response?.body)
       }
     }
-  }, 20000)
+  })
 })
 
 const getSoccerDate = () => {
