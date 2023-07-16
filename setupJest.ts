@@ -9,6 +9,10 @@ try {
 } catch (error) {
   // file does not exist in staging environment
 }
-dotenv.config({
-  path: require.resolve('./.env'),
-})
+try {
+  dotenv.config({
+    path: require.resolve('./.env'),
+  })
+} catch (error) {
+  console.log('no .env file found (only on github)')
+}
