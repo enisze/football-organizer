@@ -152,7 +152,7 @@ const getSoccerDate = () => {
     locale: de,
   })
 
-  dateForSoccer.setHours(18)
+  dateForSoccer.setHours(20)
   dateForSoccer.setMinutes(0)
   dateForSoccer.setSeconds(0)
   dateForSoccer.setMilliseconds(0)
