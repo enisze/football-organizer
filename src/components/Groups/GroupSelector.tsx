@@ -10,7 +10,6 @@ import {
 import { atom } from 'jotai'
 import { useRouter } from 'next/router'
 import type { FunctionComponent } from 'react'
-import { useEffect, useRef } from 'react'
 import { LoadingWrapper } from '../LoadingWrapper'
 
 export const selectedGroupAtom = atom<string | undefined>(undefined)
@@ -23,16 +22,7 @@ export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
   })
 
   const router = useRouter()
-
   const group = router.query.groupId as string
-
-  const isInitialGroupSet = useRef(false)
-
-  useEffect(() => {
-    if (isLoading || isInitialGroupSet.current) return
-    isInitialGroupSet.current = true
-    router.push(`/group/${groups?.at(0)?.id}`)
-  }, [groups, isLoading, router])
 
   return (
     <LoadingWrapper isLoading={isLoading}>
