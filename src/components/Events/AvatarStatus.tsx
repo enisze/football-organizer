@@ -6,7 +6,8 @@ export const AvatarStatus: FunctionComponent<{
   shortName: string
   name: string
   userEventStatus: UserEventStatus | undefined
-}> = ({ name, shortName, userEventStatus }) => {
+  comment: string | null
+}> = ({ name, shortName, userEventStatus, comment }) => {
   const color =
     userEventStatus === 'JOINED'
       ? 'text-green-500 !border-green-500'
@@ -22,6 +23,7 @@ export const AvatarStatus: FunctionComponent<{
         <AvatarFallback>{shortName}</AvatarFallback>
       </Avatar>
       <span>{name}</span>
+      <span>{comment}</span>
     </div>
   )
 }

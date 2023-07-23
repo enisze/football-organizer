@@ -48,6 +48,7 @@ export const eventRouter = router({
         where: { eventId: input.eventId },
         select: {
           userEventStatus: true,
+          comment: true,
           user: {
             select: {
               id: true,

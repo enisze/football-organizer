@@ -1,7 +1,11 @@
-import { useSession } from "next-auth/react";
+import { useAtomValue } from 'jotai'
+import { useSession } from 'next-auth/react'
+import { adminAtom } from '../components/Navigation/OrganizerMenu'
 
 export const useIsAdmin = () => {
-  const { data } = useSession();
+  const { data } = useSession()
 
-  return data?.user?.role === "admin";
-};
+  const adminView = useAtomValue(adminAtom)
+
+  return data?.user?.role === 'admin' && adminView
+}

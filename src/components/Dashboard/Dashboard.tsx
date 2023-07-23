@@ -12,9 +12,9 @@ import { GroupSelector } from '../Groups/GroupSelector'
 export const Dashboard: FunctionComponent = () => {
   const isAdmin = useIsAdmin()
 
-  const a = useRouter()
+  const router = useRouter()
 
-  const groupId = a.query.groupId as string
+  const groupId = router.query.groupId as string
 
   const { data: groupNames, isLoading: loadingGroups } =
     trpc.group.getGroupNames.useQuery()

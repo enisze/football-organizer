@@ -5,8 +5,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/ui/dropdown-menu'
+import { Label } from '@/ui/label'
 import { Separator } from '@/ui/separator'
-import { useAtomValue } from 'jotai'
+import { Switch } from '@/ui/switch'
+import { atom, useAtom, useAtomValue } from 'jotai'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import type { FunctionComponent } from 'react'
@@ -14,10 +16,14 @@ import { trpc } from '../../utils/trpc'
 import { selectedGroupAtom } from '../Groups/GroupSelector'
 import { NotificationBubble } from '../NotificationBubble'
 
+export const adminAtom = atom(false)
+
 export const OrganizerMenu: FunctionComponent = () => {
   const { data: userData } = useSession()
 
   const selectedGroupId = useAtomValue(selectedGroupAtom)
+
+  const isAdmin = userData?.user?.role === 'admin'
 
   const { data: balance } = trpc.payment.getUserBalance.useQuery(
     { groupId: selectedGroupId ?? '' },
@@ -25,6 +31,8 @@ export const OrganizerMenu: FunctionComponent = () => {
       enabled: Boolean(userData) && Boolean(selectedGroupId),
     },
   )
+
+  const [isAdminView, setIsAdminView] = useAtom(adminAtom)
 
   if (!userData) return null
 
@@ -49,8 +57,21 @@ export const OrganizerMenu: FunctionComponent = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem>{userData?.user?.name}</DropdownMenuItem>
-        <DropdownMenuItem>Kontostand: {balance}€</DropdownMenuItem>
+        <DropdownMenuItem>Kontostand: {balance ?? 0}€</DropdownMenuItem>
         <Separator />
+
+        <DropdownMenuItem hidden={!isAdmin}>
+          <div className="relative flex w-full items-center gap-x-1">
+            <Label>Admin View</Label>
+            <Switch
+              id="admin-view"
+              checked={isAdminView}
+              onClick={() => {
+                setIsAdminView(!isAdminView)
+              }}
+            />
+          </div>
+        </DropdownMenuItem>
 
         <DropdownMenuItem>
           <div className="relative flex w-full">

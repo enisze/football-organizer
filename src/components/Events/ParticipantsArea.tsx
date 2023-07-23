@@ -86,6 +86,7 @@ export const ParticipantsArea: FunctionComponent<{
                     name={participant?.user.name ?? ''}
                     shortName={`${first}${second}`}
                     userEventStatus={participant?.userEventStatus}
+                    comment={participant?.comment}
                   />
 
                   <EventCardAdminPaymentArea
