@@ -33,7 +33,7 @@ const MainPage: FunctionComponent<
 > = ({ groupName }) => {
   return (
     <div className="flex flex-col pb-2">
-      <NextSeo title={`Event Wizard ${groupName ? '-' + groupName : ''}`} />
+      <NextSeo title={`Event Wizard ${groupName ? '- ' + groupName : ''}`} />
       <Navbar />
       <div className="p-8" />
       <Dashboard />
