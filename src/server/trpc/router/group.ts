@@ -26,6 +26,24 @@ export const groupRouter = router({
         },
       })
     }),
+
+  getGroupNames: protectedProcedure
+    .input(z.object({ owned: z.boolean() }).optional())
+    .query(async ({ ctx }) => {
+      const {
+        user: { id },
+      } = ctx.session
+
+      if (!id) throw new TRPCError({ code: 'UNAUTHORIZED' })
+
+      return await ctx.prisma.group.findMany({
+        where: { users: { some: { id } } },
+        select: {
+          name: true,
+          id: true,
+        },
+      })
+    }),
   getGroupbyId: protectedProcedure
     .input(
       z.object({

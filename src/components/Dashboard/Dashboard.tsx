@@ -1,25 +1,50 @@
-import type { FunctionComponent } from 'react'
+import { FunctionComponent, useMemo } from 'react'
 
-import type { Event } from '@/prisma/generated/client'
 import { useIsAdmin } from '@/src/hooks/useIsAdmin'
+import { trpc } from '@/src/utils/trpc'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { Skeleton } from '@/ui/skeleton'
 import { addDays } from 'date-fns'
+import { useRouter } from 'next/router'
 import { EventCard } from '../Events/EventCard'
 import { GroupSelector } from '../Groups/GroupSelector'
 
-export const Dashboard: FunctionComponent<{
-  events?: Event[]
-  groupNames?: string[]
-}> = ({ events, groupNames }) => {
+export const Dashboard: FunctionComponent = () => {
   const isAdmin = useIsAdmin()
+
+  const a = useRouter()
+
+  const groupId = a.query.groupId as string
+
+  const { data: groupNames, isLoading: loadingGroups } =
+    trpc.group.getGroupNames.useQuery()
+
+  const id = useMemo(() => {
+    return groupId ?? groupNames?.at(0)?.id
+  }, [groupId, groupNames])
+
+  const {
+    data: res,
+    isLoading: loadingEvents,
+    isFetching: fetchingEvents,
+  } = trpc.group.getEvents.useQuery(
+    {
+      id,
+    },
+    { enabled: !!id },
+  )
+
+  const events = res?.events
+
+  const loading = (loadingEvents && fetchingEvents) || loadingGroups
+
   return (
     <div className="m-8 flex flex-col gap-y-3 justify-center items-center">
       {groupNames && groupNames.length > 0 ? (
         <>
           <GroupSelector />
           <ul className="flex flex-col gap-y-2">
-            {events && events?.length > 0 ? (
+            {!loading && events && events?.length > 0 ? (
               events.map((event) => {
                 if (addDays(event.date, 1) < new Date() && !isAdmin) return null
 

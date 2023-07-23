@@ -8784,6 +8784,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"next-seo@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "next-seo@npm:6.1.0"
+  peerDependencies:
+    next: ^8.1.1-canary.54 || >=9.0.0
+    react: ">=16.0.0"
+    react-dom: ">=16.0.0"
+  checksum: 5909d34d12dd8ac641d7fa96b6fe562470e1539f582c0a3f2b5e35f16b9b0e402d9f909a84393f80989bd96c034118712a5aecb520e5a45662e02fa23db7b656
+  languageName: node
+  linkType: hard
+
 "next-superjson-plugin@npm:^0.5.6":
   version: 0.5.6
   resolution: "next-superjson-plugin@npm:0.5.6"
@@ -11344,6 +11355,7 @@ __metadata:
     lucide-react: ^0.259.0
     next: 13.2.4
     next-auth: ^4.21.1
+    next-seo: ^6.1.0
     next-superjson-plugin: ^0.5.6
     next-themes: ^0.2.1
     ol: ^7.3.0
