@@ -1,6 +1,5 @@
+import { inngest, prisma } from '@/src/server/db/client'
 import { differenceInCalendarDays } from 'date-fns'
-import { prisma } from '../prisma/prisma'
-import { inngest } from './inngestClient'
 
 export const triggerNewEvent = inngest.createFunction(
   { name: 'Trigger New Event Email' },
@@ -42,7 +41,8 @@ export const triggerNewEvent = inngest.createFunction(
         .forEach(async (user) => {
           if (!user) return
 
-          await inngest.send('event/newEmail', {
+          await inngest.send({
+            name: 'event/newEmail',
             data: {
               user,
               id: event.id,
@@ -54,7 +54,7 @@ export const triggerNewEvent = inngest.createFunction(
         })
 
       return { success: true }
-    } catch (error: any) {
+    } catch (error: unknown) {
       return {
         message: `No users ${error}`,
       }

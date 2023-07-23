@@ -16,7 +16,7 @@ import { trpc } from '../../utils/trpc'
 import { selectedGroupAtom } from '../Groups/GroupSelector'
 import { NotificationBubble } from '../NotificationBubble'
 
-export const adminAtom = atom(false)
+export const adminAtom = atom(true)
 
 export const OrganizerMenu: FunctionComponent = () => {
   const { data: userData } = useSession()

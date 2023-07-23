@@ -12,6 +12,8 @@ import { GoogleCalendar, ICalendar, OutlookCalendar } from 'datebook'
 import { CalendarPlus } from 'lucide-react'
 import type { FunctionComponent } from 'react'
 
+import { saveAs } from 'file-saver'
+
 export type AddToCalendarButtonProps = {
   startTime: string
   endTime: string
@@ -72,7 +74,11 @@ export const AddToCalendarButton: FunctionComponent<
           <Button
             variant="outline"
             onClick={() => {
-              icalendar.download()
+              const blob = new Blob([icalendar.render()], {
+                type: 'text/calendar',
+              })
+
+              saveAs(blob, 'my-calendar-event.ics')
             }}
             aria-label="icalendar"
           >

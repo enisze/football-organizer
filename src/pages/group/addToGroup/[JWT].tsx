@@ -37,7 +37,7 @@ const AddToGroup: FunctionComponent = () => {
   }
 
   const { mutate } = trpc.group.addUserViaJWT.useMutation({
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast({
         title: 'Erfolgreich',
         description: 'Du wurdest der Gruppe hinzugefügt.',

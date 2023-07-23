@@ -10,8 +10,6 @@ const greenColor = 'rgb(131, 176, 34)'
 const time = '20:00h'
 const time2 = '8:00:h'
 
-const dateTime = '20:00:00.000Z'
-
 let intervalId: NodeJS.Timer | null = null
 
 const runScript = async () => {

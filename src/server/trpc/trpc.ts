@@ -41,13 +41,13 @@ export const protectedProcedure = t.procedure.use(isAuthed)
 
 const limiter = createTRPCStoreLimiter({
   root: t,
-  fingerprint: (ctx, _input) =>
+  fingerprint: (ctx) =>
     (ctx.req.headers['x-forwarded-for'] as string) ?? '127.0.0.1', // return the ip from the request
   windowMs: 20000,
   // hitInfo is inferred from the return type of `isBlocked`, its a number in this case
   message: (hitInfo) => `Too many requests, please try again later. ${hitInfo}`,
   max: 1,
-  onLimit: (hitInfo, _ctx, fingerprint) => {
+  onLimit: () => {
     throw new TRPCError({
       code: 'INTERNAL_SERVER_ERROR',
       message: 'Too many requests unique',

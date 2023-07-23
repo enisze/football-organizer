@@ -1,10 +1,10 @@
 import { EventCard } from '@/src/components/Events/EventCard'
+import { prisma } from '@/src/server/db/client'
 import { Button } from '@/ui/button'
 import Link from 'next/link'
 import type { FunctionComponent } from 'react'
-import { prisma } from '../../../prisma/prisma'
 
-import { Event } from '@/prisma/generated/client'
+import type { Event } from '@/prisma/generated/client'
 import type {
   GetServerSidePropsContext,
   InferGetServerSidePropsType,

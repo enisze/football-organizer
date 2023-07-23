@@ -5,9 +5,9 @@ import { getEuroAmount } from '../src/helpers/getEuroAmount'
 import { isDateInCertainRange } from '@/src/helpers/isDateInCertainRange'
 import { differenceInDays, subDays } from 'date-fns'
 import type { OAuth2ClientOptions } from 'google-auth-library'
-import { OAuth2Client } from 'google-auth-library'
 import type { Event, Payment } from '../prisma/generated/client'
-import { prisma } from '../prisma/prisma'
+
+import { prisma } from '@/src/server/db/client'
 
 const asyncForEach = async <T>(
   array: (T | undefined)[],
@@ -25,7 +25,7 @@ const asyncForEach = async <T>(
   }
 }
 
-const runCron = async (step?: any) => {
+const runCron = async () => {
   console.log('Starting cron')
 
   const ownerIds = await prisma.group.findMany({
@@ -149,7 +149,7 @@ const credentials: OAuth2ClientOptions = {
 
 const PAYPAL_LABEL = 'Label_3926228921657449356'
 
-const oAuth2Client = new OAuth2Client(credentials)
+const oAuth2Client = new google.auth.OAuth2(credentials)
 
 const getPaypalEmails = async (
   ownerId: string,
@@ -175,6 +175,7 @@ const getPaypalEmails = async (
     })
 
     const gmail = google.gmail({ version: 'v1', auth: oAuth2Client })
+
     const { data } = await gmail.users.messages.list({
       userId: 'me',
       labelIds: [PAYPAL_LABEL],

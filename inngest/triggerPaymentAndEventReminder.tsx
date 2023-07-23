@@ -1,14 +1,15 @@
+import { inngest, prisma } from '@/src/server/db/client'
 import type {
   ParticipantsOnEvents,
   UserEventStatus,
 } from '../prisma/generated/client'
-import { prisma } from '../prisma/prisma'
-import { inngest } from './inngestClient'
 
 export const triggerPaymentAndEventReminder = inngest.createFunction(
   { name: 'Trigger Payment and Event Reminder' },
   { event: 'event/reminder' },
   async ({ event: inngestEvent }) => {
+    console.log('here')
+
     const id = inngestEvent.data.id
 
     const event = await prisma.event.findUnique({
@@ -75,7 +76,9 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
       })
 
     usersEventReminder.forEach(async (user) => {
-      await inngest.send('event/reminderEmail', {
+      console.log('sending event reminder email')
+      await inngest.send({
+        name: 'event/reminderEmail',
         data: {
           user,
           id: event.id,
@@ -86,7 +89,8 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 
     if (usersPaymentReminder.length > 0) {
       usersPaymentReminder.forEach(async (user) => {
-        await inngest.send('event/paymentReminderEmail', {
+        await inngest.send({
+          name: 'event/paymentReminderEmail',
           data: {
             user,
             id: event.id,

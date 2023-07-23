@@ -28,7 +28,8 @@ export const eventRouter = router({
         data: { ...input },
       })
 
-      await inngest?.send('event/new', {
+      await inngest.send({
+        name: 'event/new',
         data: {
           id: event.id,
         },

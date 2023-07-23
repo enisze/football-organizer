@@ -7,9 +7,9 @@ type IContext = {
 
 export const root = initTRPC.context<IContext>().create()
 
-const limiter = createTRPCStoreLimiter({
+export const limiter = createTRPCStoreLimiter({
   root,
-  fingerprint: (ctx, _input) =>
+  fingerprint: (ctx) =>
     ctx.req.headers.get('x-forwarded-for') ?? '127.0.0.1', // return the ip from the request
   windowMs: 20000,
   // hitInfo is inferred from the return type of `isBlocked`, its a number in this case

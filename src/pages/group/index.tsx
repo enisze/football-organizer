@@ -1,8 +1,8 @@
 import Navbar from '@/src/components/Navigation/Navbar'
+import { prisma } from '@/src/server/db/client'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import type { GetServerSidePropsContext } from 'next'
 import { getServerSession } from 'next-auth'
-import { prisma } from '../../../prisma/prisma'
 import { authOptions } from '../api/auth/[...nextauth]'
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {

@@ -94,7 +94,7 @@ export const authOptions: NextAuthOptions = {
     async signIn({}) {
       return true
     },
-    async jwt({ token, user, account }) {
+    async jwt({ token, user}) {
       const id = token.id
 
       let dbUser
