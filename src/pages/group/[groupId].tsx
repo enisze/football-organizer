@@ -6,24 +6,46 @@ import type {
 } from 'next'
 import type { FunctionComponent } from 'react'
 
+import { getServerSession } from 'next-auth'
 import { NextSeo } from 'next-seo'
 import { prisma } from '../../../prisma/prisma'
+import { authOptions } from '../api/auth/[...nextauth]'
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const groupId = ctx.query.groupId as string
 
-  const groupName = await prisma.group.findUnique({
+  const session = await getServerSession(ctx.req, ctx.res, authOptions)
+
+  const groupName = await prisma.group.findFirst({
     where: {
       id: groupId,
+      users: {
+        some: {
+          id: session?.user?.id,
+        },
+      },
     },
     select: {
       name: true,
     },
   })
 
+  const name = groupName?.name
+
+  console.log(name, session?.user?.id)
+
+  if (!name || !session?.user?.id) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    }
+  }
+
   return {
     props: {
-      groupName: groupName?.name,
+      groupName: name,
     },
   }
 }
