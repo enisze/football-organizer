@@ -39,7 +39,7 @@ export const Dashboard: FunctionComponent = () => {
   const loading = (loadingEvents && fetchingEvents) || loadingGroups
 
   return (
-    <div className="m-8 flex flex-col gap-y-3 justify-center items-center">
+    <div className="m-4 flex flex-col gap-y-3 justify-center items-center">
       <GroupSelector />
       <ul className="flex flex-col gap-y-2">
         {!loading && events && events?.length > 0 ? (
