@@ -43,7 +43,7 @@ export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
           router.push(`/group/${val}`)
         }}
       >
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-[180px]" aria-label="group-selector">
           <SelectValue placeholder="Gruppe auswählen" />
         </SelectTrigger>
         <SelectContent>

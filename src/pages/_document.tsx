@@ -17,6 +17,8 @@ export default function Document() {
           name="description"
           content="A simple Event Wizard showing payments based on emails"
         />
+
+        <meta name="title" content="Event Wizard" />
       </Head>
       <body className="h-full dark:bg-slate-900 dark:text-slate-50 min-h-screen bg-white font-sans text-slate-900 antialiased">
         <Main />
