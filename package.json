@@ -105,13 +105,5 @@
     "tsx": "^3.12.7",
     "typescript": "^5.1.6"
   },
-  "packageManager": "yarn@3.5.0",
-  "exports": {
-    ".": {
-      "import": "./dist/index.es.js"
-    },
-    "./*": {
-      "import": "./dist/icons/*.es.js"
-    }
-  }
+  "packageManager": "yarn@3.5.0"
 }

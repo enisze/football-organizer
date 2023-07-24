@@ -19,6 +19,12 @@ const config = {
     defaultLocale: 'en',
   },
   experimental: {
+    fontLoaders: [
+      {
+        loader: 'next/font/google',
+        options: { subsets: ['latin'] },
+      },
+    ],
     swcPlugins: [
       [
         'next-superjson-plugin',
@@ -27,18 +33,6 @@ const config = {
         },
       ],
     ],
-  },
-  modularizeImports: {
-    'lucide-react': {
-      transform: 'lucide-react/{{member}}',
-    },
-
-    // fontLoaders: [
-    //   {
-    //     loader: 'next/font/google',
-    //     options: { subsets: ['latin'] },
-    //   },
-    // ],
   },
 }
 
