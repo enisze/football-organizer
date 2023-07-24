@@ -8531,12 +8531,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lucide-react@npm:^0.263.0":
-  version: 0.263.0
-  resolution: "lucide-react@npm:0.263.0"
+"lucide-react@npm:^0.259.0":
+  version: 0.259.0
+  resolution: "lucide-react@npm:0.259.0"
   peerDependencies:
     react: ^16.5.1 || ^17.0.0 || ^18.0.0
-  checksum: 51c7586abf25b465e4745ca22bbcd0cb46837026265a9730c872c601a5d3ee0032441c76af973780daed5a7f0308faa632cd2391efb1e3ef91a5b5e4a4212112
+  checksum: d760b2af40e36393e2f72beca3162eb8ab264e09fba8660649b7f955ecee38d2d7242ea513f7249c3d97a937b02257c3ee20af5d82d4f77509e3f143da7d009d
   languageName: node
   linkType: hard
 
@@ -11538,7 +11538,7 @@ __metadata:
     jest-puppeteer: ^9.0.0
     jotai: ^2.2.2
     jsonwebtoken: ^9.0.1
-    lucide-react: ^0.263.0
+    lucide-react: ^0.259.0
     next: 13.4.12
     next-auth: ^4.22.3
     next-seo: ^6.1.0
