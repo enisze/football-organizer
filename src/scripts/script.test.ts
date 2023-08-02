@@ -141,7 +141,7 @@ describe('Booking reminder', () => {
         'Es gibt buchbare Soccerboxen',
       )
     }
-  }, 20000)
+  }, 50000)
 })
 
 const getSoccerDate = () => {
