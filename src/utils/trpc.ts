@@ -24,6 +24,8 @@ import { transformer } from "./transformer";
  */
 interface CreateContextOptions {
   auth: any
+  session: any;
+  prisma:any;
   apiKey?: string | null;
   req?: NextRequest;
 }
@@ -52,11 +54,13 @@ export const createInnerTRPCContext = (opts: CreateContextOptions) => {
 export const createTRPCContext = (opts: { req: NextRequest }) => {
   //TODO: use auth from nextauth
   const auth = {}
-  const apiKey = opts.req.headers.get("x-acme-api-key");
+  const apiKey = opts.req.headers.get("x-test-api-key");
 
   return createInnerTRPCContext({
     auth,
     apiKey,
+    prisma,
+    session: {},
     req: opts.req,
   });
 };

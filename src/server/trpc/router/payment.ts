@@ -1,9 +1,9 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-import { protectedProcedure, router } from '../../../utils/trpc'
+import { createTRPCRouter, protectedProcedure } from '../../../utils/trpc'
 
-export const paymentRouter = router({
+export const paymentRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
