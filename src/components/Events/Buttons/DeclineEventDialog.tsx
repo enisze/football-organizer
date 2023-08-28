@@ -1,12 +1,12 @@
 import type { UserEventStatus } from '@/prisma/generated/client'
-import { trpc } from '@/src/utils/trpc'
+import { api } from '@/src/server/trpc/server'
 import { Button } from '@/ui/button'
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from '@/ui/dialog'
 import { TextField } from '@/ui/TextField'
 import { X } from 'lucide-react'
@@ -25,7 +25,7 @@ const DeclineEventDialogRaw: FunctionComponent<DeclineEventDialogProps> = ({
   userStatus,
   setShowLeaveModal,
 }) => {
-  const trpcContext = trpc.useContext()
+  // const trpcContext = trpc.useContext()
   const [comment, setComment] = useState('')
 
   const session = useSession()
@@ -34,16 +34,16 @@ const DeclineEventDialogRaw: FunctionComponent<DeclineEventDialogProps> = ({
 
   const [showCommentModal, setShowCommentModal] = useState(false)
 
-  const { mutate: setEventComment } = trpc.user.setEventComment.useMutation({
+  const { mutate: setEventComment } = api.user.setEventComment.useMutation({
     onSuccess: () => {
-      trpcContext.invalidate()
+      // trpcContext.invalidate()
     },
   })
 
   const { mutate: setEventStatus } =
-    trpc.event.setParticipatingStatus.useMutation({
+    api.event.setParticipatingStatus.useMutation({
       onSuccess: () => {
-        trpcContext.invalidate()
+        // trpcContext.invalidate()
       },
     })
 
@@ -55,7 +55,7 @@ const DeclineEventDialogRaw: FunctionComponent<DeclineEventDialogProps> = ({
     }
   }
 
-  const { data: payment } = trpc.payment.getByEventId.useQuery({
+  const { data: payment } = api.payment.getByEventId.useQuery({
     eventId: id,
     userId,
   })

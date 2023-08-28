@@ -3,12 +3,12 @@
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from '@/ui/dialog'
 import { Label } from '@/ui/label'
 import { Separator } from '@/ui/separator'
@@ -20,7 +20,7 @@ import type { Group } from '@/prisma/generated/client'
 import { AddEventForm } from '@/src/components/Events/AddEventForm'
 import { selectedGroupAtom } from '@/src/components/Groups/GroupSelector'
 import { Navbar } from '@/src/components/Navigation/Navbar'
-import { trpc } from '@/src/utils/trpc'
+import { api } from '@/src/server/trpc/client'
 import { Container } from '@/ui/container'
 import { useToast } from '@/ui/use-toast'
 import { useSetAtom } from 'jotai'
@@ -42,7 +42,7 @@ const GroupSettings: FunctionComponent = () => {
     setAtom(groupId)
   }, [groupId, setAtom])
 
-  const { data: groupData } = trpc.group.getGroupbyId.useQuery(
+  const { data: groupData } = api.group.getGroupbyId.useQuery(
     { id: groupId },
     {
       enabled: Boolean(groupId),
@@ -62,9 +62,8 @@ const GroupSettings: FunctionComponent = () => {
 
   const [open, setOpen] = useState(false)
 
-  const trpcContext = trpc.useContext()
 
-  const { data: token } = trpc.group.getJWT.useQuery(
+  const { data: token } = api.group.getJWT.useQuery(
     {
       id: groupId,
       groupName,
@@ -79,21 +78,21 @@ const GroupSettings: FunctionComponent = () => {
     return groupNameForDeletion === groupName
   }, [groupNameForDeletion, groupName])
 
-  const { mutate: updateGroupname } = trpc.group.updateName.useMutation({
+  const { mutate: updateGroupname } = api.group.updateName.useMutation({
     onSuccess: () => {
-      trpcContext.invalidate()
+      // trpcContext.invalidate()
     },
   })
 
-  const { mutate: deleteUser } = trpc.group.deleteUser.useMutation({
+  const { mutate: deleteUser } = api.group.deleteUser.useMutation({
     onSuccess: () => {
-      trpcContext.invalidate()
+      // trpcContext.invalidate()
     },
   })
 
-  const { mutate: deleteGroup } = trpc.group.delete.useMutation({
+  const { mutate: deleteGroup } = api.group.delete.useMutation({
     onSuccess: () => {
-      trpcContext.invalidate()
+      // trpcContext.invalidate()
     },
   })
 

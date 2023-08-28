@@ -1,10 +1,10 @@
 'use client'
-import { trpc } from '@/src/utils/trpc'
+import { api } from '@/src/server/trpc/client'
 import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
 } from '@/ui/accordion'
 import { User } from 'lucide-react'
 import { SessionProvider, useSession } from 'next-auth/react'
@@ -25,7 +25,7 @@ const ParticipantsAreaRaw: FunctionComponent<ParticipantsAreaProps> = ({
 
   const userId = session.data?.user?.id ?? ''
 
-  const { data } = trpc.event.getParticipants.useQuery({
+  const { data } = api.event.getParticipants.useQuery({
     eventId,
     userId,
   })

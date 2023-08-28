@@ -59,6 +59,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@dinero.js/calculator-number@npm:2.0.0-alpha.14":
+  version: 2.0.0-alpha.14
+  resolution: "@dinero.js/calculator-number@npm:2.0.0-alpha.14"
+  dependencies:
+    "@dinero.js/core": 2.0.0-alpha.14
+  checksum: 8d3a726daa7e7448aa83159132ba5751a295d5bdbb81f7a220781a0d8924843e491c998357ce63697e373d104e6a8c9aacd13355f6389e00463c9b22ab1f19ca
+  languageName: node
+  linkType: hard
+
+"@dinero.js/core@npm:2.0.0-alpha.14":
+  version: 2.0.0-alpha.14
+  resolution: "@dinero.js/core@npm:2.0.0-alpha.14"
+  dependencies:
+    "@dinero.js/currencies": 2.0.0-alpha.14
+  checksum: cb13efd3de18de1d7805ddad382d176d74428235efeb19be6cc3b06c5ad38c297300c14043c33b20e4567be851a66ff68115c87eec97bdcaf31568b3ed785243
+  languageName: node
+  linkType: hard
+
+"@dinero.js/currencies@npm:2.0.0-alpha.14":
+  version: 2.0.0-alpha.14
+  resolution: "@dinero.js/currencies@npm:2.0.0-alpha.14"
+  checksum: d764b60e993e90d1385c01ee372cab74ca19a33c1354b22f529ef8961a496e4bbc84e41a20229548258e00e6cb349f41aa88a80d9d3d52b3deb7378da7b76dd6
+  languageName: node
+  linkType: hard
+
 "@esbuild-kit/cjs-loader@npm:^2.4.2":
   version: 2.4.2
   resolution: "@esbuild-kit/cjs-loader@npm:2.4.2"
@@ -3701,10 +3726,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dinero.js@npm:^1.9.1":
-  version: 1.9.1
-  resolution: "dinero.js@npm:1.9.1"
-  checksum: f033ad0cda01cea40a890d67c99c6024b5caf69972afb3909c2894f218b05301e0df375ded45615032f459264821c16df0ff6e8a5840d5df2f5d91dd6e7b68a6
+"dinero.js@npm:2.0.0-alpha.14":
+  version: 2.0.0-alpha.14
+  resolution: "dinero.js@npm:2.0.0-alpha.14"
+  dependencies:
+    "@dinero.js/calculator-number": 2.0.0-alpha.14
+    "@dinero.js/core": 2.0.0-alpha.14
+    "@dinero.js/currencies": 2.0.0-alpha.14
+  checksum: c48163bf32bb9ba260de6a8018bde4e2294c87c2f4f85c6a5b796d4b96bef42cac79a2bfb00d2da7fd841067a228ebf4c0302c6c300ca60c1eaee5154112c75a
   languageName: node
   linkType: hard
 
@@ -8818,6 +8847,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "template@workspace:."
   dependencies:
+    "@dinero.js/currencies": 2.0.0-alpha.14
     "@google-cloud/local-auth": 2.1.1
     "@hookform/resolvers": ^3.1.1
     "@next-auth/prisma-adapter": ^1.0.5
@@ -8861,7 +8891,7 @@ __metadata:
     clsx: ^1.2.1
     date-fns: ^2.29.3
     datebook: ^7.1.0
-    dinero.js: ^1.9.1
+    dinero.js: 2.0.0-alpha.14
     dotenv: ^16.0.3
     dotenv-flow: ^3.2.0
     encoding: ^0.1.13

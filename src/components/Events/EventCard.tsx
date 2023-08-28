@@ -1,6 +1,6 @@
 'use client'
 import type { Event } from '@/prisma/generated/client'
-import { trpc } from '@/src/utils/trpc'
+import { api } from '@/src/server/trpc/client'
 import { differenceInCalendarDays } from 'date-fns'
 import { CalendarDays, Euro } from 'lucide-react'
 import type { FunctionComponent } from 'react'
@@ -33,7 +33,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({ event }) => {
     bookingDate,
   } = event
 
-  const { data, isLoading } = trpc.map.getLatLong.useQuery({
+  const { data, isLoading } = api.map.getLatLong.useQuery({
     id,
     address,
   })

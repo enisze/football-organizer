@@ -16,6 +16,7 @@
     "sendPayment": "ts-node --esm -r dotenv-flow/config ./inngest/sendPaymentAndEventReminderEmails.ts"
   },
   "dependencies": {
+    "@dinero.js/currencies": "2.0.0-alpha.14",
     "@google-cloud/local-auth": "2.1.1",
     "@hookform/resolvers": "^3.1.1",
     "@next-auth/prisma-adapter": "^1.0.5",
@@ -50,7 +51,7 @@
     "clsx": "^1.2.1",
     "date-fns": "^2.29.3",
     "datebook": "^7.1.0",
-    "dinero.js": "^1.9.1",
+    "dinero.js": "2.0.0-alpha.14",
     "dotenv": "^16.0.3",
     "dotenv-flow": "^3.2.0",
     "encoding": "^0.1.13",

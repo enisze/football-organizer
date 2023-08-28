@@ -1,12 +1,12 @@
 'use client'
-import { trpc } from '@/src/utils/trpc'
+import { api } from '@/src/server/trpc/client'
 import { Button } from '@/ui/button'
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
 } from '@/ui/dialog'
 import { TRPCError } from '@trpc/server'
 import { Check } from 'lucide-react'
@@ -19,25 +19,25 @@ import { DeclineEventDialog } from './DeclineEventDialog'
 const EventStatusAreaRaw: FunctionComponent<{
   id: string
 }> = ({ id }) => {
-  const trpcContext = trpc.useContext()
+  // const trpcContext = trpc.useContext()
 
   const { data: session } = useSession()
 
   const userId = session?.user?.id ?? ''
 
-  const { data } = trpc.event.getParticipants.useQuery({
+  const { data } = api.event.getParticipants.useQuery({
     eventId: id,
     userId,
   })
 
   const [showLeaveModal, setShowLeaveModal] = useState(false)
 
-  const { mutate: sendEmail } = trpc.gmail.sendPaidButCancledMail.useMutation()
+  const { mutate: sendEmail } = api.gmail.sendPaidButCancledMail.useMutation()
 
   const { mutate: setEventStatus } =
-    trpc.event.setParticipatingStatus.useMutation({
+    api.event.setParticipatingStatus.useMutation({
       onSuccess: () => {
-        trpcContext.invalidate()
+        // trpcContext.invalidate()
       },
     })
 

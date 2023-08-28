@@ -10,9 +10,9 @@ import type { FunctionComponent } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 
 import { Navbar } from '@/src/components/Navigation/Navbar'
+import { api } from '@/src/server/trpc/client'
 import { useToast } from '@/ui/use-toast'
 import { LoadingWrapper } from '../../../components/LoadingWrapper'
-import { trpc } from '../../../utils/trpc'
 
 const Settings: FunctionComponent = () => {
   const { data } = useSession()
@@ -20,7 +20,7 @@ const Settings: FunctionComponent = () => {
   const userName = data?.user?.name
   const paypalName = data?.user?.paypalName
 
-  const { data: paypalNameDb } = trpc.user.getPaypalName.useQuery(
+  const { data: paypalNameDb } = api.user.getPaypalName.useQuery(
     { userId },
     {
       enabled: Boolean(!paypalName) && Boolean(userId),
@@ -49,10 +49,9 @@ const Settings: FunctionComponent = () => {
 
   const { toast } = useToast()
 
-  const trpcContext = trpc.useContext()
 
   const { data: notificationStatus, isLoading } =
-    trpc.user.getNotificationStatus.useQuery(
+    api.user.getNotificationStatus.useQuery(
       { userId },
       {
         enabled: Boolean(userId),
@@ -60,17 +59,17 @@ const Settings: FunctionComponent = () => {
     )
 
   const { mutate: updateNotificationsEnabled } =
-    trpc.user.updateNotifications.useMutation({
+    api.user.updateNotifications.useMutation({
       onSuccess: () => {
-        trpcContext.invalidate()
+        // trpcContext.invalidate()
       },
     })
 
-  const { mutate: deleteUser } = trpc.user.delete.useMutation()
+  const { mutate: deleteUser } = api.user.delete.useMutation()
 
-  const { mutate: updatePaypalName } = trpc.user.updatePaypalName.useMutation({
+  const { mutate: updatePaypalName } = api.user.updatePaypalName.useMutation({
     onSuccess: () => {
-      trpcContext.invalidate()
+      // trpcContext.invalidate()
       toast({
         title: 'Paypal Name wurde geändert',
       })

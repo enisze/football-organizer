@@ -1,7 +1,7 @@
 import { Button } from '@/ui/button'
 import type { FunctionComponent } from 'react'
 import { isDateInCertainRange } from '../helpers/isDateInCertainRange'
-import { trpc } from '../utils/trpc'
+import { api } from '../server/trpc/server'
 
 const paypalLink =
   'https://www.paypal.com/paypalme/enz1994?country.x=DE&locale.x=de_DE'
@@ -10,7 +10,7 @@ export const PaymentArea: FunctionComponent<{
   eventId: string
   bookingDate: Date | null
 }> = ({ eventId, bookingDate }) => {
-  const { data: payment } = trpc.payment.getByEventId.useQuery({ eventId })
+  const { data: payment } = api.payment.getByEventId.useQuery({ eventId })
 
   const isInCertainRange = bookingDate
     ? isDateInCertainRange(new Date(), bookingDate)

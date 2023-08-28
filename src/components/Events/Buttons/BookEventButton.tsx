@@ -1,13 +1,13 @@
 'use client'
 
-import { trpc } from '@/src/utils/trpc'
+import { api } from '@/src/server/trpc/client'
 import { Button } from '@/ui/button'
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from '@/ui/dialog'
 import { TextField } from '@/ui/TextField'
 import { format } from 'date-fns'
@@ -15,9 +15,8 @@ import type { FunctionComponent } from 'react'
 import { useState } from 'react'
 
 export const BookEventButton: FunctionComponent<{ id: string }> = ({ id }) => {
-  const trpcContext = trpc.useContext()
-  const { mutate: bookEvent } = trpc.event.book.useMutation({
-    onSuccess: () => trpcContext.invalidate(),
+  const { mutate: bookEvent } = api.event.book.useMutation({
+    // onSuccess: () => trpcContext.invalidate(),
   })
 
   const [bookingDate, setBookingDate] = useState(

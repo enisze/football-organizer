@@ -1,6 +1,6 @@
 import { LoadingWrapper } from '@/src/components/LoadingWrapper'
 import { Navbar } from '@/src/components/Navigation/Navbar'
-import { trpc } from '@/src/utils/trpc'
+import { api } from '@/src/server/trpc/server'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { useParams } from 'next/navigation'
 import type { FunctionComponent } from 'react'
@@ -10,7 +10,7 @@ const Oauth2Callback: FunctionComponent = () => {
 
   const code = params?.code as string
 
-  const { error, isSuccess, isLoading } = trpc.gmail.setToken.useQuery(
+  const { error, isSuccess, isLoading } = api.gmail.setToken.useQuery(
     { code: code as string },
     { enabled: Boolean(code) },
   )
