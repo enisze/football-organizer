@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { decode, sign } from 'jsonwebtoken'
 import { z } from 'zod'
-import { protectedProcedure, router } from '../trpc'
+import { protectedProcedure, router } from '../../../utils/trpc'
 import { verifyJWT } from '../verifyJWT'
 
 export const groupRouter = router({

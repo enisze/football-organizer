@@ -1,5 +1,5 @@
 'use client'
-import { trpc } from '@/src/utils/trpc'
+import { api } from '@/src/server/trpc/client'
 import { Label } from '@/ui/label'
 import {
   Select,
@@ -22,7 +22,7 @@ const GroupSelectorRaw: FunctionComponent<{ owned?: boolean }> = ({
 }) => {
   const { data } = useSession()
 
-  const { data: groups, isLoading } = trpc.group.getGroupsOfUser.useQuery({
+  const { data: groups, isLoading } = api.group.getGroupsOfUser.useQuery({
     owned: owned,
     id: data?.user?.id,
   })

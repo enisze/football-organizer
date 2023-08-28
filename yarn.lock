@@ -2104,49 +2104,49 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trpc/client@npm:10.34.0":
-  version: 10.34.0
-  resolution: "@trpc/client@npm:10.34.0"
+"@trpc/client@npm:10.32.1-alpha-actions-2-2023-08-14-10-36-36.53+ccbe40fde":
+  version: 10.32.1-alpha-actions-2-2023-08-14-10-36-36.53
+  resolution: "@trpc/client@npm:10.32.1-alpha-actions-2-2023-08-14-10-36-36.53"
   peerDependencies:
-    "@trpc/server": 10.34.0
-  checksum: 7589d575d92865091da72bf0eb7efbfc474422aecc2d4ac146be334bbe83a2a67eb185654dccb91b90e23207bfada2b9f4e4ebcc25a24c2a7e033c177f13e10c
+    "@trpc/server": 10.32.1-alpha-actions-2-2023-08-14-10-36-36.53+ccbe40fde
+  checksum: dee3e9c3bd964d086515430f51a0295c28cf2d39573d8bf4d50bf38c91b7add01f6551e3cf06d7957d9f4bff9a80c4d049bfbbe6c3f5284952031740c6b729c5
   languageName: node
   linkType: hard
 
-"@trpc/next@npm:10.34.0":
-  version: 10.34.0
-  resolution: "@trpc/next@npm:10.34.0"
+"@trpc/next@npm:10.32.1-alpha-actions-2-2023-08-14-10-36-36.53+ccbe40fde":
+  version: 10.32.1-alpha-actions-2-2023-08-14-10-36-36.53
+  resolution: "@trpc/next@npm:10.32.1-alpha-actions-2-2023-08-14-10-36-36.53"
   dependencies:
     react-ssr-prepass: ^1.5.0
   peerDependencies:
-    "@tanstack/react-query": ^4.18.0
-    "@trpc/client": 10.34.0
-    "@trpc/react-query": 10.34.0
-    "@trpc/server": 10.34.0
+    "@tanstack/react-query": ^5.0.0-beta.9
+    "@trpc/client": 10.32.1-alpha-actions-2-2023-08-14-10-36-36.53+ccbe40fde
+    "@trpc/react-query": 10.32.1-alpha-actions-2-2023-08-14-10-36-36.53+ccbe40fde
+    "@trpc/server": 10.32.1-alpha-actions-2-2023-08-14-10-36-36.53+ccbe40fde
     next: "*"
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: aa0970f02c746b8060ccea72f685186e6c8209f5af32b35607899e8da3d1ba20832cb1506f093f70dbdbc17993db8522646a45a1f453d12f5913cf69912d7643
+  checksum: b388afcc1fc765d9c1203bc3890f902ccf8ae5250f825568d1b70602113d6ae937dfa27855b45e6ef1505f9dd3919c385b32ff035374fa315aadacb96c5f3e58
   languageName: node
   linkType: hard
 
-"@trpc/react-query@npm:10.34.0":
-  version: 10.34.0
-  resolution: "@trpc/react-query@npm:10.34.0"
+"@trpc/react-query@npm:10.32.1-alpha-actions-2-2023-08-14-10-36-36.53+ccbe40fde":
+  version: 10.32.1-alpha-actions-2-2023-08-14-10-36-36.53
+  resolution: "@trpc/react-query@npm:10.32.1-alpha-actions-2-2023-08-14-10-36-36.53"
   peerDependencies:
-    "@tanstack/react-query": ^4.18.0
-    "@trpc/client": 10.34.0
-    "@trpc/server": 10.34.0
+    "@tanstack/react-query": ^5.0.0-beta.9
+    "@trpc/client": 10.32.1-alpha-actions-2-2023-08-14-10-36-36.53+ccbe40fde
+    "@trpc/server": 10.32.1-alpha-actions-2-2023-08-14-10-36-36.53+ccbe40fde
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: 5489f4041da444795d59b8b766ba0924569317f62ab5a85411ff4bfde2b37e2d30e590fb4041dc7f799f519d6e28f5e120b16fd9066ffcb1f477d17abbe216ec
+  checksum: 768303220f828ebee3532f78c3355271941cbfb1ef37c48495b9c9dba967f4b06a97457a16e9e27a27fd2a62c1796b758c20feb97fad3339eca86e5f78c78bc8
   languageName: node
   linkType: hard
 
-"@trpc/server@npm:10.34.0":
-  version: 10.34.0
-  resolution: "@trpc/server@npm:10.34.0"
-  checksum: 6d319c98f8a152539cd46769884ddea01bf00daaf1780067b1a1e34b45a107ab702b72e0086fa8924be44d9211b51c8f4e53ab6e85583fa53fa5893df5847c62
+"@trpc/server@npm:10.32.1-alpha-actions-2-2023-08-14-10-36-36.53+ccbe40fde":
+  version: 10.32.1-alpha-actions-2-2023-08-14-10-36-36.53
+  resolution: "@trpc/server@npm:10.32.1-alpha-actions-2-2023-08-14-10-36-36.53"
+  checksum: 9cb5fc2cbdc3ab3dfe89687dbaf5fa354e72975782e4da05c5fcebf853d66d0f685534cb4d039e09fcb5dcf7e83b415e567d08b2a39653cccd06cca9096b8a9b
   languageName: node
   linkType: hard
 
@@ -2189,6 +2189,13 @@ __metadata:
   version: 0.12.2
   resolution: "@types/caseless@npm:0.12.2"
   checksum: 430d15911184ad11e0a8aa21d1ec15fcc93b90b63570c37bf16ebd34457482bfc8de3f5eb6771e0ef986ce183270d4297823b0f492c346255967e78f7292388b
+  languageName: node
+  linkType: hard
+
+"@types/dinero.js@npm:^1.9.0":
+  version: 1.9.0
+  resolution: "@types/dinero.js@npm:1.9.0"
+  checksum: db2d189d9e7e5f63ea0073515e0142483fa02cdc4917afed73063f77719a39c910dcb3389abfd85b18065cdb4ed9c78b143a7321b17a7305509d0d88ce5d9fe9
   languageName: node
   linkType: hard
 
@@ -3691,6 +3698,13 @@ __metadata:
   version: 4.0.2
   resolution: "diff@npm:4.0.2"
   checksum: f2c09b0ce4e6b301c221addd83bf3f454c0bc00caa3dd837cf6c127d6edf7223aa2bbe3b688feea110b7f262adbfc845b757c44c8a9f8c0c5b15d8fa9ce9d20d
+  languageName: node
+  linkType: hard
+
+"dinero.js@npm:^1.9.1":
+  version: 1.9.1
+  resolution: "dinero.js@npm:1.9.1"
+  checksum: f033ad0cda01cea40a890d67c99c6024b5caf69972afb3909c2894f218b05301e0df375ded45615032f459264821c16df0ff6e8a5840d5df2f5d91dd6e7b68a6
   languageName: node
   linkType: hard
 
@@ -8828,10 +8842,11 @@ __metadata:
     "@tanstack/react-query": ^4.29.23
     "@trpc-limiter/core": ^0.0.8
     "@trpc-limiter/memory": ^0.0.3
-    "@trpc/client": 10.34.0
-    "@trpc/next": 10.34.0
-    "@trpc/react-query": 10.34.0
-    "@trpc/server": 10.34.0
+    "@trpc/client": 10.32.1-alpha-actions-2-2023-08-14-10-36-36.53+ccbe40fde
+    "@trpc/next": 10.32.1-alpha-actions-2-2023-08-14-10-36-36.53+ccbe40fde
+    "@trpc/react-query": 10.32.1-alpha-actions-2-2023-08-14-10-36-36.53+ccbe40fde
+    "@trpc/server": 10.32.1-alpha-actions-2-2023-08-14-10-36-36.53+ccbe40fde
+    "@types/dinero.js": ^1.9.0
     "@types/jsonwebtoken": ^9.0.2
     "@types/lodash": ^4.14.195
     "@types/node": 18.16.19
@@ -8846,6 +8861,7 @@ __metadata:
     clsx: ^1.2.1
     date-fns: ^2.29.3
     datebook: ^7.1.0
+    dinero.js: ^1.9.1
     dotenv: ^16.0.3
     dotenv-flow: ^3.2.0
     encoding: ^0.1.13

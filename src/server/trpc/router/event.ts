@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { getAddressAndCoordinatesRedisKeys } from '../../../helpers/getAddressAndCoordinatesRedisKeys'
 import { redis } from '../../redis/redis'
 
-import { protectedProcedure, router } from '../trpc'
+import { protectedProcedure, router } from '../../../utils/trpc'
 
 export const eventRouter = router({
   create: protectedProcedure

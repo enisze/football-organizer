@@ -1,5 +1,4 @@
 'use client'
-import { trpc } from '@/src/utils/trpc'
 import { Button } from '@/ui/button'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { useToast } from '@/ui/use-toast'
@@ -8,6 +7,7 @@ import { useParams } from 'next/navigation'
 import type { FunctionComponent } from 'react'
 
 import { Navbar } from '@/src/components/Navigation/Navbar'
+import { api } from '@/src/server/trpc/client'
 
 const AddToGroup: FunctionComponent = () => {
   const params = useParams()
@@ -18,12 +18,12 @@ const AddToGroup: FunctionComponent = () => {
 
   const { data } = useSession()
 
-  const { data: groupData } = trpc.group.getDataFromJWT.useQuery(
+  const { data: groupData } = api.group.getDataFromJWT.useQuery(
     { JWT },
     { enabled: Boolean(JWT) },
   )
 
-  const { data: users } = trpc.group.getUsers.useQuery(
+  const { data: users } = api.group.getUsers.useQuery(
     { id: groupData?.id ?? '' },
     { enabled: !!groupData?.id },
   )
@@ -34,7 +34,7 @@ const AddToGroup: FunctionComponent = () => {
     return <div>Already member</div>
   }
 
-  const { mutate } = trpc.group.addUserViaJWT.useMutation({
+  const { mutate } = api.group.addUserViaJWT.useMutation({
     onSuccess: (data) => {
       toast({
         title: 'Erfolgreich',

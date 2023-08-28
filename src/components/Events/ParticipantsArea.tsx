@@ -1,10 +1,10 @@
 'use client'
 import { trpc } from '@/src/utils/trpc'
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
 } from '@/ui/accordion'
 import { User } from 'lucide-react'
 import { SessionProvider, useSession } from 'next-auth/react'

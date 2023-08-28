@@ -1,15 +1,14 @@
 'use client'
 
-import { trpc } from '@/src/utils/trpc'
+import { api } from '@/src/server/trpc/client'
 import { Button } from '@/ui/button'
 
 export const StatusButton = ({ eventId }: { eventId: string }) => {
-  const trpcContext = trpc.useContext()
 
   const { mutate: setStatus, isSuccess } =
-    trpc.event.setParticipatingStatus.useMutation({
+    api.event.setParticipatingStatus.useMutation({
       onSuccess: () => {
-        trpcContext.invalidate()
+        // trpcContext.invalidate()
       },
     })
 

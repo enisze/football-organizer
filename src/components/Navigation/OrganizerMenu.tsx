@@ -1,3 +1,4 @@
+import { api } from '@/src/server/trpc/server'
 import { Avatar, AvatarFallback } from '@/ui/avatar'
 import {
   DropdownMenu,
@@ -10,7 +11,6 @@ import { useAtomValue } from 'jotai'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import type { FunctionComponent } from 'react'
-import { trpc } from '../../utils/trpc'
 import { selectedGroupAtom } from '../Groups/GroupSelector'
 import { NotificationBubble } from '../NotificationBubble'
 
@@ -19,7 +19,7 @@ export const OrganizerMenu: FunctionComponent = () => {
 
   const selectedGroupId = useAtomValue(selectedGroupAtom)
 
-  const { data: balance } = trpc.payment.getUserBalance.useQuery(
+  const { data: balance } = api.payment.getUserBalance.useQuery(
     { groupId: selectedGroupId ?? '' },
     {
       enabled: Boolean(userData) && Boolean(selectedGroupId),
