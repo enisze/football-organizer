@@ -1,29 +1,16 @@
 'use client'
 import { NewGroup } from '@/src/components/Groups/NewGroup'
-import { authOptions } from '@/src/server/auth/authOptions'
+import { api } from '@/src/server/trpc/api'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { Container } from '@/ui/container'
 import { Separator } from '@/ui/separator'
-import { getServerSession } from 'next-auth'
-import { notFound } from 'next/navigation'
-import { prisma } from '../../../server/db/client'
+import { useSession } from 'next-auth/react'
 
 const GroupSettings = async () => {
-  const session = await getServerSession(authOptions)
+  const { data: session } = useSession()
   const userId = session?.user?.id
 
-  const groups = await prisma.group.findMany({
-    where: { ownerId: userId },
-    select: {
-      name: true,
-      id: true,
-      createdAt: true,
-      events: true,
-      pricingModel: true,
-      users: true,
-    },
-  })
-
+  const { data: groups } = api.group.getGroupsOfUser.useQuery({ owned: true })
   // const { data: link } = trpc.gmail.generateAuthLink.useQuery(undefined, {
   //   enabled: groups && groups?.length > 0,
   // })
@@ -31,7 +18,7 @@ const GroupSettings = async () => {
   if (!userId) {
     // window.location.replace('/')
     // window.location.reload()
-    notFound()
+    // notFound()
   }
 
   const showNewGroup =

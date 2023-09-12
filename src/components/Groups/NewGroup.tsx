@@ -23,9 +23,11 @@ export const NewGroup: FunctionComponent = () => {
 
   const { toast } = useToast()
 
+  const trpcContext = api.useContext()
+
   const { mutate: createGroup } = api.group.create.useMutation({
     onSuccess(data) {
-      // trpcContext.invalidate()
+      trpcContext.invalidate()
       const groupName = data
       toast({
         title: `Gruppe ${groupName} erfolgreich erstellt`,

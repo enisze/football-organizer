@@ -3,12 +3,14 @@ import { OrganizerLink } from '@/ui/OrganizerLink'
 import { Skeleton } from '@/ui/skeleton'
 import { addDays } from 'date-fns'
 import { useSession } from 'next-auth/react'
-import { notFound } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { EventCard } from '../Events/EventCard'
 import { GroupSelector } from '../Groups/GroupSelector'
 
-export const Dashboard = ({ params }: { params?: { groupId: string } }) => {
-  const groupId = params?.groupId
+export const Dashboard = () => {
+  const params = useParams()
+
+  const groupId = params?.groupId as string
 
   const { data: session } = useSession()
 
@@ -26,10 +28,6 @@ export const Dashboard = ({ params }: { params?: { groupId: string } }) => {
   const { data: events } = api.event.getByGroupId.useQuery({
     groupId: groupId ?? '',
   })
-
-  if (!events) {
-    notFound()
-  }
 
   return (
     <div className="m-8 flex flex-col gap-y-3 justify-center items-center">

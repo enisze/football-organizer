@@ -9,7 +9,6 @@ import {
   SelectValue,
 } from '@/ui/select'
 import { atom } from 'jotai'
-import { useSession } from 'next-auth/react'
 import { useParams, useRouter } from 'next/navigation'
 import type { FunctionComponent } from 'react'
 import { useEffect, useRef } from 'react'
@@ -20,8 +19,6 @@ export const selectedGroupAtom = atom<string | undefined>(undefined)
 export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
   owned = false,
 }) => {
-  const { data } = useSession()
-
   const { data: groups, isLoading } = api.group.getGroupsOfUser.useQuery({
     owned: owned,
   })
@@ -30,6 +27,8 @@ export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
   const router = useRouter()
 
   const group = params?.groupId as string
+
+  console.log(group)
 
   const isInitialGroupSet = useRef(false)
 
