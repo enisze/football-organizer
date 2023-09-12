@@ -6,11 +6,11 @@ import { TrpcProvider } from '../server/trpc/TrpcProvider'
 
 const Providers = ({ children }: { children: ReactNode }) => {
   return (
-    <SessionProvider>
-      <TrpcProvider>
+    <TrpcProvider>
+      <SessionProvider>
         <ThemeProvider attribute="class">{children}</ThemeProvider>
-      </TrpcProvider>
-    </SessionProvider>
+      </SessionProvider>
+    </TrpcProvider>
   )
 }
 

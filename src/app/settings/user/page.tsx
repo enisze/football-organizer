@@ -15,6 +15,7 @@ import { LoadingWrapper } from '../../../components/LoadingWrapper'
 
 const Settings: FunctionComponent = () => {
   const { data } = useSession()
+
   const userId = data?.user?.id ?? ''
   const userName = data?.user?.name
   const paypalName = data?.user?.paypalName
@@ -70,11 +71,11 @@ const Settings: FunctionComponent = () => {
     },
   })
 
-  if (!userId) {
-    // window.location.replace('/')
-    // window.location.reload()
-    return null
-  }
+  // if (!userId) {
+  //   // window.location.replace('/')
+  //   // window.location.reload()
+  //   return null
+  // }
 
   return (
     <>
