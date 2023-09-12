@@ -1,3 +1,4 @@
+'use client'
 import Navbar from '@/src/components/Navigation/Navbar'
 import { prisma } from '@/src/server/db/client'
 import { OrganizerLink } from '@/ui/OrganizerLink'

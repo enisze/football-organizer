@@ -1,3 +1,4 @@
+'use client'
 import { NewGroup } from '@/src/components/Groups/NewGroup'
 import { SpecificSettings } from '@/src/components/SettingsSidebar'
 import { trpc } from '@/src/utils/trpc'

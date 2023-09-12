@@ -1,3 +1,4 @@
+'use client'
 import { Dashboard } from '@/src/components/Dashboard/Dashboard'
 import Navbar from '@/src/components/Navigation/Navbar'
 import type {

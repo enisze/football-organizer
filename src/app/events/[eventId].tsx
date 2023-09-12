@@ -1,3 +1,4 @@
+'use client'
 import { EventCard } from '@/src/components/Events/EventCard'
 import { prisma } from '@/src/server/db/client'
 import { Button } from '@/ui/button'

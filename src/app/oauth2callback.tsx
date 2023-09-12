@@ -1,3 +1,4 @@
+'use client'
 import { trpc } from '@/src/utils/trpc'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { useRouter } from 'next/router'

@@ -1,3 +1,4 @@
+'use client'
 import { SpecificSettings } from '@/src/components/SettingsSidebar'
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'

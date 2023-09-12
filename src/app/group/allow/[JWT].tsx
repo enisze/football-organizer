@@ -1,3 +1,4 @@
+'use client'
 import { NewGroup } from '@/src/components/Groups/NewGroup'
 import { trpc } from '@/src/utils/trpc'
 import { useSession } from 'next-auth/react'

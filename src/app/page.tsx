@@ -1,3 +1,4 @@
+'use client'
 import { Button } from '@/ui/button'
 import type { GetServerSidePropsContext } from 'next'
 import { getServerSession } from 'next-auth'
