@@ -9,8 +9,7 @@ import { useRouter } from 'next/navigation'
 import type { FunctionComponent } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 
-import { Navbar } from '@/src/components/Navigation/Navbar'
-import { api } from '@/src/server/trpc/client'
+import { api } from '@/src/server/trpc/api'
 import { useToast } from '@/ui/use-toast'
 import { LoadingWrapper } from '../../../components/LoadingWrapper'
 
@@ -20,12 +19,9 @@ const Settings: FunctionComponent = () => {
   const userName = data?.user?.name
   const paypalName = data?.user?.paypalName
 
-  const { data: paypalNameDb } = api.user.getPaypalName.useQuery(
-    { userId },
-    {
-      enabled: Boolean(!paypalName) && Boolean(userId),
-    },
-  )
+  const { data: paypalNameDb } = api.user.getPaypalName.useQuery(undefined, {
+    enabled: Boolean(!paypalName) && Boolean(userId),
+  })
 
   const [userNameForDeletion, setUserNameForDeletion] = useState('')
 
@@ -47,21 +43,19 @@ const Settings: FunctionComponent = () => {
 
   const router = useRouter()
 
+  const trpcContext = api.useContext()
+
   const { toast } = useToast()
 
-
   const { data: notificationStatus, isLoading } =
-    api.user.getNotificationStatus.useQuery(
-      { userId },
-      {
-        enabled: Boolean(userId),
-      },
-    )
+    api.user.getNotificationStatus.useQuery(undefined, {
+      enabled: Boolean(userId),
+    })
 
   const { mutate: updateNotificationsEnabled } =
     api.user.updateNotifications.useMutation({
       onSuccess: () => {
-        // trpcContext.invalidate()
+        trpcContext.invalidate()
       },
     })
 
@@ -69,7 +63,7 @@ const Settings: FunctionComponent = () => {
 
   const { mutate: updatePaypalName } = api.user.updatePaypalName.useMutation({
     onSuccess: () => {
-      // trpcContext.invalidate()
+      trpcContext.invalidate()
       toast({
         title: 'Paypal Name wurde geändert',
       })
@@ -84,7 +78,6 @@ const Settings: FunctionComponent = () => {
 
   return (
     <>
-      <Navbar />
       <div className="flex flex-col md:grid grid-cols-[220px_8px_auto]">
         <Separator orientation="vertical" />
 
@@ -100,7 +93,6 @@ const Settings: FunctionComponent = () => {
                   updateNotificationsEnabled({
                     notificationsEnabled:
                       !notificationStatus?.notificationsEnabled,
-                    userId,
                   })
                 }}
               />
@@ -126,7 +118,7 @@ const Settings: FunctionComponent = () => {
 
           <Button
             onClick={() => {
-              updatePaypalName({ name: newPaypalName, userId })
+              updatePaypalName({ name: newPaypalName })
             }}
             className="w-fit"
           >
@@ -144,7 +136,7 @@ const Settings: FunctionComponent = () => {
           <Button
             onClick={() => {
               if (userCanBeDeleted) {
-                deleteUser({ userId })
+                deleteUser()
                 router.push('/')
               }
             }}

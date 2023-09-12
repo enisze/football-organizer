@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { decode, sign } from 'jsonwebtoken'
 import { z } from 'zod'
-import { createTRPCRouter, protectedProcedure } from '../../../utils/trpc'
+import { createTRPCRouter, protectedProcedure } from '../trpc'
 import { verifyJWT } from '../verifyJWT'
 
 export const groupRouter = createTRPCRouter({
@@ -14,7 +14,7 @@ export const groupRouter = createTRPCRouter({
 
       if (!id) throw new TRPCError({ code: 'UNAUTHORIZED' })
 
-      await ctx.prisma.group.findMany({
+      return await ctx.prisma.group.findMany({
         where: input?.owned ? { ownerId: id } : { users: { some: { id } } },
         select: {
           name: true,

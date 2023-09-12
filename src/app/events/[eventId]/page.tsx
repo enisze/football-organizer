@@ -1,27 +1,22 @@
+'use client'
 import { EventCard } from '@/src/components/Events/EventCard'
 import Link from 'next/link'
-import { prisma } from '../../../server/db/client'
 
-import { authOptions } from '@/src/pages/api/auth/[...nextauth]'
-import { getServerSession } from 'next-auth'
-import { RedirectType } from 'next/dist/client/components/redirect'
-import { notFound, redirect } from 'next/navigation'
+import { api } from '@/src/server/trpc/api'
+import { useSession } from 'next-auth/react'
+import { notFound } from 'next/navigation'
 import { StatusButton } from './StatusButton'
 
 const EventPage = async ({ params }: { params: { eventId: string } }) => {
   const id = params.eventId
 
-  const session = await getServerSession(authOptions)
+  const { data: session } = useSession()
 
   if (!session || !session.user?.id) {
-    redirect('/api/auth/signin', RedirectType.push)
+    // redirect('/api/auth/signin', RedirectType.push)
   }
 
-  const event = await prisma.event.findUnique({
-    where: {
-      id: id,
-    },
-  })
+  const { data: event } = api.event.getById.useQuery({ id })
 
   if (!event) {
     notFound()

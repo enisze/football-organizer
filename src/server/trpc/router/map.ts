@@ -3,8 +3,8 @@ import { z } from 'zod'
 
 import axios from 'axios'
 import { getAddressAndCoordinatesRedisKeys } from '../../../helpers/getAddressAndCoordinatesRedisKeys'
-import { createTRPCRouter, protectedProcedure } from '../../../utils/trpc'
 import { redis } from '../../redis/redis'
+import { createTRPCRouter, protectedProcedure } from '../trpc'
 
 const LATLONG_API_KEY = process.env.LATLONG_API_KEY
 

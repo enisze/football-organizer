@@ -8,7 +8,7 @@ import type { gmail_v1 } from 'googleapis'
 import { google } from 'googleapis'
 import { z } from 'zod'
 
-import { createTRPCRouter, protectedProcedure } from '../../../utils/trpc'
+import { createTRPCRouter, protectedProcedure } from '../trpc'
 
 const credentials: OAuth2ClientOptions = {
   clientId: process.env.GOOGLE_CLIENT_ID,

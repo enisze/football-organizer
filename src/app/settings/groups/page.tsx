@@ -1,5 +1,5 @@
+'use client'
 import { NewGroup } from '@/src/components/Groups/NewGroup'
-import { Navbar } from '@/src/components/Navigation/Navbar'
 import { authOptions } from '@/src/server/auth/authOptions'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { Container } from '@/ui/container'
@@ -39,7 +39,6 @@ const GroupSettings = async () => {
 
   return (
     <>
-      <Navbar />
       <div className="flex flex-col md:grid grid-cols-[220px_8px_auto]">
         <Separator orientation="vertical" />
         <div className="flex flex-col p-2">

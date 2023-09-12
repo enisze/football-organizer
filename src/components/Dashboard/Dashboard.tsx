@@ -1,45 +1,30 @@
-import { authOptions } from '@/src/server/auth/authOptions'
+import { api } from '@/src/server/trpc/api'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { Skeleton } from '@/ui/skeleton'
 import { addDays } from 'date-fns'
-import { getServerSession } from 'next-auth'
+import { useSession } from 'next-auth/react'
 import { notFound } from 'next/navigation'
-import { prisma } from '../../server/db/client'
 import { EventCard } from '../Events/EventCard'
 import { GroupSelector } from '../Groups/GroupSelector'
 
-export const Dashboard = async ({
-  params,
-}: {
-  params?: { groupId: string }
-}) => {
+export const Dashboard = ({ params }: { params?: { groupId: string } }) => {
   const groupId = params?.groupId
 
-  const session = await getServerSession(authOptions)
+  const { data: session } = useSession()
 
   const isAdmin = session?.user?.role === 'ADMIN'
 
-  if (!session || !session.user?.id) {
-    return {
-      redirect: {
-        destination: '/api/auth/signin',
-        permanent: false,
-      },
-    }
-  }
+  // if (!session || !session.user?.id) {
+  //   return {
+  //     redirect: {
+  //       destination: '/api/auth/signin',
+  //       permanent: false,
+  //     },
+  //   }
+  // }
 
-  const events = await prisma.event.findMany({
-    where: { groupId },
-    orderBy: { date: 'asc' },
-  })
-
-  const id = session.user.id
-
-  const groupNames = await prisma.group.findMany({
-    where: { users: { some: { id } } },
-    select: {
-      name: true,
-    },
+  const { data: events } = api.event.getByGroupId.useQuery({
+    groupId: groupId ?? '',
   })
 
   if (!events) {

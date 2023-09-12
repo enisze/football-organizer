@@ -1,5 +1,4 @@
-'use client'
-import { api } from '@/src/server/trpc/client'
+import { api } from '@/src/server/trpc/api'
 import { Button } from '@/ui/button'
 import { TextField } from '@/ui/TextField'
 import { useToast } from '@/ui/use-toast'

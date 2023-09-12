@@ -1,7 +1,7 @@
 import { Button } from '@/ui/button'
 import type { FunctionComponent } from 'react'
 import { isDateInCertainRange } from '../helpers/isDateInCertainRange'
-import { api } from '../server/trpc/server'
+import { api } from '../server/trpc/api'
 
 const paypalLink =
   'https://www.paypal.com/paypalme/enz1994?country.x=DE&locale.x=de_DE'

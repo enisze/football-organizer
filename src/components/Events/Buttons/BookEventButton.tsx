@@ -1,6 +1,4 @@
-'use client'
-
-import { api } from '@/src/server/trpc/client'
+import { api } from '@/src/server/trpc/api'
 import { Button } from '@/ui/button'
 import {
   Dialog,
@@ -15,8 +13,10 @@ import type { FunctionComponent } from 'react'
 import { useState } from 'react'
 
 export const BookEventButton: FunctionComponent<{ id: string }> = ({ id }) => {
+  const trpcContext = api.useContext()
+
   const { mutate: bookEvent } = api.event.book.useMutation({
-    // onSuccess: () => trpcContext.invalidate(),
+    onSuccess: () => trpcContext.invalidate(),
   })
 
   const [bookingDate, setBookingDate] = useState(

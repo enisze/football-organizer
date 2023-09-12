@@ -5,46 +5,42 @@ import { useToast } from '@/ui/use-toast'
 import { useSession } from 'next-auth/react'
 import { useParams } from 'next/navigation'
 
-import { Navbar } from '@/src/components/Navigation/Navbar'
-import { api } from '@/src/server/trpc/client'
+import { api } from '@/src/server/trpc/api'
 
-export default async function AddToGroup () {
+export default function AddToGroup() {
   const params = useParams()
 
   const JWT = params?.JWT as string
 
   const { toast } = useToast()
 
-  const { data } = useSession()
+  const { data: session } = useSession()
 
-  const { groupName, id, ownerName  } =await  api.group.getDataFromJWT.query(
-    { JWT },
-  )
+  const { data } = api.group.getDataFromJWT.useQuery({
+    JWT,
+  })
 
-  const users = await api.group.getUsers.query(
-    { id: id ?? '' },
-  )
+  const { data: users } = api.group.getUsers.useQuery({ id: data?.id ?? '' })
 
   const userIds = users?.map((user) => user?.id)
 
-  if (userIds?.includes(data?.user?.id)) {
+  if (userIds?.includes(session?.user?.id)) {
     return <div>Already member</div>
   }
 
-  const mutate = async ({JWT}:{JWT:string})=>{
-    await  api.group.addUserViaJWT.mutate({JWT})
-
+  const { mutate } = api.group.addUserViaJWT.useMutation({
+    onSuccess: () => {
       toast({
         title: 'Erfolgreich',
         description: 'Du wurdest der Gruppe hinzugefügt.',
       })
-}
+    },
+  })
 
   return (
     <>
-      <Navbar />
       <div className="flex flex-col justify-center items-center w-full">
-        <div>{`${ownerName} hat dich eingeladen seiner Gruppe ${groupName} beizutreten.`}</div>
+        <div>{`${data?.ownerName} hat dich eingeladen seiner Gruppe ${data?.groupName} beizutreten.`}</div>
         <Button onClick={() => mutate({ JWT })}>Beitreten</Button>
         <OrganizerLink href={'/'} className="justify-center">
           Zurück zu den Events
@@ -53,4 +49,3 @@ export default async function AddToGroup () {
     </>
   )
 }
-

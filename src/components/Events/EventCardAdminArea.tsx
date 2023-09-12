@@ -1,4 +1,4 @@
-import { api } from '@/src/server/trpc/server'
+import { api } from '@/src/server/trpc/api'
 import { Button } from '@/ui/button'
 import { SessionProvider } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
@@ -16,13 +16,15 @@ const EventCardAdminAreaRaw: FunctionComponent<EventCardAdminAreaProps> = ({
 }) => {
   const isAdmin = useIsAdmin()
 
+  const trpcContext = api.useContext()
+
   const { mutate: remind, isLoading: loadingRemind } =
     api.gmail.sendPaymentAndEventReminder.useMutation({
-      // onSuccess: () => trpcContext.invalidate(),
+      onSuccess: () => trpcContext.invalidate(),
     })
   const { mutate: cancel, isLoading: loadingCancel } =
     api.event.cancel.useMutation({
-      // onSuccess: () => trpcContext.invalidate(),
+      onSuccess: () => trpcContext.invalidate(),
     })
 
   const { data: payments, isLoading } =

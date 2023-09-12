@@ -1,4 +1,4 @@
-import { api } from '@/src/server/trpc/server'
+import { api } from '@/src/server/trpc/api'
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
 import { Formik } from 'formik'
@@ -9,12 +9,13 @@ import { selectedGroupAtom } from '../Groups/GroupSelector'
 export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
   onSubmit,
 }) => {
-
   const groupId = useAtomValue(selectedGroupAtom)
+
+  const trpcContext = api.useContext()
 
   const { mutate: createEvent } = api.event.create.useMutation({
     onSuccess: () => {
-      // trpcContext.invalidate()
+      trpcContext.invalidate()
     },
   })
 

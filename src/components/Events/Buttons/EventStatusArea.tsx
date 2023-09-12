@@ -1,5 +1,5 @@
 'use client'
-import { api } from '@/src/server/trpc/client'
+import { api } from '@/src/server/trpc/api'
 import { Button } from '@/ui/button'
 import {
   Dialog,
@@ -19,15 +19,12 @@ import { DeclineEventDialog } from './DeclineEventDialog'
 const EventStatusAreaRaw: FunctionComponent<{
   id: string
 }> = ({ id }) => {
-  // const trpcContext = trpc.useContext()
+  const trpcContext = api.useContext()
 
   const { data: session } = useSession()
 
-  const userId = session?.user?.id ?? ''
-
   const { data } = api.event.getParticipants.useQuery({
     eventId: id,
-    userId,
   })
 
   const [showLeaveModal, setShowLeaveModal] = useState(false)
@@ -37,7 +34,7 @@ const EventStatusAreaRaw: FunctionComponent<{
   const { mutate: setEventStatus } =
     api.event.setParticipatingStatus.useMutation({
       onSuccess: () => {
-        // trpcContext.invalidate()
+        trpcContext.invalidate()
       },
     })
 
@@ -54,7 +51,7 @@ const EventStatusAreaRaw: FunctionComponent<{
 
   const join = () => {
     try {
-      setEventStatus({ eventId: id, status: 'JOINED', userId })
+      setEventStatus({ eventId: id, status: 'JOINED' })
     } catch (error) {
       if (error instanceof TRPCError) {
         error.code === 'PRECONDITION_FAILED'
@@ -64,7 +61,7 @@ const EventStatusAreaRaw: FunctionComponent<{
   }
 
   const maybe = () => {
-    setEventStatus({ eventId: id, status: 'MAYBE', userId })
+    setEventStatus({ eventId: id, status: 'MAYBE' })
   }
 
   return (
@@ -117,8 +114,8 @@ const EventStatusAreaRaw: FunctionComponent<{
             variant="outline"
             color="info"
             onClick={() => {
-              setEventStatus({ eventId: id, status: 'CANCELED', userId })
-              sendEmail({ eventId: id, userId })
+              setEventStatus({ eventId: id, status: 'CANCELED' })
+              sendEmail({ eventId: id })
               setShowLeaveModal(false)
             }}
             className="w-full"

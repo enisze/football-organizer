@@ -1,6 +1,6 @@
+'use client'
 import { LoadingWrapper } from '@/src/components/LoadingWrapper'
-import { Navbar } from '@/src/components/Navigation/Navbar'
-import { api } from '@/src/server/trpc/server'
+import { api } from '@/src/server/trpc/api'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { useParams } from 'next/navigation'
 import type { FunctionComponent } from 'react'
@@ -17,7 +17,6 @@ const Oauth2Callback: FunctionComponent = () => {
 
   return (
     <>
-      <Navbar />
       <LoadingWrapper isLoading={isLoading}>
         {isSuccess && (
           <div className="flex flex-col items-center justify-center h-screen">

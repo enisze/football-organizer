@@ -1,5 +1,4 @@
 'use client'
-
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
 import {
@@ -19,8 +18,7 @@ import { useEffect, useMemo, useState } from 'react'
 import type { Group } from '@/prisma/generated/client'
 import { AddEventForm } from '@/src/components/Events/AddEventForm'
 import { selectedGroupAtom } from '@/src/components/Groups/GroupSelector'
-import { Navbar } from '@/src/components/Navigation/Navbar'
-import { api } from '@/src/server/trpc/client'
+import { api } from '@/src/server/trpc/api'
 import { Container } from '@/ui/container'
 import { useToast } from '@/ui/use-toast'
 import { useSetAtom } from 'jotai'
@@ -62,6 +60,7 @@ const GroupSettings: FunctionComponent = () => {
 
   const [open, setOpen] = useState(false)
 
+  const trpcContext = api.useContext()
 
   const { data: token } = api.group.getJWT.useQuery(
     {
@@ -80,19 +79,19 @@ const GroupSettings: FunctionComponent = () => {
 
   const { mutate: updateGroupname } = api.group.updateName.useMutation({
     onSuccess: () => {
-      // trpcContext.invalidate()
+      trpcContext.invalidate()
     },
   })
 
   const { mutate: deleteUser } = api.group.deleteUser.useMutation({
     onSuccess: () => {
-      // trpcContext.invalidate()
+      trpcContext.invalidate()
     },
   })
 
   const { mutate: deleteGroup } = api.group.delete.useMutation({
     onSuccess: () => {
-      // trpcContext.invalidate()
+      trpcContext.invalidate()
     },
   })
 
@@ -104,7 +103,6 @@ const GroupSettings: FunctionComponent = () => {
 
   return (
     <>
-      <Navbar />
       <div className="flex flex-col md:grid grid-cols-[220px_8px_auto]">
         <Separator orientation="vertical" />
 
@@ -213,7 +211,7 @@ const GroupSettings: FunctionComponent = () => {
               onClick={() => {
                 if (groupCanBeDeleted) {
                   deleteGroup(
-                    { id: groupId, ownerId: userId },
+                    { id: groupId },
                     {
                       onSuccess: () => {
                         router.push('/settings/groups')

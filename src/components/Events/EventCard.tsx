@@ -1,6 +1,6 @@
 'use client'
 import type { Event } from '@/prisma/generated/client'
-import { api } from '@/src/server/trpc/client'
+import { api } from '@/src/server/trpc/api'
 import { differenceInCalendarDays } from 'date-fns'
 import { CalendarDays, Euro } from 'lucide-react'
 import type { FunctionComponent } from 'react'

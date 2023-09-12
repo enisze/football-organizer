@@ -1,5 +1,5 @@
 import type { UserEventStatus } from '@/prisma/generated/client'
-import { api } from '@/src/server/trpc/server'
+import { api } from '@/src/server/trpc/api'
 import { Button } from '@/ui/button'
 import {
   Dialog,
@@ -25,7 +25,7 @@ const DeclineEventDialogRaw: FunctionComponent<DeclineEventDialogProps> = ({
   userStatus,
   setShowLeaveModal,
 }) => {
-  // const trpcContext = trpc.useContext()
+  const trpcContext = api.useContext()
   const [comment, setComment] = useState('')
 
   const session = useSession()
@@ -36,7 +36,7 @@ const DeclineEventDialogRaw: FunctionComponent<DeclineEventDialogProps> = ({
 
   const { mutate: setEventComment } = api.user.setEventComment.useMutation({
     onSuccess: () => {
-      // trpcContext.invalidate()
+      trpcContext.invalidate()
     },
   })
 

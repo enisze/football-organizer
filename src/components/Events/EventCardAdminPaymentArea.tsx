@@ -1,5 +1,5 @@
 'use client'
-import { api } from '@/src/server/trpc/client'
+import { api } from '@/src/server/trpc/api'
 import type { FunctionComponent } from 'react'
 import { useIsAdmin } from '../../hooks/useIsAdmin'
 

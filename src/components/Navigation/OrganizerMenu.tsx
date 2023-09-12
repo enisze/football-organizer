@@ -1,4 +1,4 @@
-import { api } from '@/src/server/trpc/server'
+import { api } from '@/src/server/trpc/api'
 import { Avatar, AvatarFallback } from '@/ui/avatar'
 import {
   DropdownMenu,

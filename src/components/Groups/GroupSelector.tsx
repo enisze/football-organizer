@@ -1,5 +1,5 @@
 'use client'
-import { api } from '@/src/server/trpc/client'
+import { api } from '@/src/server/trpc/api'
 import { Label } from '@/ui/label'
 import {
   Select,
@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from '@/ui/select'
 import { atom } from 'jotai'
-import { SessionProvider, useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import { useParams, useRouter } from 'next/navigation'
 import type { FunctionComponent } from 'react'
 import { useEffect, useRef } from 'react'
@@ -17,14 +17,13 @@ import { LoadingWrapper } from '../LoadingWrapper'
 
 export const selectedGroupAtom = atom<string | undefined>(undefined)
 
-const GroupSelectorRaw: FunctionComponent<{ owned?: boolean }> = ({
+export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
   owned = false,
 }) => {
   const { data } = useSession()
 
   const { data: groups, isLoading } = api.group.getGroupsOfUser.useQuery({
     owned: owned,
-    id: data?.user?.id,
   })
 
   const params = useParams()
@@ -62,13 +61,5 @@ const GroupSelectorRaw: FunctionComponent<{ owned?: boolean }> = ({
         </SelectContent>
       </Select>
     </LoadingWrapper>
-  )
-}
-
-export const GroupSelector = () => {
-  return (
-    <SessionProvider>
-      <GroupSelectorRaw />
-    </SessionProvider>
   )
 }
