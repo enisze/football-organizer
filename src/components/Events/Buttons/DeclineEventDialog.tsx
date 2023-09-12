@@ -10,7 +10,7 @@ import {
 } from '@/ui/dialog'
 import { TextField } from '@/ui/TextField'
 import { X } from 'lucide-react'
-import { SessionProvider, useSession } from 'next-auth/react'
+import { SessionProvider } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { useState } from 'react'
 
@@ -27,10 +27,6 @@ const DeclineEventDialogRaw: FunctionComponent<DeclineEventDialogProps> = ({
 }) => {
   const trpcContext = api.useContext()
   const [comment, setComment] = useState('')
-
-  const session = useSession()
-
-  const userId = session.data?.user?.id ?? ''
 
   const [showCommentModal, setShowCommentModal] = useState(false)
 
@@ -49,7 +45,7 @@ const DeclineEventDialogRaw: FunctionComponent<DeclineEventDialogProps> = ({
 
   const leave = () => {
     if (!payment) {
-      setEventStatus({ eventId: id, status: 'CANCELED', userId })
+      setEventStatus({ eventId: id, status: 'CANCELED' })
     } else {
       setShowLeaveModal()
     }
@@ -57,7 +53,6 @@ const DeclineEventDialogRaw: FunctionComponent<DeclineEventDialogProps> = ({
 
   const { data: payment } = api.payment.getByEventId.useQuery({
     eventId: id,
-    userId,
   })
 
   const canceledMarkColor = userStatus === 'CANCELED' ? 'text-red-500' : ''
@@ -97,7 +92,7 @@ const DeclineEventDialogRaw: FunctionComponent<DeclineEventDialogProps> = ({
             color="info"
             type="submit"
             onClick={() => {
-              setEventComment({ comment, eventId: id, userId })
+              setEventComment({ comment, eventId: id })
               setShowCommentModal(false)
             }}
             className="w-full"

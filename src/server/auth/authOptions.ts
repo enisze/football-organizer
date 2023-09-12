@@ -3,7 +3,7 @@ import { getServerSession, type NextAuthOptions } from 'next-auth'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
-import { GetServerSidePropsContext } from 'next'
+import type { GetServerSidePropsContext } from 'next'
 import DiscordProvider from 'next-auth/providers/discord'
 import GoogleProvider from 'next-auth/providers/google'
 import { prisma } from '../../server/db/client'
@@ -122,7 +122,6 @@ export const authOptions: NextAuthOptions = {
     },
   },
 }
-
 
 /**
  * Wrapper for `getServerSession` so that you don't need to import the `authOptions` in every file.

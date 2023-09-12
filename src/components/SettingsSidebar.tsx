@@ -1,14 +1,14 @@
+'use client'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { Separator } from '@/ui/separator'
 import { ArrowLeft } from 'lucide-react'
-import { getServerSession } from 'next-auth'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import type { FunctionComponent } from 'react'
-import { authOptions } from '../server/auth/authOptions'
 import { NotificationBubble } from './NotificationBubble'
 
 export const SettingsSidebar = async () => {
-  const session = await getServerSession(authOptions)
+  const { data: session } = useSession()
 
   const hasPaypalName = Boolean(session?.user?.paypalName)
 
