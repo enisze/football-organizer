@@ -1,4 +1,4 @@
-import NextAuth, { getServerSession, type NextAuthOptions } from 'next-auth'
+import { getServerSession, type NextAuthOptions } from 'next-auth'
 // Prisma adapter for NextAuth, optional and can be removed
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import CredentialsProvider from 'next-auth/providers/credentials'
@@ -134,13 +134,3 @@ export const getServerAuthSession = (ctx: {
 }) => {
   return getServerSession(ctx.req, ctx.res, authOptions)
 }
-
-// Update this whenever adding new providers so that the client can
-export const providers = ['discord'] as const
-export type OAuthProviders = (typeof providers)[number]
-
-export const {
-  handlers: { GET, POST },
-  auth,
-  CSRF_experimental,
-} = NextAuth(authOptions)
