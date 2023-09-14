@@ -1,15 +1,12 @@
 import { SpecificSettings } from '@/src/components/SettingsSidebar'
-import type { ReactNode } from 'react'
-import { ResizeEffect } from './ResizeEffect'
 
-const Settings = ({ children }: { children: ReactNode }) => {
+const SettingsLayout = ({ children }) => {
   return (
-    <>
-      <ResizeEffect />
+    <div className="flex flex-col md:grid grid-cols-[220px_8px_auto]">
       <SpecificSettings />
       {children}
-    </>
+    </div>
   )
 }
 
-export default Settings
+export default SettingsLayout

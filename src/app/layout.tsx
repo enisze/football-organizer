@@ -1,4 +1,5 @@
 import '../../styles/globals.css'
+import { Navbar } from '../components/Navigation/Navbar'
 import Providers from './Providers'
 
 export const metadata = {
@@ -17,7 +18,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="h-full dark:bg-slate-900 dark:text-slate-50 min-h-screen bg-white font-sans text-slate-900 antialiased">
-        <Providers>{children}</Providers>
+        <Providers>
+          <Navbar />
+          {children}
+        </Providers>
       </body>
     </html>
   )

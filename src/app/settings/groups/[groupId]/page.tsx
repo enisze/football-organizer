@@ -103,7 +103,7 @@ const GroupSettings: FunctionComponent = () => {
 
   return (
     <>
-      <div className="flex flex-col md:grid grid-cols-[220px_8px_auto]">
+      <div className="flex">
         <Separator orientation="vertical" />
 
         <Dialog open={open} onOpenChange={(open) => setOpen(open)}>

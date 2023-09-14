@@ -1,13 +1,15 @@
 'use client'
+import { cn } from '@/lib/utils/cn'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { Separator } from '@/ui/separator'
 import { ArrowLeft } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import type { FunctionComponent } from 'react'
 import { NotificationBubble } from './NotificationBubble'
 
-export const SettingsSidebar = async () => {
+export const SettingsSidebar = () => {
   const { data: session } = useSession()
 
   const hasPaypalName = Boolean(session?.user?.paypalName)
@@ -29,9 +31,15 @@ export const SettingsSidebar = async () => {
 }
 
 export const SpecificSettings: FunctionComponent = () => {
+  const pathname = usePathname()
+
+  const isInSettings =
+    pathname?.includes('/settings/user') ||
+    pathname?.includes('/settings/groups')
+
   return (
     <>
-      <div className="md:hidden flex flex-col">
+      <div className={cn('hidden', isInSettings && 'md:hidden flex flex-col')}>
         <Link href="/settings" className="flex gap-x-2 items-center p-5">
           <ArrowLeft />
           <h5 className="text-xl">Einstellungen</h5>
@@ -39,8 +47,7 @@ export const SpecificSettings: FunctionComponent = () => {
         <Separator />
       </div>
 
-      <div className="hidden md:block">
-        {/* @ts-expect-error Server Component */}
+      <div className={cn('flex', isInSettings && 'hidden md:flex md:flex-col')}>
         <SettingsSidebar />
       </div>
     </>
