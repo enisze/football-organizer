@@ -80,73 +80,71 @@ const Settings: FunctionComponent = () => {
   return (
     <>
       <Separator orientation="vertical" />
-      <div className="flex">
-        <div className="flex flex-col gap-y-2 p-2">
-          <h3 className="font-bold">Nutzereinstellungen</h3>
-          <div className="flex items-center space-x-2">
-            <Label>Alle Benachrichtigungen</Label>
-            <LoadingWrapper isLoading={isLoading}>
-              <Switch
-                id="notifications-enabled"
-                checked={notificationStatus?.notificationsEnabled}
-                onClick={() => {
-                  updateNotificationsEnabled({
-                    notificationsEnabled:
-                      !notificationStatus?.notificationsEnabled,
-                  })
-                }}
-              />
-            </LoadingWrapper>
-          </div>
-
-          <TextField
-            id="user-name-input"
-            type="text"
-            label={`Paypal Name`}
-            text=""
-            infoContent={
-              <div>
-                Du solltest deinen Paypal namen spezifizieren, damit dein
-                Bezahlstatus korrekt angezeigt wird.
-              </div>
-            }
-            placeholder="Paypal Name"
-            onChange={(name) => setNewPaypalName(name.target.value)}
-            value={newPaypalName}
-            withBubble={!paypalName}
-          />
-
-          <Button
-            onClick={() => {
-              updatePaypalName({ name: newPaypalName })
-            }}
-            className="w-fit"
-          >
-            Speichern
-          </Button>
-          <TextField
-            id="user-name-input"
-            type="text"
-            label={`Benutzername ${userName} eingeben um zu löschen`}
-            text=""
-            placeholder={userName}
-            onChange={(name) => setUserNameForDeletion(name.target.value)}
-            value={userNameForDeletion}
-          />
-          <Button
-            onClick={() => {
-              if (userCanBeDeleted) {
-                deleteUser()
-                router.push('/')
-              }
-            }}
-            disabled={!userCanBeDeleted}
-            className="w-fit"
-            variant="destructive"
-          >
-            Löschen
-          </Button>
+      <div className="flex flex-col gap-y-2 p-2">
+        <h3 className="font-bold">Nutzereinstellungen</h3>
+        <div className="flex items-center space-x-2">
+          <Label>Alle Benachrichtigungen</Label>
+          <LoadingWrapper isLoading={isLoading}>
+            <Switch
+              id="notifications-enabled"
+              checked={notificationStatus?.notificationsEnabled}
+              onClick={() => {
+                updateNotificationsEnabled({
+                  notificationsEnabled:
+                    !notificationStatus?.notificationsEnabled,
+                })
+              }}
+            />
+          </LoadingWrapper>
         </div>
+
+        <TextField
+          id="user-name-input"
+          type="text"
+          label={`Paypal Name`}
+          text=""
+          infoContent={
+            <div>
+              Du solltest deinen Paypal namen spezifizieren, damit dein
+              Bezahlstatus korrekt angezeigt wird.
+            </div>
+          }
+          placeholder="Paypal Name"
+          onChange={(name) => setNewPaypalName(name.target.value)}
+          value={newPaypalName}
+          withBubble={!paypalName}
+        />
+
+        <Button
+          onClick={() => {
+            updatePaypalName({ name: newPaypalName })
+          }}
+          className="w-fit"
+        >
+          Speichern
+        </Button>
+        <TextField
+          id="user-name-input"
+          type="text"
+          label={`Benutzername ${userName} eingeben um zu löschen`}
+          text=""
+          placeholder={userName}
+          onChange={(name) => setUserNameForDeletion(name.target.value)}
+          value={userNameForDeletion}
+        />
+        <Button
+          onClick={() => {
+            if (userCanBeDeleted) {
+              deleteUser()
+              router.push('/')
+            }
+          }}
+          disabled={!userCanBeDeleted}
+          className="w-fit"
+          variant="destructive"
+        >
+          Löschen
+        </Button>
       </div>
     </>
   )
