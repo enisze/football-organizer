@@ -18,14 +18,15 @@ import { type CreateNextContextOptions } from '@trpc/server/adapters/next'
 import { type Session } from 'next-auth'
 import { type OpenApiMeta } from 'trpc-openapi'
 
-import { inngest, prisma } from '../db/client'
-
+import { inngest, prisma } from './../db/client'
 type CreateContextOptions = {
   session: Session | null
   // locale?: string
 }
 
-type Meta = OpenApiMeta
+type Meta = OpenApiMeta & {
+  // featureFlag?: keyof typeof featureReleaseStatuses
+}
 
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
@@ -44,7 +45,6 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     prisma,
-
     inngest,
     // locale,
   }
@@ -56,10 +56,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = async (opts: {
-  req: CreateNextContextOptions['req']
-  res: CreateNextContextOptions['res']
-}) => {
+export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts
 
   // Get the session from the server using the getServerSession wrapper function
@@ -148,3 +145,21 @@ const enforceUserIsAuthed = trpcApi.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = trpcApi.procedure.use(enforceUserIsAuthed)
+
+// const limiter = createTRPCStoreLimiter({
+//   root: t,
+//   fingerprint: (ctx, _input) =>
+//     (ctx.req.headers['x-forwarded-for'] as string) ?? '127.0.0.1', // return the ip from the request
+//   windowMs: 20000,
+//   // hitInfo is inferred from the return type of `isBlocked`, its a number in this case
+//   message: (hitInfo) => `Too many requests, please try again later. ${hitInfo}`,
+//   max: 1,
+//   onLimit: (hitInfo, _ctx, fingerprint) => {
+//     throw new TRPCError({
+//       code: 'INTERNAL_SERVER_ERROR',
+//       message: 'Too many requests unique',
+//     })
+//   },
+// })
+
+// export const rateLimitedProcedure = t.procedure.use(limiter)
