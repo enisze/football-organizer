@@ -10,7 +10,7 @@ import { Separator } from '@/ui/separator'
 import { useAtomValue } from 'jotai'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
-import type { FunctionComponent } from 'react'
+import { useState, type FunctionComponent } from 'react'
 import { selectedGroupAtom } from '../Groups/GroupSelector'
 import { NotificationBubble } from '../NotificationBubble'
 
@@ -18,6 +18,8 @@ export const OrganizerMenu: FunctionComponent = () => {
   const { data: userData } = useSession()
 
   const selectedGroupId = useAtomValue(selectedGroupAtom)
+
+  const [open, setOpen] = useState(false)
 
   const { data: balance } = api.payment.getUserBalance.useQuery(
     { groupId: selectedGroupId ?? '' },
@@ -36,7 +38,7 @@ export const OrganizerMenu: FunctionComponent = () => {
   const second = res ? res[1]?.charAt(0) ?? 'X' : 'X'
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger className="flex items-center justify-between gap-x-2">
         <div className="relative flex">
           <Avatar className="flex items-center justify-center border-[1px]">
@@ -52,7 +54,7 @@ export const OrganizerMenu: FunctionComponent = () => {
         <DropdownMenuItem>Kontostand: {balance}€</DropdownMenuItem>
         <Separator />
 
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setOpen(!open)}>
           <div className="relative flex w-full">
             <Link href={'/settings'}>Einstellungen</Link>
             {!hasPaypalName && <NotificationBubble />}

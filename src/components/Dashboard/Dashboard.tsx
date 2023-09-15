@@ -1,10 +1,8 @@
 import { api } from '@/src/server/trpc/api'
-import { OrganizerLink } from '@/ui/OrganizerLink'
 import { addDays } from 'date-fns'
 import { useSession } from 'next-auth/react'
 import { useParams } from 'next/navigation'
 import { EventCard } from '../Events/EventCard'
-import { GroupSelector } from '../Groups/GroupSelector'
 
 export const Dashboard = () => {
   const params = useParams()
@@ -22,7 +20,6 @@ export const Dashboard = () => {
   return (
     <div className="m-8 flex flex-col gap-y-3 justify-center items-center">
       <>
-        <GroupSelector />
         <ul className="flex flex-col gap-y-2">
           {events &&
             events?.length > 0 &&
@@ -37,15 +34,6 @@ export const Dashboard = () => {
             })}
         </ul>
       </>
-      {!groupId && (
-        <div className="flex flex-col justify-center">
-          <span>Du bist noch kein Mitglied einer Gruppe</span>
-
-          <OrganizerLink href="/settings/groups" className="justify-center">
-            Grupper erstellen
-          </OrganizerLink>
-        </div>
-      )}
     </div>
   )
 }
