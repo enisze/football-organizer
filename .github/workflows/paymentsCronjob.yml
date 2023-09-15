@@ -11,12 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/cache@v3
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-
-      - name: Install Node.js and Yarn
+      - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
@@ -28,8 +23,13 @@ jobs:
           INNGEST_EVENT_KEY: ${{secrets.INNGEST_EVENT_KEY}}
           DATABASE_URL: ${{secrets.DATABASE_URL}}
 
+      - name: Install bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
       - name: Install dependencies
-        run: yarn install
+        run: bun install
         env:
           GOOGLE_CLIENT_ID: ${{secrets.GOOGLE_CLIENT_ID}}
           GOOGLE_CLIENT_SECRET: ${{secrets.GOOGLE_CLIENT_SECRET}}
@@ -39,7 +39,7 @@ jobs:
           DATABASE_URL: ${{secrets.DATABASE_URL}}
 
       - name: Run cronjob
-        run: yarn cronjob
+        run: bun cronjob
         env:
           GOOGLE_CLIENT_ID: ${{secrets.GOOGLE_CLIENT_ID}}
           GOOGLE_CLIENT_SECRET: ${{secrets.GOOGLE_CLIENT_SECRET}}
