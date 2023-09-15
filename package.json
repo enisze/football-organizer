@@ -104,6 +104,5 @@
     "ts-node": "^10.9.1",
     "tsx": "^3.12.7",
     "typescript": "^5.1.6"
-  },
-  "packageManager": "yarn@3.5.0"
+  }
 }
