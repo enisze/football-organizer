@@ -4,7 +4,7 @@ import { Dashboard } from '@/src/components/Dashboard/Dashboard'
 const MainPage = () => {
   return (
     <div className="flex flex-col pb-2">
-      <Dashboard />{' '}
+      <Dashboard />
     </div>
   )
 }
