@@ -7,7 +7,7 @@ import { useSession } from 'next-auth/react'
 import { notFound } from 'next/navigation'
 import { StatusButton } from './StatusButton'
 
-const EventPage = async ({ params }: { params: { eventId: string } }) => {
+const EventPage = ({ params }: { params: { eventId: string } }) => {
   const id = params.eventId
 
   const { data: session } = useSession()

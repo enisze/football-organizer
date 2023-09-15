@@ -42,7 +42,7 @@ const GroupSettings = () => {
                   <span>{`Pricing: ${group.pricingModel}`}</span>
 
                   <OrganizerLink
-                    href={`/settings/groups/${group.id}` as any}
+                    href={`/settings/groups/${group.id}` as never}
                     className=" flex w-full rounded-md border border-slate-300 bg-transparent mt-3 text-sm dark:border-slate-700 dark:text-slate-50"
                   >
                     Bearbeiten

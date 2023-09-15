@@ -1,9 +1,8 @@
-'use client'
 import { Button } from '@/ui/button'
 import { Link } from 'lucide-react'
 import { Hero } from '../components/Heading'
 
-const Home = async () => {
+const Home = () => {
   return (
     <div className="h-full">
       <title>Event Wizard</title>
