@@ -4,7 +4,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const {
   Decimal,
   objectEnumValues,
-  makeStrictEnum
+  makeStrictEnum,
+  Public,
 } = require('./runtime/index-browser')
 
 
@@ -13,12 +14,12 @@ const Prisma = {}
 exports.Prisma = Prisma
 
 /**
- * Prisma Client JS version: 4.12.0
- * Query Engine version: 659ef412370fa3b41cd7bf6e94587c1dfb7f67e7
+ * Prisma Client JS version: 5.0.0
+ * Query Engine version: 6b0aef69b7cdfc787f822ecd7cdc76d5f1991584
  */
 Prisma.prismaVersion = {
-  client: "4.12.0",
-  engine: "659ef412370fa3b41cd7bf6e94587c1dfb7f67e7"
+  client: "5.0.0",
+  engine: "6b0aef69b7cdfc787f822ecd7cdc76d5f1991584"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -66,8 +67,19 @@ Prisma.raw = () => {
   throw new Error(`raw is unable to be run in the browser.
 In case this error is unexpected for you, please report it in https://github.com/prisma/prisma/issues`,
 )}
-Prisma.validator = () => (val) => val
+Prisma.validator = Public.validator
 
+/**
+* Extensions
+*/
+Prisma.getExtensionContext = () => {
+  throw new Error(`Extensions.getExtensionContext is unable to be run in the browser.
+In case this error is unexpected for you, please report it in https://github.com/prisma/prisma/issues`,
+)}
+Prisma.defineExtension = () => {
+  throw new Error(`Extensions.defineExtension is unable to be run in the browser.
+In case this error is unexpected for you, please report it in https://github.com/prisma/prisma/issues`,
+)}
 
 /**
  * Shorthand utilities for JSON filtering
@@ -85,26 +97,23 @@ Prisma.NullTypes = {
 /**
  * Enums
  */
-// Based on
-// https://github.com/microsoft/TypeScript/issues/3192#issuecomment-261720275
-function makeEnum(x) { return x; }
 
-exports.Prisma.AccountScalarFieldEnum = makeEnum({
-  id: 'id',
-  userId: 'userId',
-  type: 'type',
-  provider: 'provider',
-  providerAccountId: 'providerAccountId',
-  refresh_token: 'refresh_token',
-  access_token: 'access_token',
-  expires_at: 'expires_at',
-  token_type: 'token_type',
-  scope: 'scope',
-  id_token: 'id_token',
-  session_state: 'session_state'
+exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
+  ReadUncommitted: 'ReadUncommitted',
+  ReadCommitted: 'ReadCommitted',
+  RepeatableRead: 'RepeatableRead',
+  Serializable: 'Serializable'
 });
 
-exports.Prisma.EventScalarFieldEnum = makeEnum({
+exports.Prisma.TokensScalarFieldEnum = {
+  id: 'id',
+  access_token: 'access_token',
+  refresh_token: 'refresh_token',
+  expiry_date: 'expiry_date',
+  ownerId: 'ownerId'
+};
+
+exports.Prisma.EventScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -117,27 +126,18 @@ exports.Prisma.EventScalarFieldEnum = makeEnum({
   status: 'status',
   maxParticipants: 'maxParticipants',
   groupId: 'groupId'
-});
+};
 
-exports.Prisma.GroupScalarFieldEnum = makeEnum({
-  id: 'id',
-  ownerId: 'ownerId',
-  name: 'name',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  pricingModel: 'pricingModel'
-});
-
-exports.Prisma.ParticipantsOnEventsScalarFieldEnum = makeEnum({
+exports.Prisma.ParticipantsOnEventsScalarFieldEnum = {
   eventId: 'eventId',
   date: 'date',
   id: 'id',
   comment: 'comment',
   paymentId: 'paymentId',
   userEventStatus: 'userEventStatus'
-});
+};
 
-exports.Prisma.PaymentScalarFieldEnum = makeEnum({
+exports.Prisma.PaymentScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -146,42 +146,40 @@ exports.Prisma.PaymentScalarFieldEnum = makeEnum({
   amount: 'amount',
   paymentDate: 'paymentDate',
   gmailMailId: 'gmailMailId'
-});
+};
 
-exports.Prisma.SessionScalarFieldEnum = makeEnum({
+exports.Prisma.AccountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  provider: 'provider',
+  providerAccountId: 'providerAccountId',
+  refresh_token: 'refresh_token',
+  access_token: 'access_token',
+  expires_at: 'expires_at',
+  token_type: 'token_type',
+  scope: 'scope',
+  id_token: 'id_token',
+  session_state: 'session_state'
+};
+
+exports.Prisma.SessionScalarFieldEnum = {
   id: 'id',
   sessionToken: 'sessionToken',
   userId: 'userId',
   expires: 'expires'
-});
+};
 
-exports.Prisma.SortOrder = makeEnum({
-  asc: 'asc',
-  desc: 'desc'
-});
-
-exports.Prisma.TokensScalarFieldEnum = makeEnum({
+exports.Prisma.GroupScalarFieldEnum = {
   id: 'id',
-  access_token: 'access_token',
-  refresh_token: 'refresh_token',
-  expiry_date: 'expiry_date',
-  ownerId: 'ownerId'
-});
+  ownerId: 'ownerId',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  pricingModel: 'pricingModel'
+};
 
-exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
-  ReadUncommitted: 'ReadUncommitted',
-  ReadCommitted: 'ReadCommitted',
-  RepeatableRead: 'RepeatableRead',
-  Serializable: 'Serializable'
-});
-
-exports.Prisma.UserOnGroupsScalarFieldEnum = makeEnum({
-  id: 'id',
-  groupId: 'groupId',
-  role: 'role'
-});
-
-exports.Prisma.UserScalarFieldEnum = makeEnum({
+exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
   email: 'email',
@@ -192,39 +190,55 @@ exports.Prisma.UserScalarFieldEnum = makeEnum({
   password: 'password',
   notificationsEnabled: 'notificationsEnabled',
   paypalName: 'paypalName'
-});
+};
 
-exports.Prisma.VerificationTokenScalarFieldEnum = makeEnum({
+exports.Prisma.UserOnGroupsScalarFieldEnum = {
+  id: 'id',
+  groupId: 'groupId',
+  role: 'role'
+};
+
+exports.Prisma.VerificationTokenScalarFieldEnum = {
   identifier: 'identifier',
   token: 'token',
   expires: 'expires'
-});
-exports.EventStatus = makeEnum({
+};
+
+exports.Prisma.SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+exports.EventStatus = {
   CANCELED: 'CANCELED',
   CREATED: 'CREATED',
   BOOKED: 'BOOKED'
-});
+};
 
-exports.GroupRole = makeEnum({
-  OWNER: 'OWNER',
-  ADMIN: 'ADMIN',
-  USER: 'USER'
-});
-
-exports.PricingModel = makeEnum({
-  FREE: 'FREE',
-  SUPPORTER: 'SUPPORTER',
-  PREMIUM: 'PREMIUM'
-});
-
-exports.UserEventStatus = makeEnum({
+exports.UserEventStatus = {
   MAYBE: 'MAYBE',
   AVAILABLE: 'AVAILABLE',
   JOINED: 'JOINED',
   CANCELED: 'CANCELED'
-});
+};
 
-exports.Prisma.ModelName = makeEnum({
+exports.PricingModel = {
+  FREE: 'FREE',
+  SUPPORTER: 'SUPPORTER',
+  PREMIUM: 'PREMIUM'
+};
+
+exports.GroupRole = {
+  OWNER: 'OWNER',
+  ADMIN: 'ADMIN',
+  USER: 'USER'
+};
+
+exports.Prisma.ModelName = {
   Tokens: 'Tokens',
   Event: 'Event',
   ParticipantsOnEvents: 'ParticipantsOnEvents',
@@ -235,7 +249,7 @@ exports.Prisma.ModelName = makeEnum({
   User: 'User',
   UserOnGroups: 'UserOnGroups',
   VerificationToken: 'VerificationToken'
-});
+};
 
 /**
  * Create the Client

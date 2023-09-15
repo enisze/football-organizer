@@ -1,4 +1,5 @@
-import { Button } from '@/ui/base/Button'
+'use client'
+import { Button } from '@/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -6,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/ui/base/Dialog'
+} from '@/ui/dialog'
 import type { CalendarOptions } from 'datebook'
 import { GoogleCalendar, ICalendar, OutlookCalendar } from 'datebook'
 import { CalendarPlus } from 'lucide-react'
@@ -70,8 +71,7 @@ export const AddToCalendarButton: FunctionComponent<
 
         <div className="flex flex-col gap-y-2">
           <Button
-            variant="subtle"
-            className="bg-[#73C8A9]"
+            variant="outline"
             onClick={() => {
               icalendar.download()
             }}
@@ -80,8 +80,7 @@ export const AddToCalendarButton: FunctionComponent<
             ICal Kalendar
           </Button>
           <Button
-            variant="subtle"
-            className="bg-[#73C8A9]"
+            variant="outline"
             aria-label="google-calendar"
             onClick={() => {
               window.open(googleLink)
@@ -91,8 +90,7 @@ export const AddToCalendarButton: FunctionComponent<
           </Button>
 
           <Button
-            variant="subtle"
-            className="bg-[#73C8A9]"
+            variant="outline"
             aria-label="outlook-calendar"
             onClick={() => {
               window.open(outlookLink)

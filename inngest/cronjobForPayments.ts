@@ -1,6 +1,5 @@
 import type { gmail_v1 } from 'googleapis'
 import { google } from 'googleapis'
-import { PrismaClient } from '../prisma/generated/client'
 import { getEuroAmount } from '../src/helpers/getEuroAmount'
 
 import { isDateInCertainRange } from '@/src/helpers/isDateInCertainRange'
@@ -8,6 +7,7 @@ import { differenceInDays, subDays } from 'date-fns'
 import type { OAuth2ClientOptions } from 'google-auth-library'
 import { OAuth2Client } from 'google-auth-library'
 import type { Event, Payment } from '../prisma/generated/client'
+import { prisma } from '../src/server/db/client'
 import { inngest } from './inngestClient'
 
 const asyncForEach = async <T>(
@@ -26,11 +26,9 @@ const asyncForEach = async <T>(
   }
 }
 
-const prisma = new PrismaClient()
-
 export const cronJob = inngest.createFunction(
   { name: 'Cronjob for payments' },
-  { cron: '0 11,20 * * *' },
+  { cron: '0 10 * * *' },
   ({ step }) => {
     runCron(step)
   },
@@ -165,8 +163,8 @@ const runCron = async (step?: any) => {
 }
 
 const credentials: OAuth2ClientOptions = {
-  clientId: process.env.GMAIL_CLIENT_ID,
-  clientSecret: process.env.GMAIL_CLIENT_SECRET,
+  clientId: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   redirectUri: process.env.GMAIL_REDIRECT_URIS,
 }
 
@@ -179,6 +177,7 @@ const getPaypalEmails = async (
   ownerEmail: string,
   ownerName: string,
 ) => {
+  console.log(ownerId)
   const token = await prisma.tokens.findFirst({ where: { ownerId } })
 
   if (!token) {

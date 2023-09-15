@@ -1,28 +1,21 @@
-import { Button } from '@/ui/base/Button'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/ui/base/Dialog'
+'use client'
+
+import { Button } from '@/ui/button'
 import { ThemeToggle } from '@/ui/theme-toggle'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { usePathname, useRouter } from 'next/navigation'
 import type { FunctionComponent } from 'react'
-import { useState } from 'react'
-import { LoginForm } from '../Authentication/LoginForm'
 import { Heading } from '../Heading'
 import { OrganizerMenu } from './OrganizerMenu'
 
 export const Navbar: FunctionComponent = () => {
-  const [open, setOpen] = useState(false)
+  const pathname = usePathname()
 
   const router = useRouter()
 
   const onDashboard =
-    router.pathname.includes('/group') && !router.pathname.includes('/settings')
+    pathname?.includes('/group') && !pathname?.includes('/settings')
 
   const { data } = useSession()
 
@@ -35,22 +28,16 @@ export const Navbar: FunctionComponent = () => {
           {/* <Link href={'/pricing'}>Pricing</Link> */}
           <OrganizerMenu />
 
-          <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
-            <DialogTrigger>
-              {!data?.user && <Button>Login / Registrieren</Button>}
-            </DialogTrigger>
-
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Logge dich ein</DialogTitle>
-              </DialogHeader>
-              <LoginForm
-                onSubmit={() => {
-                  setOpen(false)
-                }}
-              />
-            </DialogContent>
-          </Dialog>
+          {!data?.user && (
+            <Button
+              variant="outline"
+              onClick={() => {
+                router.push('/api/auth/signin')
+              }}
+            >
+              Login / Registrieren
+            </Button>
+          )}
 
           {!onDashboard && !!data && <Link href="/group">Dashboard</Link>}
 
@@ -60,5 +47,3 @@ export const Navbar: FunctionComponent = () => {
     </header>
   )
 }
-
-export default Navbar

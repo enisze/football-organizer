@@ -8,10 +8,6 @@ import { ContainerBox } from './components/ContainerBox'
 import { EventTemplate } from './components/EventTemplate'
 import { paypalLink } from './helpers/constants'
 
-const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : ''
-
 export const EventReminder = ({
   event = { id: '1', bookingDate: new Date(), maxParticipants: 10 },
   userName = 'Test',
@@ -21,14 +17,17 @@ export const EventReminder = ({
   userName: string
   participantsAmount: number
 }) => {
-  const { id, bookingDate } = event
+  const { id, date } = event
   const eventLink = process.env.NEXT_PUBLIC_BASE_URL + '/events/' + id
 
   return (
     <Tailwind>
       <Head />
       <Preview>
-        {`Teilnehmer ${(event.maxParticipants ?? 10) - participantsAmount}`}
+        {`Noch ${
+          (event.maxParticipants ?? 10) - participantsAmount
+        } freie Plätze am ${date?.toLocaleDateString()}
+          `}
       </Preview>
       <Body className="bg-white text-black font-sans">
         <ContainerBox className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] w-[465px]">

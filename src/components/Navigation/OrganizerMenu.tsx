@@ -1,16 +1,16 @@
-import { Avatar, AvatarFallback } from '@/ui/base/Avatar'
+import { api } from '@/src/server/trpc/api'
+import { Avatar, AvatarFallback } from '@/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/ui/base/DropDownMenu'
-import { Separator } from '@/ui/base/Separator'
+} from '@/ui/dropdown-menu'
+import { Separator } from '@/ui/separator'
 import { useAtomValue } from 'jotai'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
-import type { FunctionComponent } from 'react'
-import { trpc } from '../../utils/trpc'
+import { useState, type FunctionComponent } from 'react'
 import { selectedGroupAtom } from '../Groups/GroupSelector'
 import { NotificationBubble } from '../NotificationBubble'
 
@@ -19,7 +19,9 @@ export const OrganizerMenu: FunctionComponent = () => {
 
   const selectedGroupId = useAtomValue(selectedGroupAtom)
 
-  const { data: balance } = trpc.payment.getUserBalance.useQuery(
+  const [open, setOpen] = useState(false)
+
+  const { data: balance } = api.payment.getUserBalance.useQuery(
     { groupId: selectedGroupId ?? '' },
     {
       enabled: Boolean(userData) && Boolean(selectedGroupId),
@@ -36,7 +38,7 @@ export const OrganizerMenu: FunctionComponent = () => {
   const second = res ? res[1]?.charAt(0) ?? 'X' : 'X'
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger className="flex items-center justify-between gap-x-2">
         <div className="relative flex">
           <Avatar className="flex items-center justify-center border-[1px]">
@@ -52,7 +54,7 @@ export const OrganizerMenu: FunctionComponent = () => {
         <DropdownMenuItem>Kontostand: {balance}€</DropdownMenuItem>
         <Separator />
 
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setOpen(!open)}>
           <div className="relative flex w-full">
             <Link href={'/settings'}>Einstellungen</Link>
             {!hasPaypalName && <NotificationBubble />}

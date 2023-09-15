@@ -1,79 +1,39 @@
-import type { FunctionComponent } from 'react'
-import { trpc } from '../../utils/trpc'
-
-import { OrganizerLink } from '@/ui/base/OrganizerLink'
+import { api } from '@/src/server/trpc/api'
+import { addDays } from 'date-fns'
+import { useSession } from 'next-auth/react'
+import { useParams } from 'next/navigation'
 import { EventCard } from '../Events/EventCard'
-import { GroupSelector } from '../Groups/GroupSelector'
-import { LoadingWrapper } from '../LoadingWrapper'
 
-export const Dashboard: FunctionComponent<{ groupId?: string }> = ({
-  groupId,
-}) => {
-  const {
-    data: events,
-    isLoading,
-    isFetching,
-  } = trpc.event.getAllByGroup.useQuery(
-    {
-      groupId: groupId ?? '',
-    },
-    { enabled: Boolean(groupId) },
-  )
+export const Dashboard = () => {
+  const params = useParams()
 
-  const { data: groups, isLoading: groupsLoading } =
-    trpc.group.getGroupsOfUser.useQuery({
-      owned: false,
-    })
+  const groupId = params?.groupId as string
 
-  const loading = groupsLoading || (isLoading && isFetching)
+  const { data: session } = useSession()
 
-  if (loading)
-    return (
-      <div className="flex justify-center m-8">
-        <LoadingWrapper isLoading={loading} />
-      </div>
-    )
+  const isAdmin = session?.user?.role === 'ADMIN'
+
+  const { data: events } = api.event.getByGroupId.useQuery({
+    groupId: groupId ?? '',
+  })
 
   return (
     <div className="m-8 flex flex-col gap-y-3 justify-center items-center">
-      {groups && groups?.length > 0 && (
-        <>
-          <GroupSelector />
+      <>
+        <ul className="flex flex-col gap-y-2">
+          {events &&
+            events?.length > 0 &&
+            events.map((event) => {
+              if (addDays(event.date, 1) < new Date() && !isAdmin) return null
 
-          {groupId && (
-            <LoadingWrapper isLoading={isLoading}>
-              <ul className="flex flex-col gap-y-2">
-                {events && events?.length > 0 ? (
-                  events.map((event) => {
-                    const { participants, ...realEvent } = event
-                    return (
-                      <li key={realEvent.id}>
-                        <EventCard
-                          event={realEvent}
-                          participants={participants}
-                        />
-                      </li>
-                    )
-                  })
-                ) : (
-                  <div className="flex justify-center">
-                    <span>Keine Events</span>
-                  </div>
-                )}
-              </ul>
-            </LoadingWrapper>
-          )}
-        </>
-      )}
-      {groups && groups?.length < 1 && (
-        <div className="flex flex-col justify-center">
-          <span>Du bist noch kein Mitglied einer Gruppe</span>
-
-          <OrganizerLink href="/settings/groups" className="justify-center">
-            Grupper erstellen
-          </OrganizerLink>
-        </div>
-      )}
+              return (
+                <li key={event.id}>
+                  <EventCard event={event} />
+                </li>
+              )
+            })}
+        </ul>
+      </>
     </div>
   )
 }

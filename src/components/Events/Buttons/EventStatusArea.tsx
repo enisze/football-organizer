@@ -1,57 +1,53 @@
-import type { ParticipantsOnEvents } from '@/prisma/generated/client'
-import { trpc } from '@/src/utils/trpc'
-import { Button } from '@/ui/base/Button'
+'use client'
+import { api } from '@/src/server/trpc/api'
+import { Button } from '@/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/ui/base/Dialog'
-import { TextField } from '@/ui/base/TextField'
-import { DialogTrigger } from '@radix-ui/react-dialog'
+} from '@/ui/dialog'
 import { TRPCError } from '@trpc/server'
-import { Check, XIcon } from 'lucide-react'
-import { useSession } from 'next-auth/react'
+import { Check } from 'lucide-react'
+import { SessionProvider, useSession } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { useState } from 'react'
 import { QuestionMark } from '../../QuestionMark'
+import { DeclineEventDialog } from './DeclineEventDialog'
 
-export const EventStatusArea: FunctionComponent<{
+const EventStatusAreaRaw: FunctionComponent<{
   id: string
-  participants: ParticipantsOnEvents[]
-}> = ({ id, participants }) => {
-  const trpcContext = trpc.useContext()
+}> = ({ id }) => {
+  const trpcContext = api.useContext()
 
   const { data: session } = useSession()
 
-  const { mutate: setEventComment } = trpc.user.setEventComment.useMutation({
-    onSuccess: () => {
-      trpcContext.invalidate()
-    },
+  const { data } = api.event.getParticipants.useQuery({
+    eventId: id,
   })
 
-  const [comment, setComment] = useState('')
-
-  const [showCommentModal, setShowCommentModal] = useState(false)
-
-  const userStatus = participants.find(
-    (user) => user.id === session?.user?.id,
-  )?.userEventStatus
-
-  const checkMarkColor = userStatus === 'JOINED' ? 'text-green-500' : ''
-  const maybeMarkColor = userStatus === 'MAYBE' ? '!fill-yellow-500' : ''
-  const canceledMarkColor = userStatus === 'CANCELED' ? 'text-red-500' : ''
-
   const [showLeaveModal, setShowLeaveModal] = useState(false)
-  const { mutate: sendEmail } = trpc.gmail.sendPaidButCancledMail.useMutation()
+
+  const { mutate: sendEmail } = api.gmail.sendPaidButCancledMail.useMutation()
 
   const { mutate: setEventStatus } =
-    trpc.event.setParticipatingStatus.useMutation({
+    api.event.setParticipatingStatus.useMutation({
       onSuccess: () => {
         trpcContext.invalidate()
       },
     })
+
+  if (!data) return null
+
+  const { participants } = data
+
+  const userStatus = participants.find(
+    (participant) => participant.user.id === session?.user?.id,
+  )?.userEventStatus
+
+  const checkMarkColor = userStatus === 'JOINED' ? 'text-green-500' : ''
+  const maybeMarkColor = userStatus === 'MAYBE' ? '!fill-yellow-500' : ''
 
   const join = () => {
     try {
@@ -61,16 +57,6 @@ export const EventStatusArea: FunctionComponent<{
         error.code === 'PRECONDITION_FAILED'
       }
       alert('Leider ist kein Platz mehr frei :( ')
-    }
-  }
-
-  const { data: payment } = trpc.payment.getByEventId.useQuery({ eventId: id })
-
-  const leave = () => {
-    if (!payment) {
-      setEventStatus({ eventId: id, status: 'CANCELED' })
-    } else {
-      setShowLeaveModal(true)
     }
   }
 
@@ -105,50 +91,11 @@ export const EventStatusArea: FunctionComponent<{
           />
         </Button>
 
-        <Dialog
-          open={showCommentModal}
-          onOpenChange={(open) => setShowCommentModal(open)}
-        >
-          <DialogTrigger asChild>
-            <Button
-              aria-label="cancel-button"
-              variant="outline"
-              onClick={leave}
-              className="w-full"
-            >
-              <XIcon className={canceledMarkColor} />
-            </Button>
-          </DialogTrigger>
-
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                <h2 id="modal-title">Bitte gib einen Grund an (optional)</h2>
-              </DialogTitle>
-            </DialogHeader>
-            <div className="flex flex-col w-full gap-y-2">
-              <TextField
-                label="Warum kannst du nicht teilnehmen?"
-                text={''}
-                onChange={(e) => setComment(e.target.value)}
-                maxLength={35}
-              />
-
-              <Button
-                variant="outline"
-                color="info"
-                type="submit"
-                onClick={() => {
-                  setEventComment({ comment, eventId: id })
-                  setShowCommentModal(false)
-                }}
-                className="w-full"
-              >
-                Speichern
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <DeclineEventDialog
+          id={id}
+          userStatus={userStatus}
+          setShowLeaveModal={() => setShowLeaveModal(true)}
+        />
       </div>
       <DialogContent>
         <DialogHeader>
@@ -187,5 +134,13 @@ export const EventStatusArea: FunctionComponent<{
         </div>
       </DialogContent>
     </Dialog>
+  )
+}
+
+export const EventStatusArea: FunctionComponent<{ id: string }> = ({ id }) => {
+  return (
+    <SessionProvider>
+      <EventStatusAreaRaw id={id} />
+    </SessionProvider>
   )
 }

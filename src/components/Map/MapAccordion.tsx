@@ -1,9 +1,10 @@
+'use client'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/ui/base/Accordion'
+} from '@/ui/accordion'
 import { MapPin } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import type { FunctionComponent } from 'react'

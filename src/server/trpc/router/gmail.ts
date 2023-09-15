@@ -1,4 +1,3 @@
-import { sendGroupRequestEmail } from '@/inngest/sendGroupRequestEmail'
 import { sendPaidButCanceledMail } from '@/inngest/sendPaidButCanceledMail'
 import { sendWelcomeMail } from '@/inngest/sendWelcomeMail'
 import { TRPCError } from '@trpc/server'
@@ -9,11 +8,11 @@ import type { gmail_v1 } from 'googleapis'
 import { google } from 'googleapis'
 import { z } from 'zod'
 
-import { protectedProcedure, rateLimitedProcedure, router } from '../trpc'
+import { createTRPCRouter, protectedProcedure } from '../trpc'
 
 const credentials: OAuth2ClientOptions = {
-  clientId: process.env.GMAIL_CLIENT_ID,
-  clientSecret: process.env.GMAIL_CLIENT_SECRET,
+  clientId: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   redirectUri: process.env.GMAIL_REDIRECT_URIS,
 }
 
@@ -23,7 +22,7 @@ const PAYPAL_LABEL = 'Label_3926228921657449356'
 
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
-export const gmailRouter = router({
+export const gmailRouter = createTRPCRouter({
   generateAuthLink: protectedProcedure.query(() => {
     const authorizeUrl = oAuth2Client.generateAuthUrl({
       access_type: 'offline',
@@ -148,11 +147,11 @@ export const gmailRouter = router({
       return await sendWelcomeMail(user)
     },
   ),
-  sendGroupRequestMail: rateLimitedProcedure
-    .input(z.object({ email: z.string().email() }))
-    .mutation(async ({ input: { email } }) => {
-      return await sendGroupRequestEmail({ requester: email })
-    }),
+  // sendGroupRequestMail: rateLimitedProcedure
+  //   .input(z.object({ email: z.string().email() }))
+  //   .mutation(async ({ input: { email } }) => {
+  //     return await sendGroupRequestEmail({ requester: email })
+  //   }),
   sendPaymentAndEventReminder: protectedProcedure
     .input(z.object({ eventId: z.string() }))
     .mutation(async ({ input, ctx: { inngest } }) => {

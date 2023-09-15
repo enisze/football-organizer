@@ -1,10 +1,10 @@
 import { TRPCError } from '@trpc/server'
 import { decode } from 'jsonwebtoken'
 import { z } from 'zod'
-import { protectedProcedure, publicProcedure, router } from '../trpc'
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
 import { verifyJWT } from '../verifyJWT'
 
-export const userRouter = router({
+export const userRouter = createTRPCRouter({
   cancelEvent: protectedProcedure
     .input(z.object({ eventId: z.string() }))
     .query(async ({ ctx: { prisma, session }, input }) => {
@@ -27,16 +27,26 @@ export const userRouter = router({
       const { eventId, ids } = input
 
       const res = await Promise.all(
-        ids.map((id) =>
-          prisma.participantsOnEvents.findUnique({
+        ids.map(async (id) => {
+          const a = await prisma.user.findUnique({
+            where: { id },
+          })
+
+          if (!a) {
+            await prisma.participantsOnEvents.deleteMany({ where: { id } })
+            return
+          }
+
+          const user = prisma.participantsOnEvents.findUnique({
             where: { id_eventId: { eventId, id } },
             select: {
               userEventStatus: true,
               user: { select: { name: true, id: true } },
               event: { select: { id: true } },
             },
-          }),
-        ),
+          })
+          return user
+        }),
       )
 
       return res

@@ -1,45 +1,48 @@
-import type { ParticipantsOnEvents } from '@/prisma/generated/client'
-import { trpc } from '@/src/utils/trpc'
+'use client'
+import { api } from '@/src/server/trpc/api'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/ui/base/Accordion'
+} from '@/ui/accordion'
 import { User } from 'lucide-react'
+import { SessionProvider } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { AvatarStatus } from './AvatarStatus'
 import { EventCardAdminPaymentArea } from './EventCardAdminPaymentArea'
 
-export const ParticipantsArea: FunctionComponent<{
-  participants: ParticipantsOnEvents[]
+type ParticipantsAreaProps = {
   eventId: string
   maxParticipants?: number
-}> = ({ participants, eventId, maxParticipants }) => {
-  const joinedUsers = participants.filter(
-    (participant) => participant.userEventStatus === 'JOINED',
-  )
-  const canceledUsers = participants.filter(
-    (participant) => participant.userEventStatus === 'CANCELED',
-  )
+}
 
-  const maybeUsers = participants.filter(
-    (participant) => participant.userEventStatus === 'MAYBE',
-  )
-  const { data: users } = trpc.user.getUserNamesByIds.useQuery({
-    ids: participants.map((user) => user.id),
+const ParticipantsAreaRaw: FunctionComponent<ParticipantsAreaProps> = ({
+  eventId,
+  maxParticipants,
+}) => {
+  const { data } = api.event.getParticipants.useQuery({
     eventId,
   })
+
+  if (!data) return null
+
+  const {
+    joinedUsersAmount,
+    maybeUsersAmount,
+    canceledUsersAmount,
+    participants,
+  } = data
 
   const allUsersLength = participants.length
 
   const joinedWidth = {
-    width: `${(joinedUsers.length / allUsersLength) * 100}%`,
+    width: `${(joinedUsersAmount / allUsersLength) * 100}%`,
   }
-  const maybeWidth = { width: `${(maybeUsers.length / allUsersLength) * 100}%` }
+  const maybeWidth = { width: `${(maybeUsersAmount / allUsersLength) * 100}%` }
 
   const canceledWidth = {
-    width: `${(canceledUsers.length / allUsersLength) * 100}%`,
+    width: `${(canceledUsersAmount / allUsersLength) * 100}%`,
   }
 
   return (
@@ -51,63 +54,71 @@ export const ParticipantsArea: FunctionComponent<{
       >
         <div className="flex gap-x-1 items-center">
           <User className="h-4 w-4 opacity-70 flex-none" />
-          <span>{`${joinedUsers.length}/${maxParticipants} Teilnehmer`}</span>
+          <span>{`${joinedUsersAmount}/${maxParticipants} Teilnehmer`}</span>
         </div>
 
         {allUsersLength > 0 && (
           <AccordionTrigger className="p-0 hover:no-underline">
             <div
-              className={`rounded flex border w-full bg-gradient-to-b from mr-1`}
+              className="rounded flex border w-full mr-1"
+              style={{ border: 'solid' }}
             >
-              <div
-                className={`bg-green-400 overflow-hidden`}
-                style={joinedWidth}
-              >
-                {joinedUsers.length}
+              <div className="bg-green-400 overflow-hidden" style={joinedWidth}>
+                {joinedUsersAmount}
               </div>
               <div className="bg-yellow-400 overflow-hidden" style={maybeWidth}>
-                {maybeUsers.length}
+                {maybeUsersAmount}
               </div>
               <div className="bg-red-400 overflow-hidden" style={canceledWidth}>
-                {canceledUsers.length}
+                {canceledUsersAmount}
               </div>
             </div>
           </AccordionTrigger>
         )}
         <AccordionContent className="[&>div]:pb-0 [&>div]:pt-2">
           <div className="flex flex-col gap-y-1">
-            {users &&
-              users.map((participant) => {
-                const res = participant?.user?.name?.split(' ') as string[]
-                const first = res[0]?.charAt(0) ?? 'X'
-                const second = res[1]?.charAt(0) ?? 'X'
+            {participants.map((participant) => {
+              const res = participant?.user?.name?.split(' ') as string[]
 
-                const user = participants.find(
-                  (user) => user.id === participant?.user?.id,
-                )
+              if (!res) return null
+              const first = res[0]?.charAt(0) ?? 'X'
+              const second = res[1]?.charAt(0) ?? 'X'
 
-                return (
-                  <div
-                    key={participant?.user.id}
-                    className="flex items-center gap-x-2"
-                  >
-                    <AvatarStatus
-                      name={participant?.user.name ?? ''}
-                      shortName={`${first}${second}`}
-                      userEventStatus={participant?.userEventStatus}
-                    />
+              return (
+                <div
+                  key={participant?.user.id}
+                  className="flex items-center gap-x-2"
+                >
+                  <AvatarStatus
+                    name={participant?.user.name ?? ''}
+                    shortName={`${first}${second}`}
+                    userEventStatus={participant?.userEventStatus}
+                  />
 
-                    <span>{user?.comment}</span>
-                    <EventCardAdminPaymentArea
-                      eventId={eventId}
-                      userId={participant?.user.id ?? ''}
-                    />
-                  </div>
-                )
-              })}
+                  <EventCardAdminPaymentArea
+                    eventId={eventId}
+                    userId={participant?.user.id ?? ''}
+                  />
+                </div>
+              )
+            })}
           </div>
         </AccordionContent>
       </AccordionItem>
     </Accordion>
+  )
+}
+
+export const ParticipantsArea: FunctionComponent<ParticipantsAreaProps> = ({
+  eventId,
+  maxParticipants,
+}) => {
+  return (
+    <SessionProvider>
+      <ParticipantsAreaRaw
+        eventId={eventId}
+        maxParticipants={maxParticipants}
+      />
+    </SessionProvider>
   )
 }

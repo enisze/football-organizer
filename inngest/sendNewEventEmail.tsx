@@ -1,10 +1,9 @@
 import NewEvent from '@/emails/NewEvent'
-import { PrismaClient } from '@/prisma/generated/client'
 import { render } from '@react-email/components'
 import { sendEmail } from './createSendEmail'
 import { inngest } from './inngestClient'
 
-const prisma = new PrismaClient()
+import { prisma } from '../src/server/db/client'
 
 export const sendNewEventEmail = inngest.createFunction(
   { name: 'Send new Event Email' },

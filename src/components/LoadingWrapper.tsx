@@ -1,4 +1,5 @@
-import { Progress } from '@/ui/base/Progress'
+'use client'
+import { Progress } from '@/ui/progress'
 import type { FunctionComponent, PropsWithChildren } from 'react'
 import { useEffect, useState } from 'react'
 

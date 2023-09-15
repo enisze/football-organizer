@@ -4,9 +4,18 @@ import { z } from 'zod'
 import { getAddressAndCoordinatesRedisKeys } from '../../../helpers/getAddressAndCoordinatesRedisKeys'
 import { redis } from '../../redis/redis'
 
-import { protectedProcedure, router } from '../trpc'
+import { createTRPCRouter, protectedProcedure } from '../trpc'
 
-export const eventRouter = router({
+export const eventRouter = createTRPCRouter({
+  getById: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx: { prisma }, input }) => {
+      return await prisma.event.findUnique({
+        where: { id: input.id },
+        include: { participants: true },
+      })
+    }),
+
   create: protectedProcedure
     .input(
       z
@@ -36,30 +45,44 @@ export const eventRouter = router({
 
       return event
     }),
-  getAllByGroup: protectedProcedure
-    .input(
-      z.object({
-        groupId: z.string(),
-      }),
-    )
+
+  getParticipants: protectedProcedure
+    .input(z.object({ eventId: z.string() }))
     .query(async ({ ctx, input }) => {
-      const { groupId } = input
-      return await ctx.prisma.event.findMany({
-        where: { groupId },
-        include: { participants: true },
+      const userId = ctx.session.user.id
+
+      if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED' })
+
+      const participants = await ctx.prisma.participantsOnEvents.findMany({
+        where: { eventId: input.eventId },
+        select: {
+          userEventStatus: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
       })
-    }),
-  getById: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      return await ctx.prisma.event.findUnique({
-        where: { id: input.id },
-        include: { participants: true },
-      })
+
+      const joinedUsers = participants.filter(
+        (participant) => participant.userEventStatus === 'JOINED',
+      )
+      const canceledUsers = participants.filter(
+        (participant) => participant.userEventStatus === 'CANCELED',
+      )
+
+      const maybeUsers = participants.filter(
+        (participant) => participant.userEventStatus === 'MAYBE',
+      )
+
+      return {
+        participants,
+        joinedUsersAmount: joinedUsers.length,
+        canceledUsersAmount: canceledUsers.length,
+        maybeUsersAmount: maybeUsers.length,
+      }
     }),
   setParticipatingStatus: protectedProcedure
     .input(
@@ -71,7 +94,10 @@ export const eventRouter = router({
     .mutation(async ({ ctx: { prisma, session }, input }) => {
       const { eventId, status } = input
       const userId = session.user.id
+
       if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED' })
+      const user = await prisma.user.findUnique({ where: { id: userId } })
+      if (!user) throw new TRPCError({ code: 'UNAUTHORIZED' })
 
       switch (status) {
         case 'JOINED':
@@ -176,4 +202,12 @@ export const eventRouter = router({
   deleteAll: protectedProcedure.query(async ({ ctx: { prisma } }) => {
     return await prisma.event.deleteMany()
   }),
+  getByGroupId: protectedProcedure
+    .input(z.object({ groupId: z.string() }))
+    .query(async ({ ctx: { prisma }, input }) => {
+      return await prisma.event.findMany({
+        where: { groupId: input.groupId },
+        orderBy: { date: 'asc' },
+      })
+    }),
 })

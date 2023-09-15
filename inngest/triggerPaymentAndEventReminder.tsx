@@ -2,11 +2,8 @@ import type {
   ParticipantsOnEvents,
   UserEventStatus,
 } from '../prisma/generated/client'
-import { PrismaClient } from '../prisma/generated/client'
-
+import { prisma } from '../src/server/db/client'
 import { inngest } from './inngestClient'
-
-const prisma = new PrismaClient()
 
 export const triggerPaymentAndEventReminder = inngest.createFunction(
   { name: 'Trigger Payment and Event Reminder' },

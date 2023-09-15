@@ -1,5 +1,6 @@
-import type { Event, ParticipantsOnEvents } from '@/prisma/generated/client'
-import { trpc } from '@/src/utils/trpc'
+'use client'
+import type { Event } from '@/prisma/generated/client'
+import { api } from '@/src/server/trpc/api'
 import { differenceInCalendarDays } from 'date-fns'
 import { CalendarDays, Euro } from 'lucide-react'
 import type { FunctionComponent } from 'react'
@@ -14,16 +15,12 @@ import { StatusChip } from './StatusChip'
 
 type EventCardProps = {
   event: Event
-  participants: ParticipantsOnEvents[]
 }
 
 //TODO: Adjust schema event thingy -> Warteliste status?
 //TODO: Show Warteliste, if we have participants which are on the waiting list too?
 
-export const EventCard: FunctionComponent<EventCardProps> = ({
-  event,
-  participants,
-}) => {
+export const EventCard: FunctionComponent<EventCardProps> = ({ event }) => {
   const {
     address,
     startTime,
@@ -36,7 +33,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
     bookingDate,
   } = event
 
-  const { data, isLoading } = trpc.map.getLatLong.useQuery({
+  const { data, isLoading } = api.map.getLatLong.useQuery({
     id,
     address,
   })
@@ -54,7 +51,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
 
   return (
     <div className="relative h-full w-full rounded-2xl bg-gradient-to-b from-purple-400 to-purple-100 p-[1px] md:w-[400px]">
-      <div className="flex w-full flex-col justify-center gap-2 rounded-2xl bg-gradient-to-tl from-white to-blue-100 shadow-xl dark:bg-gradient-to-tl dark:from-slate-900 dark:to-slate-700">
+      <div className="flex w-full flex-col justify-center gap-2 rounded-2xl bg-gradient-to-tl from-white to-blue-100 shadow-xl dark:bg-gradient-to-tl dark:from-slate-950 dark:to-slate-600">
         <div className="flex flex-col p-4 gap-y-2">
           <div className="flex justify-between gap-x-1 w-full">
             <DateInfo date={date} />
@@ -90,15 +87,11 @@ export const EventCard: FunctionComponent<EventCardProps> = ({
                 isLoading={isLoading}
               />
             )}
-            <ParticipantsArea
-              eventId={id}
-              participants={participants}
-              maxParticipants={maxParticipants}
-            />
+            <ParticipantsArea eventId={id} maxParticipants={maxParticipants} />
 
             <EventCardAdminArea eventId={id} />
             <PaymentArea eventId={id} bookingDate={bookingDate} />
-            <EventStatusArea id={id} participants={participants} />
+            <EventStatusArea id={id} />
           </div>
         </div>
       </div>
