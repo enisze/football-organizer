@@ -1,6 +1,7 @@
 import { EventSchemas, Inngest } from 'inngest'
 import { PrismaClient } from '../../../prisma/generated/client/index.js'
 
+import { env } from '@/src/env/server.mjs'
 import { z } from 'zod'
 
 declare global {
@@ -11,8 +12,6 @@ declare global {
 const globals = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
-
-export const prisma = globals.prisma ?? new PrismaClient()
 
 export const Event__New = z.object({
   id: z.string(),
@@ -70,6 +69,18 @@ export const inngest = new Inngest({
   }),
 })
 
-if (process.env.NODE_ENV !== 'production') {
+
+export const prisma = globals.prisma ?? new PrismaClient()
+
+if (process.env.NODE_ENV !== 'production') globals.prisma = prisma
+
+// export const inngest =
+//   global.inngest ||
+//   new Inngest<Events>({
+//     name: 'Event Wizard',
+//     eventKey: process.env.INNGEST_EVENT_KEY,
+//   })
+
+if (env.NODE_ENV !== 'production') {
   globals.prisma = prisma
 }

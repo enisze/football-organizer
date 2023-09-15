@@ -4,9 +4,18 @@ import { z } from 'zod'
 import { getAddressAndCoordinatesRedisKeys } from '../../../helpers/getAddressAndCoordinatesRedisKeys'
 import { redis } from '../../redis/redis'
 
-import { protectedProcedure, router } from '../trpc'
+import { createTRPCRouter, protectedProcedure } from '../trpc'
 
-export const eventRouter = router({
+export const eventRouter = createTRPCRouter({
+  getById: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx: { prisma }, input }) => {
+      return await prisma.event.findUnique({
+        where: { id: input.id },
+        include: { participants: true },
+      })
+    }),
+
   create: protectedProcedure
     .input(
       z
@@ -195,4 +204,12 @@ export const eventRouter = router({
   deleteAll: protectedProcedure.query(async ({ ctx: { prisma } }) => {
     return await prisma.event.deleteMany()
   }),
+  getByGroupId: protectedProcedure
+    .input(z.object({ groupId: z.string() }))
+    .query(async ({ ctx: { prisma }, input }) => {
+      return await prisma.event.findMany({
+        where: { groupId: input.groupId },
+        orderBy: { date: 'asc' },
+      })
+    }),
 })

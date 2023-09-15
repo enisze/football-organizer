@@ -1,4 +1,5 @@
-import { trpc } from '@/src/utils/trpc'
+'use client'
+import { api } from '@/src/server/trpc/api'
 import { Button } from '@/ui/button'
 import {
   Dialog,
@@ -9,29 +10,29 @@ import {
 } from '@/ui/dialog'
 import { TRPCError } from '@trpc/server'
 import { Check } from 'lucide-react'
-import { useSession } from 'next-auth/react'
+import { SessionProvider, useSession } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { useState } from 'react'
 import { QuestionMark } from '../../QuestionMark'
 import { DeclineEventDialog } from './DeclineEventDialog'
 
-export const EventStatusArea: FunctionComponent<{
+const EventStatusAreaRaw: FunctionComponent<{
   id: string
 }> = ({ id }) => {
-  const trpcContext = trpc.useContext()
+  const trpcContext = api.useContext()
 
   const { data: session } = useSession()
 
-  const { data } = trpc.event.getParticipants.useQuery({
+  const { data } = api.event.getParticipants.useQuery({
     eventId: id,
   })
 
   const [showLeaveModal, setShowLeaveModal] = useState(false)
 
-  const { mutate: sendEmail } = trpc.gmail.sendPaidButCancledMail.useMutation()
+  const { mutate: sendEmail } = api.gmail.sendPaidButCancledMail.useMutation()
 
   const { mutate: setEventStatus } =
-    trpc.event.setParticipatingStatus.useMutation({
+    api.event.setParticipatingStatus.useMutation({
       onSuccess: () => {
         trpcContext.invalidate()
       },
@@ -133,5 +134,13 @@ export const EventStatusArea: FunctionComponent<{
         </div>
       </DialogContent>
     </Dialog>
+  )
+}
+
+export const EventStatusArea: FunctionComponent<{ id: string }> = ({ id }) => {
+  return (
+    <SessionProvider>
+      <EventStatusAreaRaw id={id} />
+    </SessionProvider>
   )
 }

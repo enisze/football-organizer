@@ -4,11 +4,11 @@ import { z } from 'zod'
 import axios from 'axios'
 import { getAddressAndCoordinatesRedisKeys } from '../../../helpers/getAddressAndCoordinatesRedisKeys'
 import { redis } from '../../redis/redis'
-import { protectedProcedure, router } from '../trpc'
+import { createTRPCRouter, protectedProcedure } from '../trpc'
 
 const LATLONG_API_KEY = process.env.LATLONG_API_KEY
 
-export const mapRouter = router({
+export const mapRouter = createTRPCRouter({
   getLatLong: protectedProcedure
     .input(z.object({ id: z.string(), address: z.string() }))
     .query(async ({ input }) => {
@@ -63,7 +63,7 @@ export const mapRouter = router({
     }),
 })
 
-const mapCoordinatesToArray = (coordinates: string | null) => {
+export const mapCoordinatesToArray = (coordinates: string | null) => {
   const split = coordinates?.split(',')
   if (!split) return null
   return [Number(split[0]), Number(split[1])]

@@ -1,4 +1,5 @@
-import { trpc } from '@/src/utils/trpc'
+'use client'
+import { api } from '@/src/server/trpc/api'
 import {
   Accordion,
   AccordionContent,
@@ -6,15 +7,21 @@ import {
   AccordionTrigger,
 } from '@/ui/accordion'
 import { User } from 'lucide-react'
+import { SessionProvider } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { AvatarStatus } from './AvatarStatus'
 import { EventCardAdminPaymentArea } from './EventCardAdminPaymentArea'
 
-export const ParticipantsArea: FunctionComponent<{
+type ParticipantsAreaProps = {
   eventId: string
   maxParticipants?: number
-}> = ({ eventId, maxParticipants }) => {
-  const { data } = trpc.event.getParticipants.useQuery({
+}
+
+const ParticipantsAreaRaw: FunctionComponent<ParticipantsAreaProps> = ({
+  eventId,
+  maxParticipants,
+}) => {
+  const { data } = api.event.getParticipants.useQuery({
     eventId,
   })
 
@@ -100,5 +107,19 @@ export const ParticipantsArea: FunctionComponent<{
         </AccordionContent>
       </AccordionItem>
     </Accordion>
+  )
+}
+
+export const ParticipantsArea: FunctionComponent<ParticipantsAreaProps> = ({
+  eventId,
+  maxParticipants,
+}) => {
+  return (
+    <SessionProvider>
+      <ParticipantsAreaRaw
+        eventId={eventId}
+        maxParticipants={maxParticipants}
+      />
+    </SessionProvider>
   )
 }

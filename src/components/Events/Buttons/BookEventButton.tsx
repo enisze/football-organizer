@@ -1,4 +1,4 @@
-import { trpc } from '@/src/utils/trpc'
+import { api } from '@/src/server/trpc/api'
 import { Button } from '@/ui/button'
 import {
   Dialog,
@@ -13,8 +13,9 @@ import type { FunctionComponent } from 'react'
 import { useState } from 'react'
 
 export const BookEventButton: FunctionComponent<{ id: string }> = ({ id }) => {
-  const trpcContext = trpc.useContext()
-  const { mutate: bookEvent } = trpc.event.book.useMutation({
+  const trpcContext = api.useContext()
+
+  const { mutate: bookEvent } = api.event.book.useMutation({
     onSuccess: () => trpcContext.invalidate(),
   })
 

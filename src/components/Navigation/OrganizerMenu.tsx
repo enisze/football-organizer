@@ -1,3 +1,4 @@
+import { api } from '@/src/server/trpc/api'
 import { Avatar, AvatarFallback } from '@/ui/avatar'
 import {
   DropdownMenu,
@@ -11,8 +12,7 @@ import { Switch } from '@/ui/switch'
 import { atom, useAtom, useAtomValue } from 'jotai'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
-import type { FunctionComponent } from 'react'
-import { trpc } from '../../utils/trpc'
+import { useState, type FunctionComponent } from 'react'
 import { selectedGroupAtom } from '../Groups/GroupSelector'
 import { NotificationBubble } from '../NotificationBubble'
 
@@ -25,7 +25,9 @@ export const OrganizerMenu: FunctionComponent = () => {
 
   const isAdmin = userData?.user?.role === 'admin'
 
-  const { data: balance } = trpc.payment.getUserBalance.useQuery(
+  const [open, setOpen] = useState(false)
+
+  const { data: balance } = api.payment.getUserBalance.useQuery(
     { groupId: selectedGroupId ?? '' },
     {
       enabled: Boolean(userData) && Boolean(selectedGroupId),
@@ -44,7 +46,7 @@ export const OrganizerMenu: FunctionComponent = () => {
   const second = res ? res[1]?.charAt(0) ?? 'X' : 'X'
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger className="flex items-center justify-between gap-x-2">
         <div className="relative flex">
           <Avatar className="flex items-center justify-center border-[1px]">
@@ -73,7 +75,7 @@ export const OrganizerMenu: FunctionComponent = () => {
           </div>
         </DropdownMenuItem>
 
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setOpen(!open)}>
           <div className="relative flex w-full">
             <Link href={'/settings'}>Einstellungen</Link>
             {!hasPaypalName && <NotificationBubble />}

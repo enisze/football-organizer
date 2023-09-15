@@ -1,10 +1,10 @@
 import { TRPCError } from '@trpc/server'
 import { decode, sign } from 'jsonwebtoken'
 import { z } from 'zod'
-import { protectedProcedure, router } from '../trpc'
+import { createTRPCRouter, protectedProcedure } from '../trpc'
 import { verifyJWT } from '../verifyJWT'
 
-export const groupRouter = router({
+export const groupRouter = createTRPCRouter({
   getGroupsOfUser: protectedProcedure
     .input(z.object({ owned: z.boolean() }).optional())
     .query(async ({ ctx, input }) => {

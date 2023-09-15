@@ -1,17 +1,21 @@
+'use client'
+
 import { Button } from '@/ui/button'
 import { ThemeToggle } from '@/ui/theme-toggle'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { usePathname, useRouter } from 'next/navigation'
 import type { FunctionComponent } from 'react'
 import { Heading } from '../Heading'
 import { OrganizerMenu } from './OrganizerMenu'
 
 export const Navbar: FunctionComponent = () => {
+  const pathname = usePathname()
+
   const router = useRouter()
 
   const onDashboard =
-    router.pathname.includes('/group') && !router.pathname.includes('/settings')
+    pathname?.includes('/group') && !pathname?.includes('/settings')
 
   const { data } = useSession()
 
@@ -43,5 +47,3 @@ export const Navbar: FunctionComponent = () => {
     </header>
   )
 }
-
-export default Navbar

@@ -1,10 +1,10 @@
 import { TRPCError } from '@trpc/server'
 import { decode } from 'jsonwebtoken'
 import { z } from 'zod'
-import { protectedProcedure, publicProcedure, router } from '../trpc'
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
 import { verifyJWT } from '../verifyJWT'
 
-export const userRouter = router({
+export const userRouter = createTRPCRouter({
   cancelEvent: protectedProcedure
     .input(z.object({ eventId: z.string() }))
     .query(async ({ ctx: { prisma, session }, input }) => {

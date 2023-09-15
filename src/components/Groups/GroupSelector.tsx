@@ -1,39 +1,45 @@
-import { trpc } from '@/src/utils/trpc'
-import { Label } from '@/ui/label'
+'use client'
+import { api } from '@/src/server/trpc/api'
+import { OrganizerLink } from '@/ui/OrganizerLink'
 import {
   Select,
   SelectContent,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/ui/select'
+import { SelectGroup } from '@radix-ui/react-select'
 import { atom } from 'jotai'
-import { useRouter } from 'next/router'
+import { useParams, useRouter } from 'next/navigation'
 import type { FunctionComponent } from 'react'
-import { LoadingWrapper } from '../LoadingWrapper'
 
 export const selectedGroupAtom = atom<string | undefined>(undefined)
 
 export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
   owned = false,
 }) => {
-  const { data: groups, isLoading } = trpc.group.getGroupsOfUser.useQuery({
+  const { data: groups } = api.group.getGroupsOfUser.useQuery({
     owned: owned,
   })
 
+  const params = useParams()
   const router = useRouter()
-  const group = router.query.groupId as string
+
+  const group = params?.groupId as string
 
   return (
-    <LoadingWrapper isLoading={isLoading}>
-      <Label>Gruppe</Label>
+    <>
       <Select
         value={group}
         onValueChange={(val) => {
           router.push(`/group/${val}`)
         }}
       >
-        <SelectTrigger className="w-[180px]" aria-label="group-selector">
+        <SelectGroup>
+          <SelectLabel>Gruppe auswählen</SelectLabel>
+        </SelectGroup>
+        <SelectTrigger className="w-[180px]" aria-label='group-selector'>
           <SelectValue placeholder="Gruppe auswählen" />
         </SelectTrigger>
         <SelectContent>
@@ -44,6 +50,16 @@ export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
           ))}
         </SelectContent>
       </Select>
-    </LoadingWrapper>
+
+      {!group && (
+        <div className="flex flex-col justify-center">
+          <span>Du bist noch kein Mitglied einer Gruppe</span>
+
+          <OrganizerLink href="/settings/groups" className="justify-center">
+            Grupper erstellen
+          </OrganizerLink>
+        </div>
+      )}
+    </>
   )
 }

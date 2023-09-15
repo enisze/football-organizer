@@ -1,41 +1,21 @@
-// @ts-check
+import bundleAnalyzer from '@next/bundle-analyzer'
 
-/**
- * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
- * This is especially useful for Docker builds.
- *
- */
+const plugins = []
 
-import withBundleAnalyzer from '@next/bundle-analyzer'
-
-!process.env.SKIP_ENV_VALIDATION && (await import('./src/env/server.mjs'))
+plugins.push(
+  bundleAnalyzer({
+    enabled: process.env.ANALYZE === 'true',
+  }),
+)
 
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
-  swcMinify: false,
-  i18n: {
-    locales: ['en'],
-    defaultLocale: 'en',
-  },
   experimental: {
-    fontLoaders: [
-      {
-        loader: 'next/font/google',
-        options: { subsets: ['latin'] },
-      },
-    ],
-    swcPlugins: [
-      [
-        'next-superjson-plugin',
-        {
-          excluded: [],
-        },
-      ],
-    ],
+    appDir: true,
+    typedRoutes: true,
   },
+  transpilePackages: ['@trpc/next-layout'],
 }
 
-export default withBundleAnalyzer({ enabled: process.env.ANALYZE === 'true' })({
-  config,
-})
+export default plugins.reduce((config, plugin) => plugin(config), config)

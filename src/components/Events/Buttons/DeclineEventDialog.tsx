@@ -1,5 +1,5 @@
 import type { UserEventStatus } from '@/prisma/generated/client'
-import { trpc } from '@/src/utils/trpc'
+import { api } from '@/src/server/trpc/api'
 import { Button } from '@/ui/button'
 import {
   Dialog,
@@ -10,29 +10,36 @@ import {
 } from '@/ui/dialog'
 import { TextField } from '@/ui/TextField'
 import { X } from 'lucide-react'
+import { SessionProvider } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { useState } from 'react'
 
-export const DeclineEventDialog: FunctionComponent<{
+type DeclineEventDialogProps = {
   id: string
   userStatus?: UserEventStatus
   setShowLeaveModal: () => void
-}> = ({ id, userStatus, setShowLeaveModal }) => {
-  const trpcContext = trpc.useContext()
+}
+
+const DeclineEventDialogRaw: FunctionComponent<DeclineEventDialogProps> = ({
+  id,
+  userStatus,
+  setShowLeaveModal,
+}) => {
+  const trpcContext = api.useContext()
   const [comment, setComment] = useState('')
 
   const [showCommentModal, setShowCommentModal] = useState(false)
 
-  const { mutate: setEventComment } = trpc.user.setEventComment.useMutation({
+  const { mutate: setEventComment } = api.user.setEventComment.useMutation({
     onSuccess: () => {
       trpcContext.invalidate()
     },
   })
 
   const { mutate: setEventStatus } =
-    trpc.event.setParticipatingStatus.useMutation({
+    api.event.setParticipatingStatus.useMutation({
       onSuccess: () => {
-        trpcContext.invalidate()
+        // trpcContext.invalidate()
       },
     })
 
@@ -44,7 +51,9 @@ export const DeclineEventDialog: FunctionComponent<{
     }
   }
 
-  const { data: payment } = trpc.payment.getByEventId.useQuery({ eventId: id })
+  const { data: payment } = api.payment.getByEventId.useQuery({
+    eventId: id,
+  })
 
   const canceledMarkColor = userStatus === 'CANCELED' ? 'text-red-500' : ''
 
@@ -93,5 +102,21 @@ export const DeclineEventDialog: FunctionComponent<{
         </div>
       </DialogContent>
     </Dialog>
+  )
+}
+
+export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
+  id,
+  userStatus,
+  setShowLeaveModal,
+}) => {
+  return (
+    <SessionProvider>
+      <DeclineEventDialogRaw
+        id={id}
+        userStatus={userStatus}
+        setShowLeaveModal={setShowLeaveModal}
+      />
+    </SessionProvider>
   )
 }

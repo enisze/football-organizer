@@ -1,4 +1,4 @@
-import { trpc } from '@/src/utils/trpc'
+import { api } from '@/src/server/trpc/api'
 import { Button } from '@/ui/button'
 import { TextField } from '@/ui/TextField'
 import { useToast } from '@/ui/use-toast'
@@ -21,11 +21,11 @@ export const NewGroup: FunctionComponent = () => {
     formState: { errors },
   } = useForm({ resolver: zodResolver(newGroupSchema), mode: 'onBlur' })
 
-  const trpcContext = trpc.useContext()
-
   const { toast } = useToast()
 
-  const { mutate: createGroup } = trpc.group.create.useMutation({
+  const trpcContext = api.useContext()
+
+  const { mutate: createGroup } = api.group.create.useMutation({
     onSuccess(data) {
       trpcContext.invalidate()
       const groupName = data
