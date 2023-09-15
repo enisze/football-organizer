@@ -31,6 +31,7 @@ const GroupSettings = () => {
         {(groups?.length ?? 0) > 0 && (
           <div className="flex flex-1 gap-x-3">
             {groups?.map((group) => {
+              //FIXME:
               // const url = new URL(`settings/groups/${group.id}`)
               return (
                 <Container key={group.id} className="flex flex-col">
@@ -41,7 +42,7 @@ const GroupSettings = () => {
                   <span>{`Pricing: ${group.pricingModel}`}</span>
 
                   <OrganizerLink
-                    href={`/settings/groups/${group.id}`}
+                    href={`/settings/groups/${group.id}` as any}
                     className=" flex w-full rounded-md border border-slate-300 bg-transparent mt-3 text-sm dark:border-slate-700 dark:text-slate-50"
                   >
                     Bearbeiten
