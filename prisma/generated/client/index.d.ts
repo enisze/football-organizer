@@ -8,67 +8,244 @@ import $Types = runtime.Types // general types
 import $Public = runtime.Types.Public
 import $Utils = runtime.Types.Utils
 import $Extensions = runtime.Types.Extensions
-import $Result = runtime.Types.Result
 
 export type PrismaPromise<T> = $Public.PrismaPromise<T>
 
+
+export type TokensPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  name: "Tokens"
+  objects: {
+    user: UserPayload<ExtArgs>
+  }
+  scalars: $Extensions.GetResult<{
+    id: string
+    access_token: string
+    refresh_token: string
+    expiry_date: Date
+    ownerId: string
+  }, ExtArgs["result"]["tokens"]>
+  composites: {}
+}
 
 /**
  * Model Tokens
  * 
  */
-export type Tokens = $Result.DefaultSelection<Prisma.$TokensPayload>
+export type Tokens = runtime.Types.DefaultSelection<TokensPayload>
+export type EventPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  name: "Event"
+  objects: {
+    participants: ParticipantsOnEventsPayload<ExtArgs>[]
+    Group: GroupPayload<ExtArgs> | null
+  }
+  scalars: $Extensions.GetResult<{
+    id: string
+    createdAt: Date
+    updatedAt: Date
+    address: string
+    date: Date
+    endTime: string
+    startTime: string
+    bookingDate: Date | null
+    cost: number
+    status: EventStatus
+    maxParticipants: number
+    groupId: string | null
+  }, ExtArgs["result"]["event"]>
+  composites: {}
+}
+
 /**
  * Model Event
  * 
  */
-export type Event = $Result.DefaultSelection<Prisma.$EventPayload>
+export type Event = runtime.Types.DefaultSelection<EventPayload>
+export type ParticipantsOnEventsPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  name: "ParticipantsOnEvents"
+  objects: {
+    payment: PaymentPayload<ExtArgs> | null
+    user: UserPayload<ExtArgs>
+    event: EventPayload<ExtArgs>
+  }
+  scalars: $Extensions.GetResult<{
+    eventId: string
+    date: Date
+    id: string
+    comment: string | null
+    paymentId: string | null
+    userEventStatus: UserEventStatus
+  }, ExtArgs["result"]["participantsOnEvents"]>
+  composites: {}
+}
+
 /**
  * Model ParticipantsOnEvents
  * 
  */
-export type ParticipantsOnEvents = $Result.DefaultSelection<Prisma.$ParticipantsOnEventsPayload>
+export type ParticipantsOnEvents = runtime.Types.DefaultSelection<ParticipantsOnEventsPayload>
+export type PaymentPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  name: "Payment"
+  objects: {
+    ParticipantsOnEvents: ParticipantsOnEventsPayload<ExtArgs>[]
+  }
+  scalars: $Extensions.GetResult<{
+    id: string
+    createdAt: Date
+    updatedAt: Date
+    eventId: string
+    userId: string
+    amount: number
+    paymentDate: Date
+    gmailMailId: string
+  }, ExtArgs["result"]["payment"]>
+  composites: {}
+}
+
 /**
  * Model Payment
  * 
  */
-export type Payment = $Result.DefaultSelection<Prisma.$PaymentPayload>
+export type Payment = runtime.Types.DefaultSelection<PaymentPayload>
+export type AccountPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  name: "Account"
+  objects: {
+    user: UserPayload<ExtArgs>
+  }
+  scalars: $Extensions.GetResult<{
+    id: string
+    userId: string
+    type: string
+    provider: string
+    providerAccountId: string
+    refresh_token: string | null
+    access_token: string | null
+    expires_at: number | null
+    token_type: string | null
+    scope: string | null
+    id_token: string | null
+    session_state: string | null
+  }, ExtArgs["result"]["account"]>
+  composites: {}
+}
+
 /**
  * Model Account
  * 
  */
-export type Account = $Result.DefaultSelection<Prisma.$AccountPayload>
+export type Account = runtime.Types.DefaultSelection<AccountPayload>
+export type SessionPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  name: "Session"
+  objects: {
+    user: UserPayload<ExtArgs>
+  }
+  scalars: $Extensions.GetResult<{
+    id: string
+    sessionToken: string
+    userId: string
+    expires: Date
+  }, ExtArgs["result"]["session"]>
+  composites: {}
+}
+
 /**
  * Model Session
  * 
  */
-export type Session = $Result.DefaultSelection<Prisma.$SessionPayload>
+export type Session = runtime.Types.DefaultSelection<SessionPayload>
+export type GroupPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  name: "Group"
+  objects: {
+    events: EventPayload<ExtArgs>[]
+    users: UserOnGroupsPayload<ExtArgs>[]
+    owner: UserPayload<ExtArgs>
+  }
+  scalars: $Extensions.GetResult<{
+    id: string
+    ownerId: string
+    name: string
+    createdAt: Date
+    updatedAt: Date
+    pricingModel: PricingModel
+  }, ExtArgs["result"]["group"]>
+  composites: {}
+}
+
 /**
  * Model Group
  * 
  */
-export type Group = $Result.DefaultSelection<Prisma.$GroupPayload>
+export type Group = runtime.Types.DefaultSelection<GroupPayload>
+export type UserPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  name: "User"
+  objects: {
+    accounts: AccountPayload<ExtArgs>[]
+    sessions: SessionPayload<ExtArgs>[]
+    events: ParticipantsOnEventsPayload<ExtArgs>[]
+    groups: UserOnGroupsPayload<ExtArgs>[]
+    ownedGroups: GroupPayload<ExtArgs>[]
+    Tokens: TokensPayload<ExtArgs>[]
+  }
+  scalars: $Extensions.GetResult<{
+    id: string
+    name: string
+    email: string
+    emailVerified: Date | null
+    image: string | null
+    role: string
+    createdAt: Date
+    password: string | null
+    notificationsEnabled: boolean
+    paypalName: string | null
+  }, ExtArgs["result"]["user"]>
+  composites: {}
+}
+
 /**
  * Model User
  * 
  */
-export type User = $Result.DefaultSelection<Prisma.$UserPayload>
+export type User = runtime.Types.DefaultSelection<UserPayload>
+export type UserOnGroupsPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  name: "UserOnGroups"
+  objects: {
+    user: UserPayload<ExtArgs>
+    group: GroupPayload<ExtArgs>
+  }
+  scalars: $Extensions.GetResult<{
+    id: string
+    groupId: string
+    role: GroupRole
+  }, ExtArgs["result"]["userOnGroups"]>
+  composites: {}
+}
+
 /**
  * Model UserOnGroups
  * 
  */
-export type UserOnGroups = $Result.DefaultSelection<Prisma.$UserOnGroupsPayload>
+export type UserOnGroups = runtime.Types.DefaultSelection<UserOnGroupsPayload>
+export type VerificationTokenPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  name: "VerificationToken"
+  objects: {}
+  scalars: $Extensions.GetResult<{
+    identifier: string
+    token: string
+    expires: Date
+  }, ExtArgs["result"]["verificationToken"]>
+  composites: {}
+}
+
 /**
  * Model VerificationToken
  * 
  */
-export type VerificationToken = $Result.DefaultSelection<Prisma.$VerificationTokenPayload>
+export type VerificationToken = runtime.Types.DefaultSelection<VerificationTokenPayload>
 
 /**
  * Enums
  */
-export namespace $Enums {
-  export const EventStatus: {
+
+export const EventStatus: {
   CANCELED: 'CANCELED',
   CREATED: 'CREATED',
   BOOKED: 'BOOKED'
@@ -104,23 +281,6 @@ export const GroupRole: {
 
 export type GroupRole = (typeof GroupRole)[keyof typeof GroupRole]
 
-}
-
-export type EventStatus = $Enums.EventStatus
-
-export const EventStatus: typeof $Enums.EventStatus
-
-export type UserEventStatus = $Enums.UserEventStatus
-
-export const UserEventStatus: typeof $Enums.UserEventStatus
-
-export type PricingModel = $Enums.PricingModel
-
-export const PricingModel: typeof $Enums.PricingModel
-
-export type GroupRole = $Enums.GroupRole
-
-export const GroupRole: typeof $Enums.GroupRole
 
 /**
  * ##  Prisma Client ʲˢ
@@ -164,12 +324,12 @@ export class PrismaClient<
   /**
    * Connect with the database
    */
-  $connect(): $Utils.JsPromise<void>;
+  $connect(): Promise<void>;
 
   /**
    * Disconnect from the database
    */
-  $disconnect(): $Utils.JsPromise<void>;
+  $disconnect(): Promise<void>;
 
   /**
    * Add a middleware
@@ -237,9 +397,9 @@ export class PrismaClient<
    * 
    * Read more in our [docs](https://www.prisma.io/docs/concepts/components/prisma-client/transactions).
    */
-  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
+  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): Promise<runtime.Types.Utils.UnwrapTuple<P>>
 
-  $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => $Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<R>
+  $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => Promise<R>, options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): Promise<R>
 
 
   $extends: $Extensions.ExtendsHook<'extends', Prisma.TypeMapCb, ExtArgs>
@@ -392,16 +552,16 @@ export namespace Prisma {
   /**
   * Extensions
   */
-  export import Extension = $Extensions.UserArgs
+  export type Extension = $Extensions.UserArgs
   export import getExtensionContext = runtime.Extensions.getExtensionContext
-  export import Args = $Public.Args
-  export import Payload = $Public.Payload
-  export import Result = $Public.Result
-  export import Exact = $Public.Exact
+  export type Args<T, F extends $Public.Operation> = $Public.Args<T, F>
+  export type Payload<T, F extends $Public.Operation> = $Public.Payload<T, F>
+  export type Result<T, A, F extends $Public.Operation> = $Public.Result<T, A, F>
+  export type Exact<T, W> = $Public.Exact<T, W>
 
   /**
-   * Prisma Client JS version: 5.3.1
-   * Query Engine version: 61e140623197a131c2a6189271ffee05a7aa9a59
+   * Prisma Client JS version: 5.0.0
+   * Query Engine version: 6b0aef69b7cdfc787f822ecd7cdc76d5f1991584
    */
   export type PrismaVersion = {
     client: string
@@ -457,7 +617,7 @@ export namespace Prisma {
    *
    * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-by-null-values
    */
-  export type InputJsonValue = string | number | boolean | InputJsonObject | InputJsonArray | { toJSON(): unknown }
+  export type InputJsonValue = string | number | boolean | InputJsonObject | InputJsonArray
 
   /**
    * Types of the values used to represent different kinds of `null` values when working with JSON fields.
@@ -527,6 +687,19 @@ export namespace Prisma {
     select: any
     include: any
   }
+  type HasSelect = {
+    select: any
+  }
+  type HasInclude = {
+    include: any
+  }
+  type CheckSelect<T, S, U> = T extends SelectAndInclude
+    ? 'Please either choose `select` or `include`'
+    : T extends HasSelect
+    ? U
+    : T extends HasInclude
+    ? U
+    : S
 
   /**
    * Get the type of the value, that the Promise holds.
@@ -536,7 +709,7 @@ export namespace Prisma {
   /**
    * Get the return type of a function which returns a Promise.
    */
-  export type PromiseReturnType<T extends (...args: any) => $Utils.JsPromise<any>> = PromiseType<ReturnType<T>>
+  export type PromiseReturnType<T extends (...args: any) => Promise<any>> = PromiseType<ReturnType<T>>
 
   /**
    * From T, pick a set of properties whose keys are in the union K
@@ -844,32 +1017,32 @@ export namespace Prisma {
     },
     model: {
       Tokens: {
-        payload: Prisma.$TokensPayload<ExtArgs>
+        payload: TokensPayload<ExtArgs>
         fields: Prisma.TokensFieldRefs
         operations: {
           findUnique: {
             args: Prisma.TokensFindUniqueArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$TokensPayload> | null
+            result: $Utils.PayloadToResult<TokensPayload> | null
           }
           findUniqueOrThrow: {
             args: Prisma.TokensFindUniqueOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$TokensPayload>
+            result: $Utils.PayloadToResult<TokensPayload>
           }
           findFirst: {
             args: Prisma.TokensFindFirstArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$TokensPayload> | null
+            result: $Utils.PayloadToResult<TokensPayload> | null
           }
           findFirstOrThrow: {
             args: Prisma.TokensFindFirstOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$TokensPayload>
+            result: $Utils.PayloadToResult<TokensPayload>
           }
           findMany: {
             args: Prisma.TokensFindManyArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$TokensPayload>[]
+            result: $Utils.PayloadToResult<TokensPayload>[]
           }
           create: {
             args: Prisma.TokensCreateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$TokensPayload>
+            result: $Utils.PayloadToResult<TokensPayload>
           }
           createMany: {
             args: Prisma.TokensCreateManyArgs<ExtArgs>,
@@ -877,11 +1050,11 @@ export namespace Prisma {
           }
           delete: {
             args: Prisma.TokensDeleteArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$TokensPayload>
+            result: $Utils.PayloadToResult<TokensPayload>
           }
           update: {
             args: Prisma.TokensUpdateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$TokensPayload>
+            result: $Utils.PayloadToResult<TokensPayload>
           }
           deleteMany: {
             args: Prisma.TokensDeleteManyArgs<ExtArgs>,
@@ -893,7 +1066,7 @@ export namespace Prisma {
           }
           upsert: {
             args: Prisma.TokensUpsertArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$TokensPayload>
+            result: $Utils.PayloadToResult<TokensPayload>
           }
           aggregate: {
             args: Prisma.TokensAggregateArgs<ExtArgs>,
@@ -910,32 +1083,32 @@ export namespace Prisma {
         }
       }
       Event: {
-        payload: Prisma.$EventPayload<ExtArgs>
+        payload: EventPayload<ExtArgs>
         fields: Prisma.EventFieldRefs
         operations: {
           findUnique: {
             args: Prisma.EventFindUniqueArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$EventPayload> | null
+            result: $Utils.PayloadToResult<EventPayload> | null
           }
           findUniqueOrThrow: {
             args: Prisma.EventFindUniqueOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$EventPayload>
+            result: $Utils.PayloadToResult<EventPayload>
           }
           findFirst: {
             args: Prisma.EventFindFirstArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$EventPayload> | null
+            result: $Utils.PayloadToResult<EventPayload> | null
           }
           findFirstOrThrow: {
             args: Prisma.EventFindFirstOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$EventPayload>
+            result: $Utils.PayloadToResult<EventPayload>
           }
           findMany: {
             args: Prisma.EventFindManyArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$EventPayload>[]
+            result: $Utils.PayloadToResult<EventPayload>[]
           }
           create: {
             args: Prisma.EventCreateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$EventPayload>
+            result: $Utils.PayloadToResult<EventPayload>
           }
           createMany: {
             args: Prisma.EventCreateManyArgs<ExtArgs>,
@@ -943,11 +1116,11 @@ export namespace Prisma {
           }
           delete: {
             args: Prisma.EventDeleteArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$EventPayload>
+            result: $Utils.PayloadToResult<EventPayload>
           }
           update: {
             args: Prisma.EventUpdateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$EventPayload>
+            result: $Utils.PayloadToResult<EventPayload>
           }
           deleteMany: {
             args: Prisma.EventDeleteManyArgs<ExtArgs>,
@@ -959,7 +1132,7 @@ export namespace Prisma {
           }
           upsert: {
             args: Prisma.EventUpsertArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$EventPayload>
+            result: $Utils.PayloadToResult<EventPayload>
           }
           aggregate: {
             args: Prisma.EventAggregateArgs<ExtArgs>,
@@ -976,32 +1149,32 @@ export namespace Prisma {
         }
       }
       ParticipantsOnEvents: {
-        payload: Prisma.$ParticipantsOnEventsPayload<ExtArgs>
+        payload: ParticipantsOnEventsPayload<ExtArgs>
         fields: Prisma.ParticipantsOnEventsFieldRefs
         operations: {
           findUnique: {
             args: Prisma.ParticipantsOnEventsFindUniqueArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$ParticipantsOnEventsPayload> | null
+            result: $Utils.PayloadToResult<ParticipantsOnEventsPayload> | null
           }
           findUniqueOrThrow: {
             args: Prisma.ParticipantsOnEventsFindUniqueOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$ParticipantsOnEventsPayload>
+            result: $Utils.PayloadToResult<ParticipantsOnEventsPayload>
           }
           findFirst: {
             args: Prisma.ParticipantsOnEventsFindFirstArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$ParticipantsOnEventsPayload> | null
+            result: $Utils.PayloadToResult<ParticipantsOnEventsPayload> | null
           }
           findFirstOrThrow: {
             args: Prisma.ParticipantsOnEventsFindFirstOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$ParticipantsOnEventsPayload>
+            result: $Utils.PayloadToResult<ParticipantsOnEventsPayload>
           }
           findMany: {
             args: Prisma.ParticipantsOnEventsFindManyArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$ParticipantsOnEventsPayload>[]
+            result: $Utils.PayloadToResult<ParticipantsOnEventsPayload>[]
           }
           create: {
             args: Prisma.ParticipantsOnEventsCreateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$ParticipantsOnEventsPayload>
+            result: $Utils.PayloadToResult<ParticipantsOnEventsPayload>
           }
           createMany: {
             args: Prisma.ParticipantsOnEventsCreateManyArgs<ExtArgs>,
@@ -1009,11 +1182,11 @@ export namespace Prisma {
           }
           delete: {
             args: Prisma.ParticipantsOnEventsDeleteArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$ParticipantsOnEventsPayload>
+            result: $Utils.PayloadToResult<ParticipantsOnEventsPayload>
           }
           update: {
             args: Prisma.ParticipantsOnEventsUpdateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$ParticipantsOnEventsPayload>
+            result: $Utils.PayloadToResult<ParticipantsOnEventsPayload>
           }
           deleteMany: {
             args: Prisma.ParticipantsOnEventsDeleteManyArgs<ExtArgs>,
@@ -1025,7 +1198,7 @@ export namespace Prisma {
           }
           upsert: {
             args: Prisma.ParticipantsOnEventsUpsertArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$ParticipantsOnEventsPayload>
+            result: $Utils.PayloadToResult<ParticipantsOnEventsPayload>
           }
           aggregate: {
             args: Prisma.ParticipantsOnEventsAggregateArgs<ExtArgs>,
@@ -1042,32 +1215,32 @@ export namespace Prisma {
         }
       }
       Payment: {
-        payload: Prisma.$PaymentPayload<ExtArgs>
+        payload: PaymentPayload<ExtArgs>
         fields: Prisma.PaymentFieldRefs
         operations: {
           findUnique: {
             args: Prisma.PaymentFindUniqueArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$PaymentPayload> | null
+            result: $Utils.PayloadToResult<PaymentPayload> | null
           }
           findUniqueOrThrow: {
             args: Prisma.PaymentFindUniqueOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>
+            result: $Utils.PayloadToResult<PaymentPayload>
           }
           findFirst: {
             args: Prisma.PaymentFindFirstArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$PaymentPayload> | null
+            result: $Utils.PayloadToResult<PaymentPayload> | null
           }
           findFirstOrThrow: {
             args: Prisma.PaymentFindFirstOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>
+            result: $Utils.PayloadToResult<PaymentPayload>
           }
           findMany: {
             args: Prisma.PaymentFindManyArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>[]
+            result: $Utils.PayloadToResult<PaymentPayload>[]
           }
           create: {
             args: Prisma.PaymentCreateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>
+            result: $Utils.PayloadToResult<PaymentPayload>
           }
           createMany: {
             args: Prisma.PaymentCreateManyArgs<ExtArgs>,
@@ -1075,11 +1248,11 @@ export namespace Prisma {
           }
           delete: {
             args: Prisma.PaymentDeleteArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>
+            result: $Utils.PayloadToResult<PaymentPayload>
           }
           update: {
             args: Prisma.PaymentUpdateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>
+            result: $Utils.PayloadToResult<PaymentPayload>
           }
           deleteMany: {
             args: Prisma.PaymentDeleteManyArgs<ExtArgs>,
@@ -1091,7 +1264,7 @@ export namespace Prisma {
           }
           upsert: {
             args: Prisma.PaymentUpsertArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>
+            result: $Utils.PayloadToResult<PaymentPayload>
           }
           aggregate: {
             args: Prisma.PaymentAggregateArgs<ExtArgs>,
@@ -1108,32 +1281,32 @@ export namespace Prisma {
         }
       }
       Account: {
-        payload: Prisma.$AccountPayload<ExtArgs>
+        payload: AccountPayload<ExtArgs>
         fields: Prisma.AccountFieldRefs
         operations: {
           findUnique: {
             args: Prisma.AccountFindUniqueArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$AccountPayload> | null
+            result: $Utils.PayloadToResult<AccountPayload> | null
           }
           findUniqueOrThrow: {
             args: Prisma.AccountFindUniqueOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$AccountPayload>
+            result: $Utils.PayloadToResult<AccountPayload>
           }
           findFirst: {
             args: Prisma.AccountFindFirstArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$AccountPayload> | null
+            result: $Utils.PayloadToResult<AccountPayload> | null
           }
           findFirstOrThrow: {
             args: Prisma.AccountFindFirstOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$AccountPayload>
+            result: $Utils.PayloadToResult<AccountPayload>
           }
           findMany: {
             args: Prisma.AccountFindManyArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$AccountPayload>[]
+            result: $Utils.PayloadToResult<AccountPayload>[]
           }
           create: {
             args: Prisma.AccountCreateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$AccountPayload>
+            result: $Utils.PayloadToResult<AccountPayload>
           }
           createMany: {
             args: Prisma.AccountCreateManyArgs<ExtArgs>,
@@ -1141,11 +1314,11 @@ export namespace Prisma {
           }
           delete: {
             args: Prisma.AccountDeleteArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$AccountPayload>
+            result: $Utils.PayloadToResult<AccountPayload>
           }
           update: {
             args: Prisma.AccountUpdateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$AccountPayload>
+            result: $Utils.PayloadToResult<AccountPayload>
           }
           deleteMany: {
             args: Prisma.AccountDeleteManyArgs<ExtArgs>,
@@ -1157,7 +1330,7 @@ export namespace Prisma {
           }
           upsert: {
             args: Prisma.AccountUpsertArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$AccountPayload>
+            result: $Utils.PayloadToResult<AccountPayload>
           }
           aggregate: {
             args: Prisma.AccountAggregateArgs<ExtArgs>,
@@ -1174,32 +1347,32 @@ export namespace Prisma {
         }
       }
       Session: {
-        payload: Prisma.$SessionPayload<ExtArgs>
+        payload: SessionPayload<ExtArgs>
         fields: Prisma.SessionFieldRefs
         operations: {
           findUnique: {
             args: Prisma.SessionFindUniqueArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$SessionPayload> | null
+            result: $Utils.PayloadToResult<SessionPayload> | null
           }
           findUniqueOrThrow: {
             args: Prisma.SessionFindUniqueOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$SessionPayload>
+            result: $Utils.PayloadToResult<SessionPayload>
           }
           findFirst: {
             args: Prisma.SessionFindFirstArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$SessionPayload> | null
+            result: $Utils.PayloadToResult<SessionPayload> | null
           }
           findFirstOrThrow: {
             args: Prisma.SessionFindFirstOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$SessionPayload>
+            result: $Utils.PayloadToResult<SessionPayload>
           }
           findMany: {
             args: Prisma.SessionFindManyArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$SessionPayload>[]
+            result: $Utils.PayloadToResult<SessionPayload>[]
           }
           create: {
             args: Prisma.SessionCreateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$SessionPayload>
+            result: $Utils.PayloadToResult<SessionPayload>
           }
           createMany: {
             args: Prisma.SessionCreateManyArgs<ExtArgs>,
@@ -1207,11 +1380,11 @@ export namespace Prisma {
           }
           delete: {
             args: Prisma.SessionDeleteArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$SessionPayload>
+            result: $Utils.PayloadToResult<SessionPayload>
           }
           update: {
             args: Prisma.SessionUpdateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$SessionPayload>
+            result: $Utils.PayloadToResult<SessionPayload>
           }
           deleteMany: {
             args: Prisma.SessionDeleteManyArgs<ExtArgs>,
@@ -1223,7 +1396,7 @@ export namespace Prisma {
           }
           upsert: {
             args: Prisma.SessionUpsertArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$SessionPayload>
+            result: $Utils.PayloadToResult<SessionPayload>
           }
           aggregate: {
             args: Prisma.SessionAggregateArgs<ExtArgs>,
@@ -1240,32 +1413,32 @@ export namespace Prisma {
         }
       }
       Group: {
-        payload: Prisma.$GroupPayload<ExtArgs>
+        payload: GroupPayload<ExtArgs>
         fields: Prisma.GroupFieldRefs
         operations: {
           findUnique: {
             args: Prisma.GroupFindUniqueArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$GroupPayload> | null
+            result: $Utils.PayloadToResult<GroupPayload> | null
           }
           findUniqueOrThrow: {
             args: Prisma.GroupFindUniqueOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$GroupPayload>
+            result: $Utils.PayloadToResult<GroupPayload>
           }
           findFirst: {
             args: Prisma.GroupFindFirstArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$GroupPayload> | null
+            result: $Utils.PayloadToResult<GroupPayload> | null
           }
           findFirstOrThrow: {
             args: Prisma.GroupFindFirstOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$GroupPayload>
+            result: $Utils.PayloadToResult<GroupPayload>
           }
           findMany: {
             args: Prisma.GroupFindManyArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$GroupPayload>[]
+            result: $Utils.PayloadToResult<GroupPayload>[]
           }
           create: {
             args: Prisma.GroupCreateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$GroupPayload>
+            result: $Utils.PayloadToResult<GroupPayload>
           }
           createMany: {
             args: Prisma.GroupCreateManyArgs<ExtArgs>,
@@ -1273,11 +1446,11 @@ export namespace Prisma {
           }
           delete: {
             args: Prisma.GroupDeleteArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$GroupPayload>
+            result: $Utils.PayloadToResult<GroupPayload>
           }
           update: {
             args: Prisma.GroupUpdateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$GroupPayload>
+            result: $Utils.PayloadToResult<GroupPayload>
           }
           deleteMany: {
             args: Prisma.GroupDeleteManyArgs<ExtArgs>,
@@ -1289,7 +1462,7 @@ export namespace Prisma {
           }
           upsert: {
             args: Prisma.GroupUpsertArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$GroupPayload>
+            result: $Utils.PayloadToResult<GroupPayload>
           }
           aggregate: {
             args: Prisma.GroupAggregateArgs<ExtArgs>,
@@ -1306,32 +1479,32 @@ export namespace Prisma {
         }
       }
       User: {
-        payload: Prisma.$UserPayload<ExtArgs>
+        payload: UserPayload<ExtArgs>
         fields: Prisma.UserFieldRefs
         operations: {
           findUnique: {
             args: Prisma.UserFindUniqueArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$UserPayload> | null
+            result: $Utils.PayloadToResult<UserPayload> | null
           }
           findUniqueOrThrow: {
             args: Prisma.UserFindUniqueOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$UserPayload>
+            result: $Utils.PayloadToResult<UserPayload>
           }
           findFirst: {
             args: Prisma.UserFindFirstArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$UserPayload> | null
+            result: $Utils.PayloadToResult<UserPayload> | null
           }
           findFirstOrThrow: {
             args: Prisma.UserFindFirstOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$UserPayload>
+            result: $Utils.PayloadToResult<UserPayload>
           }
           findMany: {
             args: Prisma.UserFindManyArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$UserPayload>[]
+            result: $Utils.PayloadToResult<UserPayload>[]
           }
           create: {
             args: Prisma.UserCreateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$UserPayload>
+            result: $Utils.PayloadToResult<UserPayload>
           }
           createMany: {
             args: Prisma.UserCreateManyArgs<ExtArgs>,
@@ -1339,11 +1512,11 @@ export namespace Prisma {
           }
           delete: {
             args: Prisma.UserDeleteArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$UserPayload>
+            result: $Utils.PayloadToResult<UserPayload>
           }
           update: {
             args: Prisma.UserUpdateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$UserPayload>
+            result: $Utils.PayloadToResult<UserPayload>
           }
           deleteMany: {
             args: Prisma.UserDeleteManyArgs<ExtArgs>,
@@ -1355,7 +1528,7 @@ export namespace Prisma {
           }
           upsert: {
             args: Prisma.UserUpsertArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$UserPayload>
+            result: $Utils.PayloadToResult<UserPayload>
           }
           aggregate: {
             args: Prisma.UserAggregateArgs<ExtArgs>,
@@ -1372,32 +1545,32 @@ export namespace Prisma {
         }
       }
       UserOnGroups: {
-        payload: Prisma.$UserOnGroupsPayload<ExtArgs>
+        payload: UserOnGroupsPayload<ExtArgs>
         fields: Prisma.UserOnGroupsFieldRefs
         operations: {
           findUnique: {
             args: Prisma.UserOnGroupsFindUniqueArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$UserOnGroupsPayload> | null
+            result: $Utils.PayloadToResult<UserOnGroupsPayload> | null
           }
           findUniqueOrThrow: {
             args: Prisma.UserOnGroupsFindUniqueOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$UserOnGroupsPayload>
+            result: $Utils.PayloadToResult<UserOnGroupsPayload>
           }
           findFirst: {
             args: Prisma.UserOnGroupsFindFirstArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$UserOnGroupsPayload> | null
+            result: $Utils.PayloadToResult<UserOnGroupsPayload> | null
           }
           findFirstOrThrow: {
             args: Prisma.UserOnGroupsFindFirstOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$UserOnGroupsPayload>
+            result: $Utils.PayloadToResult<UserOnGroupsPayload>
           }
           findMany: {
             args: Prisma.UserOnGroupsFindManyArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$UserOnGroupsPayload>[]
+            result: $Utils.PayloadToResult<UserOnGroupsPayload>[]
           }
           create: {
             args: Prisma.UserOnGroupsCreateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$UserOnGroupsPayload>
+            result: $Utils.PayloadToResult<UserOnGroupsPayload>
           }
           createMany: {
             args: Prisma.UserOnGroupsCreateManyArgs<ExtArgs>,
@@ -1405,11 +1578,11 @@ export namespace Prisma {
           }
           delete: {
             args: Prisma.UserOnGroupsDeleteArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$UserOnGroupsPayload>
+            result: $Utils.PayloadToResult<UserOnGroupsPayload>
           }
           update: {
             args: Prisma.UserOnGroupsUpdateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$UserOnGroupsPayload>
+            result: $Utils.PayloadToResult<UserOnGroupsPayload>
           }
           deleteMany: {
             args: Prisma.UserOnGroupsDeleteManyArgs<ExtArgs>,
@@ -1421,7 +1594,7 @@ export namespace Prisma {
           }
           upsert: {
             args: Prisma.UserOnGroupsUpsertArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$UserOnGroupsPayload>
+            result: $Utils.PayloadToResult<UserOnGroupsPayload>
           }
           aggregate: {
             args: Prisma.UserOnGroupsAggregateArgs<ExtArgs>,
@@ -1438,32 +1611,32 @@ export namespace Prisma {
         }
       }
       VerificationToken: {
-        payload: Prisma.$VerificationTokenPayload<ExtArgs>
+        payload: VerificationTokenPayload<ExtArgs>
         fields: Prisma.VerificationTokenFieldRefs
         operations: {
           findUnique: {
             args: Prisma.VerificationTokenFindUniqueArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$VerificationTokenPayload> | null
+            result: $Utils.PayloadToResult<VerificationTokenPayload> | null
           }
           findUniqueOrThrow: {
             args: Prisma.VerificationTokenFindUniqueOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$VerificationTokenPayload>
+            result: $Utils.PayloadToResult<VerificationTokenPayload>
           }
           findFirst: {
             args: Prisma.VerificationTokenFindFirstArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$VerificationTokenPayload> | null
+            result: $Utils.PayloadToResult<VerificationTokenPayload> | null
           }
           findFirstOrThrow: {
             args: Prisma.VerificationTokenFindFirstOrThrowArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$VerificationTokenPayload>
+            result: $Utils.PayloadToResult<VerificationTokenPayload>
           }
           findMany: {
             args: Prisma.VerificationTokenFindManyArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$VerificationTokenPayload>[]
+            result: $Utils.PayloadToResult<VerificationTokenPayload>[]
           }
           create: {
             args: Prisma.VerificationTokenCreateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$VerificationTokenPayload>
+            result: $Utils.PayloadToResult<VerificationTokenPayload>
           }
           createMany: {
             args: Prisma.VerificationTokenCreateManyArgs<ExtArgs>,
@@ -1471,11 +1644,11 @@ export namespace Prisma {
           }
           delete: {
             args: Prisma.VerificationTokenDeleteArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$VerificationTokenPayload>
+            result: $Utils.PayloadToResult<VerificationTokenPayload>
           }
           update: {
             args: Prisma.VerificationTokenUpdateArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$VerificationTokenPayload>
+            result: $Utils.PayloadToResult<VerificationTokenPayload>
           }
           deleteMany: {
             args: Prisma.VerificationTokenDeleteManyArgs<ExtArgs>,
@@ -1487,7 +1660,7 @@ export namespace Prisma {
           }
           upsert: {
             args: Prisma.VerificationTokenUpsertArgs<ExtArgs>,
-            result: $Utils.PayloadToResult<Prisma.$VerificationTokenPayload>
+            result: $Utils.PayloadToResult<VerificationTokenPayload>
           }
           aggregate: {
             args: Prisma.VerificationTokenAggregateArgs<ExtArgs>,
@@ -1536,11 +1709,6 @@ export namespace Prisma {
      * Overwrites the datasource url from your schema.prisma file
      */
     datasources?: Datasources
-
-    /**
-     * Overwrites the datasource url from your schema.prisma file
-     */
-    datasourceUrl?: string
 
     /**
      * @default "colorless"
@@ -1596,10 +1764,8 @@ export namespace Prisma {
 
   export type PrismaAction =
     | 'findUnique'
-    | 'findUniqueOrThrow'
     | 'findMany'
     | 'findFirst'
-    | 'findFirstOrThrow'
     | 'create'
     | 'createMany'
     | 'update'
@@ -1613,7 +1779,6 @@ export namespace Prisma {
     | 'count'
     | 'runCommandRaw'
     | 'findRaw'
-    | 'groupBy'
 
   /**
    * These options are being passed into the middleware as "params"
@@ -1631,8 +1796,8 @@ export namespace Prisma {
    */
   export type Middleware<T = any> = (
     params: MiddlewareParams,
-    next: (params: MiddlewareParams) => $Utils.JsPromise<T>,
-  ) => $Utils.JsPromise<T>
+    next: (params: MiddlewareParams) => Promise<T>,
+  ) => Promise<T>
 
   // tested in getLogLevel.test.ts
   export function getLogLevel(log: Array<LogLevel | LogDefinition>): LogLevel | undefined;
@@ -1655,6 +1820,7 @@ export namespace Prisma {
    * Count Type EventCountOutputType
    */
 
+
   export type EventCountOutputType = {
     participants: number
   }
@@ -1668,7 +1834,7 @@ export namespace Prisma {
   /**
    * EventCountOutputType without action
    */
-  export type EventCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  export type EventCountOutputTypeArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the EventCountOutputType
      */
@@ -1689,6 +1855,7 @@ export namespace Prisma {
    * Count Type PaymentCountOutputType
    */
 
+
   export type PaymentCountOutputType = {
     ParticipantsOnEvents: number
   }
@@ -1702,7 +1869,7 @@ export namespace Prisma {
   /**
    * PaymentCountOutputType without action
    */
-  export type PaymentCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  export type PaymentCountOutputTypeArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the PaymentCountOutputType
      */
@@ -1723,6 +1890,7 @@ export namespace Prisma {
    * Count Type GroupCountOutputType
    */
 
+
   export type GroupCountOutputType = {
     events: number
     users: number
@@ -1738,7 +1906,7 @@ export namespace Prisma {
   /**
    * GroupCountOutputType without action
    */
-  export type GroupCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  export type GroupCountOutputTypeArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the GroupCountOutputType
      */
@@ -1767,6 +1935,7 @@ export namespace Prisma {
    * Count Type UserCountOutputType
    */
 
+
   export type UserCountOutputType = {
     accounts: number
     sessions: number
@@ -1790,7 +1959,7 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  export type UserCountOutputTypeArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the UserCountOutputType
      */
@@ -1854,6 +2023,7 @@ export namespace Prisma {
   /**
    * Model Tokens
    */
+
 
   export type AggregateTokens = {
     _count: TokensCountAggregateOutputType | null
@@ -1984,6 +2154,7 @@ export namespace Prisma {
     _max?: TokensMaxAggregateInputType
   }
 
+
   export type TokensGroupByOutputType = {
     id: string
     access_token: string
@@ -2015,7 +2186,7 @@ export namespace Prisma {
     refresh_token?: boolean
     expiry_date?: boolean
     ownerId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | UserArgs<ExtArgs>
   }, ExtArgs["result"]["tokens"]>
 
   export type TokensSelectScalar = {
@@ -2027,27 +2198,11 @@ export namespace Prisma {
   }
 
   export type TokensInclude<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | UserArgs<ExtArgs>
   }
 
 
-  export type $TokensPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
-    name: "Tokens"
-    objects: {
-      user: Prisma.$UserPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetResult<{
-      id: string
-      access_token: string
-      refresh_token: string
-      expiry_date: Date
-      ownerId: string
-    }, ExtArgs["result"]["tokens"]>
-    composites: {}
-  }
-
-
-  type TokensGetPayload<S extends boolean | null | undefined | TokensDefaultArgs> = $Result.GetResult<Prisma.$TokensPayload, S>
+  type TokensGetPayload<S extends boolean | null | undefined | TokensArgs> = $Types.GetResult<TokensPayload, S>
 
   type TokensCountArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = 
     Omit<TokensFindManyArgs, 'select' | 'include'> & {
@@ -2069,7 +2224,7 @@ export namespace Prisma {
     **/
     findUnique<T extends TokensFindUniqueArgs<ExtArgs>>(
       args: SelectSubset<T, TokensFindUniqueArgs<ExtArgs>>
-    ): Prisma__TokensClient<$Result.GetResult<Prisma.$TokensPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+    ): Prisma__TokensClient<$Types.GetResult<TokensPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
 
     /**
      * Find one Tokens that matches the filter or throw an error  with `error.code='P2025'` 
@@ -2085,7 +2240,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends TokensFindUniqueOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, TokensFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__TokensClient<$Result.GetResult<Prisma.$TokensPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+    ): Prisma__TokensClient<$Types.GetResult<TokensPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
 
     /**
      * Find the first Tokens that matches the filter.
@@ -2102,7 +2257,7 @@ export namespace Prisma {
     **/
     findFirst<T extends TokensFindFirstArgs<ExtArgs>>(
       args?: SelectSubset<T, TokensFindFirstArgs<ExtArgs>>
-    ): Prisma__TokensClient<$Result.GetResult<Prisma.$TokensPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+    ): Prisma__TokensClient<$Types.GetResult<TokensPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
 
     /**
      * Find the first Tokens that matches the filter or
@@ -2120,7 +2275,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends TokensFindFirstOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, TokensFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__TokensClient<$Result.GetResult<Prisma.$TokensPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+    ): Prisma__TokensClient<$Types.GetResult<TokensPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
 
     /**
      * Find zero or more Tokens that matches the filter.
@@ -2140,7 +2295,7 @@ export namespace Prisma {
     **/
     findMany<T extends TokensFindManyArgs<ExtArgs>>(
       args?: SelectSubset<T, TokensFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TokensPayload<ExtArgs>, T, 'findMany'>>
+    ): Prisma.PrismaPromise<$Types.GetResult<TokensPayload<ExtArgs>, T, 'findMany'>>
 
     /**
      * Create a Tokens.
@@ -2156,7 +2311,7 @@ export namespace Prisma {
     **/
     create<T extends TokensCreateArgs<ExtArgs>>(
       args: SelectSubset<T, TokensCreateArgs<ExtArgs>>
-    ): Prisma__TokensClient<$Result.GetResult<Prisma.$TokensPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+    ): Prisma__TokensClient<$Types.GetResult<TokensPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
 
     /**
      * Create many Tokens.
@@ -2188,7 +2343,7 @@ export namespace Prisma {
     **/
     delete<T extends TokensDeleteArgs<ExtArgs>>(
       args: SelectSubset<T, TokensDeleteArgs<ExtArgs>>
-    ): Prisma__TokensClient<$Result.GetResult<Prisma.$TokensPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+    ): Prisma__TokensClient<$Types.GetResult<TokensPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
 
     /**
      * Update one Tokens.
@@ -2207,7 +2362,7 @@ export namespace Prisma {
     **/
     update<T extends TokensUpdateArgs<ExtArgs>>(
       args: SelectSubset<T, TokensUpdateArgs<ExtArgs>>
-    ): Prisma__TokensClient<$Result.GetResult<Prisma.$TokensPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+    ): Prisma__TokensClient<$Types.GetResult<TokensPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
 
     /**
      * Delete zero or more Tokens.
@@ -2265,7 +2420,7 @@ export namespace Prisma {
     **/
     upsert<T extends TokensUpsertArgs<ExtArgs>>(
       args: SelectSubset<T, TokensUpsertArgs<ExtArgs>>
-    ): Prisma__TokensClient<$Result.GetResult<Prisma.$TokensPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+    ): Prisma__TokensClient<$Types.GetResult<TokensPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
 
     /**
      * Count the number of Tokens.
@@ -2404,31 +2559,44 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__TokensClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export class Prisma__TokensClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> implements Prisma.PrismaPromise<T> {
+    private readonly _dmmf;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
     readonly [Symbol.toStringTag]: 'PrismaPromise';
+    constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
 
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findUniqueOrThrow'> | Null, Null, ExtArgs>;
+    user<T extends UserArgs<ExtArgs> = {}>(args?: Subset<T, UserArgs<ExtArgs>>): Prisma__UserClient<$Types.GetResult<UserPayload<ExtArgs>, T, 'findUnique'> | Null, never, ExtArgs>;
 
+    private get _document();
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
   }
 
 
@@ -2756,7 +2924,7 @@ export namespace Prisma {
   /**
    * Tokens without action
    */
-  export type TokensDefaultArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  export type TokensArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Tokens
      */
@@ -2772,6 +2940,7 @@ export namespace Prisma {
   /**
    * Model Event
    */
+
 
   export type AggregateEvent = {
     _count: EventCountAggregateOutputType | null
@@ -2801,7 +2970,7 @@ export namespace Prisma {
     startTime: string | null
     bookingDate: Date | null
     cost: number | null
-    status: $Enums.EventStatus | null
+    status: EventStatus | null
     maxParticipants: number | null
     groupId: string | null
   }
@@ -2816,7 +2985,7 @@ export namespace Prisma {
     startTime: string | null
     bookingDate: Date | null
     cost: number | null
-    status: $Enums.EventStatus | null
+    status: EventStatus | null
     maxParticipants: number | null
     groupId: string | null
   }
@@ -2980,6 +3149,7 @@ export namespace Prisma {
     _max?: EventMaxAggregateInputType
   }
 
+
   export type EventGroupByOutputType = {
     id: string
     createdAt: Date
@@ -2990,7 +3160,7 @@ export namespace Prisma {
     startTime: string
     bookingDate: Date | null
     cost: number
-    status: $Enums.EventStatus
+    status: EventStatus
     maxParticipants: number
     groupId: string | null
     _count: EventCountAggregateOutputType | null
@@ -3029,7 +3199,7 @@ export namespace Prisma {
     groupId?: boolean
     participants?: boolean | Event$participantsArgs<ExtArgs>
     Group?: boolean | Event$GroupArgs<ExtArgs>
-    _count?: boolean | EventCountOutputTypeDefaultArgs<ExtArgs>
+    _count?: boolean | EventCountOutputTypeArgs<ExtArgs>
   }, ExtArgs["result"]["event"]>
 
   export type EventSelectScalar = {
@@ -3050,35 +3220,11 @@ export namespace Prisma {
   export type EventInclude<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     participants?: boolean | Event$participantsArgs<ExtArgs>
     Group?: boolean | Event$GroupArgs<ExtArgs>
-    _count?: boolean | EventCountOutputTypeDefaultArgs<ExtArgs>
+    _count?: boolean | EventCountOutputTypeArgs<ExtArgs>
   }
 
 
-  export type $EventPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
-    name: "Event"
-    objects: {
-      participants: Prisma.$ParticipantsOnEventsPayload<ExtArgs>[]
-      Group: Prisma.$GroupPayload<ExtArgs> | null
-    }
-    scalars: $Extensions.GetResult<{
-      id: string
-      createdAt: Date
-      updatedAt: Date
-      address: string
-      date: Date
-      endTime: string
-      startTime: string
-      bookingDate: Date | null
-      cost: number
-      status: $Enums.EventStatus
-      maxParticipants: number
-      groupId: string | null
-    }, ExtArgs["result"]["event"]>
-    composites: {}
-  }
-
-
-  type EventGetPayload<S extends boolean | null | undefined | EventDefaultArgs> = $Result.GetResult<Prisma.$EventPayload, S>
+  type EventGetPayload<S extends boolean | null | undefined | EventArgs> = $Types.GetResult<EventPayload, S>
 
   type EventCountArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = 
     Omit<EventFindManyArgs, 'select' | 'include'> & {
@@ -3100,7 +3246,7 @@ export namespace Prisma {
     **/
     findUnique<T extends EventFindUniqueArgs<ExtArgs>>(
       args: SelectSubset<T, EventFindUniqueArgs<ExtArgs>>
-    ): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+    ): Prisma__EventClient<$Types.GetResult<EventPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
 
     /**
      * Find one Event that matches the filter or throw an error  with `error.code='P2025'` 
@@ -3116,7 +3262,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends EventFindUniqueOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, EventFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+    ): Prisma__EventClient<$Types.GetResult<EventPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
 
     /**
      * Find the first Event that matches the filter.
@@ -3133,7 +3279,7 @@ export namespace Prisma {
     **/
     findFirst<T extends EventFindFirstArgs<ExtArgs>>(
       args?: SelectSubset<T, EventFindFirstArgs<ExtArgs>>
-    ): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+    ): Prisma__EventClient<$Types.GetResult<EventPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
 
     /**
      * Find the first Event that matches the filter or
@@ -3151,7 +3297,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends EventFindFirstOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, EventFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+    ): Prisma__EventClient<$Types.GetResult<EventPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
 
     /**
      * Find zero or more Events that matches the filter.
@@ -3171,7 +3317,7 @@ export namespace Prisma {
     **/
     findMany<T extends EventFindManyArgs<ExtArgs>>(
       args?: SelectSubset<T, EventFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, 'findMany'>>
+    ): Prisma.PrismaPromise<$Types.GetResult<EventPayload<ExtArgs>, T, 'findMany'>>
 
     /**
      * Create a Event.
@@ -3187,7 +3333,7 @@ export namespace Prisma {
     **/
     create<T extends EventCreateArgs<ExtArgs>>(
       args: SelectSubset<T, EventCreateArgs<ExtArgs>>
-    ): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+    ): Prisma__EventClient<$Types.GetResult<EventPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
 
     /**
      * Create many Events.
@@ -3219,7 +3365,7 @@ export namespace Prisma {
     **/
     delete<T extends EventDeleteArgs<ExtArgs>>(
       args: SelectSubset<T, EventDeleteArgs<ExtArgs>>
-    ): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+    ): Prisma__EventClient<$Types.GetResult<EventPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
 
     /**
      * Update one Event.
@@ -3238,7 +3384,7 @@ export namespace Prisma {
     **/
     update<T extends EventUpdateArgs<ExtArgs>>(
       args: SelectSubset<T, EventUpdateArgs<ExtArgs>>
-    ): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+    ): Prisma__EventClient<$Types.GetResult<EventPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
 
     /**
      * Delete zero or more Events.
@@ -3296,7 +3442,7 @@ export namespace Prisma {
     **/
     upsert<T extends EventUpsertArgs<ExtArgs>>(
       args: SelectSubset<T, EventUpsertArgs<ExtArgs>>
-    ): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+    ): Prisma__EventClient<$Types.GetResult<EventPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
 
     /**
      * Count the number of Events.
@@ -3435,33 +3581,46 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__EventClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export class Prisma__EventClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> implements Prisma.PrismaPromise<T> {
+    private readonly _dmmf;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
     readonly [Symbol.toStringTag]: 'PrismaPromise';
+    constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
 
-    participants<T extends Event$participantsArgs<ExtArgs> = {}>(args?: Subset<T, Event$participantsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParticipantsOnEventsPayload<ExtArgs>, T, 'findMany'> | Null>;
+    participants<T extends Event$participantsArgs<ExtArgs> = {}>(args?: Subset<T, Event$participantsArgs<ExtArgs>>): Prisma.PrismaPromise<$Types.GetResult<ParticipantsOnEventsPayload<ExtArgs>, T, 'findMany'>| Null>;
 
-    Group<T extends Event$GroupArgs<ExtArgs> = {}>(args?: Subset<T, Event$GroupArgs<ExtArgs>>): Prisma__GroupClient<$Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, 'findUniqueOrThrow'> | null, null, ExtArgs>;
+    Group<T extends Event$GroupArgs<ExtArgs> = {}>(args?: Subset<T, Event$GroupArgs<ExtArgs>>): Prisma__GroupClient<$Types.GetResult<GroupPayload<ExtArgs>, T, 'findUnique'> | Null, never, ExtArgs>;
 
+    private get _document();
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
   }
 
 
@@ -3833,7 +3992,7 @@ export namespace Prisma {
   /**
    * Event without action
    */
-  export type EventDefaultArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  export type EventArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Event
      */
@@ -3850,6 +4009,7 @@ export namespace Prisma {
    * Model ParticipantsOnEvents
    */
 
+
   export type AggregateParticipantsOnEvents = {
     _count: ParticipantsOnEventsCountAggregateOutputType | null
     _min: ParticipantsOnEventsMinAggregateOutputType | null
@@ -3862,7 +4022,7 @@ export namespace Prisma {
     id: string | null
     comment: string | null
     paymentId: string | null
-    userEventStatus: $Enums.UserEventStatus | null
+    userEventStatus: UserEventStatus | null
   }
 
   export type ParticipantsOnEventsMaxAggregateOutputType = {
@@ -3871,7 +4031,7 @@ export namespace Prisma {
     id: string | null
     comment: string | null
     paymentId: string | null
-    userEventStatus: $Enums.UserEventStatus | null
+    userEventStatus: UserEventStatus | null
   }
 
   export type ParticipantsOnEventsCountAggregateOutputType = {
@@ -3985,13 +4145,14 @@ export namespace Prisma {
     _max?: ParticipantsOnEventsMaxAggregateInputType
   }
 
+
   export type ParticipantsOnEventsGroupByOutputType = {
     eventId: string
     date: Date
     id: string
     comment: string | null
     paymentId: string | null
-    userEventStatus: $Enums.UserEventStatus
+    userEventStatus: UserEventStatus
     _count: ParticipantsOnEventsCountAggregateOutputType | null
     _min: ParticipantsOnEventsMinAggregateOutputType | null
     _max: ParticipantsOnEventsMaxAggregateOutputType | null
@@ -4019,8 +4180,8 @@ export namespace Prisma {
     paymentId?: boolean
     userEventStatus?: boolean
     payment?: boolean | ParticipantsOnEvents$paymentArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    event?: boolean | EventDefaultArgs<ExtArgs>
+    user?: boolean | UserArgs<ExtArgs>
+    event?: boolean | EventArgs<ExtArgs>
   }, ExtArgs["result"]["participantsOnEvents"]>
 
   export type ParticipantsOnEventsSelectScalar = {
@@ -4034,31 +4195,12 @@ export namespace Prisma {
 
   export type ParticipantsOnEventsInclude<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     payment?: boolean | ParticipantsOnEvents$paymentArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    event?: boolean | EventDefaultArgs<ExtArgs>
+    user?: boolean | UserArgs<ExtArgs>
+    event?: boolean | EventArgs<ExtArgs>
   }
 
 
-  export type $ParticipantsOnEventsPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
-    name: "ParticipantsOnEvents"
-    objects: {
-      payment: Prisma.$PaymentPayload<ExtArgs> | null
-      user: Prisma.$UserPayload<ExtArgs>
-      event: Prisma.$EventPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetResult<{
-      eventId: string
-      date: Date
-      id: string
-      comment: string | null
-      paymentId: string | null
-      userEventStatus: $Enums.UserEventStatus
-    }, ExtArgs["result"]["participantsOnEvents"]>
-    composites: {}
-  }
-
-
-  type ParticipantsOnEventsGetPayload<S extends boolean | null | undefined | ParticipantsOnEventsDefaultArgs> = $Result.GetResult<Prisma.$ParticipantsOnEventsPayload, S>
+  type ParticipantsOnEventsGetPayload<S extends boolean | null | undefined | ParticipantsOnEventsArgs> = $Types.GetResult<ParticipantsOnEventsPayload, S>
 
   type ParticipantsOnEventsCountArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = 
     Omit<ParticipantsOnEventsFindManyArgs, 'select' | 'include'> & {
@@ -4080,7 +4222,7 @@ export namespace Prisma {
     **/
     findUnique<T extends ParticipantsOnEventsFindUniqueArgs<ExtArgs>>(
       args: SelectSubset<T, ParticipantsOnEventsFindUniqueArgs<ExtArgs>>
-    ): Prisma__ParticipantsOnEventsClient<$Result.GetResult<Prisma.$ParticipantsOnEventsPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+    ): Prisma__ParticipantsOnEventsClient<$Types.GetResult<ParticipantsOnEventsPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
 
     /**
      * Find one ParticipantsOnEvents that matches the filter or throw an error  with `error.code='P2025'` 
@@ -4096,7 +4238,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends ParticipantsOnEventsFindUniqueOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, ParticipantsOnEventsFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__ParticipantsOnEventsClient<$Result.GetResult<Prisma.$ParticipantsOnEventsPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+    ): Prisma__ParticipantsOnEventsClient<$Types.GetResult<ParticipantsOnEventsPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
 
     /**
      * Find the first ParticipantsOnEvents that matches the filter.
@@ -4113,7 +4255,7 @@ export namespace Prisma {
     **/
     findFirst<T extends ParticipantsOnEventsFindFirstArgs<ExtArgs>>(
       args?: SelectSubset<T, ParticipantsOnEventsFindFirstArgs<ExtArgs>>
-    ): Prisma__ParticipantsOnEventsClient<$Result.GetResult<Prisma.$ParticipantsOnEventsPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+    ): Prisma__ParticipantsOnEventsClient<$Types.GetResult<ParticipantsOnEventsPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
 
     /**
      * Find the first ParticipantsOnEvents that matches the filter or
@@ -4131,7 +4273,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends ParticipantsOnEventsFindFirstOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, ParticipantsOnEventsFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__ParticipantsOnEventsClient<$Result.GetResult<Prisma.$ParticipantsOnEventsPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+    ): Prisma__ParticipantsOnEventsClient<$Types.GetResult<ParticipantsOnEventsPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
 
     /**
      * Find zero or more ParticipantsOnEvents that matches the filter.
@@ -4151,7 +4293,7 @@ export namespace Prisma {
     **/
     findMany<T extends ParticipantsOnEventsFindManyArgs<ExtArgs>>(
       args?: SelectSubset<T, ParticipantsOnEventsFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParticipantsOnEventsPayload<ExtArgs>, T, 'findMany'>>
+    ): Prisma.PrismaPromise<$Types.GetResult<ParticipantsOnEventsPayload<ExtArgs>, T, 'findMany'>>
 
     /**
      * Create a ParticipantsOnEvents.
@@ -4167,7 +4309,7 @@ export namespace Prisma {
     **/
     create<T extends ParticipantsOnEventsCreateArgs<ExtArgs>>(
       args: SelectSubset<T, ParticipantsOnEventsCreateArgs<ExtArgs>>
-    ): Prisma__ParticipantsOnEventsClient<$Result.GetResult<Prisma.$ParticipantsOnEventsPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+    ): Prisma__ParticipantsOnEventsClient<$Types.GetResult<ParticipantsOnEventsPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
 
     /**
      * Create many ParticipantsOnEvents.
@@ -4199,7 +4341,7 @@ export namespace Prisma {
     **/
     delete<T extends ParticipantsOnEventsDeleteArgs<ExtArgs>>(
       args: SelectSubset<T, ParticipantsOnEventsDeleteArgs<ExtArgs>>
-    ): Prisma__ParticipantsOnEventsClient<$Result.GetResult<Prisma.$ParticipantsOnEventsPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+    ): Prisma__ParticipantsOnEventsClient<$Types.GetResult<ParticipantsOnEventsPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
 
     /**
      * Update one ParticipantsOnEvents.
@@ -4218,7 +4360,7 @@ export namespace Prisma {
     **/
     update<T extends ParticipantsOnEventsUpdateArgs<ExtArgs>>(
       args: SelectSubset<T, ParticipantsOnEventsUpdateArgs<ExtArgs>>
-    ): Prisma__ParticipantsOnEventsClient<$Result.GetResult<Prisma.$ParticipantsOnEventsPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+    ): Prisma__ParticipantsOnEventsClient<$Types.GetResult<ParticipantsOnEventsPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
 
     /**
      * Delete zero or more ParticipantsOnEvents.
@@ -4276,7 +4418,7 @@ export namespace Prisma {
     **/
     upsert<T extends ParticipantsOnEventsUpsertArgs<ExtArgs>>(
       args: SelectSubset<T, ParticipantsOnEventsUpsertArgs<ExtArgs>>
-    ): Prisma__ParticipantsOnEventsClient<$Result.GetResult<Prisma.$ParticipantsOnEventsPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+    ): Prisma__ParticipantsOnEventsClient<$Types.GetResult<ParticipantsOnEventsPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
 
     /**
      * Count the number of ParticipantsOnEvents.
@@ -4415,35 +4557,48 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__ParticipantsOnEventsClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export class Prisma__ParticipantsOnEventsClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> implements Prisma.PrismaPromise<T> {
+    private readonly _dmmf;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
     readonly [Symbol.toStringTag]: 'PrismaPromise';
+    constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
 
-    payment<T extends ParticipantsOnEvents$paymentArgs<ExtArgs> = {}>(args?: Subset<T, ParticipantsOnEvents$paymentArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, 'findUniqueOrThrow'> | null, null, ExtArgs>;
+    payment<T extends ParticipantsOnEvents$paymentArgs<ExtArgs> = {}>(args?: Subset<T, ParticipantsOnEvents$paymentArgs<ExtArgs>>): Prisma__PaymentClient<$Types.GetResult<PaymentPayload<ExtArgs>, T, 'findUnique'> | Null, never, ExtArgs>;
 
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findUniqueOrThrow'> | Null, Null, ExtArgs>;
+    user<T extends UserArgs<ExtArgs> = {}>(args?: Subset<T, UserArgs<ExtArgs>>): Prisma__UserClient<$Types.GetResult<UserPayload<ExtArgs>, T, 'findUnique'> | Null, never, ExtArgs>;
 
-    event<T extends EventDefaultArgs<ExtArgs> = {}>(args?: Subset<T, EventDefaultArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, 'findUniqueOrThrow'> | Null, Null, ExtArgs>;
+    event<T extends EventArgs<ExtArgs> = {}>(args?: Subset<T, EventArgs<ExtArgs>>): Prisma__EventClient<$Types.GetResult<EventPayload<ExtArgs>, T, 'findUnique'> | Null, never, ExtArgs>;
 
+    private get _document();
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
   }
 
 
@@ -4788,7 +4943,7 @@ export namespace Prisma {
   /**
    * ParticipantsOnEvents without action
    */
-  export type ParticipantsOnEventsDefaultArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  export type ParticipantsOnEventsArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the ParticipantsOnEvents
      */
@@ -4804,6 +4959,7 @@ export namespace Prisma {
   /**
    * Model Payment
    */
+
 
   export type AggregatePayment = {
     _count: PaymentCountAggregateOutputType | null
@@ -4984,6 +5140,7 @@ export namespace Prisma {
     _max?: PaymentMaxAggregateInputType
   }
 
+
   export type PaymentGroupByOutputType = {
     id: string
     createdAt: Date
@@ -5024,7 +5181,7 @@ export namespace Prisma {
     paymentDate?: boolean
     gmailMailId?: boolean
     ParticipantsOnEvents?: boolean | Payment$ParticipantsOnEventsArgs<ExtArgs>
-    _count?: boolean | PaymentCountOutputTypeDefaultArgs<ExtArgs>
+    _count?: boolean | PaymentCountOutputTypeArgs<ExtArgs>
   }, ExtArgs["result"]["payment"]>
 
   export type PaymentSelectScalar = {
@@ -5040,30 +5197,11 @@ export namespace Prisma {
 
   export type PaymentInclude<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     ParticipantsOnEvents?: boolean | Payment$ParticipantsOnEventsArgs<ExtArgs>
-    _count?: boolean | PaymentCountOutputTypeDefaultArgs<ExtArgs>
+    _count?: boolean | PaymentCountOutputTypeArgs<ExtArgs>
   }
 
 
-  export type $PaymentPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
-    name: "Payment"
-    objects: {
-      ParticipantsOnEvents: Prisma.$ParticipantsOnEventsPayload<ExtArgs>[]
-    }
-    scalars: $Extensions.GetResult<{
-      id: string
-      createdAt: Date
-      updatedAt: Date
-      eventId: string
-      userId: string
-      amount: number
-      paymentDate: Date
-      gmailMailId: string
-    }, ExtArgs["result"]["payment"]>
-    composites: {}
-  }
-
-
-  type PaymentGetPayload<S extends boolean | null | undefined | PaymentDefaultArgs> = $Result.GetResult<Prisma.$PaymentPayload, S>
+  type PaymentGetPayload<S extends boolean | null | undefined | PaymentArgs> = $Types.GetResult<PaymentPayload, S>
 
   type PaymentCountArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = 
     Omit<PaymentFindManyArgs, 'select' | 'include'> & {
@@ -5085,7 +5223,7 @@ export namespace Prisma {
     **/
     findUnique<T extends PaymentFindUniqueArgs<ExtArgs>>(
       args: SelectSubset<T, PaymentFindUniqueArgs<ExtArgs>>
-    ): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+    ): Prisma__PaymentClient<$Types.GetResult<PaymentPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
 
     /**
      * Find one Payment that matches the filter or throw an error  with `error.code='P2025'` 
@@ -5101,7 +5239,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends PaymentFindUniqueOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, PaymentFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+    ): Prisma__PaymentClient<$Types.GetResult<PaymentPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
 
     /**
      * Find the first Payment that matches the filter.
@@ -5118,7 +5256,7 @@ export namespace Prisma {
     **/
     findFirst<T extends PaymentFindFirstArgs<ExtArgs>>(
       args?: SelectSubset<T, PaymentFindFirstArgs<ExtArgs>>
-    ): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+    ): Prisma__PaymentClient<$Types.GetResult<PaymentPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
 
     /**
      * Find the first Payment that matches the filter or
@@ -5136,7 +5274,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends PaymentFindFirstOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, PaymentFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+    ): Prisma__PaymentClient<$Types.GetResult<PaymentPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
 
     /**
      * Find zero or more Payments that matches the filter.
@@ -5156,7 +5294,7 @@ export namespace Prisma {
     **/
     findMany<T extends PaymentFindManyArgs<ExtArgs>>(
       args?: SelectSubset<T, PaymentFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, 'findMany'>>
+    ): Prisma.PrismaPromise<$Types.GetResult<PaymentPayload<ExtArgs>, T, 'findMany'>>
 
     /**
      * Create a Payment.
@@ -5172,7 +5310,7 @@ export namespace Prisma {
     **/
     create<T extends PaymentCreateArgs<ExtArgs>>(
       args: SelectSubset<T, PaymentCreateArgs<ExtArgs>>
-    ): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+    ): Prisma__PaymentClient<$Types.GetResult<PaymentPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
 
     /**
      * Create many Payments.
@@ -5204,7 +5342,7 @@ export namespace Prisma {
     **/
     delete<T extends PaymentDeleteArgs<ExtArgs>>(
       args: SelectSubset<T, PaymentDeleteArgs<ExtArgs>>
-    ): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+    ): Prisma__PaymentClient<$Types.GetResult<PaymentPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
 
     /**
      * Update one Payment.
@@ -5223,7 +5361,7 @@ export namespace Prisma {
     **/
     update<T extends PaymentUpdateArgs<ExtArgs>>(
       args: SelectSubset<T, PaymentUpdateArgs<ExtArgs>>
-    ): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+    ): Prisma__PaymentClient<$Types.GetResult<PaymentPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
 
     /**
      * Delete zero or more Payments.
@@ -5281,7 +5419,7 @@ export namespace Prisma {
     **/
     upsert<T extends PaymentUpsertArgs<ExtArgs>>(
       args: SelectSubset<T, PaymentUpsertArgs<ExtArgs>>
-    ): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+    ): Prisma__PaymentClient<$Types.GetResult<PaymentPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
 
     /**
      * Count the number of Payments.
@@ -5420,31 +5558,44 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__PaymentClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export class Prisma__PaymentClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> implements Prisma.PrismaPromise<T> {
+    private readonly _dmmf;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
     readonly [Symbol.toStringTag]: 'PrismaPromise';
+    constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
 
-    ParticipantsOnEvents<T extends Payment$ParticipantsOnEventsArgs<ExtArgs> = {}>(args?: Subset<T, Payment$ParticipantsOnEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParticipantsOnEventsPayload<ExtArgs>, T, 'findMany'> | Null>;
+    ParticipantsOnEvents<T extends Payment$ParticipantsOnEventsArgs<ExtArgs> = {}>(args?: Subset<T, Payment$ParticipantsOnEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Types.GetResult<ParticipantsOnEventsPayload<ExtArgs>, T, 'findMany'>| Null>;
 
+    private get _document();
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
   }
 
 
@@ -5796,7 +5947,7 @@ export namespace Prisma {
   /**
    * Payment without action
    */
-  export type PaymentDefaultArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  export type PaymentArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Payment
      */
@@ -5812,6 +5963,7 @@ export namespace Prisma {
   /**
    * Model Account
    */
+
 
   export type AggregateAccount = {
     _count: AccountCountAggregateOutputType | null
@@ -6016,6 +6168,7 @@ export namespace Prisma {
     _max?: AccountMaxAggregateInputType
   }
 
+
   export type AccountGroupByOutputType = {
     id: string
     userId: string
@@ -6063,7 +6216,7 @@ export namespace Prisma {
     scope?: boolean
     id_token?: boolean
     session_state?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | UserArgs<ExtArgs>
   }, ExtArgs["result"]["account"]>
 
   export type AccountSelectScalar = {
@@ -6082,34 +6235,11 @@ export namespace Prisma {
   }
 
   export type AccountInclude<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | UserArgs<ExtArgs>
   }
 
 
-  export type $AccountPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
-    name: "Account"
-    objects: {
-      user: Prisma.$UserPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetResult<{
-      id: string
-      userId: string
-      type: string
-      provider: string
-      providerAccountId: string
-      refresh_token: string | null
-      access_token: string | null
-      expires_at: number | null
-      token_type: string | null
-      scope: string | null
-      id_token: string | null
-      session_state: string | null
-    }, ExtArgs["result"]["account"]>
-    composites: {}
-  }
-
-
-  type AccountGetPayload<S extends boolean | null | undefined | AccountDefaultArgs> = $Result.GetResult<Prisma.$AccountPayload, S>
+  type AccountGetPayload<S extends boolean | null | undefined | AccountArgs> = $Types.GetResult<AccountPayload, S>
 
   type AccountCountArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = 
     Omit<AccountFindManyArgs, 'select' | 'include'> & {
@@ -6131,7 +6261,7 @@ export namespace Prisma {
     **/
     findUnique<T extends AccountFindUniqueArgs<ExtArgs>>(
       args: SelectSubset<T, AccountFindUniqueArgs<ExtArgs>>
-    ): Prisma__AccountClient<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+    ): Prisma__AccountClient<$Types.GetResult<AccountPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
 
     /**
      * Find one Account that matches the filter or throw an error  with `error.code='P2025'` 
@@ -6147,7 +6277,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends AccountFindUniqueOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, AccountFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__AccountClient<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+    ): Prisma__AccountClient<$Types.GetResult<AccountPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
 
     /**
      * Find the first Account that matches the filter.
@@ -6164,7 +6294,7 @@ export namespace Prisma {
     **/
     findFirst<T extends AccountFindFirstArgs<ExtArgs>>(
       args?: SelectSubset<T, AccountFindFirstArgs<ExtArgs>>
-    ): Prisma__AccountClient<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+    ): Prisma__AccountClient<$Types.GetResult<AccountPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
 
     /**
      * Find the first Account that matches the filter or
@@ -6182,7 +6312,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends AccountFindFirstOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, AccountFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__AccountClient<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+    ): Prisma__AccountClient<$Types.GetResult<AccountPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
 
     /**
      * Find zero or more Accounts that matches the filter.
@@ -6202,7 +6332,7 @@ export namespace Prisma {
     **/
     findMany<T extends AccountFindManyArgs<ExtArgs>>(
       args?: SelectSubset<T, AccountFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, 'findMany'>>
+    ): Prisma.PrismaPromise<$Types.GetResult<AccountPayload<ExtArgs>, T, 'findMany'>>
 
     /**
      * Create a Account.
@@ -6218,7 +6348,7 @@ export namespace Prisma {
     **/
     create<T extends AccountCreateArgs<ExtArgs>>(
       args: SelectSubset<T, AccountCreateArgs<ExtArgs>>
-    ): Prisma__AccountClient<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+    ): Prisma__AccountClient<$Types.GetResult<AccountPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
 
     /**
      * Create many Accounts.
@@ -6250,7 +6380,7 @@ export namespace Prisma {
     **/
     delete<T extends AccountDeleteArgs<ExtArgs>>(
       args: SelectSubset<T, AccountDeleteArgs<ExtArgs>>
-    ): Prisma__AccountClient<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+    ): Prisma__AccountClient<$Types.GetResult<AccountPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
 
     /**
      * Update one Account.
@@ -6269,7 +6399,7 @@ export namespace Prisma {
     **/
     update<T extends AccountUpdateArgs<ExtArgs>>(
       args: SelectSubset<T, AccountUpdateArgs<ExtArgs>>
-    ): Prisma__AccountClient<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+    ): Prisma__AccountClient<$Types.GetResult<AccountPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
 
     /**
      * Delete zero or more Accounts.
@@ -6327,7 +6457,7 @@ export namespace Prisma {
     **/
     upsert<T extends AccountUpsertArgs<ExtArgs>>(
       args: SelectSubset<T, AccountUpsertArgs<ExtArgs>>
-    ): Prisma__AccountClient<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+    ): Prisma__AccountClient<$Types.GetResult<AccountPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
 
     /**
      * Count the number of Accounts.
@@ -6466,31 +6596,44 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__AccountClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export class Prisma__AccountClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> implements Prisma.PrismaPromise<T> {
+    private readonly _dmmf;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
     readonly [Symbol.toStringTag]: 'PrismaPromise';
+    constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
 
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findUniqueOrThrow'> | Null, Null, ExtArgs>;
+    user<T extends UserArgs<ExtArgs> = {}>(args?: Subset<T, UserArgs<ExtArgs>>): Prisma__UserClient<$Types.GetResult<UserPayload<ExtArgs>, T, 'findUnique'> | Null, never, ExtArgs>;
 
+    private get _document();
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
   }
 
 
@@ -6825,7 +6968,7 @@ export namespace Prisma {
   /**
    * Account without action
    */
-  export type AccountDefaultArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  export type AccountArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Account
      */
@@ -6841,6 +6984,7 @@ export namespace Prisma {
   /**
    * Model Session
    */
+
 
   export type AggregateSession = {
     _count: SessionCountAggregateOutputType | null
@@ -6965,6 +7109,7 @@ export namespace Prisma {
     _max?: SessionMaxAggregateInputType
   }
 
+
   export type SessionGroupByOutputType = {
     id: string
     sessionToken: string
@@ -6994,7 +7139,7 @@ export namespace Prisma {
     sessionToken?: boolean
     userId?: boolean
     expires?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | UserArgs<ExtArgs>
   }, ExtArgs["result"]["session"]>
 
   export type SessionSelectScalar = {
@@ -7005,26 +7150,11 @@ export namespace Prisma {
   }
 
   export type SessionInclude<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | UserArgs<ExtArgs>
   }
 
 
-  export type $SessionPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
-    name: "Session"
-    objects: {
-      user: Prisma.$UserPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetResult<{
-      id: string
-      sessionToken: string
-      userId: string
-      expires: Date
-    }, ExtArgs["result"]["session"]>
-    composites: {}
-  }
-
-
-  type SessionGetPayload<S extends boolean | null | undefined | SessionDefaultArgs> = $Result.GetResult<Prisma.$SessionPayload, S>
+  type SessionGetPayload<S extends boolean | null | undefined | SessionArgs> = $Types.GetResult<SessionPayload, S>
 
   type SessionCountArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = 
     Omit<SessionFindManyArgs, 'select' | 'include'> & {
@@ -7046,7 +7176,7 @@ export namespace Prisma {
     **/
     findUnique<T extends SessionFindUniqueArgs<ExtArgs>>(
       args: SelectSubset<T, SessionFindUniqueArgs<ExtArgs>>
-    ): Prisma__SessionClient<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+    ): Prisma__SessionClient<$Types.GetResult<SessionPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
 
     /**
      * Find one Session that matches the filter or throw an error  with `error.code='P2025'` 
@@ -7062,7 +7192,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends SessionFindUniqueOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, SessionFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__SessionClient<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+    ): Prisma__SessionClient<$Types.GetResult<SessionPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
 
     /**
      * Find the first Session that matches the filter.
@@ -7079,7 +7209,7 @@ export namespace Prisma {
     **/
     findFirst<T extends SessionFindFirstArgs<ExtArgs>>(
       args?: SelectSubset<T, SessionFindFirstArgs<ExtArgs>>
-    ): Prisma__SessionClient<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+    ): Prisma__SessionClient<$Types.GetResult<SessionPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
 
     /**
      * Find the first Session that matches the filter or
@@ -7097,7 +7227,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends SessionFindFirstOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, SessionFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__SessionClient<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+    ): Prisma__SessionClient<$Types.GetResult<SessionPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
 
     /**
      * Find zero or more Sessions that matches the filter.
@@ -7117,7 +7247,7 @@ export namespace Prisma {
     **/
     findMany<T extends SessionFindManyArgs<ExtArgs>>(
       args?: SelectSubset<T, SessionFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, 'findMany'>>
+    ): Prisma.PrismaPromise<$Types.GetResult<SessionPayload<ExtArgs>, T, 'findMany'>>
 
     /**
      * Create a Session.
@@ -7133,7 +7263,7 @@ export namespace Prisma {
     **/
     create<T extends SessionCreateArgs<ExtArgs>>(
       args: SelectSubset<T, SessionCreateArgs<ExtArgs>>
-    ): Prisma__SessionClient<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+    ): Prisma__SessionClient<$Types.GetResult<SessionPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
 
     /**
      * Create many Sessions.
@@ -7165,7 +7295,7 @@ export namespace Prisma {
     **/
     delete<T extends SessionDeleteArgs<ExtArgs>>(
       args: SelectSubset<T, SessionDeleteArgs<ExtArgs>>
-    ): Prisma__SessionClient<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+    ): Prisma__SessionClient<$Types.GetResult<SessionPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
 
     /**
      * Update one Session.
@@ -7184,7 +7314,7 @@ export namespace Prisma {
     **/
     update<T extends SessionUpdateArgs<ExtArgs>>(
       args: SelectSubset<T, SessionUpdateArgs<ExtArgs>>
-    ): Prisma__SessionClient<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+    ): Prisma__SessionClient<$Types.GetResult<SessionPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
 
     /**
      * Delete zero or more Sessions.
@@ -7242,7 +7372,7 @@ export namespace Prisma {
     **/
     upsert<T extends SessionUpsertArgs<ExtArgs>>(
       args: SelectSubset<T, SessionUpsertArgs<ExtArgs>>
-    ): Prisma__SessionClient<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+    ): Prisma__SessionClient<$Types.GetResult<SessionPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
 
     /**
      * Count the number of Sessions.
@@ -7381,31 +7511,44 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__SessionClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export class Prisma__SessionClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> implements Prisma.PrismaPromise<T> {
+    private readonly _dmmf;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
     readonly [Symbol.toStringTag]: 'PrismaPromise';
+    constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
 
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findUniqueOrThrow'> | Null, Null, ExtArgs>;
+    user<T extends UserArgs<ExtArgs> = {}>(args?: Subset<T, UserArgs<ExtArgs>>): Prisma__UserClient<$Types.GetResult<UserPayload<ExtArgs>, T, 'findUnique'> | Null, never, ExtArgs>;
 
+    private get _document();
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
   }
 
 
@@ -7732,7 +7875,7 @@ export namespace Prisma {
   /**
    * Session without action
    */
-  export type SessionDefaultArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  export type SessionArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Session
      */
@@ -7749,6 +7892,7 @@ export namespace Prisma {
    * Model Group
    */
 
+
   export type AggregateGroup = {
     _count: GroupCountAggregateOutputType | null
     _min: GroupMinAggregateOutputType | null
@@ -7761,7 +7905,7 @@ export namespace Prisma {
     name: string | null
     createdAt: Date | null
     updatedAt: Date | null
-    pricingModel: $Enums.PricingModel | null
+    pricingModel: PricingModel | null
   }
 
   export type GroupMaxAggregateOutputType = {
@@ -7770,7 +7914,7 @@ export namespace Prisma {
     name: string | null
     createdAt: Date | null
     updatedAt: Date | null
-    pricingModel: $Enums.PricingModel | null
+    pricingModel: PricingModel | null
   }
 
   export type GroupCountAggregateOutputType = {
@@ -7884,13 +8028,14 @@ export namespace Prisma {
     _max?: GroupMaxAggregateInputType
   }
 
+
   export type GroupGroupByOutputType = {
     id: string
     ownerId: string
     name: string
     createdAt: Date
     updatedAt: Date
-    pricingModel: $Enums.PricingModel
+    pricingModel: PricingModel
     _count: GroupCountAggregateOutputType | null
     _min: GroupMinAggregateOutputType | null
     _max: GroupMaxAggregateOutputType | null
@@ -7919,8 +8064,8 @@ export namespace Prisma {
     pricingModel?: boolean
     events?: boolean | Group$eventsArgs<ExtArgs>
     users?: boolean | Group$usersArgs<ExtArgs>
-    owner?: boolean | UserDefaultArgs<ExtArgs>
-    _count?: boolean | GroupCountOutputTypeDefaultArgs<ExtArgs>
+    owner?: boolean | UserArgs<ExtArgs>
+    _count?: boolean | GroupCountOutputTypeArgs<ExtArgs>
   }, ExtArgs["result"]["group"]>
 
   export type GroupSelectScalar = {
@@ -7935,31 +8080,12 @@ export namespace Prisma {
   export type GroupInclude<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     events?: boolean | Group$eventsArgs<ExtArgs>
     users?: boolean | Group$usersArgs<ExtArgs>
-    owner?: boolean | UserDefaultArgs<ExtArgs>
-    _count?: boolean | GroupCountOutputTypeDefaultArgs<ExtArgs>
+    owner?: boolean | UserArgs<ExtArgs>
+    _count?: boolean | GroupCountOutputTypeArgs<ExtArgs>
   }
 
 
-  export type $GroupPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
-    name: "Group"
-    objects: {
-      events: Prisma.$EventPayload<ExtArgs>[]
-      users: Prisma.$UserOnGroupsPayload<ExtArgs>[]
-      owner: Prisma.$UserPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetResult<{
-      id: string
-      ownerId: string
-      name: string
-      createdAt: Date
-      updatedAt: Date
-      pricingModel: $Enums.PricingModel
-    }, ExtArgs["result"]["group"]>
-    composites: {}
-  }
-
-
-  type GroupGetPayload<S extends boolean | null | undefined | GroupDefaultArgs> = $Result.GetResult<Prisma.$GroupPayload, S>
+  type GroupGetPayload<S extends boolean | null | undefined | GroupArgs> = $Types.GetResult<GroupPayload, S>
 
   type GroupCountArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = 
     Omit<GroupFindManyArgs, 'select' | 'include'> & {
@@ -7981,7 +8107,7 @@ export namespace Prisma {
     **/
     findUnique<T extends GroupFindUniqueArgs<ExtArgs>>(
       args: SelectSubset<T, GroupFindUniqueArgs<ExtArgs>>
-    ): Prisma__GroupClient<$Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+    ): Prisma__GroupClient<$Types.GetResult<GroupPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
 
     /**
      * Find one Group that matches the filter or throw an error  with `error.code='P2025'` 
@@ -7997,7 +8123,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends GroupFindUniqueOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, GroupFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__GroupClient<$Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+    ): Prisma__GroupClient<$Types.GetResult<GroupPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
 
     /**
      * Find the first Group that matches the filter.
@@ -8014,7 +8140,7 @@ export namespace Prisma {
     **/
     findFirst<T extends GroupFindFirstArgs<ExtArgs>>(
       args?: SelectSubset<T, GroupFindFirstArgs<ExtArgs>>
-    ): Prisma__GroupClient<$Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+    ): Prisma__GroupClient<$Types.GetResult<GroupPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
 
     /**
      * Find the first Group that matches the filter or
@@ -8032,7 +8158,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends GroupFindFirstOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, GroupFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__GroupClient<$Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+    ): Prisma__GroupClient<$Types.GetResult<GroupPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
 
     /**
      * Find zero or more Groups that matches the filter.
@@ -8052,7 +8178,7 @@ export namespace Prisma {
     **/
     findMany<T extends GroupFindManyArgs<ExtArgs>>(
       args?: SelectSubset<T, GroupFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, 'findMany'>>
+    ): Prisma.PrismaPromise<$Types.GetResult<GroupPayload<ExtArgs>, T, 'findMany'>>
 
     /**
      * Create a Group.
@@ -8068,7 +8194,7 @@ export namespace Prisma {
     **/
     create<T extends GroupCreateArgs<ExtArgs>>(
       args: SelectSubset<T, GroupCreateArgs<ExtArgs>>
-    ): Prisma__GroupClient<$Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+    ): Prisma__GroupClient<$Types.GetResult<GroupPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
 
     /**
      * Create many Groups.
@@ -8100,7 +8226,7 @@ export namespace Prisma {
     **/
     delete<T extends GroupDeleteArgs<ExtArgs>>(
       args: SelectSubset<T, GroupDeleteArgs<ExtArgs>>
-    ): Prisma__GroupClient<$Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+    ): Prisma__GroupClient<$Types.GetResult<GroupPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
 
     /**
      * Update one Group.
@@ -8119,7 +8245,7 @@ export namespace Prisma {
     **/
     update<T extends GroupUpdateArgs<ExtArgs>>(
       args: SelectSubset<T, GroupUpdateArgs<ExtArgs>>
-    ): Prisma__GroupClient<$Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+    ): Prisma__GroupClient<$Types.GetResult<GroupPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
 
     /**
      * Delete zero or more Groups.
@@ -8177,7 +8303,7 @@ export namespace Prisma {
     **/
     upsert<T extends GroupUpsertArgs<ExtArgs>>(
       args: SelectSubset<T, GroupUpsertArgs<ExtArgs>>
-    ): Prisma__GroupClient<$Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+    ): Prisma__GroupClient<$Types.GetResult<GroupPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
 
     /**
      * Count the number of Groups.
@@ -8316,35 +8442,48 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__GroupClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export class Prisma__GroupClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> implements Prisma.PrismaPromise<T> {
+    private readonly _dmmf;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
     readonly [Symbol.toStringTag]: 'PrismaPromise';
+    constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
 
-    events<T extends Group$eventsArgs<ExtArgs> = {}>(args?: Subset<T, Group$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, 'findMany'> | Null>;
+    events<T extends Group$eventsArgs<ExtArgs> = {}>(args?: Subset<T, Group$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Types.GetResult<EventPayload<ExtArgs>, T, 'findMany'>| Null>;
 
-    users<T extends Group$usersArgs<ExtArgs> = {}>(args?: Subset<T, Group$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserOnGroupsPayload<ExtArgs>, T, 'findMany'> | Null>;
+    users<T extends Group$usersArgs<ExtArgs> = {}>(args?: Subset<T, Group$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Types.GetResult<UserOnGroupsPayload<ExtArgs>, T, 'findMany'>| Null>;
 
-    owner<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findUniqueOrThrow'> | Null, Null, ExtArgs>;
+    owner<T extends UserArgs<ExtArgs> = {}>(args?: Subset<T, UserArgs<ExtArgs>>): Prisma__UserClient<$Types.GetResult<UserPayload<ExtArgs>, T, 'findUnique'> | Null, never, ExtArgs>;
 
+    private get _document();
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
   }
 
 
@@ -8715,7 +8854,7 @@ export namespace Prisma {
   /**
    * Group without action
    */
-  export type GroupDefaultArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  export type GroupArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Group
      */
@@ -8731,6 +8870,7 @@ export namespace Prisma {
   /**
    * Model User
    */
+
 
   export type AggregateUser = {
     _count: UserCountAggregateOutputType | null
@@ -8891,6 +9031,7 @@ export namespace Prisma {
     _max?: UserMaxAggregateInputType
   }
 
+
   export type UserGroupByOutputType = {
     id: string
     name: string
@@ -8938,7 +9079,7 @@ export namespace Prisma {
     groups?: boolean | User$groupsArgs<ExtArgs>
     ownedGroups?: boolean | User$ownedGroupsArgs<ExtArgs>
     Tokens?: boolean | User$TokensArgs<ExtArgs>
-    _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
+    _count?: boolean | UserCountOutputTypeArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -8961,37 +9102,11 @@ export namespace Prisma {
     groups?: boolean | User$groupsArgs<ExtArgs>
     ownedGroups?: boolean | User$ownedGroupsArgs<ExtArgs>
     Tokens?: boolean | User$TokensArgs<ExtArgs>
-    _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
+    _count?: boolean | UserCountOutputTypeArgs<ExtArgs>
   }
 
 
-  export type $UserPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
-    name: "User"
-    objects: {
-      accounts: Prisma.$AccountPayload<ExtArgs>[]
-      sessions: Prisma.$SessionPayload<ExtArgs>[]
-      events: Prisma.$ParticipantsOnEventsPayload<ExtArgs>[]
-      groups: Prisma.$UserOnGroupsPayload<ExtArgs>[]
-      ownedGroups: Prisma.$GroupPayload<ExtArgs>[]
-      Tokens: Prisma.$TokensPayload<ExtArgs>[]
-    }
-    scalars: $Extensions.GetResult<{
-      id: string
-      name: string
-      email: string
-      emailVerified: Date | null
-      image: string | null
-      role: string
-      createdAt: Date
-      password: string | null
-      notificationsEnabled: boolean
-      paypalName: string | null
-    }, ExtArgs["result"]["user"]>
-    composites: {}
-  }
-
-
-  type UserGetPayload<S extends boolean | null | undefined | UserDefaultArgs> = $Result.GetResult<Prisma.$UserPayload, S>
+  type UserGetPayload<S extends boolean | null | undefined | UserArgs> = $Types.GetResult<UserPayload, S>
 
   type UserCountArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = 
     Omit<UserFindManyArgs, 'select' | 'include'> & {
@@ -9013,7 +9128,7 @@ export namespace Prisma {
     **/
     findUnique<T extends UserFindUniqueArgs<ExtArgs>>(
       args: SelectSubset<T, UserFindUniqueArgs<ExtArgs>>
-    ): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+    ): Prisma__UserClient<$Types.GetResult<UserPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
 
     /**
      * Find one User that matches the filter or throw an error  with `error.code='P2025'` 
@@ -9029,7 +9144,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends UserFindUniqueOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, UserFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+    ): Prisma__UserClient<$Types.GetResult<UserPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
 
     /**
      * Find the first User that matches the filter.
@@ -9046,7 +9161,7 @@ export namespace Prisma {
     **/
     findFirst<T extends UserFindFirstArgs<ExtArgs>>(
       args?: SelectSubset<T, UserFindFirstArgs<ExtArgs>>
-    ): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+    ): Prisma__UserClient<$Types.GetResult<UserPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
 
     /**
      * Find the first User that matches the filter or
@@ -9064,7 +9179,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends UserFindFirstOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, UserFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+    ): Prisma__UserClient<$Types.GetResult<UserPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
 
     /**
      * Find zero or more Users that matches the filter.
@@ -9084,7 +9199,7 @@ export namespace Prisma {
     **/
     findMany<T extends UserFindManyArgs<ExtArgs>>(
       args?: SelectSubset<T, UserFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findMany'>>
+    ): Prisma.PrismaPromise<$Types.GetResult<UserPayload<ExtArgs>, T, 'findMany'>>
 
     /**
      * Create a User.
@@ -9100,7 +9215,7 @@ export namespace Prisma {
     **/
     create<T extends UserCreateArgs<ExtArgs>>(
       args: SelectSubset<T, UserCreateArgs<ExtArgs>>
-    ): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+    ): Prisma__UserClient<$Types.GetResult<UserPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
 
     /**
      * Create many Users.
@@ -9132,7 +9247,7 @@ export namespace Prisma {
     **/
     delete<T extends UserDeleteArgs<ExtArgs>>(
       args: SelectSubset<T, UserDeleteArgs<ExtArgs>>
-    ): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+    ): Prisma__UserClient<$Types.GetResult<UserPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
 
     /**
      * Update one User.
@@ -9151,7 +9266,7 @@ export namespace Prisma {
     **/
     update<T extends UserUpdateArgs<ExtArgs>>(
       args: SelectSubset<T, UserUpdateArgs<ExtArgs>>
-    ): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+    ): Prisma__UserClient<$Types.GetResult<UserPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
 
     /**
      * Delete zero or more Users.
@@ -9209,7 +9324,7 @@ export namespace Prisma {
     **/
     upsert<T extends UserUpsertArgs<ExtArgs>>(
       args: SelectSubset<T, UserUpsertArgs<ExtArgs>>
-    ): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+    ): Prisma__UserClient<$Types.GetResult<UserPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
 
     /**
      * Count the number of Users.
@@ -9348,41 +9463,54 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export class Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> implements Prisma.PrismaPromise<T> {
+    private readonly _dmmf;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
     readonly [Symbol.toStringTag]: 'PrismaPromise';
+    constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
 
-    accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, 'findMany'> | Null>;
+    accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Types.GetResult<AccountPayload<ExtArgs>, T, 'findMany'>| Null>;
 
-    sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, 'findMany'> | Null>;
+    sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Types.GetResult<SessionPayload<ExtArgs>, T, 'findMany'>| Null>;
 
-    events<T extends User$eventsArgs<ExtArgs> = {}>(args?: Subset<T, User$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParticipantsOnEventsPayload<ExtArgs>, T, 'findMany'> | Null>;
+    events<T extends User$eventsArgs<ExtArgs> = {}>(args?: Subset<T, User$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Types.GetResult<ParticipantsOnEventsPayload<ExtArgs>, T, 'findMany'>| Null>;
 
-    groups<T extends User$groupsArgs<ExtArgs> = {}>(args?: Subset<T, User$groupsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserOnGroupsPayload<ExtArgs>, T, 'findMany'> | Null>;
+    groups<T extends User$groupsArgs<ExtArgs> = {}>(args?: Subset<T, User$groupsArgs<ExtArgs>>): Prisma.PrismaPromise<$Types.GetResult<UserOnGroupsPayload<ExtArgs>, T, 'findMany'>| Null>;
 
-    ownedGroups<T extends User$ownedGroupsArgs<ExtArgs> = {}>(args?: Subset<T, User$ownedGroupsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, 'findMany'> | Null>;
+    ownedGroups<T extends User$ownedGroupsArgs<ExtArgs> = {}>(args?: Subset<T, User$ownedGroupsArgs<ExtArgs>>): Prisma.PrismaPromise<$Types.GetResult<GroupPayload<ExtArgs>, T, 'findMany'>| Null>;
 
-    Tokens<T extends User$TokensArgs<ExtArgs> = {}>(args?: Subset<T, User$TokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TokensPayload<ExtArgs>, T, 'findMany'> | Null>;
+    Tokens<T extends User$TokensArgs<ExtArgs> = {}>(args?: Subset<T, User$TokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Types.GetResult<TokensPayload<ExtArgs>, T, 'findMany'>| Null>;
 
+    private get _document();
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
   }
 
 
@@ -9841,7 +9969,7 @@ export namespace Prisma {
   /**
    * User without action
    */
-  export type UserDefaultArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  export type UserArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the User
      */
@@ -9858,6 +9986,7 @@ export namespace Prisma {
    * Model UserOnGroups
    */
 
+
   export type AggregateUserOnGroups = {
     _count: UserOnGroupsCountAggregateOutputType | null
     _min: UserOnGroupsMinAggregateOutputType | null
@@ -9867,13 +9996,13 @@ export namespace Prisma {
   export type UserOnGroupsMinAggregateOutputType = {
     id: string | null
     groupId: string | null
-    role: $Enums.GroupRole | null
+    role: GroupRole | null
   }
 
   export type UserOnGroupsMaxAggregateOutputType = {
     id: string | null
     groupId: string | null
-    role: $Enums.GroupRole | null
+    role: GroupRole | null
   }
 
   export type UserOnGroupsCountAggregateOutputType = {
@@ -9975,10 +10104,11 @@ export namespace Prisma {
     _max?: UserOnGroupsMaxAggregateInputType
   }
 
+
   export type UserOnGroupsGroupByOutputType = {
     id: string
     groupId: string
-    role: $Enums.GroupRole
+    role: GroupRole
     _count: UserOnGroupsCountAggregateOutputType | null
     _min: UserOnGroupsMinAggregateOutputType | null
     _max: UserOnGroupsMaxAggregateOutputType | null
@@ -10002,8 +10132,8 @@ export namespace Prisma {
     id?: boolean
     groupId?: boolean
     role?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    group?: boolean | GroupDefaultArgs<ExtArgs>
+    user?: boolean | UserArgs<ExtArgs>
+    group?: boolean | GroupArgs<ExtArgs>
   }, ExtArgs["result"]["userOnGroups"]>
 
   export type UserOnGroupsSelectScalar = {
@@ -10013,27 +10143,12 @@ export namespace Prisma {
   }
 
   export type UserOnGroupsInclude<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    group?: boolean | GroupDefaultArgs<ExtArgs>
+    user?: boolean | UserArgs<ExtArgs>
+    group?: boolean | GroupArgs<ExtArgs>
   }
 
 
-  export type $UserOnGroupsPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
-    name: "UserOnGroups"
-    objects: {
-      user: Prisma.$UserPayload<ExtArgs>
-      group: Prisma.$GroupPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetResult<{
-      id: string
-      groupId: string
-      role: $Enums.GroupRole
-    }, ExtArgs["result"]["userOnGroups"]>
-    composites: {}
-  }
-
-
-  type UserOnGroupsGetPayload<S extends boolean | null | undefined | UserOnGroupsDefaultArgs> = $Result.GetResult<Prisma.$UserOnGroupsPayload, S>
+  type UserOnGroupsGetPayload<S extends boolean | null | undefined | UserOnGroupsArgs> = $Types.GetResult<UserOnGroupsPayload, S>
 
   type UserOnGroupsCountArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = 
     Omit<UserOnGroupsFindManyArgs, 'select' | 'include'> & {
@@ -10055,7 +10170,7 @@ export namespace Prisma {
     **/
     findUnique<T extends UserOnGroupsFindUniqueArgs<ExtArgs>>(
       args: SelectSubset<T, UserOnGroupsFindUniqueArgs<ExtArgs>>
-    ): Prisma__UserOnGroupsClient<$Result.GetResult<Prisma.$UserOnGroupsPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+    ): Prisma__UserOnGroupsClient<$Types.GetResult<UserOnGroupsPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
 
     /**
      * Find one UserOnGroups that matches the filter or throw an error  with `error.code='P2025'` 
@@ -10071,7 +10186,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends UserOnGroupsFindUniqueOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, UserOnGroupsFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__UserOnGroupsClient<$Result.GetResult<Prisma.$UserOnGroupsPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+    ): Prisma__UserOnGroupsClient<$Types.GetResult<UserOnGroupsPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
 
     /**
      * Find the first UserOnGroups that matches the filter.
@@ -10088,7 +10203,7 @@ export namespace Prisma {
     **/
     findFirst<T extends UserOnGroupsFindFirstArgs<ExtArgs>>(
       args?: SelectSubset<T, UserOnGroupsFindFirstArgs<ExtArgs>>
-    ): Prisma__UserOnGroupsClient<$Result.GetResult<Prisma.$UserOnGroupsPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+    ): Prisma__UserOnGroupsClient<$Types.GetResult<UserOnGroupsPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
 
     /**
      * Find the first UserOnGroups that matches the filter or
@@ -10106,7 +10221,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends UserOnGroupsFindFirstOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, UserOnGroupsFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__UserOnGroupsClient<$Result.GetResult<Prisma.$UserOnGroupsPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+    ): Prisma__UserOnGroupsClient<$Types.GetResult<UserOnGroupsPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
 
     /**
      * Find zero or more UserOnGroups that matches the filter.
@@ -10126,7 +10241,7 @@ export namespace Prisma {
     **/
     findMany<T extends UserOnGroupsFindManyArgs<ExtArgs>>(
       args?: SelectSubset<T, UserOnGroupsFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserOnGroupsPayload<ExtArgs>, T, 'findMany'>>
+    ): Prisma.PrismaPromise<$Types.GetResult<UserOnGroupsPayload<ExtArgs>, T, 'findMany'>>
 
     /**
      * Create a UserOnGroups.
@@ -10142,7 +10257,7 @@ export namespace Prisma {
     **/
     create<T extends UserOnGroupsCreateArgs<ExtArgs>>(
       args: SelectSubset<T, UserOnGroupsCreateArgs<ExtArgs>>
-    ): Prisma__UserOnGroupsClient<$Result.GetResult<Prisma.$UserOnGroupsPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+    ): Prisma__UserOnGroupsClient<$Types.GetResult<UserOnGroupsPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
 
     /**
      * Create many UserOnGroups.
@@ -10174,7 +10289,7 @@ export namespace Prisma {
     **/
     delete<T extends UserOnGroupsDeleteArgs<ExtArgs>>(
       args: SelectSubset<T, UserOnGroupsDeleteArgs<ExtArgs>>
-    ): Prisma__UserOnGroupsClient<$Result.GetResult<Prisma.$UserOnGroupsPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+    ): Prisma__UserOnGroupsClient<$Types.GetResult<UserOnGroupsPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
 
     /**
      * Update one UserOnGroups.
@@ -10193,7 +10308,7 @@ export namespace Prisma {
     **/
     update<T extends UserOnGroupsUpdateArgs<ExtArgs>>(
       args: SelectSubset<T, UserOnGroupsUpdateArgs<ExtArgs>>
-    ): Prisma__UserOnGroupsClient<$Result.GetResult<Prisma.$UserOnGroupsPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+    ): Prisma__UserOnGroupsClient<$Types.GetResult<UserOnGroupsPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
 
     /**
      * Delete zero or more UserOnGroups.
@@ -10251,7 +10366,7 @@ export namespace Prisma {
     **/
     upsert<T extends UserOnGroupsUpsertArgs<ExtArgs>>(
       args: SelectSubset<T, UserOnGroupsUpsertArgs<ExtArgs>>
-    ): Prisma__UserOnGroupsClient<$Result.GetResult<Prisma.$UserOnGroupsPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+    ): Prisma__UserOnGroupsClient<$Types.GetResult<UserOnGroupsPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
 
     /**
      * Count the number of UserOnGroups.
@@ -10390,33 +10505,46 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__UserOnGroupsClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export class Prisma__UserOnGroupsClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> implements Prisma.PrismaPromise<T> {
+    private readonly _dmmf;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
     readonly [Symbol.toStringTag]: 'PrismaPromise';
+    constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
 
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, 'findUniqueOrThrow'> | Null, Null, ExtArgs>;
+    user<T extends UserArgs<ExtArgs> = {}>(args?: Subset<T, UserArgs<ExtArgs>>): Prisma__UserClient<$Types.GetResult<UserPayload<ExtArgs>, T, 'findUnique'> | Null, never, ExtArgs>;
 
-    group<T extends GroupDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GroupDefaultArgs<ExtArgs>>): Prisma__GroupClient<$Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, 'findUniqueOrThrow'> | Null, Null, ExtArgs>;
+    group<T extends GroupArgs<ExtArgs> = {}>(args?: Subset<T, GroupArgs<ExtArgs>>): Prisma__GroupClient<$Types.GetResult<GroupPayload<ExtArgs>, T, 'findUnique'> | Null, never, ExtArgs>;
 
+    private get _document();
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
   }
 
 
@@ -10742,7 +10870,7 @@ export namespace Prisma {
   /**
    * UserOnGroups without action
    */
-  export type UserOnGroupsDefaultArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  export type UserOnGroupsArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the UserOnGroups
      */
@@ -10758,6 +10886,7 @@ export namespace Prisma {
   /**
    * Model VerificationToken
    */
+
 
   export type AggregateVerificationToken = {
     _count: VerificationTokenCountAggregateOutputType | null
@@ -10876,6 +11005,7 @@ export namespace Prisma {
     _max?: VerificationTokenMaxAggregateInputType
   }
 
+
   export type VerificationTokenGroupByOutputType = {
     identifier: string
     token: string
@@ -10912,19 +11042,7 @@ export namespace Prisma {
   }
 
 
-  export type $VerificationTokenPayload<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
-    name: "VerificationToken"
-    objects: {}
-    scalars: $Extensions.GetResult<{
-      identifier: string
-      token: string
-      expires: Date
-    }, ExtArgs["result"]["verificationToken"]>
-    composites: {}
-  }
-
-
-  type VerificationTokenGetPayload<S extends boolean | null | undefined | VerificationTokenDefaultArgs> = $Result.GetResult<Prisma.$VerificationTokenPayload, S>
+  type VerificationTokenGetPayload<S extends boolean | null | undefined | VerificationTokenArgs> = $Types.GetResult<VerificationTokenPayload, S>
 
   type VerificationTokenCountArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = 
     Omit<VerificationTokenFindManyArgs, 'select' | 'include'> & {
@@ -10946,7 +11064,7 @@ export namespace Prisma {
     **/
     findUnique<T extends VerificationTokenFindUniqueArgs<ExtArgs>>(
       args: SelectSubset<T, VerificationTokenFindUniqueArgs<ExtArgs>>
-    ): Prisma__VerificationTokenClient<$Result.GetResult<Prisma.$VerificationTokenPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
+    ): Prisma__VerificationTokenClient<$Types.GetResult<VerificationTokenPayload<ExtArgs>, T, 'findUnique'> | null, null, ExtArgs>
 
     /**
      * Find one VerificationToken that matches the filter or throw an error  with `error.code='P2025'` 
@@ -10962,7 +11080,7 @@ export namespace Prisma {
     **/
     findUniqueOrThrow<T extends VerificationTokenFindUniqueOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, VerificationTokenFindUniqueOrThrowArgs<ExtArgs>>
-    ): Prisma__VerificationTokenClient<$Result.GetResult<Prisma.$VerificationTokenPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
+    ): Prisma__VerificationTokenClient<$Types.GetResult<VerificationTokenPayload<ExtArgs>, T, 'findUniqueOrThrow'>, never, ExtArgs>
 
     /**
      * Find the first VerificationToken that matches the filter.
@@ -10979,7 +11097,7 @@ export namespace Prisma {
     **/
     findFirst<T extends VerificationTokenFindFirstArgs<ExtArgs>>(
       args?: SelectSubset<T, VerificationTokenFindFirstArgs<ExtArgs>>
-    ): Prisma__VerificationTokenClient<$Result.GetResult<Prisma.$VerificationTokenPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
+    ): Prisma__VerificationTokenClient<$Types.GetResult<VerificationTokenPayload<ExtArgs>, T, 'findFirst'> | null, null, ExtArgs>
 
     /**
      * Find the first VerificationToken that matches the filter or
@@ -10997,7 +11115,7 @@ export namespace Prisma {
     **/
     findFirstOrThrow<T extends VerificationTokenFindFirstOrThrowArgs<ExtArgs>>(
       args?: SelectSubset<T, VerificationTokenFindFirstOrThrowArgs<ExtArgs>>
-    ): Prisma__VerificationTokenClient<$Result.GetResult<Prisma.$VerificationTokenPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
+    ): Prisma__VerificationTokenClient<$Types.GetResult<VerificationTokenPayload<ExtArgs>, T, 'findFirstOrThrow'>, never, ExtArgs>
 
     /**
      * Find zero or more VerificationTokens that matches the filter.
@@ -11017,7 +11135,7 @@ export namespace Prisma {
     **/
     findMany<T extends VerificationTokenFindManyArgs<ExtArgs>>(
       args?: SelectSubset<T, VerificationTokenFindManyArgs<ExtArgs>>
-    ): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VerificationTokenPayload<ExtArgs>, T, 'findMany'>>
+    ): Prisma.PrismaPromise<$Types.GetResult<VerificationTokenPayload<ExtArgs>, T, 'findMany'>>
 
     /**
      * Create a VerificationToken.
@@ -11033,7 +11151,7 @@ export namespace Prisma {
     **/
     create<T extends VerificationTokenCreateArgs<ExtArgs>>(
       args: SelectSubset<T, VerificationTokenCreateArgs<ExtArgs>>
-    ): Prisma__VerificationTokenClient<$Result.GetResult<Prisma.$VerificationTokenPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
+    ): Prisma__VerificationTokenClient<$Types.GetResult<VerificationTokenPayload<ExtArgs>, T, 'create'>, never, ExtArgs>
 
     /**
      * Create many VerificationTokens.
@@ -11065,7 +11183,7 @@ export namespace Prisma {
     **/
     delete<T extends VerificationTokenDeleteArgs<ExtArgs>>(
       args: SelectSubset<T, VerificationTokenDeleteArgs<ExtArgs>>
-    ): Prisma__VerificationTokenClient<$Result.GetResult<Prisma.$VerificationTokenPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
+    ): Prisma__VerificationTokenClient<$Types.GetResult<VerificationTokenPayload<ExtArgs>, T, 'delete'>, never, ExtArgs>
 
     /**
      * Update one VerificationToken.
@@ -11084,7 +11202,7 @@ export namespace Prisma {
     **/
     update<T extends VerificationTokenUpdateArgs<ExtArgs>>(
       args: SelectSubset<T, VerificationTokenUpdateArgs<ExtArgs>>
-    ): Prisma__VerificationTokenClient<$Result.GetResult<Prisma.$VerificationTokenPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
+    ): Prisma__VerificationTokenClient<$Types.GetResult<VerificationTokenPayload<ExtArgs>, T, 'update'>, never, ExtArgs>
 
     /**
      * Delete zero or more VerificationTokens.
@@ -11142,7 +11260,7 @@ export namespace Prisma {
     **/
     upsert<T extends VerificationTokenUpsertArgs<ExtArgs>>(
       args: SelectSubset<T, VerificationTokenUpsertArgs<ExtArgs>>
-    ): Prisma__VerificationTokenClient<$Result.GetResult<Prisma.$VerificationTokenPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
+    ): Prisma__VerificationTokenClient<$Types.GetResult<VerificationTokenPayload<ExtArgs>, T, 'upsert'>, never, ExtArgs>
 
     /**
      * Count the number of VerificationTokens.
@@ -11281,30 +11399,43 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__VerificationTokenClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export class Prisma__VerificationTokenClient<T, Null = never, ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> implements Prisma.PrismaPromise<T> {
+    private readonly _dmmf;
+    private readonly _queryType;
+    private readonly _rootField;
+    private readonly _clientMethod;
+    private readonly _args;
+    private readonly _dataPath;
+    private readonly _errorFormat;
+    private readonly _measurePerformance?;
+    private _isList;
+    private _callsite;
+    private _requestPromise?;
     readonly [Symbol.toStringTag]: 'PrismaPromise';
+    constructor(_dmmf: runtime.DMMFClass, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
 
 
+    private get _document();
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>;
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
      * resolved value cannot be modified from the callback.
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
   }
 
 
@@ -11594,7 +11725,7 @@ export namespace Prisma {
   /**
    * VerificationToken without action
    */
-  export type VerificationTokenDefaultArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
+  export type VerificationTokenArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the VerificationToken
      */
@@ -11901,7 +12032,7 @@ export namespace Prisma {
     startTime?: StringFilter<"Event"> | string
     bookingDate?: DateTimeNullableFilter<"Event"> | Date | string | null
     cost?: FloatFilter<"Event"> | number
-    status?: EnumEventStatusFilter<"Event"> | $Enums.EventStatus
+    status?: EnumEventStatusFilter<"Event"> | EventStatus
     maxParticipants?: IntFilter<"Event"> | number
     groupId?: StringNullableFilter<"Event"> | string | null
     participants?: ParticipantsOnEventsListRelationFilter
@@ -11938,7 +12069,7 @@ export namespace Prisma {
     startTime?: StringFilter<"Event"> | string
     bookingDate?: DateTimeNullableFilter<"Event"> | Date | string | null
     cost?: FloatFilter<"Event"> | number
-    status?: EnumEventStatusFilter<"Event"> | $Enums.EventStatus
+    status?: EnumEventStatusFilter<"Event"> | EventStatus
     maxParticipants?: IntFilter<"Event"> | number
     groupId?: StringNullableFilter<"Event"> | string | null
     participants?: ParticipantsOnEventsListRelationFilter
@@ -11978,7 +12109,7 @@ export namespace Prisma {
     startTime?: StringWithAggregatesFilter<"Event"> | string
     bookingDate?: DateTimeNullableWithAggregatesFilter<"Event"> | Date | string | null
     cost?: FloatWithAggregatesFilter<"Event"> | number
-    status?: EnumEventStatusWithAggregatesFilter<"Event"> | $Enums.EventStatus
+    status?: EnumEventStatusWithAggregatesFilter<"Event"> | EventStatus
     maxParticipants?: IntWithAggregatesFilter<"Event"> | number
     groupId?: StringNullableWithAggregatesFilter<"Event"> | string | null
   }
@@ -11992,7 +12123,7 @@ export namespace Prisma {
     id?: StringFilter<"ParticipantsOnEvents"> | string
     comment?: StringNullableFilter<"ParticipantsOnEvents"> | string | null
     paymentId?: StringNullableFilter<"ParticipantsOnEvents"> | string | null
-    userEventStatus?: EnumUserEventStatusFilter<"ParticipantsOnEvents"> | $Enums.UserEventStatus
+    userEventStatus?: EnumUserEventStatusFilter<"ParticipantsOnEvents"> | UserEventStatus
     payment?: XOR<PaymentNullableRelationFilter, PaymentWhereInput> | null
     user?: XOR<UserRelationFilter, UserWhereInput>
     event?: XOR<EventRelationFilter, EventWhereInput>
@@ -12020,7 +12151,7 @@ export namespace Prisma {
     id?: StringFilter<"ParticipantsOnEvents"> | string
     comment?: StringNullableFilter<"ParticipantsOnEvents"> | string | null
     paymentId?: StringNullableFilter<"ParticipantsOnEvents"> | string | null
-    userEventStatus?: EnumUserEventStatusFilter<"ParticipantsOnEvents"> | $Enums.UserEventStatus
+    userEventStatus?: EnumUserEventStatusFilter<"ParticipantsOnEvents"> | UserEventStatus
     payment?: XOR<PaymentNullableRelationFilter, PaymentWhereInput> | null
     user?: XOR<UserRelationFilter, UserWhereInput>
     event?: XOR<EventRelationFilter, EventWhereInput>
@@ -12047,7 +12178,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"ParticipantsOnEvents"> | string
     comment?: StringNullableWithAggregatesFilter<"ParticipantsOnEvents"> | string | null
     paymentId?: StringNullableWithAggregatesFilter<"ParticipantsOnEvents"> | string | null
-    userEventStatus?: EnumUserEventStatusWithAggregatesFilter<"ParticipantsOnEvents"> | $Enums.UserEventStatus
+    userEventStatus?: EnumUserEventStatusWithAggregatesFilter<"ParticipantsOnEvents"> | UserEventStatus
   }
 
   export type PaymentWhereInput = {
@@ -12274,7 +12405,7 @@ export namespace Prisma {
     name?: StringFilter<"Group"> | string
     createdAt?: DateTimeFilter<"Group"> | Date | string
     updatedAt?: DateTimeFilter<"Group"> | Date | string
-    pricingModel?: EnumPricingModelFilter<"Group"> | $Enums.PricingModel
+    pricingModel?: EnumPricingModelFilter<"Group"> | PricingModel
     events?: EventListRelationFilter
     users?: UserOnGroupsListRelationFilter
     owner?: XOR<UserRelationFilter, UserWhereInput>
@@ -12301,7 +12432,7 @@ export namespace Prisma {
     name?: StringFilter<"Group"> | string
     createdAt?: DateTimeFilter<"Group"> | Date | string
     updatedAt?: DateTimeFilter<"Group"> | Date | string
-    pricingModel?: EnumPricingModelFilter<"Group"> | $Enums.PricingModel
+    pricingModel?: EnumPricingModelFilter<"Group"> | PricingModel
     events?: EventListRelationFilter
     users?: UserOnGroupsListRelationFilter
     owner?: XOR<UserRelationFilter, UserWhereInput>
@@ -12328,7 +12459,7 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"Group"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Group"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Group"> | Date | string
-    pricingModel?: EnumPricingModelWithAggregatesFilter<"Group"> | $Enums.PricingModel
+    pricingModel?: EnumPricingModelWithAggregatesFilter<"Group"> | PricingModel
   }
 
   export type UserWhereInput = {
@@ -12432,7 +12563,7 @@ export namespace Prisma {
     NOT?: UserOnGroupsWhereInput | UserOnGroupsWhereInput[]
     id?: StringFilter<"UserOnGroups"> | string
     groupId?: StringFilter<"UserOnGroups"> | string
-    role?: EnumGroupRoleFilter<"UserOnGroups"> | $Enums.GroupRole
+    role?: EnumGroupRoleFilter<"UserOnGroups"> | GroupRole
     user?: XOR<UserRelationFilter, UserWhereInput>
     group?: XOR<GroupRelationFilter, GroupWhereInput>
   }
@@ -12452,7 +12583,7 @@ export namespace Prisma {
     NOT?: UserOnGroupsWhereInput | UserOnGroupsWhereInput[]
     id?: StringFilter<"UserOnGroups"> | string
     groupId?: StringFilter<"UserOnGroups"> | string
-    role?: EnumGroupRoleFilter<"UserOnGroups"> | $Enums.GroupRole
+    role?: EnumGroupRoleFilter<"UserOnGroups"> | GroupRole
     user?: XOR<UserRelationFilter, UserWhereInput>
     group?: XOR<GroupRelationFilter, GroupWhereInput>
   }, "id_groupId">
@@ -12472,7 +12603,7 @@ export namespace Prisma {
     NOT?: UserOnGroupsScalarWhereWithAggregatesInput | UserOnGroupsScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"UserOnGroups"> | string
     groupId?: StringWithAggregatesFilter<"UserOnGroups"> | string
-    role?: EnumGroupRoleWithAggregatesFilter<"UserOnGroups"> | $Enums.GroupRole
+    role?: EnumGroupRoleWithAggregatesFilter<"UserOnGroups"> | GroupRole
   }
 
   export type VerificationTokenWhereInput = {
@@ -12583,7 +12714,7 @@ export namespace Prisma {
     startTime: string
     bookingDate?: Date | string | null
     cost: number
-    status?: $Enums.EventStatus
+    status?: EventStatus
     maxParticipants?: number
     participants?: ParticipantsOnEventsCreateNestedManyWithoutEventInput
     Group?: GroupCreateNestedOneWithoutEventsInput
@@ -12599,7 +12730,7 @@ export namespace Prisma {
     startTime: string
     bookingDate?: Date | string | null
     cost: number
-    status?: $Enums.EventStatus
+    status?: EventStatus
     maxParticipants?: number
     groupId?: string | null
     participants?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutEventInput
@@ -12615,7 +12746,7 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+    status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     maxParticipants?: IntFieldUpdateOperationsInput | number
     participants?: ParticipantsOnEventsUpdateManyWithoutEventNestedInput
     Group?: GroupUpdateOneWithoutEventsNestedInput
@@ -12631,7 +12762,7 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+    status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     maxParticipants?: IntFieldUpdateOperationsInput | number
     groupId?: NullableStringFieldUpdateOperationsInput | string | null
     participants?: ParticipantsOnEventsUncheckedUpdateManyWithoutEventNestedInput
@@ -12647,7 +12778,7 @@ export namespace Prisma {
     startTime: string
     bookingDate?: Date | string | null
     cost: number
-    status?: $Enums.EventStatus
+    status?: EventStatus
     maxParticipants?: number
     groupId?: string | null
   }
@@ -12662,7 +12793,7 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+    status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     maxParticipants?: IntFieldUpdateOperationsInput | number
   }
 
@@ -12676,7 +12807,7 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+    status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     maxParticipants?: IntFieldUpdateOperationsInput | number
     groupId?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -12684,7 +12815,7 @@ export namespace Prisma {
   export type ParticipantsOnEventsCreateInput = {
     date?: Date | string
     comment?: string | null
-    userEventStatus?: $Enums.UserEventStatus
+    userEventStatus?: UserEventStatus
     payment?: PaymentCreateNestedOneWithoutParticipantsOnEventsInput
     user: UserCreateNestedOneWithoutEventsInput
     event: EventCreateNestedOneWithoutParticipantsInput
@@ -12696,13 +12827,13 @@ export namespace Prisma {
     id: string
     comment?: string | null
     paymentId?: string | null
-    userEventStatus?: $Enums.UserEventStatus
+    userEventStatus?: UserEventStatus
   }
 
   export type ParticipantsOnEventsUpdateInput = {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
-    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | $Enums.UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
     payment?: PaymentUpdateOneWithoutParticipantsOnEventsNestedInput
     user?: UserUpdateOneRequiredWithoutEventsNestedInput
     event?: EventUpdateOneRequiredWithoutParticipantsNestedInput
@@ -12714,7 +12845,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
     paymentId?: NullableStringFieldUpdateOperationsInput | string | null
-    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | $Enums.UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsCreateManyInput = {
@@ -12723,13 +12854,13 @@ export namespace Prisma {
     id: string
     comment?: string | null
     paymentId?: string | null
-    userEventStatus?: $Enums.UserEventStatus
+    userEventStatus?: UserEventStatus
   }
 
   export type ParticipantsOnEventsUpdateManyMutationInput = {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
-    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | $Enums.UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsUncheckedUpdateManyInput = {
@@ -12738,7 +12869,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
     paymentId?: NullableStringFieldUpdateOperationsInput | string | null
-    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | $Enums.UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type PaymentCreateInput = {
@@ -12979,7 +13110,7 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    pricingModel?: $Enums.PricingModel
+    pricingModel?: PricingModel
     events?: EventCreateNestedManyWithoutGroupInput
     users?: UserOnGroupsCreateNestedManyWithoutGroupInput
     owner: UserCreateNestedOneWithoutOwnedGroupsInput
@@ -12991,7 +13122,7 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    pricingModel?: $Enums.PricingModel
+    pricingModel?: PricingModel
     events?: EventUncheckedCreateNestedManyWithoutGroupInput
     users?: UserOnGroupsUncheckedCreateNestedManyWithoutGroupInput
   }
@@ -13001,7 +13132,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | $Enums.PricingModel
+    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
     events?: EventUpdateManyWithoutGroupNestedInput
     users?: UserOnGroupsUpdateManyWithoutGroupNestedInput
     owner?: UserUpdateOneRequiredWithoutOwnedGroupsNestedInput
@@ -13013,7 +13144,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | $Enums.PricingModel
+    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
     events?: EventUncheckedUpdateManyWithoutGroupNestedInput
     users?: UserOnGroupsUncheckedUpdateManyWithoutGroupNestedInput
   }
@@ -13024,7 +13155,7 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    pricingModel?: $Enums.PricingModel
+    pricingModel?: PricingModel
   }
 
   export type GroupUpdateManyMutationInput = {
@@ -13032,7 +13163,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | $Enums.PricingModel
+    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
   }
 
   export type GroupUncheckedUpdateManyInput = {
@@ -13041,7 +13172,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | $Enums.PricingModel
+    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
   }
 
   export type UserCreateInput = {
@@ -13160,7 +13291,7 @@ export namespace Prisma {
   }
 
   export type UserOnGroupsCreateInput = {
-    role?: $Enums.GroupRole
+    role?: GroupRole
     user: UserCreateNestedOneWithoutGroupsInput
     group: GroupCreateNestedOneWithoutUsersInput
   }
@@ -13168,11 +13299,11 @@ export namespace Prisma {
   export type UserOnGroupsUncheckedCreateInput = {
     id: string
     groupId: string
-    role?: $Enums.GroupRole
+    role?: GroupRole
   }
 
   export type UserOnGroupsUpdateInput = {
-    role?: EnumGroupRoleFieldUpdateOperationsInput | $Enums.GroupRole
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
     user?: UserUpdateOneRequiredWithoutGroupsNestedInput
     group?: GroupUpdateOneRequiredWithoutUsersNestedInput
   }
@@ -13180,23 +13311,23 @@ export namespace Prisma {
   export type UserOnGroupsUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     groupId?: StringFieldUpdateOperationsInput | string
-    role?: EnumGroupRoleFieldUpdateOperationsInput | $Enums.GroupRole
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
   }
 
   export type UserOnGroupsCreateManyInput = {
     id: string
     groupId: string
-    role?: $Enums.GroupRole
+    role?: GroupRole
   }
 
   export type UserOnGroupsUpdateManyMutationInput = {
-    role?: EnumGroupRoleFieldUpdateOperationsInput | $Enums.GroupRole
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
   }
 
   export type UserOnGroupsUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     groupId?: StringFieldUpdateOperationsInput | string
-    role?: EnumGroupRoleFieldUpdateOperationsInput | $Enums.GroupRole
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
   }
 
   export type VerificationTokenCreateInput = {
@@ -13349,10 +13480,10 @@ export namespace Prisma {
   }
 
   export type EnumEventStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.EventStatus | EnumEventStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.EventStatus[]
-    notIn?: $Enums.EventStatus[]
-    not?: NestedEnumEventStatusFilter<$PrismaModel> | $Enums.EventStatus
+    equals?: EventStatus | EnumEventStatusFieldRefInput<$PrismaModel>
+    in?: EventStatus[]
+    notIn?: EventStatus[]
+    not?: NestedEnumEventStatusFilter<$PrismaModel> | EventStatus
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -13486,10 +13617,10 @@ export namespace Prisma {
   }
 
   export type EnumEventStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.EventStatus | EnumEventStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.EventStatus[]
-    notIn?: $Enums.EventStatus[]
-    not?: NestedEnumEventStatusWithAggregatesFilter<$PrismaModel> | $Enums.EventStatus
+    equals?: EventStatus | EnumEventStatusFieldRefInput<$PrismaModel>
+    in?: EventStatus[]
+    notIn?: EventStatus[]
+    not?: NestedEnumEventStatusWithAggregatesFilter<$PrismaModel> | EventStatus
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumEventStatusFilter<$PrismaModel>
     _max?: NestedEnumEventStatusFilter<$PrismaModel>
@@ -13529,10 +13660,10 @@ export namespace Prisma {
   }
 
   export type EnumUserEventStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.UserEventStatus | EnumUserEventStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.UserEventStatus[]
-    notIn?: $Enums.UserEventStatus[]
-    not?: NestedEnumUserEventStatusFilter<$PrismaModel> | $Enums.UserEventStatus
+    equals?: UserEventStatus | EnumUserEventStatusFieldRefInput<$PrismaModel>
+    in?: UserEventStatus[]
+    notIn?: UserEventStatus[]
+    not?: NestedEnumUserEventStatusFilter<$PrismaModel> | UserEventStatus
   }
 
   export type PaymentNullableRelationFilter = {
@@ -13578,10 +13709,10 @@ export namespace Prisma {
   }
 
   export type EnumUserEventStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.UserEventStatus | EnumUserEventStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.UserEventStatus[]
-    notIn?: $Enums.UserEventStatus[]
-    not?: NestedEnumUserEventStatusWithAggregatesFilter<$PrismaModel> | $Enums.UserEventStatus
+    equals?: UserEventStatus | EnumUserEventStatusFieldRefInput<$PrismaModel>
+    in?: UserEventStatus[]
+    notIn?: UserEventStatus[]
+    not?: NestedEnumUserEventStatusWithAggregatesFilter<$PrismaModel> | UserEventStatus
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumUserEventStatusFilter<$PrismaModel>
     _max?: NestedEnumUserEventStatusFilter<$PrismaModel>
@@ -13735,10 +13866,10 @@ export namespace Prisma {
   }
 
   export type EnumPricingModelFilter<$PrismaModel = never> = {
-    equals?: $Enums.PricingModel | EnumPricingModelFieldRefInput<$PrismaModel>
-    in?: $Enums.PricingModel[]
-    notIn?: $Enums.PricingModel[]
-    not?: NestedEnumPricingModelFilter<$PrismaModel> | $Enums.PricingModel
+    equals?: PricingModel | EnumPricingModelFieldRefInput<$PrismaModel>
+    in?: PricingModel[]
+    notIn?: PricingModel[]
+    not?: NestedEnumPricingModelFilter<$PrismaModel> | PricingModel
   }
 
   export type EventListRelationFilter = {
@@ -13789,10 +13920,10 @@ export namespace Prisma {
   }
 
   export type EnumPricingModelWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.PricingModel | EnumPricingModelFieldRefInput<$PrismaModel>
-    in?: $Enums.PricingModel[]
-    notIn?: $Enums.PricingModel[]
-    not?: NestedEnumPricingModelWithAggregatesFilter<$PrismaModel> | $Enums.PricingModel
+    equals?: PricingModel | EnumPricingModelFieldRefInput<$PrismaModel>
+    in?: PricingModel[]
+    notIn?: PricingModel[]
+    not?: NestedEnumPricingModelWithAggregatesFilter<$PrismaModel> | PricingModel
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumPricingModelFilter<$PrismaModel>
     _max?: NestedEnumPricingModelFilter<$PrismaModel>
@@ -13891,10 +14022,10 @@ export namespace Prisma {
   }
 
   export type EnumGroupRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.GroupRole | EnumGroupRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.GroupRole[]
-    notIn?: $Enums.GroupRole[]
-    not?: NestedEnumGroupRoleFilter<$PrismaModel> | $Enums.GroupRole
+    equals?: GroupRole | EnumGroupRoleFieldRefInput<$PrismaModel>
+    in?: GroupRole[]
+    notIn?: GroupRole[]
+    not?: NestedEnumGroupRoleFilter<$PrismaModel> | GroupRole
   }
 
   export type GroupRelationFilter = {
@@ -13926,10 +14057,10 @@ export namespace Prisma {
   }
 
   export type EnumGroupRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.GroupRole | EnumGroupRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.GroupRole[]
-    notIn?: $Enums.GroupRole[]
-    not?: NestedEnumGroupRoleWithAggregatesFilter<$PrismaModel> | $Enums.GroupRole
+    equals?: GroupRole | EnumGroupRoleFieldRefInput<$PrismaModel>
+    in?: GroupRole[]
+    notIn?: GroupRole[]
+    not?: NestedEnumGroupRoleWithAggregatesFilter<$PrismaModel> | GroupRole
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumGroupRoleFilter<$PrismaModel>
     _max?: NestedEnumGroupRoleFilter<$PrismaModel>
@@ -14013,7 +14144,7 @@ export namespace Prisma {
   }
 
   export type EnumEventStatusFieldUpdateOperationsInput = {
-    set?: $Enums.EventStatus
+    set?: EventStatus
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -14085,7 +14216,7 @@ export namespace Prisma {
   }
 
   export type EnumUserEventStatusFieldUpdateOperationsInput = {
-    set?: $Enums.UserEventStatus
+    set?: UserEventStatus
   }
 
   export type PaymentUpdateOneWithoutParticipantsOnEventsNestedInput = {
@@ -14227,7 +14358,7 @@ export namespace Prisma {
   }
 
   export type EnumPricingModelFieldUpdateOperationsInput = {
-    set?: $Enums.PricingModel
+    set?: PricingModel
   }
 
   export type EventUpdateManyWithoutGroupNestedInput = {
@@ -14563,7 +14694,7 @@ export namespace Prisma {
   }
 
   export type EnumGroupRoleFieldUpdateOperationsInput = {
-    set?: $Enums.GroupRole
+    set?: GroupRole
   }
 
   export type UserUpdateOneRequiredWithoutGroupsNestedInput = {
@@ -14672,10 +14803,10 @@ export namespace Prisma {
   }
 
   export type NestedEnumEventStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.EventStatus | EnumEventStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.EventStatus[]
-    notIn?: $Enums.EventStatus[]
-    not?: NestedEnumEventStatusFilter<$PrismaModel> | $Enums.EventStatus
+    equals?: EventStatus | EnumEventStatusFieldRefInput<$PrismaModel>
+    in?: EventStatus[]
+    notIn?: EventStatus[]
+    not?: NestedEnumEventStatusFilter<$PrismaModel> | EventStatus
   }
 
   export type NestedStringNullableFilter<$PrismaModel = never> = {
@@ -14734,10 +14865,10 @@ export namespace Prisma {
   }
 
   export type NestedEnumEventStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.EventStatus | EnumEventStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.EventStatus[]
-    notIn?: $Enums.EventStatus[]
-    not?: NestedEnumEventStatusWithAggregatesFilter<$PrismaModel> | $Enums.EventStatus
+    equals?: EventStatus | EnumEventStatusFieldRefInput<$PrismaModel>
+    in?: EventStatus[]
+    notIn?: EventStatus[]
+    not?: NestedEnumEventStatusWithAggregatesFilter<$PrismaModel> | EventStatus
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumEventStatusFilter<$PrismaModel>
     _max?: NestedEnumEventStatusFilter<$PrismaModel>
@@ -14777,17 +14908,17 @@ export namespace Prisma {
   }
 
   export type NestedEnumUserEventStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.UserEventStatus | EnumUserEventStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.UserEventStatus[]
-    notIn?: $Enums.UserEventStatus[]
-    not?: NestedEnumUserEventStatusFilter<$PrismaModel> | $Enums.UserEventStatus
+    equals?: UserEventStatus | EnumUserEventStatusFieldRefInput<$PrismaModel>
+    in?: UserEventStatus[]
+    notIn?: UserEventStatus[]
+    not?: NestedEnumUserEventStatusFilter<$PrismaModel> | UserEventStatus
   }
 
   export type NestedEnumUserEventStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.UserEventStatus | EnumUserEventStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.UserEventStatus[]
-    notIn?: $Enums.UserEventStatus[]
-    not?: NestedEnumUserEventStatusWithAggregatesFilter<$PrismaModel> | $Enums.UserEventStatus
+    equals?: UserEventStatus | EnumUserEventStatusFieldRefInput<$PrismaModel>
+    in?: UserEventStatus[]
+    notIn?: UserEventStatus[]
+    not?: NestedEnumUserEventStatusWithAggregatesFilter<$PrismaModel> | UserEventStatus
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumUserEventStatusFilter<$PrismaModel>
     _max?: NestedEnumUserEventStatusFilter<$PrismaModel>
@@ -14821,17 +14952,17 @@ export namespace Prisma {
   }
 
   export type NestedEnumPricingModelFilter<$PrismaModel = never> = {
-    equals?: $Enums.PricingModel | EnumPricingModelFieldRefInput<$PrismaModel>
-    in?: $Enums.PricingModel[]
-    notIn?: $Enums.PricingModel[]
-    not?: NestedEnumPricingModelFilter<$PrismaModel> | $Enums.PricingModel
+    equals?: PricingModel | EnumPricingModelFieldRefInput<$PrismaModel>
+    in?: PricingModel[]
+    notIn?: PricingModel[]
+    not?: NestedEnumPricingModelFilter<$PrismaModel> | PricingModel
   }
 
   export type NestedEnumPricingModelWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.PricingModel | EnumPricingModelFieldRefInput<$PrismaModel>
-    in?: $Enums.PricingModel[]
-    notIn?: $Enums.PricingModel[]
-    not?: NestedEnumPricingModelWithAggregatesFilter<$PrismaModel> | $Enums.PricingModel
+    equals?: PricingModel | EnumPricingModelFieldRefInput<$PrismaModel>
+    in?: PricingModel[]
+    notIn?: PricingModel[]
+    not?: NestedEnumPricingModelWithAggregatesFilter<$PrismaModel> | PricingModel
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumPricingModelFilter<$PrismaModel>
     _max?: NestedEnumPricingModelFilter<$PrismaModel>
@@ -14851,17 +14982,17 @@ export namespace Prisma {
   }
 
   export type NestedEnumGroupRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.GroupRole | EnumGroupRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.GroupRole[]
-    notIn?: $Enums.GroupRole[]
-    not?: NestedEnumGroupRoleFilter<$PrismaModel> | $Enums.GroupRole
+    equals?: GroupRole | EnumGroupRoleFieldRefInput<$PrismaModel>
+    in?: GroupRole[]
+    notIn?: GroupRole[]
+    not?: NestedEnumGroupRoleFilter<$PrismaModel> | GroupRole
   }
 
   export type NestedEnumGroupRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.GroupRole | EnumGroupRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.GroupRole[]
-    notIn?: $Enums.GroupRole[]
-    not?: NestedEnumGroupRoleWithAggregatesFilter<$PrismaModel> | $Enums.GroupRole
+    equals?: GroupRole | EnumGroupRoleFieldRefInput<$PrismaModel>
+    in?: GroupRole[]
+    notIn?: GroupRole[]
+    not?: NestedEnumGroupRoleWithAggregatesFilter<$PrismaModel> | GroupRole
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumGroupRoleFilter<$PrismaModel>
     _max?: NestedEnumGroupRoleFilter<$PrismaModel>
@@ -14958,7 +15089,7 @@ export namespace Prisma {
   export type ParticipantsOnEventsCreateWithoutEventInput = {
     date?: Date | string
     comment?: string | null
-    userEventStatus?: $Enums.UserEventStatus
+    userEventStatus?: UserEventStatus
     payment?: PaymentCreateNestedOneWithoutParticipantsOnEventsInput
     user: UserCreateNestedOneWithoutEventsInput
   }
@@ -14968,7 +15099,7 @@ export namespace Prisma {
     id: string
     comment?: string | null
     paymentId?: string | null
-    userEventStatus?: $Enums.UserEventStatus
+    userEventStatus?: UserEventStatus
   }
 
   export type ParticipantsOnEventsCreateOrConnectWithoutEventInput = {
@@ -14986,7 +15117,7 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    pricingModel?: $Enums.PricingModel
+    pricingModel?: PricingModel
     users?: UserOnGroupsCreateNestedManyWithoutGroupInput
     owner: UserCreateNestedOneWithoutOwnedGroupsInput
   }
@@ -14997,7 +15128,7 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    pricingModel?: $Enums.PricingModel
+    pricingModel?: PricingModel
     users?: UserOnGroupsUncheckedCreateNestedManyWithoutGroupInput
   }
 
@@ -15031,7 +15162,7 @@ export namespace Prisma {
     id?: StringFilter<"ParticipantsOnEvents"> | string
     comment?: StringNullableFilter<"ParticipantsOnEvents"> | string | null
     paymentId?: StringNullableFilter<"ParticipantsOnEvents"> | string | null
-    userEventStatus?: EnumUserEventStatusFilter<"ParticipantsOnEvents"> | $Enums.UserEventStatus
+    userEventStatus?: EnumUserEventStatusFilter<"ParticipantsOnEvents"> | UserEventStatus
   }
 
   export type GroupUpsertWithoutEventsInput = {
@@ -15050,7 +15181,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | $Enums.PricingModel
+    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
     users?: UserOnGroupsUpdateManyWithoutGroupNestedInput
     owner?: UserUpdateOneRequiredWithoutOwnedGroupsNestedInput
   }
@@ -15061,7 +15192,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | $Enums.PricingModel
+    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
     users?: UserOnGroupsUncheckedUpdateManyWithoutGroupNestedInput
   }
 
@@ -15143,7 +15274,7 @@ export namespace Prisma {
     startTime: string
     bookingDate?: Date | string | null
     cost: number
-    status?: $Enums.EventStatus
+    status?: EventStatus
     maxParticipants?: number
     Group?: GroupCreateNestedOneWithoutEventsInput
   }
@@ -15158,7 +15289,7 @@ export namespace Prisma {
     startTime: string
     bookingDate?: Date | string | null
     cost: number
-    status?: $Enums.EventStatus
+    status?: EventStatus
     maxParticipants?: number
     groupId?: string | null
   }
@@ -15269,7 +15400,7 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+    status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     maxParticipants?: IntFieldUpdateOperationsInput | number
     Group?: GroupUpdateOneWithoutEventsNestedInput
   }
@@ -15284,7 +15415,7 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+    status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     maxParticipants?: IntFieldUpdateOperationsInput | number
     groupId?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -15292,7 +15423,7 @@ export namespace Prisma {
   export type ParticipantsOnEventsCreateWithoutPaymentInput = {
     date?: Date | string
     comment?: string | null
-    userEventStatus?: $Enums.UserEventStatus
+    userEventStatus?: UserEventStatus
     user: UserCreateNestedOneWithoutEventsInput
     event: EventCreateNestedOneWithoutParticipantsInput
   }
@@ -15302,7 +15433,7 @@ export namespace Prisma {
     date?: Date | string
     id: string
     comment?: string | null
-    userEventStatus?: $Enums.UserEventStatus
+    userEventStatus?: UserEventStatus
   }
 
   export type ParticipantsOnEventsCreateOrConnectWithoutPaymentInput = {
@@ -15517,7 +15648,7 @@ export namespace Prisma {
     startTime: string
     bookingDate?: Date | string | null
     cost: number
-    status?: $Enums.EventStatus
+    status?: EventStatus
     maxParticipants?: number
     participants?: ParticipantsOnEventsCreateNestedManyWithoutEventInput
   }
@@ -15532,7 +15663,7 @@ export namespace Prisma {
     startTime: string
     bookingDate?: Date | string | null
     cost: number
-    status?: $Enums.EventStatus
+    status?: EventStatus
     maxParticipants?: number
     participants?: ParticipantsOnEventsUncheckedCreateNestedManyWithoutEventInput
   }
@@ -15548,13 +15679,13 @@ export namespace Prisma {
   }
 
   export type UserOnGroupsCreateWithoutGroupInput = {
-    role?: $Enums.GroupRole
+    role?: GroupRole
     user: UserCreateNestedOneWithoutGroupsInput
   }
 
   export type UserOnGroupsUncheckedCreateWithoutGroupInput = {
     id: string
-    role?: $Enums.GroupRole
+    role?: GroupRole
   }
 
   export type UserOnGroupsCreateOrConnectWithoutGroupInput = {
@@ -15637,7 +15768,7 @@ export namespace Prisma {
     startTime?: StringFilter<"Event"> | string
     bookingDate?: DateTimeNullableFilter<"Event"> | Date | string | null
     cost?: FloatFilter<"Event"> | number
-    status?: EnumEventStatusFilter<"Event"> | $Enums.EventStatus
+    status?: EnumEventStatusFilter<"Event"> | EventStatus
     maxParticipants?: IntFilter<"Event"> | number
     groupId?: StringNullableFilter<"Event"> | string | null
   }
@@ -15664,7 +15795,7 @@ export namespace Prisma {
     NOT?: UserOnGroupsScalarWhereInput | UserOnGroupsScalarWhereInput[]
     id?: StringFilter<"UserOnGroups"> | string
     groupId?: StringFilter<"UserOnGroups"> | string
-    role?: EnumGroupRoleFilter<"UserOnGroups"> | $Enums.GroupRole
+    role?: EnumGroupRoleFilter<"UserOnGroups"> | GroupRole
   }
 
   export type UserUpsertWithoutOwnedGroupsInput = {
@@ -15777,7 +15908,7 @@ export namespace Prisma {
   export type ParticipantsOnEventsCreateWithoutUserInput = {
     date?: Date | string
     comment?: string | null
-    userEventStatus?: $Enums.UserEventStatus
+    userEventStatus?: UserEventStatus
     payment?: PaymentCreateNestedOneWithoutParticipantsOnEventsInput
     event: EventCreateNestedOneWithoutParticipantsInput
   }
@@ -15787,7 +15918,7 @@ export namespace Prisma {
     date?: Date | string
     comment?: string | null
     paymentId?: string | null
-    userEventStatus?: $Enums.UserEventStatus
+    userEventStatus?: UserEventStatus
   }
 
   export type ParticipantsOnEventsCreateOrConnectWithoutUserInput = {
@@ -15801,13 +15932,13 @@ export namespace Prisma {
   }
 
   export type UserOnGroupsCreateWithoutUserInput = {
-    role?: $Enums.GroupRole
+    role?: GroupRole
     group: GroupCreateNestedOneWithoutUsersInput
   }
 
   export type UserOnGroupsUncheckedCreateWithoutUserInput = {
     groupId: string
-    role?: $Enums.GroupRole
+    role?: GroupRole
   }
 
   export type UserOnGroupsCreateOrConnectWithoutUserInput = {
@@ -15825,7 +15956,7 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    pricingModel?: $Enums.PricingModel
+    pricingModel?: PricingModel
     events?: EventCreateNestedManyWithoutGroupInput
     users?: UserOnGroupsCreateNestedManyWithoutGroupInput
   }
@@ -15835,7 +15966,7 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    pricingModel?: $Enums.PricingModel
+    pricingModel?: PricingModel
     events?: EventUncheckedCreateNestedManyWithoutGroupInput
     users?: UserOnGroupsUncheckedCreateNestedManyWithoutGroupInput
   }
@@ -15991,7 +16122,7 @@ export namespace Prisma {
     name?: StringFilter<"Group"> | string
     createdAt?: DateTimeFilter<"Group"> | Date | string
     updatedAt?: DateTimeFilter<"Group"> | Date | string
-    pricingModel?: EnumPricingModelFilter<"Group"> | $Enums.PricingModel
+    pricingModel?: EnumPricingModelFilter<"Group"> | PricingModel
   }
 
   export type TokensUpsertWithWhereUniqueWithoutUserInput = {
@@ -16067,7 +16198,7 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    pricingModel?: $Enums.PricingModel
+    pricingModel?: PricingModel
     events?: EventCreateNestedManyWithoutGroupInput
     owner: UserCreateNestedOneWithoutOwnedGroupsInput
   }
@@ -16078,7 +16209,7 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    pricingModel?: $Enums.PricingModel
+    pricingModel?: PricingModel
     events?: EventUncheckedCreateNestedManyWithoutGroupInput
   }
 
@@ -16150,7 +16281,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | $Enums.PricingModel
+    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
     events?: EventUpdateManyWithoutGroupNestedInput
     owner?: UserUpdateOneRequiredWithoutOwnedGroupsNestedInput
   }
@@ -16161,7 +16292,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | $Enums.PricingModel
+    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
     events?: EventUncheckedUpdateManyWithoutGroupNestedInput
   }
 
@@ -16170,13 +16301,13 @@ export namespace Prisma {
     id: string
     comment?: string | null
     paymentId?: string | null
-    userEventStatus?: $Enums.UserEventStatus
+    userEventStatus?: UserEventStatus
   }
 
   export type ParticipantsOnEventsUpdateWithoutEventInput = {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
-    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | $Enums.UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
     payment?: PaymentUpdateOneWithoutParticipantsOnEventsNestedInput
     user?: UserUpdateOneRequiredWithoutEventsNestedInput
   }
@@ -16186,7 +16317,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
     paymentId?: NullableStringFieldUpdateOperationsInput | string | null
-    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | $Enums.UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsUncheckedUpdateManyWithoutEventInput = {
@@ -16194,7 +16325,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
     paymentId?: NullableStringFieldUpdateOperationsInput | string | null
-    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | $Enums.UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsCreateManyPaymentInput = {
@@ -16202,13 +16333,13 @@ export namespace Prisma {
     date?: Date | string
     id: string
     comment?: string | null
-    userEventStatus?: $Enums.UserEventStatus
+    userEventStatus?: UserEventStatus
   }
 
   export type ParticipantsOnEventsUpdateWithoutPaymentInput = {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
-    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | $Enums.UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
     user?: UserUpdateOneRequiredWithoutEventsNestedInput
     event?: EventUpdateOneRequiredWithoutParticipantsNestedInput
   }
@@ -16218,7 +16349,7 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     id?: StringFieldUpdateOperationsInput | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
-    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | $Enums.UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsUncheckedUpdateManyWithoutPaymentInput = {
@@ -16226,7 +16357,7 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     id?: StringFieldUpdateOperationsInput | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
-    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | $Enums.UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type EventCreateManyGroupInput = {
@@ -16239,13 +16370,13 @@ export namespace Prisma {
     startTime: string
     bookingDate?: Date | string | null
     cost: number
-    status?: $Enums.EventStatus
+    status?: EventStatus
     maxParticipants?: number
   }
 
   export type UserOnGroupsCreateManyGroupInput = {
     id: string
-    role?: $Enums.GroupRole
+    role?: GroupRole
   }
 
   export type EventUpdateWithoutGroupInput = {
@@ -16258,7 +16389,7 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+    status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     maxParticipants?: IntFieldUpdateOperationsInput | number
     participants?: ParticipantsOnEventsUpdateManyWithoutEventNestedInput
   }
@@ -16273,7 +16404,7 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+    status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     maxParticipants?: IntFieldUpdateOperationsInput | number
     participants?: ParticipantsOnEventsUncheckedUpdateManyWithoutEventNestedInput
   }
@@ -16288,23 +16419,23 @@ export namespace Prisma {
     startTime?: StringFieldUpdateOperationsInput | string
     bookingDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     cost?: FloatFieldUpdateOperationsInput | number
-    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+    status?: EnumEventStatusFieldUpdateOperationsInput | EventStatus
     maxParticipants?: IntFieldUpdateOperationsInput | number
   }
 
   export type UserOnGroupsUpdateWithoutGroupInput = {
-    role?: EnumGroupRoleFieldUpdateOperationsInput | $Enums.GroupRole
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
     user?: UserUpdateOneRequiredWithoutGroupsNestedInput
   }
 
   export type UserOnGroupsUncheckedUpdateWithoutGroupInput = {
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumGroupRoleFieldUpdateOperationsInput | $Enums.GroupRole
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
   }
 
   export type UserOnGroupsUncheckedUpdateManyWithoutGroupInput = {
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumGroupRoleFieldUpdateOperationsInput | $Enums.GroupRole
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
   }
 
   export type AccountCreateManyUserInput = {
@@ -16332,12 +16463,12 @@ export namespace Prisma {
     date?: Date | string
     comment?: string | null
     paymentId?: string | null
-    userEventStatus?: $Enums.UserEventStatus
+    userEventStatus?: UserEventStatus
   }
 
   export type UserOnGroupsCreateManyUserInput = {
     groupId: string
-    role?: $Enums.GroupRole
+    role?: GroupRole
   }
 
   export type GroupCreateManyOwnerInput = {
@@ -16345,7 +16476,7 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    pricingModel?: $Enums.PricingModel
+    pricingModel?: PricingModel
   }
 
   export type TokensCreateManyUserInput = {
@@ -16418,7 +16549,7 @@ export namespace Prisma {
   export type ParticipantsOnEventsUpdateWithoutUserInput = {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
-    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | $Enums.UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
     payment?: PaymentUpdateOneWithoutParticipantsOnEventsNestedInput
     event?: EventUpdateOneRequiredWithoutParticipantsNestedInput
   }
@@ -16428,7 +16559,7 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
     paymentId?: NullableStringFieldUpdateOperationsInput | string | null
-    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | $Enums.UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type ParticipantsOnEventsUncheckedUpdateManyWithoutUserInput = {
@@ -16436,22 +16567,22 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     comment?: NullableStringFieldUpdateOperationsInput | string | null
     paymentId?: NullableStringFieldUpdateOperationsInput | string | null
-    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | $Enums.UserEventStatus
+    userEventStatus?: EnumUserEventStatusFieldUpdateOperationsInput | UserEventStatus
   }
 
   export type UserOnGroupsUpdateWithoutUserInput = {
-    role?: EnumGroupRoleFieldUpdateOperationsInput | $Enums.GroupRole
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
     group?: GroupUpdateOneRequiredWithoutUsersNestedInput
   }
 
   export type UserOnGroupsUncheckedUpdateWithoutUserInput = {
     groupId?: StringFieldUpdateOperationsInput | string
-    role?: EnumGroupRoleFieldUpdateOperationsInput | $Enums.GroupRole
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
   }
 
   export type UserOnGroupsUncheckedUpdateManyWithoutUserInput = {
     groupId?: StringFieldUpdateOperationsInput | string
-    role?: EnumGroupRoleFieldUpdateOperationsInput | $Enums.GroupRole
+    role?: EnumGroupRoleFieldUpdateOperationsInput | GroupRole
   }
 
   export type GroupUpdateWithoutOwnerInput = {
@@ -16459,7 +16590,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | $Enums.PricingModel
+    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
     events?: EventUpdateManyWithoutGroupNestedInput
     users?: UserOnGroupsUpdateManyWithoutGroupNestedInput
   }
@@ -16469,7 +16600,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | $Enums.PricingModel
+    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
     events?: EventUncheckedUpdateManyWithoutGroupNestedInput
     users?: UserOnGroupsUncheckedUpdateManyWithoutGroupNestedInput
   }
@@ -16479,7 +16610,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | $Enums.PricingModel
+    pricingModel?: EnumPricingModelFieldUpdateOperationsInput | PricingModel
   }
 
   export type TokensUpdateWithoutUserInput = {
@@ -16504,66 +16635,6 @@ export namespace Prisma {
   }
 
 
-
-  /**
-   * Aliases for legacy arg types
-   */
-    /**
-     * @deprecated Use EventCountOutputTypeDefaultArgs instead
-     */
-    export type EventCountOutputTypeArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = EventCountOutputTypeDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use PaymentCountOutputTypeDefaultArgs instead
-     */
-    export type PaymentCountOutputTypeArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = PaymentCountOutputTypeDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use GroupCountOutputTypeDefaultArgs instead
-     */
-    export type GroupCountOutputTypeArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = GroupCountOutputTypeDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use UserCountOutputTypeDefaultArgs instead
-     */
-    export type UserCountOutputTypeArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = UserCountOutputTypeDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use TokensDefaultArgs instead
-     */
-    export type TokensArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = TokensDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use EventDefaultArgs instead
-     */
-    export type EventArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = EventDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use ParticipantsOnEventsDefaultArgs instead
-     */
-    export type ParticipantsOnEventsArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = ParticipantsOnEventsDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use PaymentDefaultArgs instead
-     */
-    export type PaymentArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = PaymentDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use AccountDefaultArgs instead
-     */
-    export type AccountArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = AccountDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use SessionDefaultArgs instead
-     */
-    export type SessionArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = SessionDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use GroupDefaultArgs instead
-     */
-    export type GroupArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = GroupDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use UserDefaultArgs instead
-     */
-    export type UserArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = UserDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use UserOnGroupsDefaultArgs instead
-     */
-    export type UserOnGroupsArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = UserOnGroupsDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use VerificationTokenDefaultArgs instead
-     */
-    export type VerificationTokenArgs<ExtArgs extends $Extensions.Args = $Extensions.DefaultArgs> = VerificationTokenDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany
