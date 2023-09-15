@@ -82,6 +82,7 @@ export const gmailRouter = createTRPCRouter({
           token_type: 'access_token',
         })
 
+        //@ts-expect-error googleapis types are not up to date
         const gmail = google.gmail({ version: 'v1', auth: oAuth2Client })
 
         const { data } = await gmail.users.messages.list({

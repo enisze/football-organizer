@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 
 export const LoadingWrapper: FunctionComponent<
   PropsWithChildren<{
-    isLoading: boolean
+    isLoading?: boolean
   }>
 > = ({ children, isLoading }) => {
   const [progress, setProgress] = useState(13)
