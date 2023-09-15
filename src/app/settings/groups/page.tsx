@@ -11,9 +11,9 @@ const GroupSettings = () => {
   const userId = session?.user?.id
 
   const { data: groups } = api.group.getGroupsOfUser.useQuery({ owned: true })
-  // const { data: link } = trpc.gmail.generateAuthLink.useQuery(undefined, {
-  //   enabled: groups && groups?.length > 0,
-  // })
+  const { data: link } = api.gmail.generateAuthLink.useQuery(undefined, {
+    enabled: groups && groups?.length > 0,
+  })
 
   if (!userId) {
     // window.location.replace('/')
@@ -54,7 +54,7 @@ const GroupSettings = () => {
         )}
 
         <div className="p-4">
-          {/* {link && <a href={link}>Neues gmail token</a>} */}
+          {link && <a href={link}>Neues gmail token</a>}
         </div>
         {/*TODO: Proper management Limited to one group per user currently */}
         {showNewGroup ? (

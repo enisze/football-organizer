@@ -1,7 +1,9 @@
 import { redirect } from 'next/navigation'
 
+import { prisma } from '../../server/db/client'
+
 const MainPage = async () => {
-  const groups = await prisma?.group.findMany()
+  const groups = await prisma.group.findMany()
 
   if (groups && groups?.length > 0) {
     redirect(`/group/${groups.at(0)?.id}`)
