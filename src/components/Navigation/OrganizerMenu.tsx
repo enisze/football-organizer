@@ -1,3 +1,4 @@
+import { useIsAdmin } from '@/src/hooks/useIsAdmin'
 import { api } from '@/src/server/trpc/api'
 import { Avatar, AvatarFallback } from '@/ui/avatar'
 import {
@@ -23,7 +24,7 @@ export const OrganizerMenu: FunctionComponent = () => {
 
   const selectedGroupId = useAtomValue(selectedGroupAtom)
 
-  const isAdmin = userData?.user?.role === 'admin'
+  const isAdmin = useIsAdmin()
 
   const [open, setOpen] = useState(false)
 

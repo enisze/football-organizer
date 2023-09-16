@@ -1,5 +1,6 @@
 'use client'
 import { NewGroup } from '@/src/components/Groups/NewGroup'
+import { useIsAdmin } from '@/src/hooks/useIsAdmin'
 import { api } from '@/src/server/trpc/api'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { Container } from '@/ui/container'
@@ -9,6 +10,8 @@ import { useSession } from 'next-auth/react'
 const GroupSettings = () => {
   const { data: session } = useSession()
   const userId = session?.user?.id
+
+  const isAdmin = useIsAdmin()
 
   const { data: groups } = api.group.getGroupsOfUser.useQuery({ owned: true })
   const { data: link } = api.gmail.generateAuthLink.useQuery(undefined, {
@@ -21,8 +24,7 @@ const GroupSettings = () => {
     // notFound()
   }
 
-  const showNewGroup =
-    (groups?.length ?? 0) < 1 || session?.user?.role === 'admin'
+  const showNewGroup = (groups?.length ?? 0) < 1 || isAdmin
 
   return (
     <>
