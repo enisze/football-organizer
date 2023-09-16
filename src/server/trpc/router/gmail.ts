@@ -16,7 +16,7 @@ const credentials: OAuth2ClientOptions = {
   redirectUri: process.env.GMAIL_REDIRECT_URIS,
 }
 
-const oAuth2Client = new OAuth2Client(credentials)
+export const oAuth2Client = new OAuth2Client(credentials)
 
 const PAYPAL_LABEL = 'Label_3926228921657449356'
 
@@ -33,30 +33,6 @@ export const gmailRouter = createTRPCRouter({
     return authorizeUrl
   }),
 
-  setToken: protectedProcedure
-    .input(z.object({ code: z.string() }))
-    .query(async ({ input: { code }, ctx: { prisma, session } }) => {
-      const { tokens } = await oAuth2Client.getToken(code)
-
-      const { expiry_date, access_token, refresh_token } = tokens
-
-      if (!expiry_date || !refresh_token || !access_token || !session.user.id)
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Access revoked',
-        })
-
-      await prisma.tokens.deleteMany({ where: { ownerId: session.user.id } })
-
-      return await prisma.tokens.create({
-        data: {
-          expiry_date: new Date(expiry_date),
-          access_token,
-          refresh_token,
-          ownerId: session.user.id,
-        },
-      })
-    }),
   paypalEmails: protectedProcedure.query(
     async ({
       ctx: {

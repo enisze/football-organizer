@@ -92,7 +92,7 @@ export const authOptions: NextAuthOptions = {
     async signIn({}) {
       return true
     },
-    async jwt({ token, user}) {
+    async jwt({ token, user }) {
       const id = token.id
 
       let dbUser
@@ -133,4 +133,8 @@ export const getServerAuthSession = (ctx: {
   res: GetServerSidePropsContext['res']
 }) => {
   return getServerSession(ctx.req, ctx.res, authOptions)
+}
+
+export const getServerComponentAuthSession = () => {
+  return getServerSession(authOptions)
 }
