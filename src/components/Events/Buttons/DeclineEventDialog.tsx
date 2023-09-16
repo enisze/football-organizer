@@ -10,7 +10,6 @@ import {
 } from '@/ui/dialog'
 import { TextField } from '@/ui/TextField'
 import { X } from 'lucide-react'
-import { SessionProvider } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { useState } from 'react'
 
@@ -20,7 +19,7 @@ type DeclineEventDialogProps = {
   setShowLeaveModal: () => void
 }
 
-const DeclineEventDialogRaw: FunctionComponent<DeclineEventDialogProps> = ({
+export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
   id,
   userStatus,
   setShowLeaveModal,
@@ -102,21 +101,5 @@ const DeclineEventDialogRaw: FunctionComponent<DeclineEventDialogProps> = ({
         </div>
       </DialogContent>
     </Dialog>
-  )
-}
-
-export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
-  id,
-  userStatus,
-  setShowLeaveModal,
-}) => {
-  return (
-    <SessionProvider>
-      <DeclineEventDialogRaw
-        id={id}
-        userStatus={userStatus}
-        setShowLeaveModal={setShowLeaveModal}
-      />
-    </SessionProvider>
   )
 }

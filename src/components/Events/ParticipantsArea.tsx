@@ -7,7 +7,6 @@ import {
   AccordionTrigger,
 } from '@/ui/accordion'
 import { User } from 'lucide-react'
-import { SessionProvider } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { AvatarStatus } from './AvatarStatus'
 import { EventCardAdminPaymentArea } from './EventCardAdminPaymentArea'
@@ -17,7 +16,7 @@ type ParticipantsAreaProps = {
   maxParticipants?: number
 }
 
-const ParticipantsAreaRaw: FunctionComponent<ParticipantsAreaProps> = ({
+export const ParticipantsArea: FunctionComponent<ParticipantsAreaProps> = ({
   eventId,
   maxParticipants,
 }) => {
@@ -107,19 +106,5 @@ const ParticipantsAreaRaw: FunctionComponent<ParticipantsAreaProps> = ({
         </AccordionContent>
       </AccordionItem>
     </Accordion>
-  )
-}
-
-export const ParticipantsArea: FunctionComponent<ParticipantsAreaProps> = ({
-  eventId,
-  maxParticipants,
-}) => {
-  return (
-    <SessionProvider>
-      <ParticipantsAreaRaw
-        eventId={eventId}
-        maxParticipants={maxParticipants}
-      />
-    </SessionProvider>
   )
 }

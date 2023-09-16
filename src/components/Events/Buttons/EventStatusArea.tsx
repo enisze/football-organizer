@@ -10,13 +10,13 @@ import {
 } from '@/ui/dialog'
 import { TRPCError } from '@trpc/server'
 import { Check } from 'lucide-react'
-import { SessionProvider, useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import type { FunctionComponent } from 'react'
 import { useState } from 'react'
 import { QuestionMark } from '../../QuestionMark'
 import { DeclineEventDialog } from './DeclineEventDialog'
 
-const EventStatusAreaRaw: FunctionComponent<{
+export const EventStatusArea: FunctionComponent<{
   id: string
 }> = ({ id }) => {
   const trpcContext = api.useContext()
@@ -134,13 +134,5 @@ const EventStatusAreaRaw: FunctionComponent<{
         </div>
       </DialogContent>
     </Dialog>
-  )
-}
-
-export const EventStatusArea: FunctionComponent<{ id: string }> = ({ id }) => {
-  return (
-    <SessionProvider>
-      <EventStatusAreaRaw id={id} />
-    </SessionProvider>
   )
 }
