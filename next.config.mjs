@@ -14,6 +14,7 @@ const config = {
   experimental: {
     appDir: true,
     typedRoutes: true,
+    serverActions: true,
   },
   transpilePackages: ['@trpc/next-layout'],
 }
