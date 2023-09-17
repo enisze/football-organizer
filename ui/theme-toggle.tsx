@@ -1,3 +1,4 @@
+'use client'
 import { Laptop, Moon, SunMedium } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { Button } from './button'

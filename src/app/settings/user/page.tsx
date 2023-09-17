@@ -29,10 +29,10 @@ const Settings = async () => {
   const paypalNameDb = userInfo?.paypalName
 
   return (
-    <form>
+    <>
       <Separator orientation="vertical" />
 
-      <div className="flex flex-col gap-y-2 p-2">
+      <form className="flex flex-col gap-y-2 p-2">
         <h3 className="font-bold">Nutzereinstellungen</h3>
         <Label>Alle Benachrichtigungen</Label>
         <Switch
@@ -75,8 +75,8 @@ const Settings = async () => {
         </Button>
 
         <DeleteUserForm userName={userName ?? ''} />
-      </div>
-    </form>
+      </form>
+    </>
   )
 }
 
