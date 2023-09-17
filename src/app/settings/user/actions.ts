@@ -41,8 +41,6 @@ export async function updateNotification(session: Session | null) {
     data: { notificationsEnabled: !notificationsEnabled },
   })
 
-  console.log('here')
-
   revalidatePath('/settings/user')
 }
 

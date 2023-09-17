@@ -28,60 +28,55 @@ const Settings = async () => {
   const notificationsEnabled = userInfo?.notificationsEnabled
   const paypalNameDb = userInfo?.paypalName
 
-  console.log(notificationsEnabled)
-
   return (
-    <>
+    <form>
       <Separator orientation="vertical" />
 
       <div className="flex flex-col gap-y-2 p-2">
         <h3 className="font-bold">Nutzereinstellungen</h3>
-        <form
-          action={async () => {
+        <Label>Alle Benachrichtigungen</Label>
+        <Switch
+          id="notifications-enabled"
+          checked={Boolean(notificationsEnabled)}
+          type="submit"
+          formAction={async () => {
             'use server'
             updateNotification(session)
           }}
-          className="flex items-center gap-x-2"
-        >
-          <Label>Alle Benachrichtigungen</Label>
-          <Switch
-            id="notifications-enabled"
-            checked={Boolean(notificationsEnabled)}
-            type="submit"
-          />
-        </form>
+        />
 
-        <form
-          action={async (formData) => {
+        <TextField
+          id="user-name-input"
+          type="text"
+          label={`Paypal Name`}
+          text=""
+          name="paypalName"
+          infoContent={
+            <div>
+              Du solltest deinen Paypal namen spezifizieren, damit dein
+              Bezahlstatus korrekt angezeigt wird.
+            </div>
+          }
+          placeholder="Paypal Name"
+          defaultValue={paypalNameDb ?? undefined}
+          withBubble={!paypalName}
+        />
+
+        <Button
+          type="submit"
+          className="w-fit"
+          formAction={async (formData) => {
             'use server'
+
             updateUserName(formData, session)
           }}
         >
-          <TextField
-            id="user-name-input"
-            type="text"
-            label={`Paypal Name`}
-            text=""
-            name="paypalName"
-            infoContent={
-              <div>
-                Du solltest deinen Paypal namen spezifizieren, damit dein
-                Bezahlstatus korrekt angezeigt wird.
-              </div>
-            }
-            placeholder="Paypal Name"
-            defaultValue={paypalNameDb ?? undefined}
-            withBubble={!paypalName}
-          />
-
-          <Button type="submit" className="w-fit">
-            Speichern
-          </Button>
-        </form>
+          Speichern
+        </Button>
 
         <DeleteUserForm userName={userName ?? ''} />
       </div>
-    </>
+    </form>
   )
 }
 
