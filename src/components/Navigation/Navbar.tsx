@@ -4,7 +4,7 @@ import { ThemeToggle } from '@/ui/theme-toggle'
 import Link from 'next/link'
 import { Heading } from '../Heading'
 import { DashboardLink } from './DashboardLink'
-import { OrganizerMenu } from './OrganizerMenu'
+import { OrganizerServerMenu } from './OrganizerServerMenu'
 
 export const Navbar = async () => {
   const data = await getServerComponentAuthSession()
@@ -14,10 +14,7 @@ export const Navbar = async () => {
         <Heading size="sm" />
 
         <div className="flex gap-x-1 items-center cursor-pointer">
-          <OrganizerMenu
-            paypalName={data?.user?.paypalName}
-            name={data?.user?.name}
-          />
+          <OrganizerServerMenu />
 
           {!data?.user && (
             <Link href="/api/auth/signin">

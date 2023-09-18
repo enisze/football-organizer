@@ -1,6 +1,5 @@
 'use client'
 import { useIsAdmin } from '@/src/hooks/useIsAdmin'
-import { api } from '@/src/server/trpc/api'
 import { Avatar, AvatarFallback } from '@/ui/avatar'
 import {
   DropdownMenu,
@@ -11,40 +10,35 @@ import {
 import { Label } from '@/ui/label'
 import { Separator } from '@/ui/separator'
 import { Switch } from '@/ui/switch'
-import { atom, useAtom, useAtomValue } from 'jotai'
-import { signOut } from 'next-auth/react'
+import { atom, useAtom } from 'jotai'
+import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useState, type FunctionComponent } from 'react'
-import { selectedGroupAtom } from '../Groups/GroupSelector'
 import { NotificationBubble } from '../NotificationBubble'
 
 export const adminAtom = atom(true)
 
 export const OrganizerMenu: FunctionComponent<{
-  paypalName: string | null | undefined
-  name: string | null | undefined
-}> = ({ paypalName, name }) => {
-  const selectedGroupId = useAtomValue(selectedGroupAtom)
-
+  balance: number | null | undefined
+}> = ({ balance }) => {
   const isAdmin = useIsAdmin()
-
   const [open, setOpen] = useState(false)
-
-  const { data: balance } = api.payment.getUserBalance.useQuery(
-    { groupId: selectedGroupId ?? '' },
-    {
-      enabled: Boolean(name) && Boolean(selectedGroupId),
-    },
-  )
-
+  const { data } = useSession()
   const [isAdminView, setIsAdminView] = useAtom(adminAtom)
 
-  if (!name) return null
+  const pathname = usePathname()
 
-  const hasPaypalName = Boolean(paypalName)
+  const groupId = pathname?.split('/').at(-1)
 
+  const isOnDashboard = pathname?.includes('/group/')
+
+  if (!data?.user) return null
+
+  const hasPaypalName = Boolean(data.user.paypalName)
+
+  const name = data.user.name
   const res = name?.split(' ')
-
   const first = res ? res[0]?.charAt(0) ?? 'X' : 'X'
   const second = res ? res[1]?.charAt(0) ?? 'X' : 'X'
 
@@ -78,13 +72,24 @@ export const OrganizerMenu: FunctionComponent<{
           </div>
         </DropdownMenuItem>
 
+        {isOnDashboard && (
+          <DropdownMenuItem onClick={() => setOpen(!open)}>
+            <div className="relative flex w-full">
+              <Link href={`/settings/groups/${groupId}`}>
+                Gruppeneinstellungen
+              </Link>
+            </div>
+          </DropdownMenuItem>
+        )}
+
+        <Separator />
+
         <DropdownMenuItem onClick={() => setOpen(!open)}>
           <div className="relative flex w-full">
-            <Link href={'/settings'}>Einstellungen</Link>
+            <Link href={'/settings/user'}>Accounteinstellungen</Link>
             {!hasPaypalName && <NotificationBubble />}
           </div>
         </DropdownMenuItem>
-        <Separator />
         <DropdownMenuItem
           onClick={async () => {
             await signOut({ callbackUrl: '/' })
