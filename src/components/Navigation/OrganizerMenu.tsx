@@ -12,7 +12,7 @@ import { Label } from '@/ui/label'
 import { Separator } from '@/ui/separator'
 import { Switch } from '@/ui/switch'
 import { atom, useAtom, useAtomValue } from 'jotai'
-import { signOut, useSession } from 'next-auth/react'
+import { signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { useState, type FunctionComponent } from 'react'
 import { selectedGroupAtom } from '../Groups/GroupSelector'
@@ -20,9 +20,10 @@ import { NotificationBubble } from '../NotificationBubble'
 
 export const adminAtom = atom(true)
 
-export const OrganizerMenu: FunctionComponent = () => {
-  const { data: userData } = useSession()
-
+export const OrganizerMenu: FunctionComponent<{
+  paypalName: string | null | undefined
+  name: string | null | undefined
+}> = ({ paypalName, name }) => {
   const selectedGroupId = useAtomValue(selectedGroupAtom)
 
   const isAdmin = useIsAdmin()
@@ -32,17 +33,17 @@ export const OrganizerMenu: FunctionComponent = () => {
   const { data: balance } = api.payment.getUserBalance.useQuery(
     { groupId: selectedGroupId ?? '' },
     {
-      enabled: Boolean(userData) && Boolean(selectedGroupId),
+      enabled: Boolean(name) && Boolean(selectedGroupId),
     },
   )
 
   const [isAdminView, setIsAdminView] = useAtom(adminAtom)
 
-  if (!userData) return null
+  if (!name) return null
 
-  const hasPaypalName = Boolean(userData?.user?.paypalName)
+  const hasPaypalName = Boolean(paypalName)
 
-  const res = userData?.user?.name?.split(' ')
+  const res = name?.split(' ')
 
   const first = res ? res[0]?.charAt(0) ?? 'X' : 'X'
   const second = res ? res[1]?.charAt(0) ?? 'X' : 'X'
@@ -60,7 +61,7 @@ export const OrganizerMenu: FunctionComponent = () => {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem>{userData?.user?.name}</DropdownMenuItem>
+        <DropdownMenuItem>{name}</DropdownMenuItem>
         <DropdownMenuItem>Kontostand: {balance ?? 0}€</DropdownMenuItem>
         <Separator />
 
