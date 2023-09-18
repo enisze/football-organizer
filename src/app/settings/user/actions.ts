@@ -39,9 +39,8 @@ export async function updateNotification(session: Session | null) {
   await prisma.user.update({
     where: { id },
     data: { notificationsEnabled: !notificationsEnabled },
+    select: { notificationsEnabled: true },
   })
-
-  revalidatePath('/settings/user')
 }
 
 export async function updateUserName(

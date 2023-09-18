@@ -1,14 +1,14 @@
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
 import { Label } from '@/ui/label'
-import { Switch } from '@/ui/switch'
 
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { Separator } from '@/ui/separator'
 
 import { prisma } from '@/src/server/db/client'
 import { DeleteUserForm } from './DeleteUserForm'
-import { updateNotification, updateUserName } from './actions'
+import { NotificationSwitch } from './NotificationSwitch'
+import { updateUserName } from './actions'
 
 const Settings = async () => {
   const session = await getServerComponentAuthSession()
@@ -35,14 +35,9 @@ const Settings = async () => {
       <form className="flex flex-col gap-y-2 p-2">
         <h3 className="font-bold">Nutzereinstellungen</h3>
         <Label>Alle Benachrichtigungen</Label>
-        <Switch
-          id="notifications-enabled"
-          checked={Boolean(notificationsEnabled)}
-          type="submit"
-          formAction={async () => {
-            'use server'
-            updateNotification(session)
-          }}
+        <NotificationSwitch
+          session={session}
+          notificationsEnabled={Boolean(notificationsEnabled)}
         />
 
         <TextField
