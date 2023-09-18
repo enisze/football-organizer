@@ -2,40 +2,39 @@
 
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
-import { Label } from '@/ui/label'
 import { signOut, useSession } from 'next-auth/react'
 import { useState } from 'react'
 import { deleteUser } from './actions'
 
 export const DeleteUserForm = ({ userName }: { userName: string }) => {
-  const [message, setMessage] = useState('')
+  const [userNameForDeletion, setUserNameForDeletion] = useState('')
 
   const { data } = useSession()
-  const deleteUserAction = async (formData: FormData) => {
-    const res = await deleteUser(formData, data)
-
-    if (res?.message) {
-      setMessage(res?.message ?? '')
-      return
-    }
-
+  const deleteUserAction = async () => {
+    await deleteUser({ session: data })
     await signOut({ callbackUrl: '/' })
   }
 
   return (
-    <form action={deleteUserAction}>
+    <>
       <TextField
         id="user-name-input"
         type="text"
         label={`Benutzername ${userName} eingeben um zu löschen`}
         text=""
+        value={userNameForDeletion}
+        onChange={(e) => setUserNameForDeletion(e.target.value)}
         placeholder={userName}
-        name="userNameForDeletion"
       />
-      <Button className="w-fit" variant="destructive" type="submit">
+      <Button
+        disabled={userNameForDeletion !== userName}
+        className="w-fit"
+        variant="destructive"
+        type="submit"
+        formAction={deleteUserAction}
+      >
         Löschen
       </Button>
-      <Label>{message}</Label>
-    </form>
+    </>
   )
 }

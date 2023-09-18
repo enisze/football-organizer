@@ -54,25 +54,8 @@ export async function updateUserName(
   updatePaypalName({ name: paypalName, id })
 }
 
-export async function deleteUser(formData: FormData, session: Session | null) {
-  const userNameForDeletion = formData.get('userNameForDeletion')?.toString()
-
-  if (!userNameForDeletion)
-    return {
-      message: 'User name does not match',
-    }
-
+export async function deleteUser({ session }: { session: Session | null }) {
   const id = session?.user?.id
-
-  const result = await prisma.user.findUnique({
-    where: { id },
-    select: { name: true },
-  })
-
-  if (result?.name !== userNameForDeletion) {
-    return { message: 'User name does not match' }
-  }
-
   await prisma.user.delete({
     where: { id },
   })
