@@ -1,3 +1,4 @@
+'use client'
 import { AddEventForm } from '@/src/components/Events/AddEventForm'
 import { Button } from '@/ui/button'
 import {
@@ -14,11 +15,12 @@ import { useState } from 'react'
 
 export const EventDialog = () => {
   const [open, setOpen] = useState(false)
+
   return (
     <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
       <DialogTrigger className="flex flex-col gap-y-2 justify-start">
         <Label>Neues Event</Label>
-        <Button variant="outline" role="definition">
+        <Button type="button" variant="outline" role="definition">
           Erstellen
         </Button>
       </DialogTrigger>

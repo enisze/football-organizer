@@ -56,7 +56,9 @@ export const OrganizerMenu: FunctionComponent<{
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem>{name}</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setOpen(!open)}>
+          {name}
+        </DropdownMenuItem>
         {selector}
         <DropdownMenuItem>Kontostand: {balance ?? 0}€</DropdownMenuItem>
         <Separator />

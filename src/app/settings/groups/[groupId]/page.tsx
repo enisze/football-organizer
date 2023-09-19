@@ -11,6 +11,7 @@ import { prisma } from '@/src/server/db/client'
 import { sign } from 'jsonwebtoken'
 import { redirect } from 'next/navigation'
 import { ClipboardButton } from './ClipboardButton'
+import { EventDialog } from './EventDialog'
 import { NameChange } from './NameChange'
 import { deleteUserFromGroup } from './actions'
 
@@ -61,6 +62,7 @@ const GroupSettings = async ({
 
             <ClipboardButton token={token} />
           </div>
+          <EventDialog />
 
           <Container className="flex-col">
             {groupData?.users?.map(async (userInGroup, idx) => {

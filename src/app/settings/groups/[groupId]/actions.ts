@@ -1,8 +1,10 @@
 'use server'
 
+import { defaultValues } from '@/src/helpers/constants'
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { prisma } from '@/src/server/db/client'
 import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
 
 export async function deleteGroup({ groupId }: { groupId: string }) {
   'use server'
@@ -96,4 +98,52 @@ export const deleteUserFromGroup = async ({
   revalidatePath('/settings/groups')
 
   return { groupDeleted: false }
+}
+
+const eventSchema = z
+  .object({
+    address: z.coerce.string().default(defaultValues.address),
+    date: z.coerce.date().default(defaultValues.date),
+    startTime: z.coerce.string().default(defaultValues.startTime),
+    endTime: z.coerce.string().default(defaultValues.endTime),
+    cost: z.coerce.number().default(defaultValues.cost),
+    maxParticipants: z.coerce.number().default(defaultValues.maxParticipants),
+    groupId: z.string().default(''),
+  })
+  .nullish()
+
+export const createEvent = async ({
+  formData,
+  groupId,
+}: {
+  formData: FormData
+  groupId: string
+}) => {
+  'use server'
+  const session = await getServerComponentAuthSession()
+  const id = session?.user?.id
+  if (!id || !groupId) return
+
+  const data = {
+    address: formData.get('address'),
+    date: formData.get('date'),
+    startTime: formData.get('startTime'),
+    endTime: formData.get('endTime'),
+    cost: formData.get('cost'),
+    maxParticipants: formData.get('maxParticipants'),
+    groupId,
+  }
+
+  const parsed = eventSchema.parse(data)
+
+  if (!parsed) return
+
+  await prisma.event.create({
+    data: {
+      ...parsed,
+    },
+  })
+
+  revalidatePath(`/groups/${groupId}`)
+  revalidatePath(`/groups`)
 }
