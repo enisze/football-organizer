@@ -1,7 +1,6 @@
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { oAuth2Client } from '@/src/server/gmail'
 import { OrganizerLink } from '@/ui/OrganizerLink'
-import { TRPCError } from '@trpc/server'
 
 import { prisma } from '@/src/server/db/client'
 
@@ -19,10 +18,7 @@ export default async function Page({
   const { expiry_date, access_token, refresh_token } = tokens
 
   if (!expiry_date || !refresh_token || !access_token || !session?.user?.id)
-    throw new TRPCError({
-      code: 'INTERNAL_SERVER_ERROR',
-      message: 'Access revoked',
-    })
+    throw new Error('INTERNAL_SERVER_ERROR' + 'Access revoked')
 
   await prisma.tokens.deleteMany({ where: { ownerId: session.user.id } })
 

@@ -3,8 +3,7 @@ import { OrganizerLink } from '@/ui/OrganizerLink'
 
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { prisma } from '@/src/server/db/client'
-import { verifyJWT } from '@/src/server/trpc/verifyJWT'
-import { TRPCError } from '@trpc/server'
+import { verifyJWT } from '@/src/server/verifyJWT'
 import { decode } from 'jsonwebtoken'
 
 export default async function AddToGroup({
@@ -45,7 +44,7 @@ export default async function AddToGroup({
 const getDataFromJWT = async ({ JWT }: { JWT: string }) => {
   const isValid = verifyJWT(JWT)
 
-  if (!isValid) throw new TRPCError({ code: 'BAD_REQUEST' })
+  if (!isValid) throw new Error('BAD_REQUEST')
 
   const data = decode(JWT) as {
     id: string
@@ -63,10 +62,10 @@ const addUser = async ({
   userId: string | undefined
   JWT: string
 }) => {
-  if (!userId) throw new TRPCError({ code: 'BAD_REQUEST' })
+  if (!userId) throw new Error('BAD_REQUEST')
   const isValid = verifyJWT(JWT)
 
-  if (!isValid) throw new TRPCError({ code: 'BAD_REQUEST' })
+  if (!isValid) throw new Error('BAD_REQUEST')
 
   const res = decode(JWT) as {
     id: string

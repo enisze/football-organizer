@@ -1,4 +1,3 @@
-import { Toaster } from '@/ui/toaster'
 import '../../styles/globals.css'
 import { Navbar } from '../components/Navigation/Navbar'
 import Providers from './Providers'
@@ -22,7 +21,6 @@ export default function RootLayout({
         <Providers>
           <Navbar />
           {children}
-          <Toaster />
         </Providers>
       </body>
     </html>

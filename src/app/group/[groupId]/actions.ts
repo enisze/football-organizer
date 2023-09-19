@@ -3,7 +3,6 @@ import { sendPaidButCanceledMail } from '@/inngest/sendPaidButCanceledMail'
 import type { UserEventStatus } from '@/prisma/generated/client'
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { prisma } from '@/src/server/db/client'
-import { TRPCError } from '@trpc/server'
 import { subDays } from 'date-fns'
 import { revalidatePath } from 'next/cache'
 
@@ -43,9 +42,9 @@ export const setParticipatingStatus = async ({
 
   const userId = session?.user?.id
 
-  if (!userId) throw new TRPCError({ code: 'UNAUTHORIZED' })
+  if (!userId) throw new Error('UNAUTHORIZED')
   const user = await prisma.user.findUnique({ where: { id: userId } })
-  if (!user) throw new TRPCError({ code: 'UNAUTHORIZED' })
+  if (!user) throw new Error('UNAUTHORIZED')
 
   const event = await prisma.event.findUnique({
     where: { id: eventId },
@@ -56,7 +55,7 @@ export const setParticipatingStatus = async ({
       (participant) => participant.userEventStatus === 'JOINED',
     ).length === event?.maxParticipants
   )
-    throw new TRPCError({ code: 'PRECONDITION_FAILED' })
+    throw new Error('PRECONDITION_FAILED')
 
   switch (status) {
     case 'JOINED':
@@ -122,7 +121,7 @@ export const setParticipatingStatus = async ({
       revalidatePath(`/group`)
       return
     default:
-      throw new TRPCError({ code: 'BAD_REQUEST' })
+      throw new Error('BAD_REQUEST')
   }
 }
 

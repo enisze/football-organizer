@@ -1,6 +1,6 @@
 import { getAddressAndCoordinatesRedisKeys } from '@/src/helpers/getAddressAndCoordinatesRedisKeys'
+import { mapCoordinatesToArray } from '@/src/server/map'
 import { redis } from '@/src/server/redis/redis'
-import { mapCoordinatesToArray } from '@/src/server/trpc/router/map'
 
 import axios from 'axios'
 

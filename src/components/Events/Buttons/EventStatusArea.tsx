@@ -5,6 +5,7 @@ import { QuestionMark } from '../../QuestionMark'
 import { setParticipatingStatus } from '@/src/app/group/[groupId]/actions'
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { prisma } from '@/src/server/db/client'
+import { DeclineEventDialog } from './DeclineEventDialog'
 
 export const EventStatusArea = async ({ id }: { id: string }) => {
   const session = await getServerComponentAuthSession()
@@ -68,7 +69,7 @@ export const EventStatusArea = async ({ id }: { id: string }) => {
           />
         </Button>
 
-        {/* <DeclineEventDialog id={id} userStatus={userStatus} payment={payment} /> */}
+        <DeclineEventDialog id={id} userStatus={userStatus} payment={payment} />
       </div>
     </form>
   )
