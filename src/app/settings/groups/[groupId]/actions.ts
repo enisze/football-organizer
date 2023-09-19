@@ -2,7 +2,7 @@
 
 import { defaultValues } from '@/src/helpers/constants'
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
-import { prisma } from '@/src/server/db/client'
+import { inngest, prisma } from '@/src/server/db/client'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
@@ -138,9 +138,17 @@ export const createEvent = async ({
 
   if (!parsed) return
 
-  await prisma.event.create({
+  const event = await prisma.event.create({
     data: {
       ...parsed,
+    },
+    select: { id: true },
+  })
+
+  await inngest.send({
+    name: 'event/new',
+    data: {
+      id: event.id,
     },
   })
 

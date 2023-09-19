@@ -1,3 +1,4 @@
+'use client'
 import { Button } from '@/ui/button'
 import type { FunctionComponent } from 'react'
 import { isDateInCertainRange } from '../helpers/isDateInCertainRange'

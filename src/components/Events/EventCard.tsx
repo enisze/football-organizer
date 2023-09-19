@@ -1,16 +1,14 @@
-'use client'
 import type { Event } from '@/prisma/generated/client'
-import { api } from '@/src/server/trpc/api'
+import { getLatLong } from '@/src/app/group/[groupId]/actions'
 import { differenceInCalendarDays } from 'date-fns'
 import { CalendarDays, Euro } from 'lucide-react'
-import type { FunctionComponent } from 'react'
 import { MapAccordion } from '../Map/MapAccordion'
 import { PaymentArea } from '../PaymentArea'
 import { AddToCalendarButton } from './Buttons/AddToCalendarButton'
 import { EventStatusArea } from './Buttons/EventStatusArea'
 import { DateInfo } from './DateInfo'
 import { EventCardAdminArea } from './EventCardAdminArea'
-import { ParticipantsArea } from './ParticipantsArea'
+import { ParticipantsAreaServer } from './ParticipantsAreaServer'
 import { StatusChip } from './StatusChip'
 
 type EventCardProps = {
@@ -20,7 +18,7 @@ type EventCardProps = {
 //TODO: Adjust schema event thingy -> Warteliste status?
 //TODO: Show Warteliste, if we have participants which are on the waiting list too?
 
-export const EventCard: FunctionComponent<EventCardProps> = ({ event }) => {
+export const EventCard = async ({ event }: EventCardProps) => {
   const {
     address,
     startTime,
@@ -33,10 +31,7 @@ export const EventCard: FunctionComponent<EventCardProps> = ({ event }) => {
     bookingDate,
   } = event
 
-  const { data, isLoading } = api.map.getLatLong.useQuery({
-    id,
-    address,
-  })
+  const data = await getLatLong(address, id)
 
   const currentDate = new Date()
   const days = differenceInCalendarDays(date, currentDate)
@@ -80,14 +75,11 @@ export const EventCard: FunctionComponent<EventCardProps> = ({ event }) => {
               <Euro className={iconStyle} />
               <span> {`${cost / maxParticipants}`}</span>
             </div>
-            {data && (
-              <MapAccordion
-                address={address}
-                coordinates={data}
-                isLoading={isLoading}
-              />
-            )}
-            <ParticipantsArea eventId={id} maxParticipants={maxParticipants} />
+            {data && <MapAccordion address={address} coordinates={data} />}
+            <ParticipantsAreaServer
+              eventId={id}
+              maxParticipants={maxParticipants}
+            />
 
             <EventCardAdminArea eventId={id} />
             <PaymentArea eventId={id} bookingDate={bookingDate} />

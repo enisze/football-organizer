@@ -14,7 +14,6 @@ export const NameChange = ({ groupName }: { groupName: string }) => {
   const updateName = async (formData: FormData, groupId: string) => {
     const groupNameEdit = await updateGroupName(formData, groupId)
 
-    //TODO: Fixme why does this not work?
     toast({
       title: 'Gruppenname geändert',
       description: `Der Gruppenname wurde erfolgreich zu ${groupNameEdit} geändert.`,

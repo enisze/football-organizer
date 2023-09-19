@@ -1,3 +1,4 @@
+'use client'
 import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover'
 import { Check, X } from 'lucide-react'
 import type { FunctionComponent } from 'react'

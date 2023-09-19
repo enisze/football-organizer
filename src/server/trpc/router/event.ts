@@ -16,37 +16,6 @@ export const eventRouter = createTRPCRouter({
       })
     }),
 
-  create: protectedProcedure
-    .input(
-      z
-        .object({
-          address: z.string(),
-          date: z.date(),
-          startTime: z.string(),
-          endTime: z.string(),
-          cost: z.number(),
-          maxParticipants: z.number(),
-          groupId: z.string(),
-        })
-        .nullish(),
-    )
-    .mutation(async ({ ctx: { prisma, inngest }, input }) => {
-      if (!input) throw new TRPCError({ code: 'BAD_REQUEST' })
-
-      const event = await prisma.event.create({
-        data: { ...input },
-      })
-
-      await inngest.send({
-        name: 'event/new',
-        data: {
-          id: event.id,
-        },
-      })
-
-      return event
-    }),
-
   getParticipants: protectedProcedure
     .input(z.object({ eventId: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -201,9 +170,6 @@ export const eventRouter = createTRPCRouter({
         where: { id: input.id },
       })
     }),
-  deleteAll: protectedProcedure.query(async ({ ctx: { prisma } }) => {
-    return await prisma.event.deleteMany()
-  }),
   getByGroupId: protectedProcedure
     .input(z.object({ groupId: z.string() }))
     .query(async ({ ctx: { prisma }, input }) => {
