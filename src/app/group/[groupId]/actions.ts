@@ -1,8 +1,10 @@
+'use server'
 import { sendPaidButCanceledMail } from '@/inngest/sendPaidButCanceledMail'
 import type { UserEventStatus } from '@/prisma/generated/client'
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { prisma } from '@/src/server/db/client'
 import { TRPCError } from '@trpc/server'
+import { subDays } from 'date-fns'
 import { revalidatePath } from 'next/cache'
 
 export const sendPaidButCanceledMailAction = async ({
@@ -10,6 +12,7 @@ export const sendPaidButCanceledMailAction = async ({
 }: {
   eventId: string
 }) => {
+  'use server'
   const session = await getServerComponentAuthSession()
 
   const event = await prisma.event.findUnique({ where: { id: eventId } })
@@ -35,6 +38,7 @@ export const setParticipatingStatus = async ({
   eventId: string
   status: UserEventStatus
 }) => {
+  'use server'
   const session = await getServerComponentAuthSession()
 
   const userId = session?.user?.id
@@ -120,4 +124,41 @@ export const setParticipatingStatus = async ({
     default:
       throw new TRPCError({ code: 'BAD_REQUEST' })
   }
+}
+
+export const bookEvent = async ({
+  formData,
+  eventId,
+}: {
+  eventId: string
+  formData: FormData
+}) => {
+  'use server'
+  const dateString = formData.get('date') as string
+
+  const date = new Date(dateString)
+
+  await prisma.event.update({
+    data: { status: 'BOOKED', bookingDate: subDays(date, 1) },
+    where: { id: eventId },
+  })
+}
+
+export const setEventCommentAction = async ({
+  comment,
+  eventId,
+}: {
+  comment: string | null
+  eventId: string
+}) => {
+  'use server'
+  const session = await getServerComponentAuthSession()
+
+  const id = session?.user?.id
+  if (!id) throw new Error('UNAUTHORIZED')
+
+  return await prisma.participantsOnEvents.update({
+    where: { id_eventId: { id, eventId } },
+    data: { comment },
+  })
 }

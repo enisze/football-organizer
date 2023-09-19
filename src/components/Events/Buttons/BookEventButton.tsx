@@ -1,4 +1,6 @@
-import { api } from '@/src/server/trpc/api'
+'use client'
+import { bookEvent } from '@/src/app/group/[groupId]/actions'
+import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
 import {
   Dialog,
@@ -7,22 +9,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/ui/dialog'
-import { TextField } from '@/ui/TextField'
-import { format } from 'date-fns'
-import type { FunctionComponent } from 'react'
-import { useState } from 'react'
 
-export const BookEventButton: FunctionComponent<{ id: string }> = ({ id }) => {
-  const trpcContext = api.useContext()
-
-  const { mutate: bookEvent } = api.event.book.useMutation({
-    onSuccess: () => trpcContext.invalidate(),
-  })
-
-  const [bookingDate, setBookingDate] = useState(
-    format(new Date(), 'yyyy-MM-dd'),
-  )
-
+export const BookEventButton = async ({ id }: { id: string }) => {
   return (
     <Dialog>
       <DialogTrigger>
@@ -43,19 +31,17 @@ export const BookEventButton: FunctionComponent<{ id: string }> = ({ id }) => {
             label="Datum"
             type="date"
             name="date"
-            onChange={(event) => {
-              const date = new Date(event.target.value)
-              setBookingDate(format(date, 'yyyy-MM-dd'))
-            }}
-            value={bookingDate}
             text={''}
             className="w-36"
           />
           <Button
             variant="outline"
             color="info"
-            onClick={() => {
-              bookEvent({ id, date: new Date(bookingDate) })
+            formAction={async (formData: FormData) => {
+              await bookEvent({
+                eventId: id,
+                formData,
+              })
             }}
             className="w-36"
           >

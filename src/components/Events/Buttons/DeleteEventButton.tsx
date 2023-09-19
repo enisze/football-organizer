@@ -1,20 +1,34 @@
-import { api } from '@/src/server/trpc/api'
+import { getAddressAndCoordinatesRedisKeys } from '@/src/helpers/getAddressAndCoordinatesRedisKeys'
+import { prisma } from '@/src/server/db/client'
+import { redis } from '@/src/server/redis/redis'
 import { Button } from '@/ui/button'
 import type { FunctionComponent } from 'react'
-import { LoadingWrapper } from '../../LoadingWrapper'
 
 export const DeleteEventButton: FunctionComponent<{ id: string }> = ({
   id,
 }) => {
-  const trpcContext = api.useContext()
-  const { mutate: deleteEvent, isLoading } = api.event.delete.useMutation({
-    onSuccess: () => trpcContext.invalidate(),
-  })
   return (
-    <LoadingWrapper isLoading={isLoading}>
-      <Button variant="outline" onClick={() => deleteEvent({ id })}>
+    <form>
+      <Button
+        variant="outline"
+        formAction={async () => {
+          'use server'
+
+          const { addressKey, coordinatesKey } =
+            getAddressAndCoordinatesRedisKeys(id)
+
+          try {
+            console.log(await redis.ping())
+          } catch (error) {
+            await redis.connect()
+          }
+          await redis.del(addressKey)
+          await redis.del(coordinatesKey)
+          await prisma.event.delete({ where: { id } })
+        }}
+      >
         Delete
       </Button>
-    </LoadingWrapper>
+    </form>
   )
 }

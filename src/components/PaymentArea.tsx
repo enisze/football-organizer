@@ -1,17 +1,27 @@
-'use client'
 import { Button } from '@/ui/button'
-import type { FunctionComponent } from 'react'
 import { isDateInCertainRange } from '../helpers/isDateInCertainRange'
-import { api } from '../server/trpc/api'
+import { getServerComponentAuthSession } from '../server/auth/authOptions'
+
+import { prisma } from '../server/db/client'
 
 const paypalLink =
   'https://www.paypal.com/paypalme/enz1994?country.x=DE&locale.x=de_DE'
 
-export const PaymentArea: FunctionComponent<{
+export const PaymentArea = async ({
+  eventId,
+  bookingDate,
+}: {
   eventId: string
   bookingDate: Date | null
-}> = ({ eventId, bookingDate }) => {
-  const { data: payment } = api.payment.getByEventId.useQuery({ eventId })
+}) => {
+  const session = await getServerComponentAuthSession()
+
+  const isAdmin = session?.user?.role === 'ADMIN'
+
+  const payment = await prisma.payment.findFirst({
+    where: { eventId, userId: session?.user?.id },
+  })
+  if (!isAdmin) return null
 
   const isInCertainRange = bookingDate
     ? isDateInCertainRange(new Date(), bookingDate)

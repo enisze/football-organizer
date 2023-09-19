@@ -30,6 +30,10 @@ export const EventStatusArea = async ({ id }: { id: string }) => {
   const checkMarkColor = userStatus === 'JOINED' ? 'text-green-500' : ''
   const maybeMarkColor = userStatus === 'MAYBE' ? '!fill-yellow-500' : ''
 
+  const payment = await prisma.payment.findFirst({
+    where: { eventId: id, userId: session?.user?.id },
+  })
+
   return (
     <form>
       <span>Mein Status:</span>
@@ -64,7 +68,7 @@ export const EventStatusArea = async ({ id }: { id: string }) => {
           />
         </Button>
 
-        {/* <DeclineEventDialog id={id} userStatus={userStatus} /> */}
+        {/* <DeclineEventDialog id={id} userStatus={userStatus} payment={payment} /> */}
       </div>
     </form>
   )

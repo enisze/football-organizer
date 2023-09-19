@@ -1,5 +1,5 @@
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
-import { oAuth2Client } from '@/src/server/trpc/router/gmail'
+import { oAuth2Client } from '@/src/server/gmail'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { TRPCError } from '@trpc/server'
 

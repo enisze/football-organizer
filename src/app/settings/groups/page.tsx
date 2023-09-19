@@ -1,6 +1,6 @@
 import { NewGroup } from '@/src/components/Groups/NewGroup'
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
-import { SCOPES, oAuth2Client } from '@/src/server/trpc/router/gmail'
+import { SCOPES, oAuth2Client } from '@/src/server/gmail'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { Container } from '@/ui/container'
 import { Separator } from '@/ui/separator'

@@ -1,20 +1,22 @@
-'use client'
-import { api } from '@/src/server/trpc/api'
-import type { FunctionComponent } from 'react'
-import { useIsAdmin } from '../../hooks/useIsAdmin'
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+
+import { prisma } from '@/src/server/db/client'
 
 type EventCardAdminPaymentAreaProps = {
   eventId: string
   userId: string
 }
 
-export const EventCardAdminPaymentArea: FunctionComponent<
-  EventCardAdminPaymentAreaProps
-> = ({ eventId, userId }) => {
-  const isAdmin = useIsAdmin()
-  const { data: payment } = api.payment.getByUserAndEventId.useQuery({
-    eventId,
-    userId,
+export const EventCardAdminPaymentArea = async ({
+  eventId,
+  userId,
+}: EventCardAdminPaymentAreaProps) => {
+  const session = await getServerComponentAuthSession()
+
+  const isAdmin = session?.user?.role === 'ADMIN'
+
+  const payment = await prisma.payment.findFirst({
+    where: { eventId, userId },
   })
   if (!isAdmin) return null
 

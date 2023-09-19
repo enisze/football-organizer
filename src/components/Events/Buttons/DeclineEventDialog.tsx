@@ -1,7 +1,9 @@
 'use client'
-import type { UserEventStatus } from '@/prisma/generated/client'
-import { setParticipatingStatus } from '@/src/app/group/[groupId]/actions'
-import { api } from '@/src/server/trpc/api'
+import type { Payment, UserEventStatus } from '@/prisma/generated/client'
+import {
+  setEventCommentAction,
+  setParticipatingStatus,
+} from '@/src/app/group/[groupId]/actions'
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
 import {
@@ -19,24 +21,29 @@ import { LeaveModal } from './LeaveModal'
 type DeclineEventDialogProps = {
   id: string
   userStatus?: UserEventStatus
+  payment: Payment
 }
 
 export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
   id,
   userStatus,
+  payment,
 }) => {
-  const trpcContext = api.useContext()
   const [comment, setComment] = useState('')
 
   const [showCommentModal, setShowCommentModal] = useState(false)
 
   const [showLeaveModal, setShowLeaveModal] = useState(false)
 
-  const { mutate: setEventComment } = api.user.setEventComment.useMutation({
-    onSuccess: () => {
-      trpcContext.invalidate()
-    },
-  })
+  const setEventComment = async ({
+    comment,
+    eventId,
+  }: {
+    comment: string
+    eventId: string
+  }) => {
+    await setEventCommentAction({ comment, eventId })
+  }
 
   const leave = async () => {
     if (!payment) {
@@ -45,10 +52,6 @@ export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
       setShowLeaveModal(true)
     }
   }
-
-  const { data: payment } = api.payment.getByEventId.useQuery({
-    eventId: id,
-  })
 
   const canceledMarkColor = userStatus === 'CANCELED' ? 'text-red-500' : ''
 
