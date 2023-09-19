@@ -1,5 +1,8 @@
+'use client'
 import type { UserEventStatus } from '@/prisma/generated/client'
+import { setParticipatingStatus } from '@/src/app/group/[groupId]/actions'
 import { api } from '@/src/server/trpc/api'
+import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
 import {
   Dialog,
@@ -8,26 +11,26 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/ui/dialog'
-import { TextField } from '@/ui/TextField'
 import { X } from 'lucide-react'
 import type { FunctionComponent } from 'react'
 import { useState } from 'react'
+import { LeaveModal } from './LeaveModal'
 
 type DeclineEventDialogProps = {
   id: string
   userStatus?: UserEventStatus
-  setShowLeaveModal: () => void
 }
 
 export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
   id,
   userStatus,
-  setShowLeaveModal,
 }) => {
   const trpcContext = api.useContext()
   const [comment, setComment] = useState('')
 
   const [showCommentModal, setShowCommentModal] = useState(false)
+
+  const [showLeaveModal, setShowLeaveModal] = useState(false)
 
   const { mutate: setEventComment } = api.user.setEventComment.useMutation({
     onSuccess: () => {
@@ -35,18 +38,11 @@ export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
     },
   })
 
-  const { mutate: setEventStatus } =
-    api.event.setParticipatingStatus.useMutation({
-      onSuccess: () => {
-        // trpcContext.invalidate()
-      },
-    })
-
-  const leave = () => {
+  const leave = async () => {
     if (!payment) {
-      setEventStatus({ eventId: id, status: 'CANCELED' })
+      await setParticipatingStatus({ eventId: id, status: 'CANCELED' })
     } else {
-      setShowLeaveModal()
+      setShowLeaveModal(true)
     }
   }
 
@@ -57,49 +53,57 @@ export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
   const canceledMarkColor = userStatus === 'CANCELED' ? 'text-red-500' : ''
 
   return (
-    <Dialog
-      open={showCommentModal}
-      onOpenChange={(open) => setShowCommentModal(open)}
-    >
-      <DialogTrigger asChild>
-        <Button
-          aria-label="cancel-button"
-          variant="outline"
-          onClick={leave}
-          className="w-full"
-        >
-          <X className={canceledMarkColor} />
-        </Button>
-      </DialogTrigger>
-
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            <h2 id="modal-title">Bitte gib einen Grund an (optional)</h2>
-          </DialogTitle>
-        </DialogHeader>
-        <div className="flex flex-col w-full gap-y-2">
-          <TextField
-            label="Warum kannst du nicht teilnehmen?"
-            text={''}
-            onChange={(e) => setComment(e.target.value)}
-            maxLength={35}
-          />
-
+    <>
+      <Dialog
+        open={showCommentModal}
+        onOpenChange={(open) => setShowCommentModal(open)}
+      >
+        <DialogTrigger asChild>
           <Button
+            aria-label="cancel-button"
             variant="outline"
-            color="info"
-            type="submit"
-            onClick={() => {
-              setEventComment({ comment, eventId: id })
-              setShowCommentModal(false)
-            }}
             className="w-full"
+            formAction={leave}
           >
-            Speichern
+            <X className={canceledMarkColor} />
           </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogTrigger>
+
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              <h2 id="modal-title">Bitte gib einen Grund an (optional)</h2>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col w-full gap-y-2">
+            <TextField
+              label="Warum kannst du nicht teilnehmen?"
+              text={''}
+              onChange={(e) => setComment(e.target.value)}
+              maxLength={35}
+            />
+
+            <Button
+              variant="outline"
+              color="info"
+              type="submit"
+              onClick={() => {
+                setEventComment({ comment, eventId: id })
+                setShowCommentModal(false)
+              }}
+              className="w-full"
+            >
+              Speichern
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <LeaveModal
+        eventId={id}
+        showLeaveModal={showLeaveModal}
+        setShowLeaveModal={setShowLeaveModal}
+      />
+    </>
   )
 }

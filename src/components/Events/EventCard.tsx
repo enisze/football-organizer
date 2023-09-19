@@ -1,5 +1,5 @@
 import type { Event } from '@/prisma/generated/client'
-import { getLatLong } from '@/src/app/group/[groupId]/actions'
+import { getLatLong } from '@/src/app/group/[groupId]/getLatLong'
 import { differenceInCalendarDays } from 'date-fns'
 import { CalendarDays, Euro } from 'lucide-react'
 import { MapAccordion } from '../Map/MapAccordion'
