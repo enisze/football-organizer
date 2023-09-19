@@ -23,7 +23,7 @@ export const DeleteGroupForm = ({
   }
 
   return (
-    <form>
+    <>
       <TextField
         id="group-name-input"
         type="text"
@@ -42,6 +42,6 @@ export const DeleteGroupForm = ({
       >
         Löschen
       </Button>
-    </form>
+    </>
   )
 }

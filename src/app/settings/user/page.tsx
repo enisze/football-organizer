@@ -8,7 +8,7 @@ import { Separator } from '@/ui/separator'
 import { prisma } from '@/src/server/db/client'
 import { DeleteUserForm } from './DeleteUserForm'
 import { NotificationSwitch } from './NotificationSwitch'
-import { updateUserName } from './actions'
+import { updatePaypalName } from './actions'
 
 const Settings = async () => {
   const session = await getServerComponentAuthSession()
@@ -36,7 +36,6 @@ const Settings = async () => {
         <h3 className="font-bold">Nutzereinstellungen</h3>
         <Label>Alle Benachrichtigungen</Label>
         <NotificationSwitch
-          session={session}
           notificationsEnabled={Boolean(notificationsEnabled)}
         />
 
@@ -57,15 +56,7 @@ const Settings = async () => {
           withBubble={!paypalName}
         />
 
-        <Button
-          type="submit"
-          className="w-fit"
-          formAction={async (formData) => {
-            'use server'
-
-            updateUserName(formData, session)
-          }}
-        >
+        <Button type="submit" className="w-fit" formAction={updatePaypalName}>
           Speichern
         </Button>
 

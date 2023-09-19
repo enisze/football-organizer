@@ -1,28 +1,31 @@
 'use server'
 
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { prisma } from '@/src/server/db/client'
-import type { Session } from 'next-auth'
 import { revalidatePath } from 'next/cache'
 
-export const updatePaypalName = async (input: {
-  name: string | undefined
-  id: string | undefined
-}) => {
+export const updatePaypalName = async (formData: FormData) => {
   'use server'
-  const { name, id } = input
 
-  if (!name || !id) return null
+  const session = await getServerComponentAuthSession()
+  const paypalName = formData.get('paypalName')?.toString()
+
+  const id = session?.user?.id
+
+  if (!id) return null
 
   await prisma.user.update({
     where: { id },
-    data: { paypalName: name },
+    data: { paypalName },
   })
 
   revalidatePath('/settings/user')
 }
 
-export async function updateNotification(session: Session | null) {
+export async function updateNotification() {
   'use server'
+
+  const session = await getServerComponentAuthSession()
 
   const id = session?.user?.id
   if (!session || !id) {
@@ -43,19 +46,10 @@ export async function updateNotification(session: Session | null) {
   })
 }
 
-export async function updateUserName(
-  formData: FormData,
-  session: Session | null,
-) {
+export async function deleteUser() {
   'use server'
-  const paypalName = formData.get('paypalName')?.toString()
-  const id = session?.user?.id
 
-  updatePaypalName({ name: paypalName, id })
-}
-
-export async function deleteUser({ session }: { session: Session | null }) {
-  'use server'
+  const session = await getServerComponentAuthSession()
   const id = session?.user?.id
   await prisma.user.delete({
     where: { id },

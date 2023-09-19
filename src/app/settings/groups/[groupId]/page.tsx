@@ -4,10 +4,15 @@ import { Separator } from '@/ui/separator'
 import type { Group } from '@/prisma/generated/client'
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { Container } from '@/ui/container'
-import { Copy, XIcon } from 'lucide-react'
+import { XIcon } from 'lucide-react'
 import { DeleteGroupForm } from './DeleteGroupForm'
 
 import { prisma } from '@/src/server/db/client'
+import { sign } from 'jsonwebtoken'
+import { redirect } from 'next/navigation'
+import { ClipboardButton } from './ClipboardButton'
+import { NameChange } from './NameChange'
+import { deleteUserFromGroup } from './actions'
 
 const GroupSettings = async ({
   params: { groupId },
@@ -26,30 +31,12 @@ const GroupSettings = async ({
 
   const groupName = groupData?.name
 
-  // const trpcContext = api.useContext()
+  const userName = session?.user?.name
 
-  // const { data: token } = api.group.getJWT.useQuery(
-  //   {
-  //     id: groupId,
-  //     groupName,
-  //     ownerName: data?.user?.name ?? '',
-  //   },
-  //   { enabled: Boolean(groupId) },
-  // )
-
-  // const [groupNameEdit, setGroupnameEdit] = useState<string>()
-
-  // const { mutate: updateGroupname } = api.group.updateName.useMutation({
-  //   onSuccess: () => {
-  //     trpcContext.invalidate()
-  //   },
-  // })
-
-  // const { mutate: deleteUser } = api.group.deleteUser.useMutation({
-  //   onSuccess: () => {
-  //     trpcContext.invalidate()
-  //   },
-  // })
+  const token = sign(
+    { id: groupId, groupName, ownerName: userName },
+    process.env.JWT_SECRET as string,
+  )
 
   if (!userId || !groupId) {
     // window.location.replace('/')
@@ -58,50 +45,21 @@ const GroupSettings = async ({
   }
 
   return (
-    <>
+    <form>
       <div className="flex">
         <Separator orientation="vertical" />
 
         <div className="flex flex-col gap-y-2 p-2">
           <h3 className="font-bold">Einstellungen für Gruppe {groupName}</h3>
 
-          {/* <TextField
-            id="group-name-input"
-            label="Gruppenname bearbeiten"
-            value={groupNameEdit}
-            placeholder="Gruppenname..."
-            text=""
-            onChange={(name) => setGroupnameEdit(name.target.value)}
-          />
-          <Button
-            onClick={() => {
-              if (!groupNameEdit) return
-              updateGroupname({
-                id: groupId,
-                name: groupNameEdit,
-              })
-            }}
-            variant="outline"
-            className="w-fit"
-          >
-            Speichern
-          </Button> */}
+          <NameChange groupName={groupName ?? ''} />
 
           <div className="flex items-center justify-between gap-x-2">
             <p>{`Mitglieder ${groupData?.users.length}/${getPricingInfos(
               groupData,
             )?.maximalMembers}`}</p>
-            <Button
-              // onClick={() => {
-              //   navigator.clipboard.writeText(
-              //     process.env.NEXT_PUBLIC_BASE_URL + '/addToGroup/', //+ token,
-              //   )
-              // }}
-              className="w-fit"
-            >
-              Einladungslink&nbsp;
-              <Copy />
-            </Button>
+
+            <ClipboardButton token={token} />
           </div>
 
           <Container className="flex-col">
@@ -128,14 +86,20 @@ const GroupSettings = async ({
                   </p>
                   {userInGroup?.id === groupData.ownerId && (
                     <Button
-                      // onClick={() => {
-                      // deleteUser({
-                      //   userId: user?.id ?? '',
-                      //   groupId,
-                      // })
-                      // }}
                       variant="ghost"
+                      type="submit"
                       className="w-fit justify-self-end"
+                      formAction={async () => {
+                        'use server'
+                        const res = await deleteUserFromGroup({
+                          groupId,
+                          userId: userInGroup.id,
+                        })
+
+                        if (res?.groupDeleted) {
+                          redirect('/settings/groups')
+                        }
+                      }}
                     >
                       <XIcon />
                     </Button>
@@ -149,7 +113,7 @@ const GroupSettings = async ({
         </div>
       </div>
       <Separator />
-    </>
+    </form>
   )
 }
 
