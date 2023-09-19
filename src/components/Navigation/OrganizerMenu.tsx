@@ -15,6 +15,7 @@ import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, type FunctionComponent } from 'react'
+import { GroupSelector } from '../Groups/GroupSelector'
 import { NotificationBubble } from '../NotificationBubble'
 
 export const adminAtom = atom(true)
@@ -56,6 +57,7 @@ export const OrganizerMenu: FunctionComponent<{
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem>{name}</DropdownMenuItem>
+        <GroupSelector />
         <DropdownMenuItem>Kontostand: {balance ?? 0}€</DropdownMenuItem>
         <Separator />
 

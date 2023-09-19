@@ -39,7 +39,7 @@ export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
         <SelectGroup>
           <SelectLabel>Gruppe auswählen</SelectLabel>
         </SelectGroup>
-        <SelectTrigger className="w-[180px]" aria-label='group-selector'>
+        <SelectTrigger className="w-[180px]" aria-label="group-selector">
           <SelectValue placeholder="Gruppe auswählen" />
         </SelectTrigger>
         <SelectContent>

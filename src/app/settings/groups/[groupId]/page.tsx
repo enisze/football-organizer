@@ -144,15 +144,13 @@ const GroupSettings: FunctionComponent = () => {
             </DialogTrigger>
 
             <div className="flex items-center justify-between gap-x-2">
-              <p>{`Mitglieder ${groupData?.users.length}/${
-                getPricingInfos(groupData?.group)?.maximalMembers
-              }`}</p>
+              <p>{`Mitglieder ${groupData?.users.length}/${getPricingInfos(
+                groupData?.group,
+              )?.maximalMembers}`}</p>
               <Button
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    process.env.NEXT_PUBLIC_BASE_URL +
-                      '/group/addToGroup/' +
-                      token,
+                    process.env.NEXT_PUBLIC_BASE_URL + '/addToGroup/' + token,
                   )
                 }}
                 className="w-fit"
