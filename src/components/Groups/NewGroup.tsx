@@ -1,14 +1,13 @@
 import { Button } from '@/ui/button'
 import { TextField } from '@/ui/TextField'
-import { z } from 'zod'
 
 import { createGroup } from '@/src/app/settings/groups/[groupId]/actions'
 
-const newGroupSchema = z.object({
-  name: z
-    .string()
-    .min(5, { message: 'Der Gruppenname ist zu kurz. Mindestlaenge 5.' }),
-})
+// const newGroupSchema = z.object({
+//   name: z
+//     .string()
+//     .min(5, { message: 'Der Gruppenname ist zu kurz. Mindestlaenge 5.' }),
+// })
 
 export const NewGroup = async () => {
   return (
