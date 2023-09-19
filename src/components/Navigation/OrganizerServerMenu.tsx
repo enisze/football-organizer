@@ -1,6 +1,7 @@
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { prisma } from '@/src/server/db/client'
 import { headers } from 'next/headers'
+import { GroupSelectorServer } from '../Groups/GroupSelectorServer'
 import { OrganizerMenu } from './OrganizerMenu'
 
 export const OrganizerServerMenu = async () => {
@@ -43,5 +44,5 @@ export const OrganizerServerMenu = async () => {
     return acc
   }, Promise.resolve(0))
 
-  return <OrganizerMenu balance={balance} />
+  return <OrganizerMenu balance={balance} selector={<GroupSelectorServer />} />
 }

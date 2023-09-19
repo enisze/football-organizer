@@ -207,6 +207,8 @@ export const eventRouter = createTRPCRouter({
   getByGroupId: protectedProcedure
     .input(z.object({ groupId: z.string() }))
     .query(async ({ ctx: { prisma }, input }) => {
+      console.log(await prisma.event.findMany())
+
       return await prisma.event.findMany({
         where: { groupId: input.groupId },
         orderBy: { date: 'asc' },

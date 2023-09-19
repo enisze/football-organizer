@@ -1,19 +1,18 @@
-'use client'
-import { useIsAdmin } from '@/src/hooks/useIsAdmin'
-import { api } from '@/src/server/trpc/api'
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { addDays } from 'date-fns'
-import { useParams } from 'next/navigation'
 import { EventCard } from '../Events/EventCard'
 
-export const Dashboard = () => {
-  const params = useParams()
+import { prisma } from '@/src/server/db/client'
 
-  const groupId = params?.groupId as string
+export const Dashboard = async ({ groupId }: { groupId: string }) => {
+  const session = await getServerComponentAuthSession()
 
-  const isAdmin = useIsAdmin()
+  const isAdmin = session?.user?.role === 'ADMIN'
 
-  const { data: events } = api.event.getByGroupId.useQuery({
-    groupId: groupId ?? '',
+  const events = await prisma.event.findMany({
+    where: {
+      groupId,
+    },
   })
 
   return (

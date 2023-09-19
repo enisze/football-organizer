@@ -55,6 +55,7 @@ export async function updateUserName(
 }
 
 export async function deleteUser({ session }: { session: Session | null }) {
+  'use server'
   const id = session?.user?.id
   await prisma.user.delete({
     where: { id },

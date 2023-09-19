@@ -15,14 +15,14 @@ import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, type FunctionComponent } from 'react'
-import { GroupSelector } from '../Groups/GroupSelector'
 import { NotificationBubble } from '../NotificationBubble'
 
 export const adminAtom = atom(true)
 
 export const OrganizerMenu: FunctionComponent<{
   balance: number | null | undefined
-}> = ({ balance }) => {
+  selector: JSX.Element
+}> = ({ balance, selector }) => {
   const isAdmin = useIsAdmin()
   const [open, setOpen] = useState(false)
   const { data } = useSession()
@@ -57,7 +57,7 @@ export const OrganizerMenu: FunctionComponent<{
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem>{name}</DropdownMenuItem>
-        <GroupSelector />
+        {selector}
         <DropdownMenuItem>Kontostand: {balance ?? 0}€</DropdownMenuItem>
         <Separator />
 

@@ -20,19 +20,9 @@ export const oAuth2Client = new OAuth2Client(credentials)
 
 const PAYPAL_LABEL = 'Label_3926228921657449356'
 
-const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+export const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
 export const gmailRouter = createTRPCRouter({
-  generateAuthLink: protectedProcedure.query(() => {
-    const authorizeUrl = oAuth2Client.generateAuthUrl({
-      access_type: 'offline',
-      scope: SCOPES,
-      prompt: 'consent',
-      redirect_uri: process.env.NEXT_PUBLIC_BASE_URL + '/oauth2callback',
-    })
-    return authorizeUrl
-  }),
-
   paypalEmails: protectedProcedure.query(
     async ({
       ctx: {
