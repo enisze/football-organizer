@@ -2,16 +2,15 @@
 
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
-import { signOut, useSession } from 'next-auth/react'
+import { signOut } from 'next-auth/react'
 import { useState } from 'react'
 import { deleteUser } from './actions'
 
 export const DeleteUserForm = ({ userName }: { userName: string }) => {
   const [userNameForDeletion, setUserNameForDeletion] = useState('')
 
-  const { data } = useSession()
   const deleteUserAction = async () => {
-    await deleteUser({ session: data })
+    await deleteUser()
     await signOut({ callbackUrl: '/' })
   }
 
