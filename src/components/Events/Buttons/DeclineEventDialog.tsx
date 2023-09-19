@@ -21,7 +21,7 @@ import { LeaveModal } from './LeaveModal'
 type DeclineEventDialogProps = {
   id: string
   userStatus?: UserEventStatus
-  payment: Payment
+  payment: Payment | null
 }
 
 export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
