@@ -24,7 +24,6 @@ export const sendPaidButCanceledMailAction = async ({
     include: { owner: { select: { email: true, name: true } } },
   })
 
-  //TODO: fix this
   await sendPaidButCanceledMail(event, user, group?.owner ?? null)
 
   revalidatePath(`/group/${event?.groupId}`)
