@@ -1,4 +1,3 @@
-'use client'
 import { bookEvent } from '@/src/app/group/[groupId]/actions'
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'

@@ -1,21 +1,19 @@
-'use client'
-
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { Button } from '@/ui/button'
-import { useSession } from 'next-auth/react'
+import { headers } from 'next/headers'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 
-export const DashboardLink = () => {
-  const pathname = usePathname()
+export const DashboardLink = async () => {
+  const pathname = headers().get('x-pathname')
 
-  const { status } = useSession()
+  const session = await getServerComponentAuthSession()
 
   const onDashboard =
     pathname?.includes('/group') && !pathname?.includes('/settings')
 
   return (
     <>
-      {!onDashboard && status === 'authenticated' && (
+      {!onDashboard && session?.user?.id && (
         <Link href="/group">
           <Button variant="outline">Dashboard</Button>
         </Link>
