@@ -12,7 +12,6 @@ plugins.push(
 const config = {
   reactStrictMode: true,
   experimental: {
-    appDir: true,
     typedRoutes: true,
     serverActions: true,
   },

@@ -30,9 +30,7 @@ export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
   payment,
 }) => {
   const [comment, setComment] = useState('')
-
   const [showCommentModal, setShowCommentModal] = useState(false)
-
   const [showLeaveModal, setShowLeaveModal] = useState(false)
 
   const setEventComment = async ({
@@ -43,6 +41,8 @@ export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
     eventId: string
   }) => {
     await setEventCommentAction({ comment, eventId })
+
+    setShowCommentModal(false)
   }
 
   const leave = async () => {
@@ -66,6 +66,7 @@ export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
             aria-label="cancel-button"
             variant="outline"
             className="w-full"
+            type="submit"
             formAction={leave}
           >
             <X className={canceledMarkColor} />
@@ -90,9 +91,8 @@ export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
               variant="outline"
               color="info"
               type="submit"
-              onClick={() => {
+              formAction={() => {
                 setEventComment({ comment, eventId: id })
-                setShowCommentModal(false)
               }}
               className="w-full"
             >
