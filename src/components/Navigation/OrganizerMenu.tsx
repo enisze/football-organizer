@@ -1,5 +1,5 @@
 'use client'
-import { useIsAdmin } from '@/src/hooks/useIsAdmin'
+import { revalidateGroupAction } from '@/src/app/group/[groupId]/actions'
 import { Avatar, AvatarFallback } from '@/ui/avatar'
 import {
   DropdownMenu,
@@ -10,29 +10,36 @@ import {
 import { Label } from '@/ui/label'
 import { Separator } from '@/ui/separator'
 import { Switch } from '@/ui/switch'
-import { atom, useAtom } from 'jotai'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useState, type FunctionComponent } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useCallback, useState, type FunctionComponent } from 'react'
 import { NotificationBubble } from '../NotificationBubble'
-
-export const adminAtom = atom(true)
 
 export const OrganizerMenu: FunctionComponent<{
   balance: number | null | undefined
   selector: JSX.Element
-}> = ({ balance, selector }) => {
-  const isAdmin = useIsAdmin()
+  isOwner: boolean
+}> = ({ balance, selector, isOwner }) => {
   const [open, setOpen] = useState(false)
   const { data } = useSession()
-  const [isAdminView, setIsAdminView] = useAtom(adminAtom)
-
   const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const router = useRouter()
 
   const groupId = pathname?.split('/').at(-1)
 
   const isOnDashboard = pathname?.includes('/group/')
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams)
+      params.set(name, value)
+
+      return params.toString()
+    },
+    [searchParams],
+  )
 
   if (!data?.user) return null
 
@@ -63,14 +70,18 @@ export const OrganizerMenu: FunctionComponent<{
         <DropdownMenuItem>Kontostand: {balance ?? 0}€</DropdownMenuItem>
         <Separator />
 
-        <DropdownMenuItem hidden={!isAdmin}>
+        <DropdownMenuItem hidden={!isOwner}>
           <div className="relative flex w-full items-center gap-x-1">
             <Label>Admin View</Label>
             <Switch
               id="admin-view"
-              checked={isAdminView}
-              onClick={() => {
-                setIsAdminView(!isAdminView)
+              checked={isOwner}
+              onClick={async () => {
+                router.push(
+                  //@ts-expect-error next issue
+                  pathname + '?' + createQueryString('isOwner', !isOwner),
+                )
+                await revalidateGroupAction()
               }}
             />
           </div>

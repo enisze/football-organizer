@@ -1,11 +1,9 @@
 import { getAddressAndCoordinatesRedisKeys } from '@/src/helpers/getAddressAndCoordinatesRedisKeys'
+import { revalidateGroup } from '@/src/helpers/isOwnerOfGroup'
 import { prisma, redis } from '@/src/server/db/client'
 import { Button } from '@/ui/button'
-import type { FunctionComponent } from 'react'
 
-export const DeleteEventButton: FunctionComponent<{ id: string }> = ({
-  id,
-}) => {
+export const DeleteEventButton = async ({ id }: { id: string }) => {
   return (
     <form className="w-full">
       <Button
@@ -19,6 +17,8 @@ export const DeleteEventButton: FunctionComponent<{ id: string }> = ({
           await redis.del(addressKey)
           await redis.del(coordinatesKey)
           await prisma.event.delete({ where: { id } })
+
+          revalidateGroup()
         }}
         className="w-full"
       >

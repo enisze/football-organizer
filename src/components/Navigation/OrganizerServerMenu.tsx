@@ -1,14 +1,13 @@
+import { getGroupId, isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { prisma } from '@/src/server/db/client'
-import { headers } from 'next/headers'
 import { GroupSelectorServer } from '../Groups/GroupSelectorServer'
 import { OrganizerMenu } from './OrganizerMenu'
 
 export const OrganizerServerMenu = async () => {
   const session = await getServerComponentAuthSession()
-  const list = headers()
-  const pathname = list.get('x-pathname')
-  const groupId = pathname?.split('/').at(-1)
+
+  const groupId = getGroupId()
 
   const events = await prisma.event.findMany({
     where: {
@@ -41,5 +40,13 @@ export const OrganizerServerMenu = async () => {
     return acc
   }, Promise.resolve(0))
 
-  return <OrganizerMenu balance={balance} selector={<GroupSelectorServer />} />
+  const isOwner = await isOwnerOfGroup()
+
+  return (
+    <OrganizerMenu
+      balance={balance}
+      selector={<GroupSelectorServer />}
+      isOwner={isOwner}
+    />
+  )
 }

@@ -1,11 +1,11 @@
 'use server'
 import { sendPaidButCanceledMail } from '@/inngest/sendPaidButCanceledMail'
 import type { UserEventStatus } from '@/prisma/generated/client'
+import { revalidateGroup } from '@/src/helpers/isOwnerOfGroup'
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { prisma } from '@/src/server/db/client'
 import { subDays } from 'date-fns'
 import { revalidatePath } from 'next/cache'
-import { headers } from 'next/headers'
 
 export const sendPaidButCanceledMailAction = async ({
   eventId,
@@ -147,9 +147,7 @@ export const bookEvent = async ({
     where: { id: eventId },
   })
 
-  const groupId = headers().get('x-pathname')?.split('/').at(-1)
-
-  revalidatePath(`/group/${groupId}`)
+  revalidateGroup()
 }
 
 export const setEventCommentAction = async ({
@@ -169,4 +167,9 @@ export const setEventCommentAction = async ({
     where: { id_eventId: { id, eventId } },
     data: { comment },
   })
+}
+
+export const revalidateGroupAction = async () => {
+  'use server'
+  revalidateGroup()
 }

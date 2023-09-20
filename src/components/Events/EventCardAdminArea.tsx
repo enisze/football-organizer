@@ -1,4 +1,4 @@
-import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
+import { isOwnerOfGroup, revalidateGroup } from '@/src/helpers/isOwnerOfGroup'
 import { inngest, prisma } from '@/src/server/db/client'
 import { Button } from '@/ui/button'
 import { BookEventButton } from './Buttons/BookEventButton'
@@ -94,6 +94,8 @@ export const EventCardAdminArea = async ({
               data: { status: 'CANCELED', bookingDate: null },
               where: { id: eventId },
             })
+
+            revalidateGroup()
           }}
         >
           Cancel Event
