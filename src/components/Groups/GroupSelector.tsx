@@ -15,9 +15,9 @@ import type { FunctionComponent } from 'react'
 
 export const selectedGroupAtom = atom<string | undefined>(undefined)
 
-export const GroupSelector: FunctionComponent<{ groups?: UserOnGroups[] }> = ({
-  groups,
-}) => {
+export const GroupSelector: FunctionComponent<{
+  groups?: (UserOnGroups & { group: { name: string } })[]
+}> = ({ groups }) => {
   const router = useRouter()
   const params = useParams()
   const groupId = params?.groupId as string
@@ -39,7 +39,7 @@ export const GroupSelector: FunctionComponent<{ groups?: UserOnGroups[] }> = ({
       <SelectContent>
         {groups?.map((group) => (
           <SelectItem key={group.groupId} value={group.groupId}>
-            {group.groupId}
+            {group.group.name}
           </SelectItem>
         ))}
       </SelectContent>

@@ -13,6 +13,7 @@ export const GroupSelectorServer = async () => {
     where: {
       id,
     },
+    include: { group: { select: { name: true } } },
   })
 
   return (

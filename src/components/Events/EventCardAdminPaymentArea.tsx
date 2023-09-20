@@ -1,4 +1,4 @@
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
 
 import { prisma } from '@/src/server/db/client'
 
@@ -11,14 +11,13 @@ export const EventCardAdminPaymentArea = async ({
   eventId,
   userId,
 }: EventCardAdminPaymentAreaProps) => {
-  const session = await getServerComponentAuthSession()
+  const isOwner = await isOwnerOfGroup()
 
-  const isAdmin = session?.user?.role === 'ADMIN'
+  if (!isOwner) return null
 
   const payment = await prisma.payment.findFirst({
     where: { eventId, userId },
   })
-  if (!isAdmin) return null
 
   return (
     <>
