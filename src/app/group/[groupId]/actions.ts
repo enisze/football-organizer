@@ -14,6 +14,10 @@ export const sendPaidButCanceledMailAction = async ({
   'use server'
   const session = await getServerComponentAuthSession()
 
+  if (!eventId) throw new Error('BAD_REQUEST')
+
+  if (!session?.user?.id) throw new Error('UNAUTHORIZED')
+
   const event = await prisma.event.findUnique({ where: { id: eventId } })
   const user = await prisma.user.findUnique({
     where: { id: session?.user?.id },
@@ -49,6 +53,8 @@ export const setParticipatingStatus = async ({
     where: { id: eventId },
     include: { participants: true },
   })
+
+  if (!eventId) throw new Error('BAD_REQUEST')
   if (
     event?.participants.filter(
       (participant) => participant.userEventStatus === 'JOINED',
@@ -75,7 +81,6 @@ export const setParticipatingStatus = async ({
         },
       })
       revalidatePath(`/group/${event?.groupId}`)
-      revalidatePath(`/group`)
       return
     case 'CANCELED':
       await prisma.participantsOnEvents.upsert({
@@ -96,7 +101,6 @@ export const setParticipatingStatus = async ({
       })
 
       revalidatePath(`/group/${event?.groupId}`)
-      revalidatePath(`/group`)
       return
 
     case 'MAYBE':
@@ -117,7 +121,6 @@ export const setParticipatingStatus = async ({
         },
       })
       revalidatePath(`/group/${event?.groupId}`)
-      revalidatePath(`/group`)
       return
     default:
       throw new Error('BAD_REQUEST')
@@ -135,6 +138,8 @@ export const bookEvent = async ({
   const dateString = formData.get('date') as string
 
   const date = new Date(dateString)
+
+  if (!eventId) throw new Error('BAD_REQUEST')
 
   await prisma.event.update({
     data: { status: 'BOOKED', bookingDate: subDays(date, 1) },
