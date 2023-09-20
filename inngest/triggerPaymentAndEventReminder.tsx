@@ -8,8 +8,6 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
   { name: 'Trigger Payment and Event Reminder' },
   { event: 'event/reminder' },
   async ({ event: inngestEvent }) => {
-    console.log('here')
-
     const id = inngestEvent.data.id
 
     const event = await prisma.event.findUnique({

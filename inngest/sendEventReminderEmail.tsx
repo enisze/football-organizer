@@ -35,8 +35,6 @@ export const sendEventReminderEmail = inngest.createFunction(
 
     const days = differenceInCalendarDays(event.date, new Date())
 
-    console.log('here')
-
     const { response } = await sendEmail(
       user.email,
       html,

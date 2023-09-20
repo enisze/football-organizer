@@ -69,34 +69,36 @@ export const EventCardAdminArea = async ({
       </div>
       <DeleteEventButton id={eventId} />
 
-      <Button
-        variant="outline"
-        formAction={async () => {
-          'use server'
+      <form className="w-full flex flex-col gap-y-1">
+        <Button
+          variant="outline"
+          formAction={async () => {
+            'use server'
 
-          await inngest.send({
-            name: 'event/reminder',
-            data: {
-              id: eventId,
-            },
-          })
-        }}
-      >
-        Remind
-      </Button>
-      <BookEventButton id={eventId} />
-      <Button
-        variant="outline"
-        onClick={async () => {
-          'use server'
-          await prisma.event.update({
-            data: { status: 'CANCELED', bookingDate: null },
-            where: { id: eventId },
-          })
-        }}
-      >
-        Cancel Event
-      </Button>
+            await inngest.send({
+              name: 'event/reminder',
+              data: {
+                id: eventId,
+              },
+            })
+          }}
+        >
+          Remind
+        </Button>
+        <BookEventButton id={eventId} />
+        <Button
+          variant="outline"
+          onClick={async () => {
+            'use server'
+            await prisma.event.update({
+              data: { status: 'CANCELED', bookingDate: null },
+              where: { id: eventId },
+            })
+          }}
+        >
+          Cancel Event
+        </Button>
+      </form>
     </>
   )
 }

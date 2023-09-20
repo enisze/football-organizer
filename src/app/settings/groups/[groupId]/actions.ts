@@ -153,5 +153,4 @@ export const createEvent = async ({
   })
 
   revalidatePath(`/groups/${groupId}`)
-  revalidatePath(`/groups`)
 }
