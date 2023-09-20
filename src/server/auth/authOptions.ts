@@ -3,6 +3,7 @@ import { getServerSession, type NextAuthOptions } from 'next-auth'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
+import { sendWelcomeMail } from '@/inngest/sendWelcomeMail'
 import type { GetServerSidePropsContext } from 'next'
 import DiscordProvider from 'next-auth/providers/discord'
 import GoogleProvider from 'next-auth/providers/google'
@@ -77,7 +78,7 @@ export const authOptions: NextAuthOptions = {
             },
           })
 
-          //   await sendWelcomeMail(createdUser)
+          await sendWelcomeMail(createdUser)
 
           return createdUser
         } catch (error) {

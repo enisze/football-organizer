@@ -1,4 +1,3 @@
-'use client'
 import { NewGroup } from '@/src/components/Groups/NewGroup'
 import type { FunctionComponent } from 'react'
 

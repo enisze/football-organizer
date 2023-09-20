@@ -1,21 +1,30 @@
-'use client'
 import { NewGroup } from '@/src/components/Groups/NewGroup'
-import { useIsAdmin } from '@/src/hooks/useIsAdmin'
-import { api } from '@/src/server/trpc/api'
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { SCOPES, oAuth2Client } from '@/src/server/gmail'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { Container } from '@/ui/container'
 import { Separator } from '@/ui/separator'
-import { useSession } from 'next-auth/react'
 
-const GroupSettings = () => {
-  const { data: session } = useSession()
+import { prisma } from '@/src/server/db/client'
+
+const GroupSettings = async () => {
+  const session = await getServerComponentAuthSession()
   const userId = session?.user?.id
 
-  const isAdmin = useIsAdmin()
+  const isAdmin = session?.user?.role === 'ADMIN'
 
-  const { data: groups } = api.group.getGroupsOfUser.useQuery({ owned: true })
-  const { data: link } = api.gmail.generateAuthLink.useQuery(undefined, {
-    enabled: groups && groups?.length > 0,
+  const groups = await prisma.group.findMany({
+    where: {
+      ownerId: userId,
+    },
+    include: { users: true, events: true },
+  })
+
+  const link = oAuth2Client.generateAuthUrl({
+    access_type: 'offline',
+    scope: SCOPES,
+    prompt: 'consent',
+    redirect_uri: process.env.NEXT_PUBLIC_BASE_URL + '/oauth2callback',
   })
 
   if (!userId) {
@@ -56,7 +65,7 @@ const GroupSettings = () => {
         )}
 
         <div className="p-4">
-          {link && <a href={link}>Neues gmail token</a>}
+          <a href={link}>Neues gmail token</a>
         </div>
         {/*TODO: Proper management Limited to one group per user currently */}
         {showNewGroup ? (

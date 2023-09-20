@@ -1,127 +1,71 @@
-import { api } from '@/src/server/trpc/api'
+import { createEvent } from '@/src/app/settings/groups/[groupId]/actions'
+import { defaultValues } from '@/src/helpers/constants'
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
-import { Formik } from 'formik'
-import { useAtomValue } from 'jotai'
-import type { FunctionComponent } from 'react'
-import { selectedGroupAtom } from '../Groups/GroupSelector'
+import { useParams } from 'next/navigation'
 
-export const AddEventForm: FunctionComponent<{ onSubmit: () => void }> = ({
-  onSubmit,
-}) => {
-  const groupId = useAtomValue(selectedGroupAtom)
+export const AddEventForm = ({ onSubmit }: { onSubmit: () => void }) => {
+  const params = useParams()
 
-  const trpcContext = api.useContext()
-
-  const { mutate: createEvent } = api.event.create.useMutation({
-    onSuccess: () => {
-      trpcContext.invalidate()
-    },
-  })
-
+  const groupId = params?.groupId as string
   return (
-    <div className="flex flex-col gap-y-3">
-      <Formik
-        initialValues={{
-          address: 'Zülpicher Wall 1, 50674 Köln',
-          date: '',
-          startTime: '20:00',
-          endTime: '21:30',
-          cost: 45,
-          maxParticipants: 10,
-        }}
-        onSubmit={(values, { setSubmitting }) => {
-          const date = new Date(values.date)
-          createEvent({
-            groupId: groupId ?? '',
-            ...values,
-            date,
-          })
-          setSubmitting(false)
+    <form className="flex flex-col justify-center gap-2">
+      <TextField
+        label="Address"
+        defaultValue={defaultValues.address}
+        name="address"
+        text=""
+      />
+
+      <TextField
+        label="Datum"
+        defaultValue={defaultValues.date.toISOString()}
+        type="date"
+        name="date"
+        text=""
+      />
+
+      <TextField
+        label="Startzeit"
+        defaultValue={defaultValues.startTime}
+        type="time"
+        name="startTime"
+        text=""
+      />
+      <TextField
+        label="Endzeit"
+        defaultValue={defaultValues.endTime}
+        type="time"
+        name="endTime"
+        text=""
+      />
+
+      <TextField
+        label="Kosten"
+        defaultValue={defaultValues.cost}
+        name="cost"
+        type="number"
+        text=""
+      />
+
+      <TextField
+        label="Teilnehmerzahl"
+        defaultValue={defaultValues.maxParticipants}
+        name="maxParticipants"
+        type="number"
+        text=""
+      />
+      <Button
+        variant="outline"
+        type="submit"
+        className="bg-[#73C8A9]"
+        formAction={async (formData: FormData) => {
+          await createEvent({ formData, groupId })
           onSubmit()
         }}
       >
-        {({
-          values,
-          errors,
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          isSubmitting,
-          /* and other goodies */
-        }) => (
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col justify-center gap-2"
-          >
-            <TextField
-              label="Address"
-              name="address"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.address}
-              text={errors.address ?? ''}
-            />
-
-            <TextField
-              label="Datum"
-              type="date"
-              name="date"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.date}
-              text={errors.date ?? ''}
-            />
-
-            <TextField
-              label="Startzeit"
-              type="time"
-              name="startTime"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.startTime}
-              text={errors.startTime ?? ''}
-            />
-            <TextField
-              label="Endzeit"
-              type="time"
-              name="endTime"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.endTime}
-              text={errors.endTime ?? ''}
-            />
-
-            <TextField
-              label="Kosten"
-              name="cost"
-              type="number"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.cost}
-              text={errors.cost ?? ''}
-            />
-
-            <TextField
-              label="Teilnehmerzahl"
-              name="maxParticipants"
-              type="number"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.maxParticipants}
-              text={errors.maxParticipants ?? ''}
-            />
-            <Button
-              variant="outline"
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-[#73C8A9]"
-            >
-              Submit
-            </Button>
-          </form>
-        )}
-      </Formik>
-    </div>
+        Submit
+      </Button>
+    </form>
   )
 }
