@@ -6,11 +6,8 @@ import { OrganizerMenu } from './OrganizerMenu'
 
 export const OrganizerServerMenu = async () => {
   const session = await getServerComponentAuthSession()
-
   const list = headers()
-
   const pathname = list.get('x-pathname')
-
   const groupId = pathname?.split('/').at(-1)
 
   const events = await prisma.event.findMany({

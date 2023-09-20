@@ -1,3 +1,4 @@
+'use client'
 import { bookEvent } from '@/src/app/group/[groupId]/actions'
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
@@ -8,10 +9,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/ui/dialog'
+import { useState } from 'react'
 
-export const BookEventButton = async ({ id }: { id: string }) => {
+export const BookEventButton = ({ id }: { id: string }) => {
+  const [open, setOpen] = useState(false)
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={() => setOpen(!open)}>
       <DialogTrigger>
         <Button variant="outline" className="w-full">
           Book
@@ -33,19 +36,22 @@ export const BookEventButton = async ({ id }: { id: string }) => {
             text={''}
             className="w-36"
           />
-          <Button
-            variant="outline"
-            color="info"
-            formAction={async (formData: FormData) => {
-              await bookEvent({
-                eventId: id,
-                formData,
-              })
-            }}
-            className="w-36"
-          >
-            Buchen
-          </Button>
+          <form>
+            <Button
+              variant="outline"
+              color="info"
+              formAction={async (formData: FormData) => {
+                await bookEvent({
+                  eventId: id,
+                  formData,
+                })
+                setOpen(false)
+              }}
+              className="w-36"
+            >
+              Buchen
+            </Button>
+          </form>
         </div>
       </DialogContent>
     </Dialog>

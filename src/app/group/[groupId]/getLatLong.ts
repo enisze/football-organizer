@@ -1,19 +1,13 @@
 import { getAddressAndCoordinatesRedisKeys } from '@/src/helpers/getAddressAndCoordinatesRedisKeys'
 import { mapCoordinatesToArray } from '@/src/server/map'
-import { redis } from '@/src/server/redis/redis'
+
+import { redis } from '@/src/server/db/client'
 
 import axios from 'axios'
 
 const LATLONG_API_KEY = process.env.LATLONG_API_KEY
 
 export const getLatLong = async (address: string, id: string) => {
-  try {
-    await redis.ping()
-  } catch (error) {
-    console.log('connecting')
-    await redis.connect()
-  }
-
   if (!address) return null
 
   const { addressKey, coordinatesKey } = getAddressAndCoordinatesRedisKeys(id)

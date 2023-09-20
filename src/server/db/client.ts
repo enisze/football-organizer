@@ -2,14 +2,18 @@ import { EventSchemas, Inngest } from 'inngest'
 import { PrismaClient } from '../../../prisma/generated/client/index.js'
 
 import { env } from '@/src/env/server.mjs'
+import Redis, { type Redis as RedisClient } from 'ioredis'
 import { z } from 'zod'
 
 declare global {
   // eslint-disable-next-line no-var
   var prisma: PrismaClient | undefined
+  // eslint-disable-next-line no-var
+  var redis: RedisClient
 }
 
 const globals = globalThis as unknown as {
+  redis: RedisClient
   prisma: PrismaClient | undefined
 }
 
@@ -69,8 +73,15 @@ export const inngest = new Inngest({
   }),
 })
 
-
 export const prisma = globals.prisma ?? new PrismaClient()
+
+export const redis =
+  globals.redis ??
+  new Redis({
+    host: process.env.REDIS_HOST,
+    port: 16734,
+    password: process.env.REDIS_PASSWORD,
+  })
 
 if (process.env.NODE_ENV !== 'production') globals.prisma = prisma
 

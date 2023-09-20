@@ -45,8 +45,7 @@ export const EventStatusArea = async ({ id }: { id: string }) => {
           type="submit"
           formAction={async () => {
             'use server'
-
-            setParticipatingStatus({ eventId: id, status: 'JOINED' })
+            await setParticipatingStatus({ eventId: id, status: 'JOINED' })
           }}
           className="w-full"
         >
@@ -59,8 +58,7 @@ export const EventStatusArea = async ({ id }: { id: string }) => {
           type="submit"
           formAction={async () => {
             'use server'
-
-            setParticipatingStatus({ eventId: id, status: 'MAYBE' })
+            await setParticipatingStatus({ eventId: id, status: 'MAYBE' })
           }}
           className="w-full"
         >

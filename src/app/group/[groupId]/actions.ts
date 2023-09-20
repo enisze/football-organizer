@@ -5,6 +5,7 @@ import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { prisma } from '@/src/server/db/client'
 import { subDays } from 'date-fns'
 import { revalidatePath } from 'next/cache'
+import { headers } from 'next/headers'
 
 export const sendPaidButCanceledMailAction = async ({
   eventId,
@@ -145,6 +146,10 @@ export const bookEvent = async ({
     data: { status: 'BOOKED', bookingDate: subDays(date, 1) },
     where: { id: eventId },
   })
+
+  const groupId = headers().get('x-pathname')?.split('/').at(-1)
+
+  revalidatePath(`/group/${groupId}`)
 }
 
 export const setEventCommentAction = async ({

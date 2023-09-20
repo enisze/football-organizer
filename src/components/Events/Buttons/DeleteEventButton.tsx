@@ -1,6 +1,5 @@
 import { getAddressAndCoordinatesRedisKeys } from '@/src/helpers/getAddressAndCoordinatesRedisKeys'
-import { prisma } from '@/src/server/db/client'
-import { redis } from '@/src/server/redis/redis'
+import { prisma, redis } from '@/src/server/db/client'
 import { Button } from '@/ui/button'
 import type { FunctionComponent } from 'react'
 
@@ -8,7 +7,7 @@ export const DeleteEventButton: FunctionComponent<{ id: string }> = ({
   id,
 }) => {
   return (
-    <form>
+    <form className="w-full">
       <Button
         variant="outline"
         formAction={async () => {
@@ -17,15 +16,11 @@ export const DeleteEventButton: FunctionComponent<{ id: string }> = ({
           const { addressKey, coordinatesKey } =
             getAddressAndCoordinatesRedisKeys(id)
 
-          try {
-            console.log(await redis.ping())
-          } catch (error) {
-            await redis.connect()
-          }
           await redis.del(addressKey)
           await redis.del(coordinatesKey)
           await prisma.event.delete({ where: { id } })
         }}
+        className="w-full"
       >
         Delete
       </Button>

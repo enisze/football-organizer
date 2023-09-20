@@ -10,7 +10,7 @@ import {
 } from '@/ui/select'
 import { SelectGroup } from '@radix-ui/react-select'
 import { atom } from 'jotai'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import type { FunctionComponent } from 'react'
 
 export const selectedGroupAtom = atom<string | undefined>(undefined)
@@ -19,12 +19,16 @@ export const GroupSelector: FunctionComponent<{ groups?: UserOnGroups[] }> = ({
   groups,
 }) => {
   const router = useRouter()
+  const params = useParams()
+  const groupId = params?.groupId as string
 
+  //TODO: add name here
   return (
     <Select
       onValueChange={(val) => {
         router.push(`/group/${val}`)
       }}
+      value={groupId}
     >
       <SelectGroup>
         <SelectLabel>Gruppe auswählen</SelectLabel>
@@ -34,7 +38,7 @@ export const GroupSelector: FunctionComponent<{ groups?: UserOnGroups[] }> = ({
       </SelectTrigger>
       <SelectContent>
         {groups?.map((group) => (
-          <SelectItem key={group.id} value={group.id}>
+          <SelectItem key={group.groupId} value={group.groupId}>
             {group.groupId}
           </SelectItem>
         ))}

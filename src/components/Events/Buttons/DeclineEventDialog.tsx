@@ -84,20 +84,20 @@ export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
               maxLength={35}
             />
 
-            <Button
-              variant="outline"
-              color="info"
-              type="submit"
-              formAction={() => {
-                leave({ comment, eventId: id })
-
-                console.log('here')
-                setShowCommentModal(false)
-              }}
-              className="w-full"
-            >
-              Speichern
-            </Button>
+            <form>
+              <Button
+                variant="outline"
+                color="info"
+                type="submit"
+                formAction={async () => {
+                  await leave({ comment, eventId: id })
+                  setShowCommentModal(false)
+                }}
+                className="w-full"
+              >
+                Speichern
+              </Button>
+            </form>
           </div>
         </DialogContent>
       </Dialog>

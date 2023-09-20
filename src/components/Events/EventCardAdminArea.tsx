@@ -1,4 +1,4 @@
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
 import { inngest, prisma } from '@/src/server/db/client'
 import { Button } from '@/ui/button'
 import { BookEventButton } from './Buttons/BookEventButton'
@@ -11,8 +11,7 @@ type EventCardAdminAreaProps = {
 export const EventCardAdminArea = async ({
   eventId,
 }: EventCardAdminAreaProps) => {
-  const session = await getServerComponentAuthSession()
-  const isAdmin = session?.user?.role === 'ADMIN'
+  const isOwner = await isOwnerOfGroup()
 
   const participantsWithoutPayment = await prisma.participantsOnEvents.findMany(
     {
@@ -43,7 +42,7 @@ export const EventCardAdminArea = async ({
     }),
   )
 
-  if (!isAdmin) return null
+  if (!isOwner) return null
 
   return (
     <>

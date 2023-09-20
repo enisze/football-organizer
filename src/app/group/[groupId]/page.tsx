@@ -1,7 +1,7 @@
 import { EventCard } from '@/src/components/Events/EventCard'
 import { addDays } from 'date-fns'
 
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
 import { prisma } from '@/src/server/db/client'
 
 const MainPage = async ({
@@ -9,10 +9,7 @@ const MainPage = async ({
 }: {
   params: { groupId: string }
 }) => {
-  const session = await getServerComponentAuthSession()
-
-  const isAdmin = session?.user?.role === 'ADMIN'
-
+  const isOwner = await isOwnerOfGroup()
   const events = await prisma.event.findMany({
     where: {
       groupId,
@@ -26,7 +23,7 @@ const MainPage = async ({
           {events &&
             events?.length > 0 &&
             events.map((event) => {
-              if (addDays(event.date, 1) < new Date() && !isAdmin) return null
+              if (addDays(event.date, 1) < new Date() && !isOwner) return null
 
               return (
                 <li key={event.id}>

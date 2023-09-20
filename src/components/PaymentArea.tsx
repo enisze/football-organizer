@@ -16,43 +16,31 @@ export const PaymentArea = async ({
 }) => {
   const session = await getServerComponentAuthSession()
 
-  const isAdmin = session?.user?.role === 'ADMIN'
-
   const payment = await prisma.payment.findFirst({
     where: { eventId, userId: session?.user?.id },
   })
-  if (!isAdmin) return null
 
   const isInCertainRange = bookingDate
     ? isDateInCertainRange(new Date(), bookingDate)
     : false
 
+  if (!isInCertainRange) return null
+
+  if (payment)
+    return (
+      <div className="flex items-center gap-x-2">
+        {payment?.amount + '€  am ' + payment?.paymentDate.toDateString()}
+        <span>Bezahlt</span>
+      </div>
+    )
+
   return (
-    <>
-      {(!payment && isInCertainRange) ||
-        (payment && (
-          <div className="flex w-full flex-col items-center justify-center gap-y-2">
-            {!payment && isInCertainRange && (
-              <a href={paypalLink} className="w-full">
-                <Button
-                  variant="outline"
-                  aria-label="paypal"
-                  className="w-full"
-                >
-                  Bezahlen per Paypal
-                </Button>
-              </a>
-            )}
-            {payment && (
-              <div className="flex items-center gap-x-2">
-                {payment?.amount +
-                  '€  am ' +
-                  payment?.paymentDate.toDateString()}
-                <span>Bezahlt</span>
-              </div>
-            )}
-          </div>
-        ))}
-    </>
+    <div className="flex w-full flex-col items-center justify-center gap-y-2">
+      <a href={paypalLink} className="w-full">
+        <Button variant="outline" aria-label="paypal" className="w-full">
+          Bezahlen per Paypal
+        </Button>
+      </a>
+    </div>
   )
 }
