@@ -1,49 +1,48 @@
-import { trpc } from '@/src/utils/trpc'
-import { Label } from '@/ui/label'
+'use client'
+import type { UserOnGroups } from '@/prisma/generated/client'
 import {
   Select,
   SelectContent,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/ui/select'
+import { SelectGroup } from '@radix-ui/react-select'
 import { atom } from 'jotai'
-import { useRouter } from 'next/router'
+import { useParams, useRouter } from 'next/navigation'
 import type { FunctionComponent } from 'react'
-import { LoadingWrapper } from '../LoadingWrapper'
 
 export const selectedGroupAtom = atom<string | undefined>(undefined)
 
-export const GroupSelector: FunctionComponent<{ owned?: boolean }> = ({
-  owned = false,
-}) => {
-  const { data: groups, isLoading } = trpc.group.getGroupsOfUser.useQuery({
-    owned: owned,
-  })
-
+export const GroupSelector: FunctionComponent<{
+  groups?: (UserOnGroups & { group: { name: string } })[]
+}> = ({ groups }) => {
   const router = useRouter()
-  const group = router.query.groupId as string
+  const params = useParams()
+  const groupId = params?.groupId as string
 
+  //TODO: add name here
   return (
-    <LoadingWrapper isLoading={isLoading}>
-      <Label>Gruppe</Label>
-      <Select
-        value={group}
-        onValueChange={(val) => {
-          router.push(`/group/${val}`)
-        }}
-      >
-        <SelectTrigger className="w-[180px]" aria-label="group-selector">
-          <SelectValue placeholder="Gruppe auswählen" />
-        </SelectTrigger>
-        <SelectContent>
-          {groups?.map((group) => (
-            <SelectItem key={group.id} value={group.id}>
-              {group.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </LoadingWrapper>
+    <Select
+      onValueChange={(val) => {
+        router.push(`/group/${val}`)
+      }}
+      value={groupId}
+    >
+      <SelectGroup>
+        <SelectLabel>Gruppe auswählen</SelectLabel>
+      </SelectGroup>
+      <SelectTrigger className="w-[180px]" aria-label="group-selector">
+        <SelectValue placeholder="Gruppe auswählen" />
+      </SelectTrigger>
+      <SelectContent>
+        {groups?.map((group) => (
+          <SelectItem key={group.groupId} value={group.groupId}>
+            {group.group.name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   )
 }

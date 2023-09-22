@@ -1,3 +1,4 @@
+'use client'
 import { NotificationBubble } from '@/src/components/NotificationBubble'
 import { Label } from '@radix-ui/react-label'
 import { InfoIcon } from 'lucide-react'

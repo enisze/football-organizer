@@ -1,3 +1,4 @@
+'use client'
 import {
   Accordion,
   AccordionContent,
@@ -7,7 +8,6 @@ import {
 import { MapPin } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import type { FunctionComponent } from 'react'
-import { LoadingWrapper } from '../LoadingWrapper'
 import type { OrganizerMapProps } from '../Map/OrganizerMap'
 
 const DynamicOrganizerMap = dynamic<OrganizerMapProps>(
@@ -19,9 +19,8 @@ const DynamicOrganizerMap = dynamic<OrganizerMapProps>(
 
 export const MapAccordion: FunctionComponent<{
   address: string
-  isLoading: boolean
   coordinates: number[]
-}> = ({ address, isLoading, coordinates }) => {
+}> = ({ address, coordinates }) => {
   return (
     <Accordion type="single" collapsible className="p-0">
       <AccordionItem
@@ -37,11 +36,9 @@ export const MapAccordion: FunctionComponent<{
         </AccordionTrigger>
         <AccordionContent>
           <div className="relative h-[200px] w-[250px] md:h-[250px] md:w-[350px]">
-            <LoadingWrapper isLoading={isLoading}>
-              <div className="flex">
-                <DynamicOrganizerMap coordinates={coordinates} />
-              </div>
-            </LoadingWrapper>
+            <div className="flex">
+              <DynamicOrganizerMap coordinates={coordinates} />
+            </div>
           </div>
         </AccordionContent>
       </AccordionItem>

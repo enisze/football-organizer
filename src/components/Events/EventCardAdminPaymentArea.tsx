@@ -1,21 +1,23 @@
-import type { FunctionComponent } from 'react'
-import { useIsAdmin } from '../../hooks/useIsAdmin'
-import { trpc } from '../../utils/trpc'
+import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
+
+import { prisma } from '@/src/server/db/client'
 
 type EventCardAdminPaymentAreaProps = {
   eventId: string
   userId: string
 }
 
-export const EventCardAdminPaymentArea: FunctionComponent<
-  EventCardAdminPaymentAreaProps
-> = ({ eventId, userId }) => {
-  const isAdmin = useIsAdmin()
-  const { data: payment } = trpc.payment.getByUserAndEventId.useQuery({
-    eventId,
-    userId,
+export const EventCardAdminPaymentArea = async ({
+  eventId,
+  userId,
+}: EventCardAdminPaymentAreaProps) => {
+  const isOwner = await isOwnerOfGroup()
+
+  if (!isOwner) return null
+
+  const payment = await prisma.payment.findFirst({
+    where: { eventId, userId },
   })
-  if (!isAdmin) return null
 
   return (
     <>

@@ -1,8 +1,6 @@
-import { trpc } from '@/src/utils/trpc'
+import { isOwnerOfGroup, revalidateGroup } from '@/src/helpers/isOwnerOfGroup'
+import { inngest, prisma } from '@/src/server/db/client'
 import { Button } from '@/ui/button'
-import type { FunctionComponent } from 'react'
-import { useIsAdmin } from '../../hooks/useIsAdmin'
-import { LoadingWrapper } from '../LoadingWrapper'
 import { BookEventButton } from './Buttons/BookEventButton'
 import { DeleteEventButton } from './Buttons/DeleteEventButton'
 
@@ -10,67 +8,99 @@ type EventCardAdminAreaProps = {
   eventId: string
 }
 
-export const EventCardAdminArea: FunctionComponent<EventCardAdminAreaProps> = ({
+export const EventCardAdminArea = async ({
   eventId,
-}) => {
-  const isAdmin = useIsAdmin()
-  const trpcContext = trpc.useContext()
+}: EventCardAdminAreaProps) => {
+  const isOwner = await isOwnerOfGroup()
 
-  const { mutate: remind, isLoading: loadingRemind } =
-    trpc.gmail.sendPaymentAndEventReminder.useMutation({
-      onSuccess: () => trpcContext.invalidate(),
-    })
-  const { mutate: cancel, isLoading: loadingCancel } =
-    trpc.event.cancel.useMutation({
-      onSuccess: () => trpcContext.invalidate(),
-    })
+  const participantsWithoutPayment = await prisma.participantsOnEvents.findMany(
+    {
+      where: { eventId, paymentId: { not: null } },
+    },
+  )
 
-  const { data: payments, isLoading } =
-    trpc.payment.getAllPaymentsForEventFromNotParticipants.useQuery(
-      { eventId },
-      { enabled: isAdmin },
-    )
+  const payments = await Promise.all(
+    participantsWithoutPayment.map(async (participant) => {
+      const user = await prisma.user.findUnique({
+        where: { id: participant.id },
+      })
 
-  if (!isAdmin) return null
+      const paymentId = participant.paymentId
+
+      if (!paymentId) throw new Error('NOT_FOUND')
+
+      const payment = await prisma.payment.findUnique({
+        where: { id: paymentId },
+      })
+
+      return {
+        id: paymentId,
+        user,
+        amount: payment?.amount,
+        paymentDate: payment?.paymentDate,
+      }
+    }),
+  )
+
+  if (!isOwner) return null
 
   return (
     <>
       <div className="flex flex-col items-center gap-y-3">
         <span>{'Id: ' + eventId}</span>
-        <LoadingWrapper isLoading={isLoading}>
-          {payments && payments.length > 0 && (
-            <>
-              <span>Bezahlt aber nicht teilgenommen</span>
-              {payments.map((payment) => {
-                if (!payment || !payment?.user) return null
-                return (
-                  <div key={payment.id}>
-                    <div key={payment.id} className="flex items-center gap-x-2">
-                      <div>{payment?.user.name}</div>
-                      <div>{payment?.amount + ' €'}</div>
-                      <div>{payment?.paymentDate?.toDateString()}</div>
-                      <div color="success">Bezahlt</div>
-                    </div>
+        {payments && payments.length > 0 && (
+          <>
+            <span>Bezahlt aber nicht teilgenommen</span>
+            {payments.map((payment) => {
+              if (!payment || !payment?.user) return null
+              return (
+                <div key={payment.id}>
+                  <div key={payment.id} className="flex items-center gap-x-2">
+                    <div>{payment?.user.name}</div>
+                    <div>{payment?.amount + ' €'}</div>
+                    <div>{payment?.paymentDate?.toDateString()}</div>
+                    <div color="success">Bezahlt</div>
                   </div>
-                )
-              })}
-            </>
-          )}
-        </LoadingWrapper>
+                </div>
+              )
+            })}
+          </>
+        )}
       </div>
       <DeleteEventButton id={eventId} />
 
-      <LoadingWrapper isLoading={loadingRemind}>
-        <Button variant="outline" onClick={() => remind({ eventId })}>
+      <form className="w-full flex flex-col gap-y-1">
+        <Button
+          variant="outline"
+          formAction={async () => {
+            'use server'
+
+            await inngest.send({
+              name: 'event/reminder',
+              data: {
+                id: eventId,
+              },
+            })
+          }}
+        >
           Remind
         </Button>
-      </LoadingWrapper>
-      <BookEventButton id={eventId} />
-      <LoadingWrapper isLoading={loadingCancel}>
-        <Button variant="outline" onClick={() => cancel({ id: eventId })}>
+        <BookEventButton id={eventId} />
+        <Button
+          variant="outline"
+          onClick={async () => {
+            'use server'
+            await prisma.event.update({
+              data: { status: 'CANCELED', bookingDate: null },
+              where: { id: eventId },
+            })
+
+            revalidateGroup()
+          }}
+        >
           Cancel Event
         </Button>
-      </LoadingWrapper>
+      </form>
     </>
   )
 }

@@ -1,4 +1,4 @@
-import { trpc } from '@/src/utils/trpc'
+import type { UserEventStatus } from '@/prisma/generated/client'
 import {
   Accordion,
   AccordionContent,
@@ -6,29 +6,35 @@ import {
   AccordionTrigger,
 } from '@/ui/accordion'
 import { User } from 'lucide-react'
-import type { FunctionComponent } from 'react'
 import { AvatarStatus } from './AvatarStatus'
 import { EventCardAdminPaymentArea } from './EventCardAdminPaymentArea'
 
-export const ParticipantsArea: FunctionComponent<{
-  eventId: string
+type ParticipantsAreaProps = {
+  joinedUsersAmount: number
+  canceledUsersAmount: number
+  maybeUsersAmount: number
+  allUsersLength: number
   maxParticipants?: number
-}> = ({ eventId, maxParticipants }) => {
-  const { data } = trpc.event.getParticipants.useQuery({
-    eventId,
-  })
+  participants: {
+    userEventStatus: UserEventStatus
+    comment: string | null
+    user: {
+      id: string
+      name: string
+    }
+  }[]
+  eventId: string
+}
 
-  if (!data) return null
-
-  const {
-    joinedUsersAmount,
-    maybeUsersAmount,
-    canceledUsersAmount,
-    participants,
-  } = data
-
-  const allUsersLength = participants.length
-
+export const ParticipantsArea = async ({
+  allUsersLength,
+  joinedUsersAmount,
+  canceledUsersAmount,
+  maybeUsersAmount,
+  maxParticipants,
+  participants,
+  eventId,
+}: ParticipantsAreaProps) => {
   const joinedWidth = {
     width: `${(joinedUsersAmount / allUsersLength) * 100}%`,
   }

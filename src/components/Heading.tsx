@@ -10,8 +10,9 @@ export const Heading: FunctionComponent<{
       : size === 'md'
       ? 'text-[48px]'
       : 'text-[20px]'
+
   return (
-    <Link href={process.env.NEXT_PUBLIC_BASE_URL ?? ''}>
+    <Link href={'/'}>
       <div className="text-center">
         <span
           className={`cursor-pointer font-extrabold leading-normal ${fontSize} bg-gradient-to-r from-blue-400 to-blue-200 bg-clip-text text-transparent dark:from-blue-800 dark:to-slate-800`}

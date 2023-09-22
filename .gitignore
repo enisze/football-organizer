@@ -40,6 +40,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
+# Yarn 3 files
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 
 # email
 /.react-email

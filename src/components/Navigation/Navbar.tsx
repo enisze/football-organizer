@@ -1,41 +1,27 @@
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { Button } from '@/ui/button'
 import { ThemeToggle } from '@/ui/theme-toggle'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
-import type { FunctionComponent } from 'react'
 import { Heading } from '../Heading'
-import { OrganizerMenu } from './OrganizerMenu'
+import { DashboardLink } from './DashboardLink'
+import { OrganizerServerMenu } from './OrganizerServerMenu'
 
-export const Navbar: FunctionComponent = () => {
-  const router = useRouter()
-
-  const onDashboard =
-    router.pathname.includes('/group') && !router.pathname.includes('/settings')
-
-  const { data } = useSession()
-
+export const Navbar = async () => {
+  const data = await getServerComponentAuthSession()
   return (
     <header className="sticky top-0 z-40 w-full border-b border-b-slate-200 bg-white dark:border-b-slate-700 dark:bg-slate-900">
       <nav className="flex items-center justify-between px-2 py-3">
         <Heading size="sm" />
 
         <div className="flex gap-x-1 items-center cursor-pointer">
-          {/* <Link href={'/pricing'}>Pricing</Link> */}
-          <OrganizerMenu />
+          <OrganizerServerMenu />
 
           {!data?.user && (
-            <Button
-              variant="outline"
-              onClick={() => {
-                router.push('/api/auth/signin')
-              }}
-            >
-              Login / Registrieren
-            </Button>
+            <Link href="/api/auth/signin">
+              <Button variant="outline">Login / Registrieren</Button>
+            </Link>
           )}
-
-          {!onDashboard && !!data && <Link href="/group">Dashboard</Link>}
+          <DashboardLink />
 
           <ThemeToggle />
         </div>
@@ -43,5 +29,3 @@ export const Navbar: FunctionComponent = () => {
     </header>
   )
 }
-
-export default Navbar
