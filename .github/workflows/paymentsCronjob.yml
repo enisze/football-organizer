@@ -33,6 +33,6 @@ jobs:
           NEXT_PUBLIC_BASE_URL: ${{secrets.NEXT_PUBLIC_BASE_URL}}
           INNGEST_EVENT_KEY: ${{secrets.INNGEST_EVENT_KEY}}
           DATABASE_URL: ${{secrets.DATABASE_URL}}
-          NODE_ENV: ''
+          NODE_ENV: 'production'
           NEXTAUTH_SECRET: ''
           NEXTAUTH_URL: ''
