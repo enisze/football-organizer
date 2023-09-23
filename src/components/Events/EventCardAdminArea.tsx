@@ -1,8 +1,9 @@
 import { isOwnerOfGroup, revalidateGroup } from '@/src/helpers/isOwnerOfGroup'
-import { inngest, prisma } from '@/src/server/db/client'
+import { prisma } from '@/src/server/db/client'
 import { Button } from '@/ui/button'
 import { BookEventButton } from './Buttons/BookEventButton'
 import { DeleteEventButton } from './Buttons/DeleteEventButton'
+import { RemindButton } from './Buttons/RemindButton'
 
 type EventCardAdminAreaProps = {
   eventId: string
@@ -70,21 +71,7 @@ export const EventCardAdminArea = async ({
       <DeleteEventButton id={eventId} />
 
       <form className="w-full flex flex-col gap-y-1">
-        <Button
-          variant="outline"
-          formAction={async () => {
-            'use server'
-
-            await inngest.send({
-              name: 'event/reminder',
-              data: {
-                id: eventId,
-              },
-            })
-          }}
-        >
-          Remind
-        </Button>
+        <RemindButton id={eventId} />
         <BookEventButton id={eventId} />
         <Button
           variant="outline"

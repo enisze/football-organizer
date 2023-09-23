@@ -15,25 +15,31 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
       include: { participants: true },
     })
 
+    if (!event?.groupId) return { message: 'No group id' }
+
+    const groupMembers = await prisma.group.findUnique({
+      where: { id: event.groupId },
+      select: { users: true },
+    })
+
     if (!event)
       return {
         message: 'No event',
       }
 
-    if (!event.participants)
+    if (!groupMembers)
       return {
-        message: `No users found`,
+        message: 'No group members',
       }
 
-    const allParticipants = await Promise.all(
-      event.participants.map(async (user) => {
+    const allGroupMembers = await Promise.all(
+      groupMembers.users.map(async (user) => {
         return await prisma.user.findUnique({ where: { id: user.id } })
       }),
     )
 
     const { participants } = event
 
-    //Ids which are available
     const canceledParticipantIds = getParticipantIdsByStatus(
       event.participants,
       'CANCELED',
@@ -44,37 +50,44 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
       'JOINED',
     )
 
+    const membersToRemindEvent = allGroupMembers.filter(
+      (user) =>
+        !canceledParticipantIds.includes(user?.id ?? '') &&
+        !joinedParticipantIds.includes(user?.id ?? ''),
+    )
+
+    const membersToRemindPayment = allGroupMembers.filter((user) =>
+      joinedParticipantIds.includes(user?.id ?? ''),
+    )
+
     const usersEventReminder: { name: string; email: string }[] = []
     const usersPaymentReminder: { name: string; email: string }[] = []
 
-    allParticipants
-      .filter((user) => user?.notificationsEnabled)
-      .forEach(async (user) => {
-        if (!user) return
-        //Did not interact with the event at all
-        if (
-          !joinedParticipantIds.includes(user.id) &&
-          !canceledParticipantIds.includes(user.id) &&
-          participants.length < event.maxParticipants
-        ) {
+    if (participants.length < event.maxParticipants) {
+      membersToRemindEvent
+        .filter((user) => user?.notificationsEnabled)
+        .forEach((user) => {
+          if (!user) return
           usersEventReminder.push({ email: user.email, name: user.name })
-        }
+        })
+    }
 
-        if (event.bookingDate && joinedParticipantIds.includes(user.id)) {
+    if (event.bookingDate) {
+      membersToRemindPayment
+        .filter((user) => user?.notificationsEnabled)
+        .forEach(async (user) => {
+          if (!user) return
           const payment = await prisma.participantsOnEvents.findUnique({
             where: { id_eventId: { eventId: event.id, id: user.id } },
           })
 
-          if (!payment) {
-            //Send payment reminder
-
+          if (!payment?.paymentId) {
             usersPaymentReminder.push({ email: user.email, name: user.name })
           }
-        }
-      })
+        })
+    }
 
     usersEventReminder.forEach(async (user) => {
-      console.log('sending event reminder email')
       await inngest.send({
         name: 'event/reminderEmail',
         data: {

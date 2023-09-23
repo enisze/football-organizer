@@ -14,11 +14,14 @@ export const triggerNewEvent = inngest.createFunction(
 
     if (!event) return { message: `No event found ${eventId}` }
 
+    if (!event.groupId) return { message: `No group found ${event.groupId}` }
+
     try {
-      const usersOnGroup = await prisma.userOnGroups.findMany({
+      const usersOnGroup = await prisma.group.findUnique({
         where: {
-          groupId: event.groupId ?? '',
+          id: event.groupId,
         },
+        select: { users: true },
       })
 
       if (!usersOnGroup)
@@ -31,7 +34,7 @@ export const triggerNewEvent = inngest.createFunction(
       const days = differenceInCalendarDays(new Date(event.date), new Date())
 
       const usersOfGroup = await Promise.all(
-        usersOnGroup.map(async (user) => {
+        usersOnGroup.users.map(async (user) => {
           return await prisma.user.findUnique({ where: { id: user.id } })
         }),
       )

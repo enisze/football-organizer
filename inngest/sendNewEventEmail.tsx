@@ -20,7 +20,6 @@ export const sendNewEventEmail = inngest.createFunction(
 
     const event = await prisma.event.findUnique({
       where: { id },
-      include: { participants: true },
     })
 
     if (!event) return
