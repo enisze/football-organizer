@@ -35,4 +35,4 @@ jobs:
           DATABASE_URL: ${{secrets.DATABASE_URL}}
           NODE_ENV: 'production'
           NEXTAUTH_SECRET: ''
-          NEXTAUTH_URL: ''
+          NEXTAUTH_URL: 'http://localhost:3000'
