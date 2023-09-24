@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-export const DashboardLink = () => {
+export const DashboardLink = ({ groupId }: { groupId: string | undefined }) => {
   const { data } = useSession()
 
   const pathname = usePathname()
@@ -16,7 +16,7 @@ export const DashboardLink = () => {
     <>
       {!onDashboard && data?.user?.id && (
         <form>
-          <Link href="/group">
+          <Link href={groupId ? `/group/${groupId}` : '/group'}>
             <Button variant="outline">Dashboard</Button>
           </Link>
         </form>

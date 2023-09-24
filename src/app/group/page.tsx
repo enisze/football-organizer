@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 
+import { GroupSelectorServer } from '@/src/components/Groups/GroupSelectorServer'
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { prisma } from '../../server/db/client'
 
@@ -20,7 +21,11 @@ const MainPage = async () => {
   if (groups && groups?.length > 0) {
     redirect(`/group/${groups.at(0)?.id}`)
   }
-  return <div className="flex flex-col pb-2"></div>
+  return (
+    <div className="flex flex-col pb-2 pt-7">
+      <GroupSelectorServer />
+    </div>
+  )
 }
 
 export default MainPage
