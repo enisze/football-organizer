@@ -1,7 +1,7 @@
 import { getAddressAndCoordinatesRedisKeys } from '@/src/helpers/getAddressAndCoordinatesRedisKeys'
 import { mapCoordinatesToArray } from '@/src/server/map'
 
-import { redis } from '@/src/server/db/client'
+import { redis } from '@/src/server/db/redis'
 
 import axios from 'axios'
 

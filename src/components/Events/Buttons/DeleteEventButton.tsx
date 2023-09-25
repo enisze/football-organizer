@@ -1,7 +1,9 @@
 import { getAddressAndCoordinatesRedisKeys } from '@/src/helpers/getAddressAndCoordinatesRedisKeys'
 import { revalidateGroup } from '@/src/helpers/isOwnerOfGroup'
-import { prisma, redis } from '@/src/server/db/client'
+import { prisma } from '@/src/server/db/client'
 import { Button } from '@/ui/button'
+
+import { redis } from '@/src/server/db/redis'
 
 export const DeleteEventButton = async ({ id }: { id: string }) => {
   return (
