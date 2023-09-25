@@ -29,14 +29,14 @@ export const BookEventButton = ({ id }: { id: string }) => {
         </DialogHeader>
 
         <div className="flex flex-col justify-center">
-          <TextField
-            label="Datum"
-            type="date"
-            name="date"
-            text={''}
-            className="w-36"
-          />
           <form>
+            <TextField
+              label="Datum"
+              type="date"
+              name="bookingdate"
+              text={''}
+              className="w-36"
+            />
             <Button
               variant="outline"
               color="info"

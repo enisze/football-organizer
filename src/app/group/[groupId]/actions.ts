@@ -136,7 +136,7 @@ export const bookEvent = async ({
   formData: FormData
 }) => {
   'use server'
-  const dateString = formData.get('date') as string
+  const dateString = formData.get('bookingdate') as string
 
   const date = new Date(dateString)
 

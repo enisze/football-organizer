@@ -99,16 +99,14 @@ const runCron = async () => {
             return
           }
 
-          const result = isInAmountRangeAndEventBookingDate(email, events)
+          const result = isInAmountRangeAndEventBookingDate(email, event)
 
           if (!result || !email.snippet || !email.id) {
             console.log('email data missing')
             return
           }
 
-          const { conditionFulfilled, event } = result
-
-          if (!event?.id || !conditionFulfilled) {
+          if (!event?.id || !result) {
             console.log('No event id or condition failed')
             return
           }
@@ -245,28 +243,21 @@ const AMOUNT_LIST = [4.5, 5, 10, 11]
 
 const isInAmountRangeAndEventBookingDate = (
   paymentMail: gmail_v1.Schema$Message,
-  events: Event[] | undefined,
-): { conditionFulfilled: boolean; event: Event | undefined } | undefined => {
+  event: Event | undefined,
+) => {
   if (!paymentMail.internalDate) return undefined
   if (!paymentMail.snippet) return undefined
-  if (!events) return undefined
+  if (!event) return undefined
+  if (!event.bookingDate) return undefined
 
   const amount = getEuroAmount(paymentMail.snippet)
   const paymentDate = new Date(Number(paymentMail.internalDate))
 
-  const eventWithBookingDateInRange = events.find((event) => {
-    if (!event.bookingDate) return null
-    const dateInRange = isDateInCertainRange(paymentDate, event.bookingDate)
-
-    return dateInRange
-  })
+  const dateInRange = isDateInCertainRange(paymentDate, event.bookingDate)
 
   const amountInRange = AMOUNT_LIST.includes(amount)
 
-  return {
-    conditionFulfilled: Boolean(eventWithBookingDateInRange) && amountInRange,
-    event: eventWithBookingDateInRange,
-  }
+  return dateInRange && amountInRange
 }
 
 runCron()
