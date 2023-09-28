@@ -37,9 +37,12 @@ export const sendPaidButCanceledMailAction = async ({
 export const setParticipatingStatus = async ({
   eventId,
   status,
+  comment,
 }: {
   eventId: string
   status: UserEventStatus
+
+  comment?: string | null
 }) => {
   'use server'
   const session = await getServerComponentAuthSession()
@@ -70,9 +73,11 @@ export const setParticipatingStatus = async ({
           eventId,
           id: userId,
           userEventStatus: 'JOINED',
+          comment: null,
         },
         update: {
           userEventStatus: 'JOINED',
+          comment: null,
         },
         where: {
           id_eventId: {
@@ -89,9 +94,11 @@ export const setParticipatingStatus = async ({
           eventId,
           id: userId,
           userEventStatus: 'CANCELED',
+          comment,
         },
         update: {
           userEventStatus: 'CANCELED',
+          comment,
         },
         where: {
           id_eventId: {
@@ -110,9 +117,11 @@ export const setParticipatingStatus = async ({
           eventId,
           id: userId,
           userEventStatus: 'MAYBE',
+          comment: null,
         },
         update: {
           userEventStatus: 'MAYBE',
+          comment: null,
         },
         where: {
           id_eventId: {
@@ -148,25 +157,6 @@ export const bookEvent = async ({
   })
 
   revalidateGroup()
-}
-
-export const setEventCommentAction = async ({
-  comment,
-  eventId,
-}: {
-  comment: string | null
-  eventId: string
-}) => {
-  'use server'
-  const session = await getServerComponentAuthSession()
-
-  const id = session?.user?.id
-  if (!id) throw new Error('UNAUTHORIZED')
-
-  return await prisma.participantsOnEvents.update({
-    where: { id_eventId: { id, eventId } },
-    data: { comment },
-  })
 }
 
 export const revalidateGroupAction = async () => {

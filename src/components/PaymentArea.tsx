@@ -28,8 +28,10 @@ export const PaymentArea = async ({
 
   if (payment)
     return (
-      <div className="flex items-center gap-x-2">
-        {payment?.amount + '€  am ' + payment?.paymentDate.toDateString()}
+      <div className="flex items-center gap-x-2 text-green-500 font-bold">
+        {payment?.amount +
+          '€  am ' +
+          payment?.paymentDate.toLocaleDateString('de')}
         <span>Bezahlt</span>
       </div>
     )

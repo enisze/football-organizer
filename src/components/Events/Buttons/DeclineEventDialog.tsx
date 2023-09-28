@@ -1,9 +1,6 @@
 'use client'
 import type { Payment, UserEventStatus } from '@/prisma/generated/client'
-import {
-  setEventCommentAction,
-  setParticipatingStatus,
-} from '@/src/app/group/[groupId]/actions'
+import { setParticipatingStatus } from '@/src/app/group/[groupId]/actions'
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
 import {
@@ -33,16 +30,9 @@ export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
   const [showCommentModal, setShowCommentModal] = useState(false)
   const [showLeaveModal, setShowLeaveModal] = useState(false)
 
-  const leave = async ({
-    comment,
-    eventId,
-  }: {
-    comment: string
-    eventId: string
-  }) => {
+  const leave = async ({ comment }: { comment: string }) => {
     if (!payment) {
-      await setEventCommentAction({ comment, eventId })
-      await setParticipatingStatus({ eventId: id, status: 'CANCELED' })
+      await setParticipatingStatus({ eventId: id, status: 'CANCELED', comment })
     } else {
       setShowLeaveModal(true)
     }
@@ -90,7 +80,7 @@ export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
                 color="info"
                 type="submit"
                 formAction={async () => {
-                  await leave({ comment, eventId: id })
+                  await leave({ comment })
                   setShowCommentModal(false)
                 }}
                 className="w-full"
