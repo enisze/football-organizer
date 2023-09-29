@@ -1,6 +1,7 @@
 import { Button } from '@/ui/button'
 import Link from 'next/link'
 import { Hero } from '../components/Heading'
+import { Phone } from '../components/Phone'
 import { getServerComponentAuthSession } from '../server/auth/authOptions'
 
 const Home = async () => {
@@ -10,7 +11,7 @@ const Home = async () => {
     <div className="h-full">
       <title>Event Wizard</title>
 
-      <main className="absolute flex h-full w-full flex-col items-center justify-center">
+      <main className="flex h-full w-full flex-col items-center justify-center">
         <Hero />
         {!session && (
           <Link href="/api/auth/signin">
@@ -19,6 +20,10 @@ const Home = async () => {
             </Button>
           </Link>
         )}
+        <span className="text-lg font-bold mx-auto text-center pb-1 px-5">
+          Erstelle eine Verknüpfung zur Website um sie schneller zu nutzen:
+        </span>
+        <Phone />
         {/* <ContactForm /> */}
       </main>
     </div>

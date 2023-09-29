@@ -27,7 +27,7 @@ export const Heading: FunctionComponent<{
 
 export const Hero: FunctionComponent = () => {
   return (
-    <div className="text-center p-5 flex-col">
+    <div className="text-center flex-col">
       <span className="text-3xl md:text-6xl text-slate-900 dark:text-slate-100 font-extrabold">
         Events organisieren wie von&nbsp;
         <span
