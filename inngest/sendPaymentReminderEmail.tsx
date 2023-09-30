@@ -25,16 +25,14 @@ export const sendPaymentReminderEmail = inngest.createFunction(
 
     const html = render(<PaymentReminder event={event} userName={user.name} />)
 
-    const { response } = await sendEmail(
+    const { statusCode } = await sendEmail(
       user.email,
       html,
       'Erinnerung: Fussball bezahlen',
     )
 
     console.log(
-      `Message sent to: ${JSON.stringify(user.email)}, Code : ${
-        response.statusCode
-      }`,
+      `Message sent to: ${JSON.stringify(user.email)}, Code : ${statusCode}`,
     )
   },
 )

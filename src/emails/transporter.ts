@@ -1,13 +1,8 @@
-import {
-  TransactionalEmailsApi,
-  TransactionalEmailsApiApiKeys,
-} from "@sendinblue/client";
+import 'dotenv/config'
+import { MailerSend } from 'mailersend'
 
-const apiInstance = new TransactionalEmailsApi();
+const mailerSend = new MailerSend({
+  apiKey: process.env.MAILERSEND_API_KEY ?? '',
+})
 
-apiInstance.setApiKey(
-  TransactionalEmailsApiApiKeys.apiKey,
-  process.env.SENDINBLUE_API_KEY ?? ""
-);
-
-export default apiInstance;
+export default mailerSend

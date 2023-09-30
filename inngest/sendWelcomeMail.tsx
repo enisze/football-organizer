@@ -8,7 +8,7 @@ export const sendWelcomeMail = async (user: User | null) => {
 
   if (!user?.email) return { success: false }
 
-  const { response } = await sendEmail(
+  const { statusCode } = await sendEmail(
     user.email,
     html,
     'Erfolgreich Registriert :)',
@@ -16,5 +16,5 @@ export const sendWelcomeMail = async (user: User | null) => {
 
   console.log(`Message sent to: ${JSON.stringify(user.email)}`)
 
-  return { success: response.statusCode === 201 }
+  return { success: statusCode === 201 }
 }
