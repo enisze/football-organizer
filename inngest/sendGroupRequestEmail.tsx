@@ -15,11 +15,11 @@ export const sendGroupRequestEmail = async ({
 
   const html = render(<GroupRequestEmail email={requester} token={token} />)
 
-  const { response } = await sendEmail(
+  const response = await sendEmail(
     'eniszej@gmail.com',
     html,
     'Neue Gruppenanfrage',
   )
 
-  return { success: response.statusCode === 201 }
+  return { success: response?.id }
 }
