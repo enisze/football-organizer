@@ -1,20 +1,23 @@
-import apiInstance from '@/src/emails/transporter'
-import { SendSmtpEmail } from '@sendinblue/client'
+import { default as mailerSend } from '@/src/emails/transporter'
+import { EmailParams, Recipient, Sender } from 'mailersend'
 
 export const sendEmail = async (
   email: string,
   html: string,
   subject: string,
 ) => {
-  const sendSmptMail = new SendSmtpEmail()
+  const sentFrom = new Sender('eniszej@gmail.com', 'Event Wizard')
 
-  sendSmptMail.to = [{ email }]
-  sendSmptMail.htmlContent = html
-  sendSmptMail.sender = {
-    email: 'eniszej@gmail.com',
-    name: 'Event Wizard',
-  }
-  sendSmptMail.subject = subject
+  const recipients = [new Recipient(email)]
 
-  return await apiInstance.sendTransacEmail(sendSmptMail)
+  const emailParams = new EmailParams()
+    .setFrom(sentFrom)
+    .setTo(recipients)
+    .setReplyTo(sentFrom)
+    .setSubject(subject)
+    .setHtml(html)
+
+  const res = await mailerSend.email.send(emailParams)
+
+  return res
 }
