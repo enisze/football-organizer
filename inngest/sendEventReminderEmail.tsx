@@ -35,16 +35,14 @@ export const sendEventReminderEmail = inngest.createFunction(
 
     const days = differenceInCalendarDays(event.date, new Date())
 
-    const { response } = await sendEmail(
+    const res = await sendEmail(
       user.email,
       html,
       `Erinnerung: Fussball in ${days} Tagen, ${participantsAmount}/${event.maxParticipants} Teilnehmer!`,
     )
 
     console.log(
-      `Message sent to: ${JSON.stringify(user.email)}, Code : ${
-        response.statusCode
-      }`,
+      `Message sent to: ${JSON.stringify(user.email)}, Id: ${res?.id}`,
     )
   },
 )

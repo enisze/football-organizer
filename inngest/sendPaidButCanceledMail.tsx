@@ -21,17 +21,11 @@ export const sendPaidButCanceledMail = async (
 
   if (!owner) return { success: false }
 
-  const { response } = await sendEmail(
-    owner.email,
-    html,
-    'BEZAHLUNG TROTZ ABSAGE',
-  )
+  const response = await sendEmail(owner.email, html, 'BEZAHLUNG TROTZ ABSAGE')
 
   console.log(
-    `Message sent to: ${JSON.stringify(owner.email)}, Code : ${
-      response.statusCode
-    }`,
+    `Message sent to: ${JSON.stringify(owner.email)}, Code : ${response?.id}`,
   )
 
-  return { success: response.statusCode === 201 }
+  return { success: response?.id }
 }

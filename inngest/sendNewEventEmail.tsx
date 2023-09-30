@@ -26,16 +26,14 @@ export const sendNewEventEmail = inngest.createFunction(
 
     const html = render(<NewEvent event={event} userName={user.name} />)
 
-    const { response } = await sendEmail(
+    const response = await sendEmail(
       user.email,
       html,
       `NEUES FUSSBALL EVENT: In ${days} Tagen`,
     )
 
     console.log(
-      `Message sent to: ${JSON.stringify(user.email)}, Code : ${
-        response.statusCode
-      }`,
+      `Message sent to: ${JSON.stringify(user.email)}, Code : ${response?.id}`,
     )
   },
 )
