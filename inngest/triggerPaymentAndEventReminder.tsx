@@ -1,4 +1,4 @@
-import { inngest, prisma } from '@/src/server/db/client'
+import { inngest } from '@/src/server/db/client'
 import type {
   ParticipantsOnEvents,
   UserEventStatus,
@@ -7,7 +7,7 @@ import type {
 export const triggerPaymentAndEventReminder = inngest.createFunction(
   { name: 'Trigger Payment and Event Reminder' },
   { event: 'event/reminder' },
-  async ({ event: inngestEvent }) => {
+  async ({ event: inngestEvent, prisma }) => {
     const id = inngestEvent.data.id
 
     const event = await prisma.event.findUnique({

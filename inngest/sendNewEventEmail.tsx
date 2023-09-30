@@ -2,13 +2,13 @@ import NewEvent from '@/emails/NewEvent'
 import { render } from '@react-email/components'
 import { sendEmail } from './createSendEmail'
 
-import { inngest, prisma } from '@/src/server/db/client'
+import { inngest } from '@/src/server/db/client'
 
 export const sendNewEventEmail = inngest.createFunction(
   { name: 'Send new Event Email' },
   { event: 'event/newEmail' },
 
-  async ({ event: inngestEvent }) => {
+  async ({ event: inngestEvent, prisma }) => {
     const id = inngestEvent.data.id as string
 
     const user = inngestEvent.data.user as {

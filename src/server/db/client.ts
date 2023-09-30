@@ -1,4 +1,4 @@
-import { EventSchemas, Inngest } from 'inngest'
+import { EventSchemas, Inngest, InngestMiddleware } from 'inngest'
 import { PrismaClient } from '../../../prisma/generated/client/index.js'
 
 import { env } from '@/src/env/server.mjs'
@@ -49,6 +49,29 @@ export const Event__NewEmail = z.object({
   id: z.string(),
   days: z.number(),
 })
+const prismaMiddleware = new InngestMiddleware({
+  name: 'Prisma Middleware',
+  init() {
+    const prisma = new PrismaClient()
+
+    return {
+      onFunctionRun(ctx) {
+        return {
+          ...ctx,
+          transformInput(ctx) {
+            return {
+              // Anything passed via `ctx` will be merged with the function's arguments
+              ctx: {
+                ...ctx,
+                prisma,
+              },
+            }
+          },
+        }
+      },
+    }
+  },
+})
 
 export const inngest = new Inngest({
   name: 'Event-Wizard',
@@ -70,6 +93,7 @@ export const inngest = new Inngest({
       data: Event__New,
     },
   }),
+  middleware: [prismaMiddleware],
 })
 
 export const prisma = globals.prisma ?? new PrismaClient()

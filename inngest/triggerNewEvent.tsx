@@ -1,10 +1,10 @@
-import { inngest, prisma } from '@/src/server/db/client'
+import { inngest } from '@/src/server/db/client'
 import { differenceInCalendarDays } from 'date-fns'
 
 export const triggerNewEvent = inngest.createFunction(
   { name: 'Trigger New Event Email' },
   { event: 'event/new' },
-  async ({ event: inngestEvent }) => {
+  async ({ event: inngestEvent, prisma }) => {
     const eventId = inngestEvent.data.id
 
     const event = await prisma.event.findUnique({

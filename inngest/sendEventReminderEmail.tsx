@@ -1,5 +1,5 @@
 import EventReminder from '@/emails/EventReminder'
-import { inngest, prisma } from '@/src/server/db/client'
+import { inngest } from '@/src/server/db/client'
 import { render } from '@react-email/components'
 import { differenceInCalendarDays } from 'date-fns'
 import { sendEmail } from './createSendEmail'
@@ -8,7 +8,7 @@ export const sendEventReminderEmail = inngest.createFunction(
   { name: 'Send Event Reminder Email' },
   { event: 'event/reminderEmail' },
 
-  async ({ event: inngestEvent }) => {
+  async ({ event: inngestEvent, prisma }) => {
     const id = inngestEvent.data.id as string
 
     const user = inngestEvent.data.user as {

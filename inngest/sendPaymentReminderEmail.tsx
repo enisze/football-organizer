@@ -2,13 +2,13 @@ import PaymentReminder from '@/emails/PaymentReminder'
 import { render } from '@react-email/components'
 import { sendEmail } from './createSendEmail'
 
-import { inngest, prisma } from '@/src/server/db/client'
+import { inngest } from '@/src/server/db/client'
 
 export const sendPaymentReminderEmail = inngest.createFunction(
   { name: 'Send Payment Reminder Email' },
   { event: 'event/paymentReminderEmail' },
 
-  async ({ event: inngestEvent }) => {
+  async ({ event: inngestEvent, prisma }) => {
     const id = inngestEvent.data.id as string
 
     const user = inngestEvent.data.user as {
