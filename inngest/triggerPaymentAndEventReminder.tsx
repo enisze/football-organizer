@@ -7,19 +7,35 @@ import type {
 export const triggerPaymentAndEventReminder = inngest.createFunction(
   { name: 'Trigger Payment and Event Reminder' },
   { event: 'event/reminder' },
-  async ({ event: inngestEvent, prisma }) => {
+  async ({ event: inngestEvent, prisma, step, logger }) => {
     const id = inngestEvent.data.id
 
-    const event = await prisma.event.findUnique({
-      where: { id },
-      include: { participants: true },
-    })
+    const event = await step.run(
+      'getEvent',
+      async () =>
+        await prisma.event.findUnique({
+          where: { id },
+          include: { participants: true },
+        }),
+    )
 
     if (!event?.groupId) return { message: 'No group id' }
 
-    const groupMembers = await prisma.group.findUnique({
-      where: { id: event.groupId },
-      select: { users: true },
+    const allGroupMembers = await step.run('getting members', async () => {
+      const groupMembers = await prisma.group.findUnique({
+        where: { id: event.groupId ?? undefined },
+        select: { users: true },
+      })
+
+      if (!groupMembers) return []
+
+      const allGroupMembers = await Promise.all(
+        groupMembers.users.map(async (user) => {
+          return await prisma.user.findUnique({ where: { id: user.id } })
+        }),
+      )
+
+      return allGroupMembers
     })
 
     if (!event)
@@ -27,16 +43,10 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
         message: 'No event',
       }
 
-    if (!groupMembers)
+    if (!allGroupMembers)
       return {
         message: 'No group members',
       }
-
-    const allGroupMembers = await Promise.all(
-      groupMembers.users.map(async (user) => {
-        return await prisma.user.findUnique({ where: { id: user.id } })
-      }),
-    )
 
     const { participants } = event
 
@@ -87,8 +97,12 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
         })
     }
 
+    logger.info('usersEventReminder', usersEventReminder)
+
+    logger.info('usersPaymentReminder', usersPaymentReminder)
+
     usersEventReminder.forEach(async (user) => {
-      await inngest.send({
+      await step.sendEvent({
         name: 'event/reminderEmail',
         data: {
           user,
@@ -100,7 +114,7 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 
     if (usersPaymentReminder.length > 0) {
       usersPaymentReminder.forEach(async (user) => {
-        await inngest.send({
+        await step.sendEvent({
           name: 'event/paymentReminderEmail',
           data: {
             user,
@@ -117,7 +131,7 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 )
 
 const getParticipantIdsByStatus = (
-  participants: ParticipantsOnEvents[],
+  participants: Array<Omit<ParticipantsOnEvents, 'date'>>,
   eventStatus: UserEventStatus,
 ) => {
   return participants.reduce((acc: string[], participant) => {
