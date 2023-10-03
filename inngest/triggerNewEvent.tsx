@@ -4,11 +4,11 @@ import { differenceInCalendarDays } from 'date-fns'
 export const triggerNewEvent = inngest.createFunction(
   { name: 'Trigger New Event Email' },
   { event: 'event/new' },
-  async ({ step, event: inngestEvent, prisma }) => {
+  async ({ step, event: inngestEvent, prisma, logger }) => {
     const eventId = inngestEvent.data.id
 
     const event = await step.run('get event', async () => {
-      console.log('getting event')
+      logger.info('getting event')
       const event = await prisma.event.findUnique({
         where: { id: eventId },
         include: { participants: true },
@@ -22,7 +22,7 @@ export const triggerNewEvent = inngest.createFunction(
     if (!event.groupId) return { message: `No group found ${event.groupId}` }
 
     const usersOfGroup = await step.run('get users', async () => {
-      console.log('getting users')
+      logger.info('getting users')
       try {
         const usersOnGroup = await prisma.group.findUnique({
           where: {
@@ -48,27 +48,28 @@ export const triggerNewEvent = inngest.createFunction(
     if (!usersOfGroup) return { message: `No users found` }
 
     await step.run('sending newEmail event', async () => {
-      console.log('sending event')
-      const usersWhoGotMails: string[] = []
+      logger.info('sending event')
 
       const days = differenceInCalendarDays(new Date(event.date), new Date())
 
-      usersOfGroup
-        .filter((user) => user?.notificationsEnabled)
-        .forEach(async (user) => {
-          if (!user) return
+      const filteredUsers = usersOfGroup.filter(
+        (user) => user?.notificationsEnabled,
+      )
 
-          await inngest.send({
-            name: 'event/newEmail',
-            data: {
-              user,
-              id: event.id,
-              days,
-            },
-          })
+      logger.info('filtered users', filteredUsers)
 
-          usersWhoGotMails.push(user.email)
+      filteredUsers.forEach(async (user) => {
+        if (!user) return
+
+        await step.sendEvent({
+          name: 'event/newEmail',
+          data: {
+            user,
+            id: event.id,
+            days,
+          },
         })
+      })
     })
 
     return { success: true }
