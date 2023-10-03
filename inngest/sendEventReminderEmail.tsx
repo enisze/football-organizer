@@ -35,8 +35,6 @@ export const sendEventReminderEmail = inngest.createFunction(
           ...event,
           date: new Date(event.date),
           bookingDate: event.bookingDate ? new Date(event.bookingDate) : null,
-          createdAt: new Date(event.createdAt),
-          updatedAt: new Date(event.updatedAt),
         }}
         userName={user.name}
         participantsAmount={participantsAmount}

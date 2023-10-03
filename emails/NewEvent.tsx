@@ -11,7 +11,7 @@ export const NewEvent = ({
   event = { id: '1', bookingDate: new Date(), maxParticipants: 10 },
   userName = 'Test',
 }: {
-  event: Partial<Event>
+  event: Partial<Omit<Event, 'createdAt' | 'updatedAt'>>
   userName: string
 }) => {
   const { id } = event

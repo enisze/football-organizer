@@ -13,7 +13,7 @@ export const EventReminder = ({
   userName = 'Test',
   participantsAmount = 0,
 }: {
-  event: Partial<Event>
+  event: Partial<Omit<Event, 'createdAt' | 'updatedAt'>>
   userName: string
   participantsAmount: number
 }) => {

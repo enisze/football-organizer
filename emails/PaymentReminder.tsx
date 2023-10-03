@@ -8,7 +8,7 @@ import { ContainerBox } from './components/ContainerBox'
 import { CustomButton } from './components/CustomButton'
 
 type PaymentReminderProps = {
-  event: Partial<Event>
+  event: Partial<Omit<Event, 'createdAt' | 'updatedAt'>>
   userName: string
 }
 
