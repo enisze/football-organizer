@@ -14,6 +14,7 @@ const MainPage = async ({
     where: {
       groupId,
     },
+    orderBy: { date: 'asc' },
   })
 
   return (
