@@ -2,6 +2,7 @@ import { Button } from '@/ui/button'
 import { isDateInCertainRange } from '../helpers/isDateInCertainRange'
 import { getServerComponentAuthSession } from '../server/auth/authOptions'
 
+import { formatter } from '../helpers/formatter'
 import { prisma } from '../server/db/client'
 
 const paypalLink =
@@ -29,10 +30,10 @@ export const PaymentArea = async ({
   if (payment)
     return (
       <div className="flex items-center gap-x-2 text-green-500 font-bold">
-        {payment?.amount +
+        {formatter.format(payment?.amount) +
           '€  am ' +
           payment?.paymentDate.toLocaleDateString('de')}
-        <span>Bezahlt</span>
+        <span>bezahlt</span>
       </div>
     )
 

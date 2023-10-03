@@ -1,5 +1,6 @@
 import type { Event } from '@/prisma/generated/client'
 import { getLatLong } from '@/src/app/group/[groupId]/getLatLong'
+import { formatter } from '@/src/helpers/formatter'
 import { differenceInCalendarDays } from 'date-fns'
 import { CalendarDays, Euro } from 'lucide-react'
 import { MapAccordion } from '../Map/MapAccordion'
@@ -73,7 +74,7 @@ export const EventCard = async ({ event }: EventCardProps) => {
               <CalendarDays className={iconStyle} />
               <span>{[startTime, endTime].join('-')}</span>
               <Euro className={iconStyle} />
-              <span> {`${cost / maxParticipants}`}</span>
+              <span> {`${formatter.format(cost / maxParticipants)}`}</span>
             </div>
             {data && <MapAccordion address={address} coordinates={data} />}
             <ParticipantsAreaServer
