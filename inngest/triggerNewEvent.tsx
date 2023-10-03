@@ -4,7 +4,7 @@ import { differenceInCalendarDays } from 'date-fns'
 export const triggerNewEvent = inngest.createFunction(
   { name: 'Trigger New Event Email' },
   { event: 'event/new' },
-  async ({ event: inngestEvent, prisma }) => {
+  async ({ event: inngestEvent, prisma, step }) => {
     const eventId = inngestEvent.data.id
 
     const event = await prisma.event.findUnique({
@@ -39,22 +39,24 @@ export const triggerNewEvent = inngest.createFunction(
         }),
       )
 
-      usersOfGroup
-        .filter((user) => user?.notificationsEnabled)
-        .forEach(async (user) => {
-          if (!user) return
+      await step.run('trigger new Event', () => {
+        usersOfGroup
+          .filter((user) => user?.notificationsEnabled)
+          .forEach(async (user) => {
+            if (!user) return
 
-          await inngest.send({
-            name: 'event/newEmail',
-            data: {
-              user,
-              id: event.id,
-              days,
-            },
+            await inngest.send({
+              name: 'event/newEmail',
+              data: {
+                user,
+                id: event.id,
+                days,
+              },
+            })
+
+            usersWhoGotMails.push(user.email)
           })
-
-          usersWhoGotMails.push(user.email)
-        })
+      })
 
       return { success: true }
     } catch (error: unknown) {
