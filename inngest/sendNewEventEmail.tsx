@@ -8,7 +8,7 @@ export const sendNewEventEmail = inngest.createFunction(
   { name: 'Send new Event Email' },
   { event: 'event/newEmail' },
 
-  async ({ event: inngestEvent, prisma }) => {
+  async ({ event: inngestEvent, prisma, step, logger }) => {
     const id = inngestEvent.data.id as string
 
     const user = inngestEvent.data.user as {
@@ -18,24 +18,49 @@ export const sendNewEventEmail = inngest.createFunction(
 
     const days = inngestEvent.data.days as number
 
-    const event = await prisma.event.findUnique({
-      where: { id },
-    })
+    const event = await step.run(
+      'get event',
+      async () =>
+        await prisma.event.findUnique({
+          where: { id },
+        }),
+    )
 
     if (!event) return
 
-    const html = render(<NewEvent event={event} userName={user.name} />)
-
-    const { response } = await sendEmail(
-      user.email,
-      html,
-      `NEUES FUSSBALL EVENT: In ${days} Tagen`,
+    const html = render(
+      <NewEvent
+        event={{
+          ...event,
+          date: new Date(event.date),
+          bookingDate: event.bookingDate ? new Date(event.bookingDate) : null,
+          createdAt: new Date(event.createdAt),
+          updatedAt: new Date(event.updatedAt),
+        }}
+        userName={user.name}
+      />,
     )
 
-    console.log(
-      `Message sent to: ${JSON.stringify(user.email)}, Code : ${
-        response.statusCode
-      }`,
+    const { response } = await step.run('sending mail', async () => {
+      try {
+        const response = await sendEmail(
+          user.email,
+          html,
+          `NEUES FUSSBALL EVENT: In ${days} Tagen`,
+        )
+
+        return response
+      } catch (error: unknown) {
+        console.log(error)
+
+        return { response: null }
+      }
+    })
+
+    logger.info(
+      `Message sent to: ${JSON.stringify(
+        user.email,
+      )}, Code : ${response?.statusCode}`,
     )
   },
 )
