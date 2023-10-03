@@ -47,28 +47,26 @@ export const triggerNewEvent = inngest.createFunction(
 
     if (!usersOfGroup) return { message: `No users found` }
 
-    await step.run('sending newEmail event', async () => {
-      logger.info('sending event')
+    logger.info('sending event')
 
-      const days = differenceInCalendarDays(new Date(event.date), new Date())
+    const days = differenceInCalendarDays(new Date(event.date), new Date())
 
-      const filteredUsers = usersOfGroup.filter(
-        (user) => user?.notificationsEnabled,
-      )
+    const filteredUsers = usersOfGroup.filter(
+      (user) => user?.notificationsEnabled,
+    )
 
-      logger.info('filtered users', filteredUsers)
+    logger.info('filtered users', filteredUsers)
 
-      filteredUsers.forEach(async (user) => {
-        if (!user) return
+    filteredUsers.forEach(async (user) => {
+      if (!user) return
 
-        await step.sendEvent({
-          name: 'event/newEmail',
-          data: {
-            user,
-            id: event.id,
-            days,
-          },
-        })
+      await step.sendEvent({
+        name: 'event/newEmail',
+        data: {
+          user,
+          id: event.id,
+          days,
+        },
       })
     })
 
