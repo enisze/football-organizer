@@ -1,13 +1,12 @@
-import {
-  TransactionalEmailsApi,
-  TransactionalEmailsApiApiKeys,
-} from "@sendinblue/client";
+//@ts-expect-error - Astro doesn't know about the request object
+import Brevo from '@getbrevo/brevo'
 
-const apiInstance = new TransactionalEmailsApi();
+const defaultClient = Brevo.ApiClient.instance
 
-apiInstance.setApiKey(
-  TransactionalEmailsApiApiKeys.apiKey,
-  process.env.SENDINBLUE_API_KEY ?? ""
-);
+// Configure API key authorization: api-key
+const apiKey = defaultClient.authentications['api-key']
+apiKey.apiKey = process.env.SENDINBLUE_API_KEY ?? ''
 
-export default apiInstance;
+const apiInstance = new Brevo.TransactionalEmailsApi()
+
+export default apiInstance
