@@ -12,6 +12,10 @@ export const getLatLong = async (address: string, id: string) => {
 
   const { addressKey, coordinatesKey } = getAddressAndCoordinatesRedisKeys(id)
 
+  if (!redis.isOpen) {
+    await redis.connect()
+  }
+
   const cachedAddress = await redis.get(addressKey)
   const coordinates = await redis.get(coordinatesKey)
 
@@ -39,6 +43,8 @@ export const getLatLong = async (address: string, id: string) => {
       const coordinates = `${longitude},${latitude}`
 
       await redis.set(coordinatesKey, coordinates)
+
+      await redis.disconnect()
 
       return mapCoordinatesToArray(coordinates)
     } catch (error) {

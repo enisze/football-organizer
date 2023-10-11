@@ -2,14 +2,11 @@ import { EventSchemas, Inngest, InngestMiddleware } from 'inngest'
 import { PrismaClient } from '../../../prisma/generated/client/index.js'
 
 import { env } from '@/src/env/server.mjs'
-import { type Redis as RedisClient } from 'ioredis'
 import { z } from 'zod'
 
 declare global {
   // eslint-disable-next-line no-var
   var prisma: PrismaClient | undefined
-  // eslint-disable-next-line no-var
-  var redis: RedisClient
 }
 
 const globals = globalThis as unknown as {
@@ -99,13 +96,6 @@ export const inngest = new Inngest({
 export const prisma = globals.prisma ?? new PrismaClient()
 
 if (process.env.NODE_ENV !== 'production') globals.prisma = prisma
-
-// export const inngest =
-//   global.inngest ||
-//   new Inngest<Events>({
-//     name: 'Event Wizard',
-//     eventKey: process.env.INNGEST_EVENT_KEY,
-//   })
 
 if (env.NODE_ENV !== 'production') {
   globals.prisma = prisma

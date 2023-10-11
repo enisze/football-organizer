@@ -1,12 +1,9 @@
-import Redis, { type Redis as RedisClient } from 'ioredis'
+import { createClient } from 'redis'
 
-const globals = globalThis as unknown as {
-  redis: RedisClient
-}
-export const redis =
-  globals.redis ??
-  new Redis({
+export const redis = createClient({
+  socket: {
     host: process.env.REDIS_HOST,
     port: 16734,
-    password: process.env.REDIS_PASSWORD,
-  })
+  },
+  password: process.env.REDIS_PASSWORD,
+})
