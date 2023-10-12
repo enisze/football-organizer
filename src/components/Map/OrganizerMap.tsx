@@ -1,17 +1,17 @@
 'use client'
 
 import { Feature } from 'ol'
+import Map from 'ol/Map'
+import View from 'ol/View'
 import { Point } from 'ol/geom'
 import TileLayer from 'ol/layer/Tile'
 import VectorLayer from 'ol/layer/Vector'
-import Map from 'ol/Map'
 import 'ol/ol.css'
 import { fromLonLat } from 'ol/proj'
-import OSM from 'ol/source/OSM'
+import BingMaps from 'ol/source/BingMaps.js'
 import VectorSource from 'ol/source/Vector'
 import Icon from 'ol/style/Icon'
 import Style from 'ol/style/Style'
-import View from 'ol/View'
 import type { FunctionComponent, PropsWithChildren } from 'react'
 import { useEffect, useRef } from 'react'
 
@@ -32,7 +32,7 @@ export const OrganizerMap: FunctionComponent<OrganizerMapProps> = ({
     const drawSource = new VectorSource({ wrapX: false, features: [feature] })
 
     const svg =
-      '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="512"><!--! Font Awesome Pro 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M320 144c0 79.5-64.5 144-144 144S32 223.5 32 144S96.5 0 176 0s144 64.5 144 144zM176 80c8.8 0 16-7.2 16-16s-7.2-16-16-16c-53 0-96 43-96 96c0 8.8 7.2 16 16 16s16-7.2 16-16c0-35.3 28.7-64 64-64zM144 480V317.1c10.4 1.9 21.1 2.9 32 2.9s21.6-1 32-2.9V480c0 17.7-14.3 32-32 32s-32-14.3-32-32z"/></svg>'
+      '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256"><path fill="#FF0000" d="M128 16a88.1 88.1 0 0 0-88 88c0 75.3 80 132.17 83.41 134.55a8 8 0 0 0 9.18 0C136 236.17 216 179.3 216 104a88.1 88.1 0 0 0-88-88Zm0 56a32 32 0 1 1-32 32a32 32 0 0 1 32-32Z"/></svg>'
     const src = 'data:image/svg+xml,' + encodeURIComponent(svg)
 
     const style = new Style({
@@ -48,7 +48,11 @@ export const OrganizerMap: FunctionComponent<OrganizerMapProps> = ({
         target: mapElement.current ?? undefined,
         layers: [
           new TileLayer({
-            source: new OSM(),
+            source: new BingMaps({
+              placeholderTiles: true,
+              key: 'AiUxVpnsyLiaeAyT-GvCpGCpzr7GcKp3rQBIjFBcSbS1SGbtgcuumF05dahBBNcz',
+              imagerySet: 'RoadOnDemand',
+            }),
           }),
           new VectorLayer({
             source: drawSource,
