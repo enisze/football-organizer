@@ -61,8 +61,6 @@ export const getLatLong = async (
   } catch (error) {
     console.log(error)
     throw new Error('INTERNAL_SERVER_ERROR')
-  } finally {
-    redis.disconnect()
   }
 }
 

@@ -81,6 +81,8 @@ export const OrganizerMenu: FunctionComponent<{
                   //@ts-expect-error next issue
                   pathname + '?' + createQueryString('isOwner', !isOwner),
                 )
+
+                await new Promise((resolve) => setTimeout(resolve, 500))
                 await revalidateGroupAction()
               }}
             />

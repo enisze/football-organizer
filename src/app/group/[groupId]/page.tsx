@@ -3,6 +3,7 @@ import { addDays } from 'date-fns'
 
 import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
 import { prisma } from '@/src/server/db/client'
+import { redis } from '@/src/server/db/redis'
 import { getLatLong } from './getLatLong'
 
 const MainPage = async ({
@@ -23,6 +24,10 @@ const MainPage = async ({
   })
 
   const data = await getLatLong(eventInfo)
+
+  if (redis.isOpen) {
+    await redis.disconnect()
+  }
 
   return (
     <div className="flex flex-col pb-2">
