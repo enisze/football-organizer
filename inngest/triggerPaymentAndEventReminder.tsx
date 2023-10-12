@@ -130,7 +130,7 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
   },
 )
 
-const getParticipantIdsByStatus = (
+export const getParticipantIdsByStatus = (
   participants: Array<Omit<ParticipantsOnEvents, 'date'>>,
   eventStatus: UserEventStatus,
 ) => {

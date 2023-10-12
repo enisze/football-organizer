@@ -1,5 +1,6 @@
 import { inngest } from '@/src/server/db/client'
-import { differenceInCalendarDays } from 'date-fns'
+import { addDays, differenceInCalendarDays } from 'date-fns'
+import { getParticipantIdsByStatus } from './triggerPaymentAndEventReminder'
 
 export const triggerNewEvent = inngest.createFunction(
   { name: 'Trigger New Event Email' },
@@ -66,6 +67,74 @@ export const triggerNewEvent = inngest.createFunction(
           user,
           id: event.id,
           days,
+        },
+      })
+    })
+    await step.sleepUntil(addDays(new Date(event.createdAt), 7))
+
+    const usersEventReminder: { name: string; email: string }[] = []
+
+    const allGroupMembers = await step.run('getting members', async () => {
+      const groupMembers = await prisma.group.findUnique({
+        where: { id: event.groupId ?? undefined },
+        select: { users: true },
+      })
+
+      if (!groupMembers) return []
+
+      const allGroupMembers = await Promise.all(
+        groupMembers.users.map(async (user) => {
+          return await prisma.user.findUnique({ where: { id: user.id } })
+        }),
+      )
+
+      return allGroupMembers
+    })
+
+    if (!event)
+      return {
+        message: 'No event',
+      }
+
+    if (!allGroupMembers)
+      return {
+        message: 'No group members',
+      }
+
+    const { participants } = event
+
+    const canceledParticipantIds = getParticipantIdsByStatus(
+      event.participants,
+      'CANCELED',
+    )
+
+    const joinedParticipantIds = getParticipantIdsByStatus(
+      event.participants,
+      'JOINED',
+    )
+
+    const membersToRemindEvent = allGroupMembers.filter(
+      (user) =>
+        !canceledParticipantIds.includes(user?.id ?? '') &&
+        !joinedParticipantIds.includes(user?.id ?? ''),
+    )
+
+    if (participants.length < event.maxParticipants) {
+      membersToRemindEvent
+        .filter((user) => user?.notificationsEnabled)
+        .forEach((user) => {
+          if (!user) return
+          usersEventReminder.push({ email: user.email, name: user.name })
+        })
+    }
+
+    usersEventReminder.forEach(async (user) => {
+      await step.sendEvent({
+        name: 'event/reminderEmail',
+        data: {
+          user,
+          id: event.id,
+          participantsAmount: joinedParticipantIds.length,
         },
       })
     })
