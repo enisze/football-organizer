@@ -25,16 +25,12 @@ const EventPage = async ({ params }: { params: { eventId: string } }) => {
     notFound()
   }
 
-  const url = process.env.NEXT_PUBLIC_BASE_URL as string
-
-  const link = new URL(url)
-
   return (
     <div className="mx-20 flex flex-col">
       <div className="flex flex-col items-center">
         <div className="my-5 flex flex-col items-center justify-center gap-y-2 rounded p-5">
           <StatusButton eventId={event.id} />
-          <Link href={link}>
+          <Link href={'/group'}>
             <span>Zur Startseite</span>
           </Link>
         </div>
