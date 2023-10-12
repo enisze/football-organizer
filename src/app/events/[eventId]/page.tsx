@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { prisma } from '@/src/server/db/client'
 import { notFound } from 'next/navigation'
+import { getLatLong } from '../../group/[groupId]/getLatLong'
 import { StatusButton } from './StatusButton'
 
 const EventPage = async ({ params }: { params: { eventId: string } }) => {
@@ -25,6 +26,8 @@ const EventPage = async ({ params }: { params: { eventId: string } }) => {
     notFound()
   }
 
+  const data = await getLatLong([{ address: event.address, id: event.id }])
+
   return (
     <div className="mx-20 flex flex-col">
       <div className="flex flex-col items-center">
@@ -34,7 +37,7 @@ const EventPage = async ({ params }: { params: { eventId: string } }) => {
             <span>Zur Startseite</span>
           </Link>
         </div>
-        <EventCard event={event} />
+        <EventCard event={event} location={data.get(id)} />
       </div>
     </div>
   )
