@@ -3,6 +3,7 @@ import { addDays } from 'date-fns'
 
 import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
 import { prisma } from '@/src/server/db/client'
+import { getLatLong } from './getLatLong'
 
 const MainPage = async ({
   params: { groupId },
@@ -17,6 +18,12 @@ const MainPage = async ({
     orderBy: { date: 'asc' },
   })
 
+  const eventInfo = events.map((event) => {
+    return { address: event.address, id: event.id }
+  })
+
+  const data = await getLatLong(eventInfo)
+
   return (
     <div className="flex flex-col pb-2">
       <div className="m-8 flex flex-col gap-y-3 justify-center items-center">
@@ -28,7 +35,7 @@ const MainPage = async ({
 
               return (
                 <li key={event.id}>
-                  <EventCard event={event} />
+                  <EventCard event={event} location={data.get(event.id)} />
                 </li>
               )
             })}

@@ -1,5 +1,4 @@
 import type { Event } from '@/prisma/generated/client'
-import { getLatLong } from '@/src/app/group/[groupId]/getLatLong'
 import { formatter } from '@/src/helpers/formatter'
 import { differenceInCalendarDays } from 'date-fns'
 import { CalendarDays, Euro } from 'lucide-react'
@@ -14,12 +13,13 @@ import { StatusChip } from './StatusChip'
 
 type EventCardProps = {
   event: Event
+  location: number[] | undefined
 }
 
 //TODO: Adjust schema event thingy -> Warteliste status?
 //TODO: Show Warteliste, if we have participants which are on the waiting list too?
 
-export const EventCard = async ({ event }: EventCardProps) => {
+export const EventCard = async ({ event, location }: EventCardProps) => {
   const {
     address,
     startTime,
@@ -31,8 +31,6 @@ export const EventCard = async ({ event }: EventCardProps) => {
     maxParticipants,
     bookingDate,
   } = event
-
-  const data = await getLatLong(address, id)
 
   const currentDate = new Date()
   const days = differenceInCalendarDays(date, currentDate)
@@ -76,7 +74,9 @@ export const EventCard = async ({ event }: EventCardProps) => {
               <Euro className={iconStyle} />
               <span> {`${formatter.format(cost / maxParticipants)}`}</span>
             </div>
-            {data && <MapAccordion address={address} coordinates={data} />}
+            {location && (
+              <MapAccordion address={address} coordinates={location} />
+            )}
             <ParticipantsAreaServer
               eventId={id}
               maxParticipants={maxParticipants}
