@@ -37,29 +37,6 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
       return groupMembersToRemind
     })
 
-    const membersToRemind2 = await step.run('Get members2', async () => {
-      const groupMembersTest = await prisma.user.findMany({
-        where: {
-          notificationsEnabled: true,
-          groups: {
-            some: {
-              groupId: event.groupId ?? undefined,
-            },
-          },
-        },
-      })
-      return groupMembersTest
-    })
-
-    const membersToRemind3 = await step.run('Get members3', async () => {
-      const groupMembers2 = await prisma.user.findMany({
-        where: {
-          events: { none: { id: event.id, userEventStatus: 'CANCELED' } },
-        },
-      })
-      return groupMembers2
-    })
-
     if (!event)
       return {
         message: 'No event',
@@ -73,7 +50,7 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
     const { participants } = event
 
     const joinedParticipantIds = getParticipantIdsByStatus(
-      event.participants,
+      participants,
       'JOINED',
     )
 
@@ -84,7 +61,7 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
     const usersEventReminder: { name: string; email: string }[] = []
     const usersPaymentReminder: { name: string; email: string }[] = []
 
-    if (participants.length < event.maxParticipants) {
+    if (joinedParticipantIds.length < event.maxParticipants) {
       membersToRemind
         .filter((user) => !membersToRemindPayment.find((u) => u.id === user.id))
         .forEach((user) => {
