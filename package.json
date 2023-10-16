@@ -75,6 +75,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^13.4.12",
+    "@playwright/test": "^1.39.0",
     "@types/file-saver": "^2.0.5",
     "@types/jest": "^29.5.3",
     "@types/jsonwebtoken": "^9.0.2",

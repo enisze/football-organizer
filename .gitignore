@@ -51,3 +51,6 @@ yarn-error.log*
 
 # email
 /.react-email
+/test-results/
+/playwright-report/
+/playwright/.cache/
