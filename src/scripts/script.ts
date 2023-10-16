@@ -1,8 +1,8 @@
-import { getWeek } from 'date-fns'
+import { addWeeks, getWeek, startOfWeek } from 'date-fns'
 import puppeteer from 'puppeteer'
 
 import { sendEmail } from '@/inngest/createSendEmail'
-import { getSoccerDate } from './getSoccerDate'
+import { de } from 'date-fns/locale'
 
 const redColor = 'rgb(175, 18, 29)'
 const greenColor = 'rgb(131, 176, 34)'
@@ -10,23 +10,23 @@ const greenColor = 'rgb(131, 176, 34)'
 const time = '20:00h'
 const time2 = '8:00:h'
 
-let intervalId: NodeJS.Timer | null = null
+const soccerboxesBookable: { soccerbox: number; hrefValue: string | null }[] =
+  []
+const soccerboxesError: {
+  soccerbox: number
+  errror?: string
+  error?: string
+}[] = []
 
 const runScript = async () => {
   console.log('starting script')
   const date = new Date()
   const week = getWeek(date)
 
-  const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox1/index_ger.html?y=2023&w=${
-    week + 1
-  }`
-
   //---FOR DOCKER---
   // const browser = await puppeteer.connect({
   //   browserWSEndpoint: "ws://chrome:3000"
   // })
-
-  const soccerDate = getSoccerDate()
 
   //---FOR LOCAL---
   const browser = await puppeteer.launch({
@@ -35,116 +35,148 @@ const runScript = async () => {
   })
 
   try {
-    const page = await browser.newPage()
-    await page.goto(url)
+    for (let soccerbox = 1; soccerbox < 2; soccerbox++) {
+      const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox${soccerbox}/index_ger.html?y=2023&w=${
+        week + 1
+      }`
 
-    const classValue = 'Mo'
-    const cssSelector = `td[class="${classValue}"][datetime="${soccerDate.toISOString()}"]`
-    const tdElement = await page.waitForSelector(cssSelector, {
-      timeout: 10000,
-    })
+      const page = await browser.newPage()
 
-    if (!tdElement) {
-      console.log('Fehler, kein tdElement gefunden')
+      const soccerDate = getSoccerDate()
 
-      await sendEmail(
-        'eniszej@gmail.com',
-        `<div>Fehler, kein tdElement gefunden</div>`,
-        'Soccer Error',
+      await page.goto(url)
+
+      console.log(`starting Soccerbox ${soccerbox}`)
+
+      console.log(soccerDate)
+
+      const classValue = 'Di'
+      const cssSelector = `td[class="${classValue}"][datetime="${soccerDate.toISOString()}"]`
+
+      const tdElement = await page.waitForSelector(cssSelector, {
+        timeout: 5000,
+      })
+
+      if (!tdElement) {
+        soccerboxesError.push({
+          soccerbox,
+          errror: 'Fehler, kein tdElement gefunden',
+        })
+
+        continue
+      }
+
+      const linkName = '.uzk15__eventunit'
+      const linkElement = await tdElement.$(linkName)
+
+      if (!linkElement) {
+        soccerboxesError.push({
+          soccerbox,
+          errror: 'Noch nicht buchbar, kein Link',
+        })
+        continue
+      }
+
+      const hrefValue = await linkElement.evaluate((el) =>
+        el.getAttribute('href'),
       )
-      return
-    }
 
-    const linkName = '.uzk15__eventunit'
-    const linkElement = await tdElement.$(linkName)
+      const className = '.uzk15__kreis'
 
-    if (!linkElement) {
-      console.log('Noch nicht buchbar, kein Link')
-      return
-    }
+      let colorValue = ''
 
-    const hrefValue = await linkElement.evaluate((el) =>
-      el.getAttribute('href'),
-    )
-
-    const className = '.uzk15__kreis'
-
-    let colorValue = ''
-
-    try {
       const color = await tdElement.$(className)
 
       if (!color) {
-        console.log('Fehler, keine Color gefunden')
-
-        await sendEmail(
-          'eniszej@gmail.com',
-          `<div>Fehler, keine Color gefunden</div>`,
-          'Soccer Error',
-        )
-        return
+        soccerboxesError.push({
+          soccerbox,
+          error: 'Fehler, keine Color gefunden',
+        })
+        continue
       }
 
       colorValue = await color.evaluate(
         (el) => getComputedStyle(el).backgroundColor,
       )
-    } catch (error) {
-      if (intervalId) clearInterval(intervalId) // Clear the interval to stop the script
-    }
 
-    console.log(colorValue)
+      const targetField = await tdElement.evaluate((el) => el.textContent)
 
-    const targetField = await tdElement.evaluate((el) => el.textContent)
+      if (
+        targetField?.includes(time) === false &&
+        targetField?.includes(time2) === false
+      ) {
+        soccerboxesError.push({
+          soccerbox,
+          error: `Falsche Uhrzeit ${targetField} ${time}`,
+        })
 
-    if (
-      targetField?.includes(time) === false &&
-      targetField?.includes(time2) === false
-    ) {
-      console.log('Falsche Uhrzeit', targetField, time)
+        continue
+      }
 
-      await sendEmail(
-        'eniszej@gmail.com',
-        `<div>Fehler, falsche Uhrzeit gewaehlt</div>`,
-        'Soccer Error',
-      )
-      return
-    }
+      if (colorValue === redColor) {
+        soccerboxesError.push({
+          soccerbox,
+          error: 'Gebucht',
+        })
 
-    if (colorValue === redColor) {
-      console.log('Gebucht')
-      return
-    }
+        continue
+      }
 
-    if (colorValue === greenColor) {
-      console.log('Buchbar')
-      await sendEmail(
-        'eniszej@gmail.com',
-        `<a href=${hrefValue}>Buchen</a>`,
-        'Soccer reminder',
-      )
-      if (intervalId) clearInterval(intervalId) // Clear the interval to stop the script
+      if (colorValue === greenColor) {
+        soccerboxesBookable.push({
+          soccerbox,
+          hrefValue,
+        })
+      }
     }
   } catch (error) {
-    console.log(error)
-  } finally {
-    // await browser.close()
+    //@ts-expect-error there is such at hing
+    if ('response' in error) {
+      //@ts-expect-error there is such at hing
+      console.log(error.response?.body)
+    }
+  }
+
+  console.log(soccerboxesBookable, soccerboxesError)
+  if (soccerboxesBookable.length > 0) {
+    console.log('email send')
+    sendEmail(
+      'eniszej@gmail.com',
+      `
+        <h1>Es gibt buchbare Soccerboxen</h1>
+        <ul>
+        ${soccerboxesBookable.map(
+          (soccerbox) =>
+            `<li> <a href="${soccerbox.hrefValue}">
+            Soccerbox ${soccerbox.soccerbox} hier buchen
+            hier buchen</a></li>`,
+        )}
+        ${soccerboxesError.map(
+          (soccerbox) =>
+            `<li> Soccerbox ${soccerbox.soccerbox}, Fehler: ${soccerbox.error}</li>`,
+        )}
+        </ul>
+        `,
+      'Es gibt buchbare Soccerboxen',
+    )
   }
 }
 
-const fiveMinutes = 5 * 60 * 1000 // 5 minutes in milliseconds
+const getSoccerDate = () => {
+  const date = new Date()
 
-// Function to run the script every 5 minutes
-const runEveryFiveMinutes = () => {
-  runScript() // Run the script immediately
+  const dateForSoccer = startOfWeek(addWeeks(date, 2), {
+    weekStartsOn: 2,
+    locale: de,
+  })
 
-  // Set up the interval to run the script every 5 minutes
-  intervalId = setInterval(() => {
-    runScript()
-  }, fiveMinutes)
+  dateForSoccer.setHours(20)
+  dateForSoccer.setMinutes(0)
+  dateForSoccer.setSeconds(0)
+  dateForSoccer.setMilliseconds(0)
+
+  return dateForSoccer
 }
 
 //Local
-// runScript()
-
-// Call the function to start running the script
-runEveryFiveMinutes()
+runScript()
