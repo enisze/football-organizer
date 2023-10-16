@@ -11,112 +11,124 @@ const time2 = '8:00:h'
 const date = new Date()
 const week = getWeek(date)
 
+const days = ['Mo']
+
 describe('Booking reminder', () => {
-  const soccerboxesBookable: { soccerbox: number; hrefValue: string | null }[] =
-    []
+  const soccerboxesBookable: {
+    soccerbox: number
+    hrefValue: string | null
+    day: string
+  }[] = []
   const soccerboxesError: {
     soccerbox: number
-    errror?: string
     error?: string
+    day: string
   }[] = []
   it('Should remind booking"', async () => {
     for (let soccerbox = 1; soccerbox < 4; soccerbox++) {
-      const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox${soccerbox}/index_ger.html?y=2023&w=${
-        week + 1
-      }`
+      for (const day in days) {
+        const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox${soccerbox}/index_ger.html?y=2023&w=${
+          week + 1
+        }`
 
-      const soccerDate = getSoccerDate()
+        const soccerDate = getSoccerDate(day)
 
-      await page.goto(url)
+        await page.goto(url)
 
-      console.log(`starting Soccerbox ${soccerbox}`)
+        console.log(`starting Soccerbox ${soccerbox}`)
 
-      console.log(soccerDate)
+        console.log(soccerDate)
 
-      const classValue = 'Di'
-      const cssSelector = `td[class="${classValue}"][datetime="${soccerDate.toISOString()}"]`
+        const cssSelector = `td[class="${day}"][datetime="${soccerDate.toISOString()}"]`
 
-      try {
-        const tdElement = await page.waitForSelector(cssSelector, {
-          timeout: 5000,
-        })
-
-        if (!tdElement) {
-          soccerboxesError.push({
-            soccerbox,
-            errror: 'Fehler, kein tdElement gefunden',
+        try {
+          const tdElement = await page.waitForSelector(cssSelector, {
+            timeout: 5000,
           })
 
-          continue
-        }
+          if (!tdElement) {
+            soccerboxesError.push({
+              soccerbox,
+              error: 'Fehler, kein tdElement gefunden',
+              day,
+            })
 
-        const linkName = '.uzk15__eventunit'
-        const linkElement = await tdElement.$(linkName)
+            continue
+          }
 
-        if (!linkElement) {
-          soccerboxesError.push({
-            soccerbox,
-            errror: 'Noch nicht buchbar, kein Link',
-          })
-          continue
-        }
+          const linkName = '.uzk15__eventunit'
+          const linkElement = await tdElement.$(linkName)
 
-        const hrefValue = await linkElement.evaluate((el) =>
-          el.getAttribute('href'),
-        )
+          if (!linkElement) {
+            soccerboxesError.push({
+              soccerbox,
+              error: 'Noch nicht buchbar, kein Link',
+              day,
+            })
+            continue
+          }
 
-        const className = '.uzk15__kreis'
+          const hrefValue = await linkElement.evaluate((el) =>
+            el.getAttribute('href'),
+          )
 
-        let colorValue = ''
+          const className = '.uzk15__kreis'
 
-        const color = await tdElement.$(className)
+          let colorValue = ''
 
-        if (!color) {
-          soccerboxesError.push({
-            soccerbox,
-            error: 'Fehler, keine Color gefunden',
-          })
-          continue
-        }
+          const color = await tdElement.$(className)
 
-        colorValue = await color.evaluate(
-          (el) => getComputedStyle(el).backgroundColor,
-        )
+          if (!color) {
+            soccerboxesError.push({
+              soccerbox,
+              error: 'Fehler, keine Color gefunden',
+              day,
+            })
+            continue
+          }
 
-        const targetField = await tdElement.evaluate((el) => el.textContent)
+          colorValue = await color.evaluate(
+            (el) => getComputedStyle(el).backgroundColor,
+          )
 
-        if (
-          targetField?.includes(time) === false &&
-          targetField?.includes(time2) === false
-        ) {
-          soccerboxesError.push({
-            soccerbox,
-            error: `Falsche Uhrzeit ${targetField} ${time}`,
-          })
+          const targetField = await tdElement.evaluate((el) => el.textContent)
 
-          continue
-        }
+          if (
+            targetField?.includes(time) === false &&
+            targetField?.includes(time2) === false
+          ) {
+            soccerboxesError.push({
+              soccerbox,
+              error: `Falsche Uhrzeit ${targetField} ${time}`,
+              day,
+            })
 
-        if (colorValue === redColor) {
-          soccerboxesError.push({
-            soccerbox,
-            error: 'Gebucht',
-          })
+            continue
+          }
 
-          continue
-        }
+          if (colorValue === redColor) {
+            soccerboxesError.push({
+              soccerbox,
+              error: 'Gebucht',
+              day,
+            })
 
-        if (colorValue === greenColor) {
-          soccerboxesBookable.push({
-            soccerbox,
-            hrefValue,
-          })
-        }
-      } catch (error) {
-        //@ts-expect-error there is such at hing
-        if ('response' in error) {
+            continue
+          }
+
+          if (colorValue === greenColor) {
+            soccerboxesBookable.push({
+              soccerbox,
+              hrefValue,
+              day,
+            })
+          }
+        } catch (error) {
           //@ts-expect-error there is such at hing
-          console.log(error.response?.body)
+          if ('response' in error) {
+            //@ts-expect-error there is such at hing
+            console.log(error.response?.body)
+          }
         }
       }
     }
@@ -127,7 +139,7 @@ describe('Booking reminder', () => {
         await sendEmail(
           'eniszej@gmail.com',
           `
-        <h1>Es gibt buchbare Soccerboxen</h1>
+        <h1>Es gibt buchbare Soccerboxen für </h1>
         <ul>
         ${soccerboxesBookable.map(
           (soccerbox) =>
@@ -151,11 +163,15 @@ describe('Booking reminder', () => {
   }, 50000)
 })
 
-const getSoccerDate = () => {
+const getSoccerDate = (day: string) => {
+  const offset = (days.indexOf(day) + 1) as 0 | 1 | 2 | 3 | 4 | 5 | 6
+
   const date = new Date()
 
-  const dateForSoccer = startOfWeek(addWeeks(date, 2), {
-    weekStartsOn: 2,
+  if (offset < 0 || offset > 6) return date
+
+  const dateForSoccer = startOfWeek(addWeeks(date, offset), {
+    weekStartsOn: offset,
     locale: de,
   })
 
