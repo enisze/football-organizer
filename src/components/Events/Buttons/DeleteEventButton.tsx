@@ -16,9 +16,15 @@ export const DeleteEventButton = async ({ id }: { id: string }) => {
           const { addressKey, coordinatesKey } =
             getAddressAndCoordinatesRedisKeys(id)
 
+          if (!redis.isOpen) {
+            await redis.connect()
+          }
+
           await redis.del(addressKey)
           await redis.del(coordinatesKey)
           await prisma.event.delete({ where: { id } })
+
+          await redis.disconnect()
 
           revalidateGroup()
         }}
