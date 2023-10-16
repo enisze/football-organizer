@@ -31,7 +31,7 @@ describe('Booking reminder', () => {
 
       console.log(`starting Soccerbox ${soccerbox}`)
 
-      const classValue = 'Mo'
+      const classValue = 'Di'
       const cssSelector = `td[class="${classValue}"][datetime="${soccerDate.toISOString()}"]`
 
       try {
@@ -121,9 +121,10 @@ describe('Booking reminder', () => {
 
     console.log(soccerboxesBookable, soccerboxesError)
     if (soccerboxesBookable.length > 0) {
-      sendEmail(
-        'eniszej@gmail.com',
-        `
+      try {
+        await sendEmail(
+          'eniszej@gmail.com',
+          `
         <h1>Es gibt buchbare Soccerboxen</h1>
         <ul>
         ${soccerboxesBookable.map(
@@ -138,8 +139,12 @@ describe('Booking reminder', () => {
         )}
         </ul>
         `,
-        'Es gibt buchbare Soccerboxen',
-      )
+          'Es gibt buchbare Soccerboxen',
+        )
+      } catch (error) {
+        console.log('Sending email failed')
+        console.log(error)
+      }
     }
   }, 50000)
 })
@@ -147,8 +152,8 @@ describe('Booking reminder', () => {
 const getSoccerDate = () => {
   const date = new Date()
 
-  const dateForSoccer = startOfWeek(addWeeks(date, 1), {
-    weekStartsOn: 1,
+  const dateForSoccer = startOfWeek(addWeeks(date, 2), {
+    weekStartsOn: 2,
     locale: de,
   })
 
