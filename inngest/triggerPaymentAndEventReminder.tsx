@@ -10,6 +10,8 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
   async ({ event: inngestEvent, prisma, step, logger }) => {
     const id = inngestEvent.data.id
 
+    logger.info('Starting event with', id)
+
     const event = await step.run(
       'Get Event',
       async () =>
@@ -55,7 +57,7 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
     )
 
     const membersToRemindPayment = membersToRemind.filter((user) =>
-      event.participants.find((participant) => participant.id === user.id),
+      joinedParticipantIds.find((id) => id === user.id),
     )
 
     const usersEventReminder: { name: string; email: string }[] = []
@@ -112,6 +114,8 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 
     return {
       success: true,
+      usersEventReminder,
+      usersPaymentReminder,
     }
   },
 )
