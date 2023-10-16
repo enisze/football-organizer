@@ -154,7 +154,7 @@ describe('Booking reminder', () => {
 const getSoccerDate = () => {
   const date = new Date()
 
-  const dateForSoccer = startOfWeek(addWeeks(date, 1), {
+  const dateForSoccer = startOfWeek(addWeeks(date, 2), {
     weekStartsOn: 2,
     locale: de,
   })
