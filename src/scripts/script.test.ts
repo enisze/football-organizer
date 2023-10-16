@@ -31,6 +31,8 @@ describe('Booking reminder', () => {
 
       console.log(`starting Soccerbox ${soccerbox}`)
 
+      console.log(soccerDate)
+
       const classValue = 'Di'
       const cssSelector = `td[class="${classValue}"][datetime="${soccerDate.toISOString()}"]`
 
@@ -152,7 +154,7 @@ describe('Booking reminder', () => {
 const getSoccerDate = () => {
   const date = new Date()
 
-  const dateForSoccer = startOfWeek(addWeeks(date, 2), {
+  const dateForSoccer = startOfWeek(addWeeks(date, 1), {
     weekStartsOn: 2,
     locale: de,
   })
