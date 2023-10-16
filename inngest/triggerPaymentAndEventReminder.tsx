@@ -27,7 +27,7 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
           notificationsEnabled: true,
           groups: {
             some: {
-              id: event.groupId ?? undefined,
+              groupId: event.groupId ?? undefined,
             },
           },
           events: { none: { id: event.id, userEventStatus: 'CANCELED' } },
@@ -43,7 +43,7 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
           notificationsEnabled: true,
           groups: {
             some: {
-              id: event.groupId ?? undefined,
+              groupId: event.groupId ?? undefined,
             },
           },
         },
