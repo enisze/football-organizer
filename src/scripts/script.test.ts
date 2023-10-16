@@ -31,19 +31,24 @@ describe('Booking reminder', () => {
 
       console.log(`starting Soccerbox ${soccerbox}`)
 
-      const classValue = 'Mo'
+      const classValue = 'Di'
       const cssSelector = `td[class="${classValue}"][datetime="${soccerDate.toISOString()}"]`
 
       try {
+        console.log('waiting for selector')
         const tdElement = await page.waitForSelector(cssSelector, {
           timeout: 5000,
         })
+
+        console.log('timeout')
 
         if (!tdElement) {
           soccerboxesError.push({
             soccerbox,
             errror: 'Fehler, kein tdElement gefunden',
           })
+
+          console.log(`Fehler, kein tdElement gefunden`)
 
           continue
         }
@@ -52,6 +57,7 @@ describe('Booking reminder', () => {
         const linkElement = await tdElement.$(linkName)
 
         if (!linkElement) {
+          console.log(`Noch nicht buchbar, kein Link`)
           soccerboxesError.push({
             soccerbox,
             errror: 'Noch nicht buchbar, kein Link',
@@ -70,6 +76,7 @@ describe('Booking reminder', () => {
         const color = await tdElement.$(className)
 
         if (!color) {
+          console.log(`Fehler, keine Color gefunden`)
           soccerboxesError.push({
             soccerbox,
             error: 'Fehler, keine Color gefunden',
@@ -87,6 +94,7 @@ describe('Booking reminder', () => {
           targetField?.includes(time) === false &&
           targetField?.includes(time2) === false
         ) {
+          console.log(`Falsche Uhrzeit ${targetField} ${time}`)
           soccerboxesError.push({
             soccerbox,
             error: `Falsche Uhrzeit ${targetField} ${time}`,
@@ -148,7 +156,7 @@ const getSoccerDate = () => {
   const date = new Date()
 
   const dateForSoccer = startOfWeek(addWeeks(date, 1), {
-    weekStartsOn: 1,
+    weekStartsOn: 2,
     locale: de,
   })
 

@@ -3,6 +3,7 @@ const jestPuppeteerConfig = {
   launch: {
     headless: 'new',
   },
+  browserContext: 'default',
 }
 
 export default jestPuppeteerConfig
