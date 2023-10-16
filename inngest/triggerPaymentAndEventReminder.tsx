@@ -10,10 +10,6 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
   async ({ event: inngestEvent, prisma, step, logger }) => {
     const id = inngestEvent.data.id
 
-    await step.run('logging', async () => {
-      logger.info('Starting event with', id)
-    })
-
     const event = await step.run(
       'Get Event',
       async () =>
@@ -38,6 +34,10 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
         },
       })
 
+      return groupMembersToRemind
+    })
+
+    const membersToRemind2 = await step.run('Get members2', async () => {
       const groupMembersTest = await prisma.user.findMany({
         where: {
           notificationsEnabled: true,
@@ -48,18 +48,16 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
           },
         },
       })
+      return groupMembersTest
+    })
 
-      logger.info('groupMembersToRemind', groupMembersTest)
-
+    const membersToRemind3 = await step.run('Get members3', async () => {
       const groupMembers2 = await prisma.user.findMany({
         where: {
           events: { none: { id: event.id, userEventStatus: 'CANCELED' } },
         },
       })
-
-      logger.info('membersToRemind', groupMembers2)
-
-      return groupMembersToRemind
+      return groupMembers2
     })
 
     if (!event)
