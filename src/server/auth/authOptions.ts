@@ -9,7 +9,6 @@ import type { Adapter } from 'next-auth/adapters'
 import DiscordProvider from 'next-auth/providers/discord'
 import GoogleProvider from 'next-auth/providers/google'
 import { prisma } from '../../server/db/client'
-
 export const authOptions: NextAuthOptions = {
   // figure one or more authentication providers
   adapter: PrismaAdapter(prisma) as Adapter,
