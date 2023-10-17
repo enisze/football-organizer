@@ -1,4 +1,4 @@
-import type { User as PrismaUser } from '@/prisma/generated/client'
+import type { User as PrismaUser } from '@prisma/client'
 import { type DefaultSession } from 'next-auth'
 
 import 'next-auth/jwt'

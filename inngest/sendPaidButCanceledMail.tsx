@@ -1,6 +1,6 @@
 import { PaidButCanceled } from '@/emails/PaidButCanceled'
+import type { Event, User } from '@prisma/client'
 import { render } from '@react-email/render'
-import type { Event, User } from '../prisma/generated/client'
 import { sendEmail } from './createSendEmail'
 
 export const sendPaidButCanceledMail = async (

@@ -1,5 +1,5 @@
+import type { Event } from '@prisma/client'
 import { Section } from '@react-email/components'
-import type { Event } from '../../prisma/generated/client'
 import { transformDate } from '../helpers/transformDate'
 
 export const EventTemplate = ({ event }: { event: Partial<Event> }) => {

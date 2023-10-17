@@ -1,8 +1,5 @@
 import { inngest } from '@/src/server/db/client'
-import type {
-  ParticipantsOnEvents,
-  UserEventStatus,
-} from '../prisma/generated/client'
+import type { ParticipantsOnEvents, UserEventStatus } from '@prisma/client'
 
 export const triggerPaymentAndEventReminder = inngest.createFunction(
   { name: 'Trigger Payment and Event Reminder' },

@@ -1,5 +1,5 @@
-import type { Event } from '@/prisma/generated/client'
 import { formatter } from '@/src/helpers/formatter'
+import type { Event } from '@prisma/client'
 import { differenceInCalendarDays } from 'date-fns'
 import { CalendarDays, Euro } from 'lucide-react'
 import { MapAccordion } from '../Map/MapAccordion'

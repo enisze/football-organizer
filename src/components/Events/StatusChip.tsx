@@ -1,7 +1,7 @@
 import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover'
+import type { EventStatus } from '@prisma/client'
 import { Check, X } from 'lucide-react'
 import type { FunctionComponent } from 'react'
-import type { EventStatus } from '../../../prisma/generated/client'
 import { QuestionMark } from '../QuestionMark'
 
 export const StatusChip: FunctionComponent<{

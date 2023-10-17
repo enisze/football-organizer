@@ -1,9 +1,9 @@
 'use server'
 import { sendPaidButCanceledMail } from '@/inngest/sendPaidButCanceledMail'
-import type { UserEventStatus } from '@/prisma/generated/client'
 import { revalidateGroup } from '@/src/helpers/isOwnerOfGroup'
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { prisma } from '@/src/server/db/client'
+import type { UserEventStatus } from '@prisma/client'
 import { subDays } from 'date-fns'
 import { revalidatePath } from 'next/cache'
 

@@ -1,5 +1,5 @@
-import type { UserEventStatus } from '@/prisma/generated/client'
 import { Avatar, AvatarFallback } from '@/ui/avatar'
+import type { UserEventStatus } from '@prisma/client'
 import type { FunctionComponent } from 'react'
 
 export const AvatarStatus: FunctionComponent<{

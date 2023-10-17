@@ -3,7 +3,7 @@ import { Tailwind } from '@react-email/tailwind'
 import { CustomButton } from './components/CustomButton'
 import { Footer } from './components/Footer'
 
-import type { Event } from '../prisma/generated/client'
+import type { Event } from '@prisma/client'
 import { ContainerBox } from './components/ContainerBox'
 import { EventTemplate } from './components/EventTemplate'
 import { paypalLink } from './helpers/constants'
