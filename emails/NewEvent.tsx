@@ -4,7 +4,7 @@ import { CustomButton } from './components/CustomButton'
 import { EventTemplate } from './components/EventTemplate'
 import { Footer } from './components/Footer'
 
-import type { Event } from '../prisma/generated/client'
+import type { Event } from '@prisma/client'
 import { ContainerBox } from './components/ContainerBox'
 
 export const NewEvent = ({

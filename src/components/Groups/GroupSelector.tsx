@@ -1,5 +1,4 @@
 'use client'
-import type { UserOnGroups } from '@/prisma/generated/client'
 import {
   Select,
   SelectContent,
@@ -8,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/ui/select'
+import type { UserOnGroups } from '@prisma/client'
 import { SelectGroup } from '@radix-ui/react-select'
 import { atom } from 'jotai'
 import { useParams, useRouter } from 'next/navigation'

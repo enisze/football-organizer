@@ -5,12 +5,13 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 
 import { sendWelcomeMail } from '@/inngest/sendWelcomeMail'
 import type { GetServerSidePropsContext } from 'next'
+import type { Adapter } from 'next-auth/adapters'
 import DiscordProvider from 'next-auth/providers/discord'
 import GoogleProvider from 'next-auth/providers/google'
 import { prisma } from '../../server/db/client'
 export const authOptions: NextAuthOptions = {
   // figure one or more authentication providers
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(prisma) as Adapter,
   session: {
     strategy: 'jwt',
     updateAge: 1000 * 60 * 60 * 24,

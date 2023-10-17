@@ -1,10 +1,10 @@
-import type { UserEventStatus } from '@/prisma/generated/client'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/ui/accordion'
+import type { UserEventStatus } from '@prisma/client'
 import { User } from 'lucide-react'
 import { AvatarStatus } from './AvatarStatus'
 import { EventCardAdminPaymentArea } from './EventCardAdminPaymentArea'

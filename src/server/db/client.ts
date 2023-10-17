@@ -1,5 +1,5 @@
+import { PrismaClient } from '@prisma/client'
 import { EventSchemas, Inngest, InngestMiddleware } from 'inngest'
-import { PrismaClient } from '../../../prisma/generated/client/index.js'
 
 import { env } from '@/src/env/server.mjs'
 import { z } from 'zod'

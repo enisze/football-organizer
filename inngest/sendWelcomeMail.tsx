@@ -1,6 +1,6 @@
 import { WelcomeEmail } from '@/emails/Welcome'
+import type { User } from '@prisma/client'
 import { render } from '@react-email/render'
-import type { User } from '../prisma/generated/client'
 import { sendEmail } from './createSendEmail'
 
 export const sendWelcomeMail = async (user: User | null) => {

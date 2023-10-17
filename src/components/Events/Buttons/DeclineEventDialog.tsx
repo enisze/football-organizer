@@ -1,5 +1,4 @@
 'use client'
-import type { Payment, UserEventStatus } from '@/prisma/generated/client'
 import { setParticipatingStatus } from '@/src/app/group/[groupId]/actions'
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
@@ -10,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/ui/dialog'
+import type { Payment, UserEventStatus } from '@prisma/client'
 import { X } from 'lucide-react'
 import type { FunctionComponent } from 'react'
 import { useState } from 'react'

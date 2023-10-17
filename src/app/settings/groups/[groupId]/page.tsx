@@ -1,9 +1,9 @@
 import { Button } from '@/ui/button'
 import { Separator } from '@/ui/separator'
 
-import type { Group } from '@/prisma/generated/client'
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { Container } from '@/ui/container'
+import type { Group } from '@prisma/client'
 import { XIcon } from 'lucide-react'
 import { DeleteGroupForm } from './DeleteGroupForm'
 

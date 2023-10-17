@@ -3,9 +3,9 @@ import { google } from 'googleapis'
 import { getEuroAmount } from '../src/helpers/getEuroAmount'
 
 import { isDateInCertainRange } from '@/src/helpers/isDateInCertainRange'
+import type { Event, Payment } from '@prisma/client'
 import { differenceInDays, subDays } from 'date-fns'
 import type { OAuth2ClientOptions } from 'google-auth-library'
-import type { Event, Payment } from '../prisma/generated/client'
 
 import { prisma } from '@/src/server/db/client'
 
