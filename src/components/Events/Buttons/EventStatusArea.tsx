@@ -45,7 +45,11 @@ export const EventStatusArea = async ({ id }: { id: string }) => {
           type="submit"
           formAction={async () => {
             'use server'
-            await setParticipatingStatus({ eventId: id, status: 'JOINED' })
+            try {
+              await setParticipatingStatus({ eventId: id, status: 'JOINED' })
+            } catch (error) {
+              console.log('error', error)
+            }
           }}
           className="w-full"
         >
