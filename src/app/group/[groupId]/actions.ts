@@ -62,7 +62,8 @@ export const setParticipatingStatus = async ({
   if (
     event?.participants.filter(
       (participant) => participant.userEventStatus === 'JOINED',
-    ).length === event?.maxParticipants
+    ).length === event?.maxParticipants &&
+    status === 'JOINED'
   )
     throw new Error('PRECONDITION_FAILED')
 
