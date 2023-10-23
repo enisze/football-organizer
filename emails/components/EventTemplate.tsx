@@ -1,3 +1,4 @@
+import { formatter } from '@/src/helpers/formatter'
 import type { Event } from '@prisma/client'
 import { Section } from '@react-email/components'
 import { transformDate } from '../helpers/transformDate'
@@ -28,7 +29,7 @@ export const EventTemplate = ({ event }: { event: Partial<Event> }) => {
       </div>
       <div className="text-start p-1">
         <strong className="pr-2">Preis:</strong>
-        {cost && cost / (maxParticipants ?? 10)} Euro
+        {cost && formatter.format(cost / (maxParticipants ?? 10))}
       </div>
     </Section>
   )
