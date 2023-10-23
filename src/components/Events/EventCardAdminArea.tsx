@@ -75,7 +75,7 @@ export const EventCardAdminArea = async ({
         <BookEventButton id={eventId} />
         <Button
           variant="outline"
-          onClick={async () => {
+          formAction={async () => {
             'use server'
             await prisma.event.update({
               data: { status: 'CANCELED', bookingDate: null },
