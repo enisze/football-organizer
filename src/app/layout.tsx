@@ -18,6 +18,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="h-full dark:bg-slate-900 dark:text-slate-50 min-h-screen bg-white font-sans text-slate-900 antialiased">
+        <meta
+          name="google-site-verification"
+          content="LMJ7nv6Hz3ij0v5y7cxbJfTE8PAIxT9HFRQ54JMPgN4"
+        />
         <Providers>
           <Navbar />
           {children}
