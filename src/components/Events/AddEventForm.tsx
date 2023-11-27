@@ -2,12 +2,15 @@ import { createEvent } from '@/src/app/settings/groups/[groupId]/actions'
 import { defaultValues } from '@/src/helpers/constants'
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
+import { Label } from '@/ui/label'
+import { Switch } from '@/ui/switch'
 import { useParams } from 'next/navigation'
 
 export const AddEventForm = ({ onSubmit }: { onSubmit: () => void }) => {
   const params = useParams()
 
   const groupId = params?.groupId as string
+
   return (
     <form className="flex flex-col justify-center gap-2">
       <TextField
@@ -39,6 +42,11 @@ export const AddEventForm = ({ onSubmit }: { onSubmit: () => void }) => {
         name="endTime"
         text=""
       />
+
+      <div className="flex gap-x-2 items-center">
+        <Label htmlFor="environment">Indoor</Label>
+        <Switch name="environment" defaultValue={defaultValues.environment} />
+      </div>
 
       <TextField
         label="Kosten"

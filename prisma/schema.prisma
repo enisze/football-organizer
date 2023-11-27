@@ -21,6 +21,11 @@ model Tokens {
   @@index([ownerId])
 }
 
+enum EventEnvironemnt {
+  INDOOR
+  OUTDOOR
+}
+
 model Event {
   id              String                 @id @default(cuid())
   createdAt       DateTime               @default(now())
@@ -31,6 +36,7 @@ model Event {
   startTime       String
   bookingDate     DateTime?
   cost            Float
+  environment     EventEnvironemnt       @default(OUTDOOR)
   status          EventStatus            @default(CREATED)
   maxParticipants Int                    @default(10)
   participants    ParticipantsOnEvents[]

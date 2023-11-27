@@ -109,6 +109,9 @@ const eventSchema = z
     cost: z.coerce.number().default(defaultValues.cost),
     maxParticipants: z.coerce.number().default(defaultValues.maxParticipants),
     groupId: z.string().default(''),
+    environment: z
+      .enum(['OUTDOOR', 'INDOOR'])
+      .default(defaultValues.environment),
   })
   .nullish()
 
@@ -131,10 +134,14 @@ export const createEvent = async ({
     endTime: formData.get('endTime'),
     cost: formData.get('cost'),
     maxParticipants: formData.get('maxParticipants'),
+    environment: formData.get('environment'),
     groupId,
   }
 
-  const parsed = eventSchema.parse(data)
+  const parsed = eventSchema.parse({
+    ...data,
+    environment: data.environment === 'on' ? 'INDOOR' : 'OUTDOOR',
+  })
 
   if (!parsed) return
 

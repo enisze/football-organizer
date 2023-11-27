@@ -7,6 +7,7 @@ import { PaymentArea } from '../PaymentArea'
 import { AddToCalendarButton } from './Buttons/AddToCalendarButton'
 import { EventStatusArea } from './Buttons/EventStatusArea'
 import { DateInfo } from './DateInfo'
+import { EnvironmentInfo } from './EnvironmentInfo'
 import { EventCardAdminArea } from './EventCardAdminArea'
 import { ParticipantsAreaServer } from './ParticipantsAreaServer'
 import { StatusChip } from './StatusChip'
@@ -30,6 +31,7 @@ export const EventCard = async ({ event, location }: EventCardProps) => {
     status,
     maxParticipants,
     bookingDate,
+    environment,
   } = event
 
   const currentDate = new Date()
@@ -51,6 +53,7 @@ export const EventCard = async ({ event, location }: EventCardProps) => {
             <DateInfo date={date} />
 
             <div className="flex items-center gap-x-2">
+              <EnvironmentInfo environment={environment} />
               <span className={`font-bold ${fullEventStringStyle}`}>
                 {fullEventString}
               </span>
