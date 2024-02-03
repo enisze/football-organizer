@@ -3,6 +3,7 @@ name: Cronjob for payments
 on:
   schedule:
     - cron: '1 */6 * * *'
+  workflow_dispatch:
 
 jobs:
   cronjob:
