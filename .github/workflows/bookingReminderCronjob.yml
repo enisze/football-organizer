@@ -11,11 +11,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
-      - uses: actions/cache@v3
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - uses: oven-sh/setup-bun@v1
 
       - name: Install Node.js and Yarn
         uses: actions/setup-node@v3
@@ -25,10 +21,10 @@ jobs:
           NODE_OPTIONS: --max_old_space_size=4096
 
       - name: Install dependencies
-        run: yarn install
+        run: bun install
 
       - name: Run
         env:
           NODE_OPTIONS: --max_old_space_size=4096
           SENDINBLUE_API_KEY: ${{secrets.SENDINBLUE_API_KEY}}
-        run: yarn test
+        run: bun test
