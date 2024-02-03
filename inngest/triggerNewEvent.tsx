@@ -8,13 +8,14 @@ export const triggerNewEvent = inngest.createFunction(
   async ({ step, event: inngestEvent, prisma, logger }) => {
     const eventId = inngestEvent.data.id
 
-    await step.run('get event', async () => {
+    const event = await step.run('get event', async () => {
       logger.info('getting event')
-    })
 
-    const event = await prisma.event.findUnique({
-      where: { id: eventId },
-      include: { participants: true },
+      const event = await prisma.event.findUnique({
+        where: { id: eventId },
+        include: { participants: true },
+      })
+      return event
     })
 
     if (!event) return { message: `No event found ${eventId}` }
