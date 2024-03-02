@@ -1,6 +1,5 @@
 import { sendEmail } from '@/inngest/createSendEmail'
-import { addWeeks, getWeek, startOfWeek } from 'date-fns'
-import { de } from 'date-fns/locale'
+import { addWeeks, getWeek, setDay } from 'date-fns'
 
 const redColor = 'rgb(175, 18, 29)'
 const greenColor = 'rgb(131, 176, 34)'
@@ -26,8 +25,8 @@ describe('Booking reminder', () => {
   }[] = []
   it('Should remind booking"', async () => {
     for (let soccerbox = 1; soccerbox < 4; soccerbox++) {
-      for (const day in days) {
-        const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox${soccerbox}/index_ger.html?y=2023&w=${
+      for (const day of days) {
+        const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox${soccerbox}/index_ger.html?y=2024&w=${
           week + 1
         }`
 
@@ -37,98 +36,88 @@ describe('Booking reminder', () => {
 
         console.log(`starting Soccerbox ${soccerbox}`)
 
-        console.log(soccerDate)
-
         const cssSelector = `td[class="${day}"][datetime="${soccerDate.toISOString()}"]`
 
-        try {
-          const tdElement = await page.waitForSelector(cssSelector, {
-            timeout: 5000,
+        const tdElement = await page.waitForSelector(cssSelector, {
+          timeout: 5000,
+        })
+
+        if (!tdElement) {
+          soccerboxesError.push({
+            soccerbox,
+            error: 'Fehler, kein tdElement gefunden',
+            day,
           })
 
-          if (!tdElement) {
-            soccerboxesError.push({
-              soccerbox,
-              error: 'Fehler, kein tdElement gefunden',
-              day,
-            })
+          continue
+        }
 
-            continue
-          }
+        const linkName = '.uzk15__eventunit'
+        const linkElement = await tdElement.$(linkName)
 
-          const linkName = '.uzk15__eventunit'
-          const linkElement = await tdElement.$(linkName)
+        if (!linkElement) {
+          soccerboxesError.push({
+            soccerbox,
+            error: 'Noch nicht buchbar, kein Link',
+            day,
+          })
+          continue
+        }
 
-          if (!linkElement) {
-            soccerboxesError.push({
-              soccerbox,
-              error: 'Noch nicht buchbar, kein Link',
-              day,
-            })
-            continue
-          }
+        const hrefValue = await linkElement.evaluate((el) =>
+          el.getAttribute('href'),
+        )
 
-          const hrefValue = await linkElement.evaluate((el) =>
-            el.getAttribute('href'),
-          )
+        const className = '.uzk15__kreis'
 
-          const className = '.uzk15__kreis'
+        let colorValue = ''
 
-          let colorValue = ''
+        const color = await tdElement.$(className)
 
-          const color = await tdElement.$(className)
+        if (!color) {
+          soccerboxesError.push({
+            soccerbox,
+            error: 'Fehler, keine Color gefunden',
+            day,
+          })
+          continue
+        }
 
-          if (!color) {
-            soccerboxesError.push({
-              soccerbox,
-              error: 'Fehler, keine Color gefunden',
-              day,
-            })
-            continue
-          }
+        colorValue = await color.evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        )
 
-          colorValue = await color.evaluate(
-            (el) => getComputedStyle(el).backgroundColor,
-          )
+        const targetField = await tdElement.evaluate((el) => el.textContent)
 
-          const targetField = await tdElement.evaluate((el) => el.textContent)
+        if (
+          targetField?.includes(time) === false &&
+          targetField?.includes(time2) === false
+        ) {
+          soccerboxesError.push({
+            soccerbox,
+            error: `Falsche Uhrzeit ${targetField} ${time}`,
+            day,
+          })
 
-          if (
-            targetField?.includes(time) === false &&
-            targetField?.includes(time2) === false
-          ) {
-            soccerboxesError.push({
-              soccerbox,
-              error: `Falsche Uhrzeit ${targetField} ${time}`,
-              day,
-            })
+          continue
+        }
 
-            continue
-          }
+        if (colorValue === redColor) {
+          soccerboxesError.push({
+            soccerbox,
+            error: 'Gebucht',
+            day,
+          })
 
-          if (colorValue === redColor) {
-            soccerboxesError.push({
-              soccerbox,
-              error: 'Gebucht',
-              day,
-            })
+          continue
+        }
 
-            continue
-          }
-
-          if (colorValue === greenColor) {
-            soccerboxesBookable.push({
-              soccerbox,
-              hrefValue,
-              day,
-            })
-          }
-        } catch (error) {
-          //@ts-expect-error there is such at hing
-          if ('response' in error) {
-            //@ts-expect-error there is such at hing
-            console.log(error.response?.body)
-          }
+        if (colorValue === greenColor) {
+          soccerboxesBookable.push({
+            soccerbox,
+            hrefValue,
+            day,
+          })
         }
       }
     }
@@ -170,10 +159,14 @@ const getSoccerDate = (day: string) => {
 
   if (offset < 0 || offset > 6) return date
 
-  const dateForSoccer = startOfWeek(addWeeks(date, offset), {
-    weekStartsOn: offset,
-    locale: de,
-  })
+  const weeks = addWeeks(date, 1)
+
+  const dateForSoccer = setDay(weeks, 1)
+
+  // const dateForSoccer = startOfWeek(weeks, {
+  //   weekStartsOn: offset,
+  //   locale: de,
+  // })
 
   dateForSoccer.setHours(20)
   dateForSoccer.setMinutes(0)
