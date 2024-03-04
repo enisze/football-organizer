@@ -32,7 +32,16 @@ export default async function AddToGroup({
     <>
       <div className="flex flex-col justify-center items-center w-full">
         <div>{`${data?.ownerName} hat dich eingeladen seiner Gruppe ${data?.groupName} beizutreten.`}</div>
-        <Button onClick={() => addUser({ userId, JWT })}>Beitreten</Button>
+        <form>
+          <Button
+            formAction={async () => {
+              'use server'
+              addUser({ userId, JWT })
+            }}
+          >
+            Beitreten
+          </Button>
+        </form>
         <OrganizerLink href={'/'} className="justify-center">
           Zurück zu den Events
         </OrganizerLink>
