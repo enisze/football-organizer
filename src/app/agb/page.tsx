@@ -98,50 +98,49 @@ const Page = () => {
         Kommunikation per E-Mail) Sicherheitslücken aufweisen kann. Ein
         lückenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht
         möglich. Hinweis zur verantwortlichen Stelle Die verantwortliche Stelle
-        für die Datenverarbeitung auf dieser Website ist: Enis Zejnilovic
-        Wüllnerstraße 132 50935 Köln Telefon: [Telefonnummer der
-        verantwortlichen Stelle] E-Mail: eniszejnilovic@gmail.com 3/ 7
-        Verantwortliche Stelle ist die natürliche oder juristische Person, die
-        allein oder gemeinsam mit anderen über die Zwecke und Mittel der
-        Verarbeitung von personenbezogenen Daten (z. B. Namen, E-Mail-Adressen
-        o. Ä.) entscheidet. Speicherdauer Soweit innerhalb dieser
-        Datenschutzerklärung keine speziellere Speicherdauer genannt wurde,
-        verbleiben Ihre personenbezogenen Daten bei uns, bis der Zweck für die
-        Datenverarbeitung entfällt. Wenn Sie ein berechtigtes Löschersuchen
-        geltend machen oder eine Einwilligung zur Datenverarbeitung widerrufen,
-        werden Ihre Daten gelöscht, sofern wir keine anderen rechtlich
-        zulässigen Gründe für die Speicherung Ihrer personenbezogenen Daten
-        haben (z. B. steuer- oder handelsrechtliche Aufbewahrungsfristen); im
-        letztgenannten Fall erfolgt die Löschung nach Fortfall dieser Gründe.
-        Allgemeine Hinweise zu den Rechtsgrundlagen der Datenverarbeitung auf
-        dieser Website Sofern Sie in die Datenverarbeitung eingewilligt haben,
-        verarbeiten wir Ihre personenbezogenen Daten auf Grundlage von Art. 6
-        Abs. 1 lit. a DSGVO bzw. Art. 9 Abs. 2 lit. a DSGVO, sofern besondere
-        Datenkategorien nach Art. 9 Abs. 1 DSGVO verarbeitet werden. Im Falle
-        einer ausdrücklichen Einwilligung in die Übertragung personenbezogener
-        Daten in Drittstaaten erfolgt die Datenverarbeitung außerdem auf
-        Grundlage von Art. 49 Abs. 1 lit. a DSGVO. Sofern Sie in die Speicherung
-        von Cookies oder in den Zugriff auf Informationen in Ihr Endgerät (z. B.
-        via Device-Fingerprinting) eingewilligt haben, erfolgt die
-        Datenverarbeitung zusätzlich auf Grundlage von § 25 Abs. 1 TTDSG. Die
-        Einwilligung ist jederzeit widerrufbar. Sind Ihre Daten zur
-        Vertragserfüllung oder zur Durchführung vorvertraglicher Maßnahmen
-        erforderlich, verarbeiten wir Ihre Daten auf Grundlage des Art. 6 Abs. 1
-        lit. b DSGVO. Des Weiteren verarbeiten wir Ihre Daten, sofern diese zur
-        Erfüllung einer rechtlichen Verpflichtung erforderlich sind auf
-        Grundlage von Art. 6 Abs. 1 lit. c DSGVO. Die Datenverarbeitung kann
-        ferner auf Grundlage unseres berechtigten Interesses nach Art. 6 Abs. 1
-        lit. f DSGVO erfolgen. Über die jeweils im Einzelfall einschlägigen
-        Rechtsgrundlagen wird in den folgenden Absätzen dieser
-        Datenschutzerklärung informiert. Empfänger von personenbezogenen Daten
-        Im Rahmen unserer Geschäftstätigkeit arbeiten wir mit verschiedenen
-        externen Stellen zusammen. Dabei ist teilweise auch eine Übermittlung
-        von personenbezogenen Daten an diese externen Stellen erforderlich. Wir
-        geben personenbezogene Daten nur dann an externe Stellen weiter, wenn
-        dies im Rahmen einer Vertragserfüllung erforderlich ist, wenn wir
-        gesetzlich hierzu verpflichtet sind (z. B. Weitergabe von Daten an
-        Steuerbehörden), wenn wir ein berechtigtes Interesse nach Art. 6 Abs. 1
-        lit. f DSGVO an der Weitergabe haben oder wenn eine sonstige
+        für die Datenverarbeitung auf dieser Website ist: Enis Zejnilovic 50935
+        Köln Telefon: [Telefonnummer der verantwortlichen Stelle] E-Mail:
+        eniszejnilovic@gmail.com 3/ 7 Verantwortliche Stelle ist die natürliche
+        oder juristische Person, die allein oder gemeinsam mit anderen über die
+        Zwecke und Mittel der Verarbeitung von personenbezogenen Daten (z. B.
+        Namen, E-Mail-Adressen o. Ä.) entscheidet. Speicherdauer Soweit
+        innerhalb dieser Datenschutzerklärung keine speziellere Speicherdauer
+        genannt wurde, verbleiben Ihre personenbezogenen Daten bei uns, bis der
+        Zweck für die Datenverarbeitung entfällt. Wenn Sie ein berechtigtes
+        Löschersuchen geltend machen oder eine Einwilligung zur
+        Datenverarbeitung widerrufen, werden Ihre Daten gelöscht, sofern wir
+        keine anderen rechtlich zulässigen Gründe für die Speicherung Ihrer
+        personenbezogenen Daten haben (z. B. steuer- oder handelsrechtliche
+        Aufbewahrungsfristen); im letztgenannten Fall erfolgt die Löschung nach
+        Fortfall dieser Gründe. Allgemeine Hinweise zu den Rechtsgrundlagen der
+        Datenverarbeitung auf dieser Website Sofern Sie in die Datenverarbeitung
+        eingewilligt haben, verarbeiten wir Ihre personenbezogenen Daten auf
+        Grundlage von Art. 6 Abs. 1 lit. a DSGVO bzw. Art. 9 Abs. 2 lit. a
+        DSGVO, sofern besondere Datenkategorien nach Art. 9 Abs. 1 DSGVO
+        verarbeitet werden. Im Falle einer ausdrücklichen Einwilligung in die
+        Übertragung personenbezogener Daten in Drittstaaten erfolgt die
+        Datenverarbeitung außerdem auf Grundlage von Art. 49 Abs. 1 lit. a
+        DSGVO. Sofern Sie in die Speicherung von Cookies oder in den Zugriff auf
+        Informationen in Ihr Endgerät (z. B. via Device-Fingerprinting)
+        eingewilligt haben, erfolgt die Datenverarbeitung zusätzlich auf
+        Grundlage von § 25 Abs. 1 TTDSG. Die Einwilligung ist jederzeit
+        widerrufbar. Sind Ihre Daten zur Vertragserfüllung oder zur Durchführung
+        vorvertraglicher Maßnahmen erforderlich, verarbeiten wir Ihre Daten auf
+        Grundlage des Art. 6 Abs. 1 lit. b DSGVO. Des Weiteren verarbeiten wir
+        Ihre Daten, sofern diese zur Erfüllung einer rechtlichen Verpflichtung
+        erforderlich sind auf Grundlage von Art. 6 Abs. 1 lit. c DSGVO. Die
+        Datenverarbeitung kann ferner auf Grundlage unseres berechtigten
+        Interesses nach Art. 6 Abs. 1 lit. f DSGVO erfolgen. Über die jeweils im
+        Einzelfall einschlägigen Rechtsgrundlagen wird in den folgenden Absätzen
+        dieser Datenschutzerklärung informiert. Empfänger von personenbezogenen
+        Daten Im Rahmen unserer Geschäftstätigkeit arbeiten wir mit
+        verschiedenen externen Stellen zusammen. Dabei ist teilweise auch eine
+        Übermittlung von personenbezogenen Daten an diese externen Stellen
+        erforderlich. Wir geben personenbezogene Daten nur dann an externe
+        Stellen weiter, wenn dies im Rahmen einer Vertragserfüllung erforderlich
+        ist, wenn wir gesetzlich hierzu verpflichtet sind (z. B. Weitergabe von
+        Daten an Steuerbehörden), wenn wir ein berechtigtes Interesse nach Art.
+        6 Abs. 1 lit. f DSGVO an der Weitergabe haben oder wenn eine sonstige
         Rechtsgrundlage die Datenweitergabe erlaubt. Beim Einsatz von
         Auftragsverarbeitern geben wir personenbezogene Daten unserer Kunden nur
         auf Grundlage eines gültigen Vertrags über Auftragsverarbeitung weiter.
