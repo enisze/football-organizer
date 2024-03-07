@@ -1,37 +1,39 @@
-import { getAddressAndCoordinatesRedisKeys } from '@/src/helpers/getAddressAndCoordinatesRedisKeys'
-import { revalidateGroup } from '@/src/helpers/isOwnerOfGroup'
-import { prisma } from '@/src/server/db/client'
+'use client'
 import { Button } from '@/ui/button'
 
-import { redis } from '@/src/server/db/redis'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/ui/dialog'
+import { deleteEvent } from './actions'
 
 export const DeleteEventButton = async ({ id }: { id: string }) => {
   return (
-    <form className="w-full">
-      <Button
-        variant="outline"
-        formAction={async () => {
-          'use server'
-
-          const { addressKey, coordinatesKey } =
-            getAddressAndCoordinatesRedisKeys(id)
-
-          if (!redis.isOpen) {
-            await redis.connect()
-          }
-
-          await redis.del(addressKey)
-          await redis.del(coordinatesKey)
-          await prisma.event.delete({ where: { id } })
-
-          await redis.disconnect()
-
-          revalidateGroup()
-        }}
-        className="w-full"
-      >
-        Delete
-      </Button>
-    </form>
+    <Dialog>
+      <DialogTrigger asChild className="flex flex-col gap-y-2 justify-start">
+        <Button variant="outline">Delete</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Delete Event</DialogTitle>
+          <DialogDescription>Are you sure?</DialogDescription>
+        </DialogHeader>
+        <form className="w-full">
+          <Button
+            variant="outline"
+            formAction={async () => {
+              await deleteEvent(id)
+            }}
+            className="w-full"
+          >
+            Delete
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
