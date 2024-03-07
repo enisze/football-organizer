@@ -37,7 +37,7 @@ const EventPage = async ({ params }: { params: { eventId: string } }) => {
             <span>Zur Startseite</span>
           </Link>
         </div>
-        <EventCard event={event} location={data.get(id)} />
+        <EventCard event={event} location={data?.get(id)} />
       </div>
     </div>
   )
