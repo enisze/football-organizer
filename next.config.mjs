@@ -13,7 +13,6 @@ const config = {
   reactStrictMode: true,
   experimental: {
     typedRoutes: true,
-    serverActions: true,
   },
   transpilePackages: ['@trpc/next-layout'],
 }
