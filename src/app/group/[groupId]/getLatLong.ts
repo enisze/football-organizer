@@ -60,6 +60,8 @@ export const getLatLong = async (
     return map
   } catch (error) {
     console.log(error)
+
+    return null
     throw new Error('INTERNAL_SERVER_ERROR')
   }
 }
