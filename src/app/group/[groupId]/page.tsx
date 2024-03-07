@@ -47,7 +47,7 @@ const MainPage = async ({
 
               return (
                 <li key={event.id}>
-                  <EventCard event={event} location={data.get(event.id)} />
+                  <EventCard event={event} location={data?.get(event.id)} />
                 </li>
               )
             })}
