@@ -3,6 +3,7 @@
 import { defaultValues } from '@/src/helpers/constants'
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { inngest, prisma } from '@/src/server/db/client'
+import { nanoid } from 'nanoid'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
@@ -35,6 +36,7 @@ export const createGroup = async (formData: FormData) => {
   await prisma.group.create({
     data: {
       name,
+      code: nanoid(6),
       owner: {
         connect: {
           id,

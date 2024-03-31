@@ -11,6 +11,7 @@ import { prisma } from '@/src/server/db/client'
 import { sign } from 'jsonwebtoken'
 import { redirect } from 'next/navigation'
 import { ClipboardButton } from './ClipboardButton'
+import { ClipboardCode } from './ClipboardCode'
 import { EventDialog } from './EventDialog'
 import { NameChange } from './NameChange'
 import { deleteUserFromGroup } from './actions'
@@ -61,6 +62,7 @@ const GroupSettings = async ({
             )?.maximalMembers}`}</p>
 
             <ClipboardButton token={token} />
+            <ClipboardCode code={groupData?.code ?? ''} />
           </div>
           <EventDialog />
 

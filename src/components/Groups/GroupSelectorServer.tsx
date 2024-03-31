@@ -21,9 +21,15 @@ export const GroupSelectorServer = async () => {
       {groups.length > 0 ? (
         <GroupSelector groups={groups} />
       ) : (
-        <OrganizerLink href="/settings/groups" className="text-sm">
-          Gruppe erstellen
-        </OrganizerLink>
+        <div className="flex flex-col gap-2">
+          <OrganizerLink href="/settings/groups" className="text-sm">
+            Gruppe erstellen
+          </OrganizerLink>
+
+          <OrganizerLink href="/group/enter" className="text-sm">
+            Gruppe beitreten
+          </OrganizerLink>
+        </div>
       )}
     </>
   )

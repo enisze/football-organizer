@@ -115,6 +115,7 @@ model Group {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   events       Event[]
+  code         String?         @unique
   users        UserOnGroups[]
   pricingModel PricingModel   @default(FREE)
   owner        User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
