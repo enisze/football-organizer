@@ -1,24 +1,10 @@
+import { Hero } from '@/src/components/Heading'
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { Button } from '@/ui/button'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
-import { Hero } from '../components/Heading'
-import { getServerComponentAuthSession } from '../server/auth/authOptions'
-import { prisma } from '../server/db/client'
 
 const Home = async () => {
   const session = await getServerComponentAuthSession()
-
-  const group = await prisma.userOnGroups.findFirst({
-    where: {
-      user: {
-        id: session?.user?.id,
-      },
-    },
-  })
-
-  if (group) {
-    redirect('/group/' + group.groupId)
-  }
 
   return (
     <div className="h-full">

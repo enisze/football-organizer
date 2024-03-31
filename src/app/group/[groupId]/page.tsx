@@ -5,6 +5,7 @@ import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { prisma } from '@/src/server/db/client'
 import { redis } from '@/src/server/db/redis'
+import { redirect } from 'next/navigation'
 import { getLatLong } from './getLatLong'
 
 const MainPage = async ({
@@ -31,6 +32,19 @@ const MainPage = async ({
   }
 
   const session = await getServerComponentAuthSession()
+
+  if (!session?.user?.id) redirect('/api/auth/signin')
+
+  const isInGroup = await prisma.userOnGroups.findFirst({
+    where: {
+      groupId,
+      id: session?.user?.id,
+    },
+  })
+
+  if (!isInGroup) {
+    return <div>Du gehörst nicht zu dieser Gruppe</div>
+  }
 
   return (
     <div className="flex flex-col pb-2">

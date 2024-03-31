@@ -22,7 +22,7 @@ export const addToGroup = async (code: string) => {
       id: session?.user?.id,
     },
     select: {
-      group: { select: { name: true } },
+      group: { select: { name: true, id: true } },
     },
   })
 
@@ -35,7 +35,7 @@ export const addToGroup = async (code: string) => {
     },
     select: {
       id: true,
-      group: { select: { name: true } },
+      group: { select: { name: true, id: true } },
     },
   })
 
