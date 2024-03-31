@@ -1,11 +1,13 @@
 'use server'
 
+import { prisma } from '@/src/server/db/client'
+
 import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 
 export const addToGroup = async (code: string) => {
   const session = await getServerComponentAuthSession()
 
-  const group = await prisma?.group.findFirst({
+  const group = await prisma.group.findFirst({
     where: {
       code,
     },
@@ -14,7 +16,7 @@ export const addToGroup = async (code: string) => {
 
   if (!group) throw new Error('Group not found')
 
-  const isOnGrouo = await prisma?.userOnGroups.findFirst({
+  const isOnGrouo = await prisma.userOnGroups.findFirst({
     where: {
       groupId: group?.id,
       id: session?.user?.id,
@@ -26,7 +28,7 @@ export const addToGroup = async (code: string) => {
 
   if (isOnGrouo) return isOnGrouo
 
-  const result = await prisma?.userOnGroups.create({
+  const result = await prisma.userOnGroups.create({
     data: {
       groupId: group?.id,
       id: session?.user?.id,
