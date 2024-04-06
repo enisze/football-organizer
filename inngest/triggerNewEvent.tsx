@@ -72,11 +72,24 @@ export const triggerNewEvent = inngest.createFunction(
     })
     await step.sleepUntil(addDays(new Date(event.createdAt), 7))
 
+    const newEvent = await step.run('get event', async () => {
+      logger.info('getting event after some days')
+
+      const event = await prisma.event.findUnique({
+        where: { id: eventId, NOT: { status: 'CANCELED' } },
+        include: { participants: true },
+      })
+      return event
+    })
+
+    if (!newEvent)
+      return { message: `No event found ${eventId} / Or event canceled` }
+
     const usersEventReminder: { name: string; email: string }[] = []
 
     const allGroupMembers = await step.run('getting members', async () => {
       const groupMembers = await prisma.group.findUnique({
-        where: { id: event.groupId ?? undefined },
+        where: { id: newEvent.groupId ?? undefined },
         select: { users: true },
       })
 
@@ -91,7 +104,7 @@ export const triggerNewEvent = inngest.createFunction(
       return allGroupMembers
     })
 
-    if (!event)
+    if (!newEvent)
       return {
         message: 'No event',
       }
@@ -101,15 +114,15 @@ export const triggerNewEvent = inngest.createFunction(
         message: 'No group members',
       }
 
-    const { participants } = event
+    const { participants } = newEvent
 
     const canceledParticipantIds = getParticipantIdsByStatus(
-      event.participants,
+      newEvent.participants,
       'CANCELED',
     )
 
     const joinedParticipantIds = getParticipantIdsByStatus(
-      event.participants,
+      newEvent.participants,
       'JOINED',
     )
 
@@ -119,7 +132,7 @@ export const triggerNewEvent = inngest.createFunction(
         !joinedParticipantIds.includes(user?.id ?? ''),
     )
 
-    if (participants.length < event.maxParticipants) {
+    if (participants.length < newEvent.maxParticipants) {
       membersToRemindEvent
         .filter((user) => user?.notificationsEnabled)
         .forEach((user) => {
@@ -133,7 +146,7 @@ export const triggerNewEvent = inngest.createFunction(
         name: 'event/reminderEmail',
         data: {
           user,
-          id: event.id,
+          id: newEvent.id,
         },
       })
     })
