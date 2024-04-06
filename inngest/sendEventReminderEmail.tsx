@@ -3,20 +3,19 @@ import { inngest } from '@/src/server/db/client'
 import { render } from '@react-email/components'
 import { differenceInCalendarDays } from 'date-fns'
 import { sendEmail } from './createSendEmail'
+import { getParticipantIdsByStatus } from './triggerPaymentAndEventReminder'
 
 export const sendEventReminderEmail = inngest.createFunction(
   { name: 'Send Event Reminder Email' },
   { event: 'event/reminderEmail' },
 
   async ({ event: inngestEvent, prisma, step, logger }) => {
-    const id = inngestEvent.data.id as string
+    const id = inngestEvent.data.id
 
     const user = inngestEvent.data.user as {
       name: string
       email: string
     }
-
-    const participantsAmount = inngestEvent.data.participantsAmount as number
 
     const event = await step.run(
       'get event',
@@ -28,6 +27,11 @@ export const sendEventReminderEmail = inngest.createFunction(
     )
 
     if (!event) return
+
+    const participantsAmount = getParticipantIdsByStatus(
+      event.participants,
+      'JOINED',
+    ).length
 
     const html = render(
       <EventReminder

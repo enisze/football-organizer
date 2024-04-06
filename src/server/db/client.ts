@@ -27,7 +27,6 @@ export const Event__ReminderEmail = z.object({
     name: z.string(),
   }),
   id: z.string(),
-  participantsAmount: z.number(),
 })
 
 export const Event__PaymentReminderEmail = z.object({

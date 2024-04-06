@@ -92,7 +92,6 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
         data: {
           user,
           id: event.id,
-          participantsAmount: joinedParticipantIds.length,
         },
       })
     })
