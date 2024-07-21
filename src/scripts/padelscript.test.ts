@@ -118,22 +118,33 @@ describe('Booking reminder', () => {
     console.log(padelBookable, padelError)
     if (padelBookable.length > 0) {
       try {
-        await sendEmail(
-          'eniszej@gmail.com',
-          `
+
+        const emailContent = `
         <h1>Es gibt buchbare Padelboxen für </h1>
         <ul>
         ${padelBookable.map(
-            (soccerbox) =>
-              `<li> <a href="${soccerbox.hrefValue}">
+          (soccerbox) =>
+            `<li> <a href="${soccerbox.hrefValue}">
             Padel hier buchen
-            hier buchen</a></li>`
-          )}
+            </a></li>`
+        )}
         ${padelError.map(
-            (soccerbox) => `<li> Padel Fehler: ${soccerbox.error}</li>`
-          )}
+          (soccerbox) => `<li> Padel Fehler: ${soccerbox.error}</li>`
+        )}
         </ul>
-        `,
+        `
+
+
+        await sendEmail(
+          'eniszej@gmail.com',
+          emailContent,
+
+          'Es gibt buchbare Padelboxen'
+        )
+
+        await sendEmail(
+          'max.sander.97@gmx.de',
+          emailContent,
           'Es gibt buchbare Padelboxen'
         )
       } catch (error) {
