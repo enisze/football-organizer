@@ -1,4 +1,4 @@
-name: Cronjob for bookingReminder
+name: Cronjob for Padel reminder
 
 on:
   schedule:
