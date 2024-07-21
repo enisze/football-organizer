@@ -5,53 +5,53 @@ import { prisma } from '@/src/server/db/client'
 import { revalidatePath } from 'next/cache'
 
 export const updatePaypalName = async (formData: FormData) => {
-  'use server'
+	'use server'
 
-  const session = await getServerComponentAuthSession()
-  const paypalName = formData.get('paypalName')?.toString()
+	const session = await getServerComponentAuthSession()
+	const paypalName = formData.get('paypalName')?.toString()
 
-  const id = session?.user?.id
+	const id = session?.user?.id
 
-  if (!id) return null
+	if (!id) return null
 
-  await prisma.user.update({
-    where: { id },
-    data: { paypalName },
-  })
+	await prisma.user.update({
+		where: { id },
+		data: { paypalName }
+	})
 
-  revalidatePath('/settings/user')
+	revalidatePath('/settings/user')
 }
 
 export async function updateNotification() {
-  'use server'
+	'use server'
 
-  const session = await getServerComponentAuthSession()
+	const session = await getServerComponentAuthSession()
 
-  const id = session?.user?.id
-  if (!session || !id) {
-    return { message: 'failed' }
-  }
+	const id = session?.user?.id
+	if (!session || !id) {
+		return { message: 'failed' }
+	}
 
-  const userInfo = await prisma.user.findUnique({
-    where: { id },
-    select: { notificationsEnabled: true, paypalName: true },
-  })
+	const userInfo = await prisma.user.findUnique({
+		where: { id },
+		select: { notificationsEnabled: true, paypalName: true }
+	})
 
-  const notificationsEnabled = userInfo?.notificationsEnabled
+	const notificationsEnabled = userInfo?.notificationsEnabled
 
-  await prisma.user.update({
-    where: { id },
-    data: { notificationsEnabled: !notificationsEnabled },
-    select: { notificationsEnabled: true },
-  })
+	await prisma.user.update({
+		where: { id },
+		data: { notificationsEnabled: !notificationsEnabled },
+		select: { notificationsEnabled: true }
+	})
 }
 
 export async function deleteUser() {
-  'use server'
+	'use server'
 
-  const session = await getServerComponentAuthSession()
-  const id = session?.user?.id
-  await prisma.user.delete({
-    where: { id },
-  })
+	const session = await getServerComponentAuthSession()
+	const id = session?.user?.id
+	await prisma.user.delete({
+		where: { id }
+	})
 }

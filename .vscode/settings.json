@@ -1,8 +1,8 @@
 {
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "jest.runMode": {
-    "type": "on-demand",
-    "coverage": false
-  }
+	"typescript.tsdk": "node_modules/typescript/lib",
+	"typescript.enablePromptUseWorkspaceTsdk": true,
+	"jest.runMode": {
+		"type": "on-demand",
+		"coverage": false
+	}
 }

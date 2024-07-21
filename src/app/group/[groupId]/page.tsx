@@ -9,66 +9,66 @@ import { redirect } from 'next/navigation'
 import { getLatLong } from './getLatLong'
 
 const MainPage = async ({
-  params: { groupId },
+	params: { groupId }
 }: {
-  params: { groupId: string }
+	params: { groupId: string }
 }) => {
-  const isOwner = await isOwnerOfGroup()
-  const events = await prisma.event.findMany({
-    where: {
-      groupId,
-    },
-    orderBy: { date: 'asc' },
-  })
+	const isOwner = await isOwnerOfGroup()
+	const events = await prisma.event.findMany({
+		where: {
+			groupId
+		},
+		orderBy: { date: 'asc' }
+	})
 
-  const eventInfo = events.map((event) => {
-    return { address: event.address, id: event.id }
-  })
+	const eventInfo = events.map((event) => {
+		return { address: event.address, id: event.id }
+	})
 
-  const data = await getLatLong(eventInfo)
+	const data = await getLatLong(eventInfo)
 
-  if (redis.isOpen) {
-    await redis.disconnect()
-  }
+	if (redis.isOpen) {
+		await redis.disconnect()
+	}
 
-  const session = await getServerComponentAuthSession()
+	const session = await getServerComponentAuthSession()
 
-  if (!session?.user?.id) redirect('/api/auth/signin')
+	if (!session?.user?.id) redirect('/api/auth/signin')
 
-  const isInGroup = await prisma.userOnGroups.findFirst({
-    where: {
-      groupId,
-      id: session?.user?.id,
-    },
-  })
+	const isInGroup = await prisma.userOnGroups.findFirst({
+		where: {
+			groupId,
+			id: session?.user?.id
+		}
+	})
 
-  if (!isInGroup) {
-    return <div>Du gehörst nicht zu dieser Gruppe</div>
-  }
+	if (!isInGroup) {
+		return <div>Du gehörst nicht zu dieser Gruppe</div>
+	}
 
-  return (
-    <div className="flex flex-col pb-2">
-      <div className="m-8 flex flex-col gap-y-3 justify-center items-center">
-        <ul className="flex flex-col gap-y-2">
-          {events &&
-            events?.length > 0 &&
-            events.map(async (event) => {
-              const payment = await prisma.payment.findFirst({
-                where: { eventId: event.id, userId: session?.user?.id },
-              })
-              if (addDays(event.date, 3) < new Date() && !isOwner && payment)
-                return null
+	return (
+		<div className='flex flex-col pb-2'>
+			<div className='m-8 flex flex-col gap-y-3 justify-center items-center'>
+				<ul className='flex flex-col gap-y-2'>
+					{events &&
+						events?.length > 0 &&
+						events.map(async (event) => {
+							const payment = await prisma.payment.findFirst({
+								where: { eventId: event.id, userId: session?.user?.id }
+							})
+							if (addDays(event.date, 3) < new Date() && !isOwner && payment)
+								return null
 
-              return (
-                <li key={event.id}>
-                  <EventCard event={event} location={data?.get(event.id)} />
-                </li>
-              )
-            })}
-        </ul>
-      </div>
-    </div>
-  )
+							return (
+								<li key={event.id}>
+									<EventCard event={event} location={data?.get(event.id)} />
+								</li>
+							)
+						})}
+				</ul>
+			</div>
+		</div>
+	)
 }
 
 export default MainPage

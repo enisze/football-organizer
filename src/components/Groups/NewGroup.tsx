@@ -10,20 +10,20 @@ import { createGroup } from '@/src/app/settings/groups/[groupId]/actions'
 // })
 
 export const NewGroup = async () => {
-  return (
-    <form className="flex flex-col gap-y-2">
-      <h3>Neue Gruppe erstellen</h3>
+	return (
+		<form className='flex flex-col gap-y-2'>
+			<h3>Neue Gruppe erstellen</h3>
 
-      <TextField label="Name" text="" name="groupName" />
+			<TextField label='Name' text='' name='groupName' />
 
-      <Button
-        type="submit"
-        variant="outline"
-        className="w-fit"
-        formAction={createGroup}
-      >
-        Gruppe erstellen
-      </Button>
-    </form>
-  )
+			<Button
+				type='submit'
+				variant='outline'
+				className='w-fit'
+				formAction={createGroup}
+			>
+				Gruppe erstellen
+			</Button>
+		</form>
+	)
 }

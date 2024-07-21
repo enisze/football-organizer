@@ -10,31 +10,28 @@ const time2 = '8:00:h'
 const date = new Date()
 const week = getWeek(date)
 
-const days = ['Mo']
+const days = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
+
+const times = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
 
 describe('Booking reminder', () => {
-	const soccerboxesBookable: {
-		soccerbox: number
+	const padelBookable: {
 		hrefValue: string | null
 		day: string
 	}[] = []
-	const soccerboxesError: {
-		soccerbox: number
+	const padelError: {
 		error?: string
 		day: string
+		hour: number
 	}[] = []
 	it('Should remind booking"', async () => {
-		for (let soccerbox = 1; soccerbox < 4; soccerbox++) {
-			for (const day of days) {
-				const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox${soccerbox}/index_ger.html?y=2024&w=${
-					week + 1
-				}`
+		for (const day of days) {
+			const url = `https://unisport.koeln/sportspiele/padel/padel_platzreservierung/index_ger.html?y=2024&w=${week + 1}`
 
-				const soccerDate = getSoccerDate(day)
+			for (const hour of times) {
+				const soccerDate = getSoccerDate(day, hour)
 
 				await page.goto(url)
-
-				console.log(`starting Soccerbox ${soccerbox}`)
 
 				const cssSelector = `td[class="${day}"][datetime="${soccerDate.toISOString()}"]`
 
@@ -43,10 +40,10 @@ describe('Booking reminder', () => {
 				})
 
 				if (!tdElement) {
-					soccerboxesError.push({
-						soccerbox,
+					padelError.push({
 						error: 'Fehler, kein tdElement gefunden',
-						day
+						day,
+						hour
 					})
 
 					continue
@@ -56,10 +53,10 @@ describe('Booking reminder', () => {
 				const linkElement = await tdElement.$(linkName)
 
 				if (!linkElement) {
-					soccerboxesError.push({
-						soccerbox,
+					padelError.push({
 						error: 'Noch nicht buchbar, kein Link',
-						day
+						day,
+						hour
 					})
 					continue
 				}
@@ -75,10 +72,10 @@ describe('Booking reminder', () => {
 				const color = await tdElement.$(className)
 
 				if (!color) {
-					soccerboxesError.push({
-						soccerbox,
+					padelError.push({
 						error: 'Fehler, keine Color gefunden',
-						day
+						day,
+						hour
 					})
 					continue
 				}
@@ -93,28 +90,27 @@ describe('Booking reminder', () => {
 					targetField?.includes(time) === false &&
 					targetField?.includes(time2) === false
 				) {
-					soccerboxesError.push({
-						soccerbox,
+					padelError.push({
 						error: `Falsche Uhrzeit ${targetField} ${time}`,
-						day
+						day,
+						hour
 					})
 
 					continue
 				}
 
 				if (colorValue === redColor) {
-					soccerboxesError.push({
-						soccerbox,
+					padelError.push({
 						error: 'Gebucht',
-						day
+						day,
+						hour
 					})
 
 					continue
 				}
 
 				if (colorValue === greenColor) {
-					soccerboxesBookable.push({
-						soccerbox,
+					padelBookable.push({
 						hrefValue,
 						day
 					})
@@ -122,23 +118,22 @@ describe('Booking reminder', () => {
 			}
 		}
 
-		console.log(soccerboxesBookable, soccerboxesError)
-		if (soccerboxesBookable.length > 0) {
+		console.log(padelBookable, padelError)
+		if (padelBookable.length > 0) {
 			try {
 				await sendEmail(
 					'eniszej@gmail.com',
 					`
         <h1>Es gibt buchbare Soccerboxen für </h1>
         <ul>
-        ${soccerboxesBookable.map(
+        ${padelBookable.map(
 					(soccerbox) =>
 						`<li> <a href="${soccerbox.hrefValue}">
-            Soccerbox ${soccerbox.soccerbox} hier buchen
+            Padel hier buchen
             hier buchen</a></li>`
 				)}
-        ${soccerboxesError.map(
-					(soccerbox) =>
-						`<li> Soccerbox ${soccerbox.soccerbox}, Fehler: ${soccerbox.error}</li>`
+        ${padelError.map(
+					(soccerbox) => `<li> Padel Fehler: ${soccerbox.error}</li>`
 				)}
         </ul>
         `,
@@ -149,10 +144,10 @@ describe('Booking reminder', () => {
 				console.log(error)
 			}
 		}
-	}, 50000)
+	}, 5000)
 })
 
-const getSoccerDate = (day: string) => {
+const getSoccerDate = (day: string, hour: number) => {
 	const offset = (days.indexOf(day) + 1) as 0 | 1 | 2 | 3 | 4 | 5 | 6
 
 	const date = new Date()
@@ -163,12 +158,7 @@ const getSoccerDate = (day: string) => {
 
 	const dateForSoccer = setDay(weeks, 1)
 
-	// const dateForSoccer = startOfWeek(weeks, {
-	//   weekStartsOn: offset,
-	//   locale: de,
-	// })
-
-	dateForSoccer.setHours(20)
+	dateForSoccer.setHours(hour)
 	dateForSoccer.setMinutes(0)
 	dateForSoccer.setSeconds(0)
 	dateForSoccer.setMilliseconds(0)

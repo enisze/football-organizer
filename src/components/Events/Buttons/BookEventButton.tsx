@@ -3,57 +3,57 @@ import { bookEvent } from '@/src/app/group/[groupId]/actions'
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger
 } from '@/ui/dialog'
 import { useState } from 'react'
 
 export const BookEventButton = ({ id }: { id: string }) => {
-  const [open, setOpen] = useState(false)
-  return (
-    <Dialog open={open} onOpenChange={() => setOpen(!open)}>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="w-full" type="button">
-          Book
-        </Button>
-      </DialogTrigger>
+	const [open, setOpen] = useState(false)
+	return (
+		<Dialog open={open} onOpenChange={() => setOpen(!open)}>
+			<DialogTrigger asChild>
+				<Button variant='outline' className='w-full' type='button'>
+					Book
+				</Button>
+			</DialogTrigger>
 
-      <DialogContent className="w-50">
-        <DialogHeader>
-          <DialogTitle>
-            <h2 id="modal-title">Event buchen</h2>
-          </DialogTitle>
-        </DialogHeader>
+			<DialogContent className='w-50'>
+				<DialogHeader>
+					<DialogTitle>
+						<h2 id='modal-title'>Event buchen</h2>
+					</DialogTitle>
+				</DialogHeader>
 
-        <div className="flex flex-col justify-center">
-          <form>
-            <TextField
-              label="Datum"
-              type="date"
-              name="bookingdate"
-              text={''}
-              className="w-36"
-            />
-            <Button
-              variant="outline"
-              color="info"
-              formAction={async (formData: FormData) => {
-                await bookEvent({
-                  eventId: id,
-                  formData,
-                })
-                setOpen(false)
-              }}
-              className="w-36"
-            >
-              Buchen
-            </Button>
-          </form>
-        </div>
-      </DialogContent>
-    </Dialog>
-  )
+				<div className='flex flex-col justify-center'>
+					<form>
+						<TextField
+							label='Datum'
+							type='date'
+							name='bookingdate'
+							text={''}
+							className='w-36'
+						/>
+						<Button
+							variant='outline'
+							color='info'
+							formAction={async (formData: FormData) => {
+								await bookEvent({
+									eventId: id,
+									formData
+								})
+								setOpen(false)
+							}}
+							className='w-36'
+						>
+							Buchen
+						</Button>
+					</form>
+				</div>
+			</DialogContent>
+		</Dialog>
+	)
 }

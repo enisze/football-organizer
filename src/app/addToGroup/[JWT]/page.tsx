@@ -7,100 +7,100 @@ import { verifyJWT } from '@/src/server/verifyJWT'
 import { decode } from 'jsonwebtoken'
 
 export default async function AddToGroup({
-  params,
+	params
 }: {
-  params: { JWT: string }
+	params: { JWT: string }
 }) {
-  const JWT = params?.JWT
+	const JWT = params?.JWT
 
-  const session = await getServerComponentAuthSession()
+	const session = await getServerComponentAuthSession()
 
-  const userId = session?.user?.id
+	const userId = session?.user?.id
 
-  const data = await getDataFromJWT({ JWT })
+	const data = await getDataFromJWT({ JWT })
 
-  const isParticipating = await isParticipatingUser({
-    groupId: data.id,
-    userId: session?.user?.id,
-  })
+	const isParticipating = await isParticipatingUser({
+		groupId: data.id,
+		userId: session?.user?.id
+	})
 
-  if (isParticipating) {
-    return <div>Already member</div>
-  }
+	if (isParticipating) {
+		return <div>Already member</div>
+	}
 
-  return (
-    <>
-      <div className="flex flex-col justify-center items-center w-full">
-        <div>{`${data?.ownerName} hat dich eingeladen seiner Gruppe ${data?.groupName} beizutreten.`}</div>
-        <form>
-          <Button
-            formAction={async () => {
-              'use server'
-              addUser({ userId, JWT })
-            }}
-          >
-            Beitreten
-          </Button>
-        </form>
-        <OrganizerLink href={'/'} className="justify-center">
-          Zurück zu den Events
-        </OrganizerLink>
-      </div>
-    </>
-  )
+	return (
+		<>
+			<div className='flex flex-col justify-center items-center w-full'>
+				<div>{`${data?.ownerName} hat dich eingeladen seiner Gruppe ${data?.groupName} beizutreten.`}</div>
+				<form>
+					<Button
+						formAction={async () => {
+							'use server'
+							addUser({ userId, JWT })
+						}}
+					>
+						Beitreten
+					</Button>
+				</form>
+				<OrganizerLink href={'/'} className='justify-center'>
+					Zurück zu den Events
+				</OrganizerLink>
+			</div>
+		</>
+	)
 }
 
 const getDataFromJWT = async ({ JWT }: { JWT: string }) => {
-  const isValid = verifyJWT(JWT)
+	const isValid = verifyJWT(JWT)
 
-  if (!isValid) throw new Error('BAD_REQUEST')
+	if (!isValid) throw new Error('BAD_REQUEST')
 
-  const data = decode(JWT) as {
-    id: string
-    groupName: string
-    ownerName: string
-  }
+	const data = decode(JWT) as {
+		id: string
+		groupName: string
+		ownerName: string
+	}
 
-  return data
+	return data
 }
 
 const addUser = async ({
-  userId,
-  JWT,
+	userId,
+	JWT
 }: {
-  userId: string | undefined
-  JWT: string
+	userId: string | undefined
+	JWT: string
 }) => {
-  if (!userId) throw new Error('BAD_REQUEST')
-  const isValid = verifyJWT(JWT)
+	if (!userId) throw new Error('BAD_REQUEST')
+	const isValid = verifyJWT(JWT)
 
-  if (!isValid) throw new Error('BAD_REQUEST')
+	if (!isValid) throw new Error('BAD_REQUEST')
 
-  const res = decode(JWT) as {
-    id: string
-    groupName: string
-    ownerName: string
-  }
+	const res = decode(JWT) as {
+		id: string
+		groupName: string
+		ownerName: string
+	}
 
-  await prisma.group.update({
-    data: {
-      users: { create: { id: userId } },
-    },
-    where: { id: res.id },
-  })
+	await prisma.group.update({
+		data: {
+			users: { create: { id: userId } }
+		},
+		where: { id: res.id }
+	})
 }
 
 const isParticipatingUser = async ({
-  userId,
-  groupId,
+	userId,
+	groupId
 }: {
-  userId: string | undefined
-  groupId: string
+	userId: string | undefined
+	groupId: string
 }) => {
-  if (!userId) return false
-  const res = await prisma.group.findUnique({
-    where: { id: groupId, users: { some: { id: userId } } },
-  })
+	if (!userId) return false
+	const res = await prisma.group.findUnique({
+		where: { id: groupId, users: { some: { id: userId } } }
+	})
 
-  return res ? true : false
+	return res ? true : false
 }

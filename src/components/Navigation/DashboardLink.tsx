@@ -5,22 +5,22 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 export const DashboardLink = ({ groupId }: { groupId: string | undefined }) => {
-  const { data } = useSession()
+	const { data } = useSession()
 
-  const pathname = usePathname()
+	const pathname = usePathname()
 
-  const onDashboard =
-    pathname?.includes('/group') && !pathname?.includes('/settings')
+	const onDashboard =
+		pathname?.includes('/group') && !pathname?.includes('/settings')
 
-  return (
-    <>
-      {!onDashboard && data?.user?.id && (
-        <form>
-          <Link href={groupId ? `/group/${groupId}` : '/group'}>
-            <Button variant="outline">Dashboard</Button>
-          </Link>
-        </form>
-      )}
-    </>
-  )
+	return (
+		<>
+			{!onDashboard && data?.user?.id && (
+				<form>
+					<Link href={groupId ? `/group/${groupId}` : '/group'}>
+						<Button variant='outline'>Dashboard</Button>
+					</Link>
+				</form>
+			)}
+		</>
+	)
 }

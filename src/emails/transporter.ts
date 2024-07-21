@@ -1,13 +1,13 @@
 import {
-  TransactionalEmailsApi,
-  TransactionalEmailsApiApiKeys,
-} from "@sendinblue/client";
+	TransactionalEmailsApi,
+	TransactionalEmailsApiApiKeys
+} from '@sendinblue/client'
 
-const apiInstance = new TransactionalEmailsApi();
+const apiInstance = new TransactionalEmailsApi()
 
 apiInstance.setApiKey(
-  TransactionalEmailsApiApiKeys.apiKey,
-  process.env.SENDINBLUE_API_KEY ?? ""
-);
+	TransactionalEmailsApiApiKeys.apiKey,
+	process.env.SENDINBLUE_API_KEY ?? ''
+)
 
-export default apiInstance;
+export default apiInstance

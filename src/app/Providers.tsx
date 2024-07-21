@@ -5,14 +5,14 @@ import { ThemeProvider } from 'next-themes'
 import type { ReactNode } from 'react'
 
 const Providers = ({ children }: { children: ReactNode }) => {
-  return (
-    <SessionProvider>
-      <ThemeProvider attribute="class">
-        <Toaster />
-        {children}
-      </ThemeProvider>
-    </SessionProvider>
-  )
+	return (
+		<SessionProvider>
+			<ThemeProvider attribute='class'>
+				<Toaster />
+				{children}
+			</ThemeProvider>
+		</SessionProvider>
+	)
 }
 
 export default Providers

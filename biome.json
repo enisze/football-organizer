@@ -1,0 +1,59 @@
+{
+	"$schema": "https://biomejs.dev/schemas/1.8.2/schema.json",
+	"organizeImports": {
+		"enabled": false
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"suspicious": {
+				"noExplicitAny": "off",
+				"noArrayIndexKey": "off"
+			},
+			"security": {
+				"noDangerouslySetInnerHtml": "off"
+			},
+			"style": {
+				"noNonNullAssertion": "off",
+				"noVar": "off"
+			},
+			"a11y": {
+				"useButtonType": "off",
+				"noSvgWithoutTitle": "off"
+			}
+		}
+	},
+	"formatter": {
+		"enabled": true,
+		"formatWithErrors": false,
+		"indentStyle": "tab",
+		"indentWidth": 2,
+		"lineWidth": 80,
+		"lineEnding": "lf",
+		"ignore": []
+	},
+
+	"javascript": {
+		"formatter": {
+			"jsxQuoteStyle": "single",
+			"arrowParentheses": "always",
+			"semicolons": "asNeeded",
+			"trailingCommas": "none",
+			"quoteProperties": "asNeeded",
+			"bracketSpacing": true,
+			"bracketSameLine": false,
+			"quoteStyle": "single"
+		},
+		"globals": ["_", "_.*"]
+	},
+	"json": {
+		"parser": {
+			"allowComments": true
+		}
+	},
+	"files": {
+		"maxSize": 15000000,
+		"ignore": ["*.next*", "./biome.json", "*/dist/*"]
+	}
+}

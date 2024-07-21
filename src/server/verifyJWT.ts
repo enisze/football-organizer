@@ -1,15 +1,15 @@
 import { verify } from 'jsonwebtoken'
 
 export const verifyJWT = (JWT: string) => {
-  let isJWTValid = false
+	let isJWTValid = false
 
-  verify(JWT, process.env.JWT_SECRET as string, (error) => {
-    if (error) {
-      return
-    }
+	verify(JWT, process.env.JWT_SECRET as string, (error) => {
+		if (error) {
+			return
+		}
 
-    isJWTValid = true
-  })
+		isJWTValid = true
+	})
 
-  return isJWTValid
+	return isJWTValid
 }
