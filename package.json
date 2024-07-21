@@ -16,7 +16,9 @@
 		"start-script": "tsx -r dotenv-flow/config ./src/scripts/script.ts",
 		"test": "jest",
 		"format:write": "bunx @biomejs/biome format --write .",
-		"lint:write": "bunx @biomejs/biome lint --write ."
+		"lint:write": "bunx @biomejs/biome lint --write .",
+    "padelScript": "tsx -r dotenv-flow/config ./src/scripts/padelScript.ts"
+
 	},
 	"dependencies": {
 		"@google-cloud/local-auth": "2.1.1",
