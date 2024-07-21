@@ -33,7 +33,7 @@ describe('Booking reminder', () => {
     })
 
     for (const day of days) {
-      const url = `https://unisport.koeln/sportspiele/padel/padel_platzreservierung/index_ger.html?y=2024&w=${week}`
+      const url = `https://unisport.koeln/sportspiele/padel/padel_platzreservierung/index_ger.html?y=2024&w=${week + 1}`
 
       console.log(padelError)
 
@@ -162,7 +162,7 @@ const getSoccerDate = (day: string, hour: number) => {
 
   // if (offset < 0 || offset > 6) return date
 
-  const weeks = addWeeks(date, 0)
+  const weeks = addWeeks(date, 1)
 
   const dateForSoccer = setDay(weeks, offset)
 
