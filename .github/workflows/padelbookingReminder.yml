@@ -2,7 +2,7 @@ name: Cronjob for Padel reminder
 
 on:
   schedule:
-    - cron: '*/20 8-10 * * 1'
+    - cron: '*/5 7-10 * * 1'
   workflow_dispatch:
 
 jobs:
