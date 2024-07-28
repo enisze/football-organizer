@@ -132,7 +132,7 @@ describe('Booking reminder', () => {
             </a></li>`
         )}
         ${padelError.map(
-          (padelbox) => `<li> Padel Fehler: ${padelbox.error}</li>`
+          (padelbox) => `<li> Padel Fehler: ${padelbox.error} für ${padelbox.day} ${padelbox.hour}</li>`
         )}
         </ul>
         `
