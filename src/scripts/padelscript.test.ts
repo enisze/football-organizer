@@ -17,6 +17,7 @@ describe('Booking reminder', () => {
     hrefValue: string | null
     day: string
     soccerdate: string
+    hour: number
   }[] = []
   const padelError: {
     error?: string
@@ -112,8 +113,10 @@ describe('Booking reminder', () => {
             hrefValue,
             day,
             soccerdate:
-              new Date(soccerDate).toLocaleDateString('de-DE')
+              new Date(soccerDate).toLocaleDateString('de-DE'),
+            hour
           })
+
         }
       }
     }
@@ -128,7 +131,7 @@ describe('Booking reminder', () => {
         ${padelBookable.map(
           (padelbox) =>
             `<li> <a href="${padelbox.hrefValue}">
-            Padel hier buchen für Tag: ${padelbox.day}. Genaues Datum: ${padelbox.soccerdate}.
+            Padel hier buchen für Tag: ${padelbox.day}. Genaues Datum: ${padelbox.soccerdate}, ${padelbox.day} ${padelbox.hour}.
             </a></li>`
         )}
         ${padelError.map(
