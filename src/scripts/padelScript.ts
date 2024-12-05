@@ -32,7 +32,6 @@ const script = async () => {
 	await page.setViewport({
 		height: 1080,
 		width: 1920
-
 	})
 
 	for (const day of days) {
@@ -41,11 +40,9 @@ const script = async () => {
 		for (const hour of times) {
 			const soccerDate = getSoccerDate(day, hour)
 
-
 			await page.goto(url)
 
 			const cssSelector = `td[class="${day}"][datetime="${soccerDate.toISOString()}"]`
-
 
 			const tdElement = await page.waitForSelector(cssSelector, {
 				timeout: 5000
@@ -96,7 +93,6 @@ const script = async () => {
 				(el) => getComputedStyle(el).backgroundColor
 			)
 
-
 			if (colorValue === redColor) {
 				padelError.push({
 					error: 'Gebucht',
@@ -144,7 +140,6 @@ const script = async () => {
 	}
 }
 
-
 const getSoccerDate = (day: string, hour: number) => {
 	const offset = (days.indexOf(day) + 1) as 0 | 1 | 2 | 3 | 4 | 5 | 6
 
@@ -163,6 +158,5 @@ const getSoccerDate = (day: string, hour: number) => {
 
 	return dateForSoccer
 }
-
 
 script()

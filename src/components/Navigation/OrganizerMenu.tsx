@@ -47,8 +47,8 @@ export const OrganizerMenu: FunctionComponent<{
 
 	const name = data.user.name
 	const res = name?.split(' ')
-	const first = res ? res[0]?.charAt(0) ?? 'X' : 'X'
-	const second = res ? res[1]?.charAt(0) ?? 'X' : 'X'
+	const first = res ? (res[0]?.charAt(0) ?? 'X') : 'X'
+	const second = res ? (res[1]?.charAt(0) ?? 'X') : 'X'
 
 	return (
 		<DropdownMenu open={open} onOpenChange={setOpen}>
