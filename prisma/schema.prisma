@@ -28,21 +28,36 @@ enum EventEnvironemnt {
 
 model Event {
   id              String                 @id @default(cuid())
-  createdAt       DateTime               @default(now())
+    createdAt       DateTime               @default(now())
   updatedAt       DateTime               @updatedAt
   address         String
   date            DateTime
   endTime         String
   startTime       String
-  bookingDate     DateTime?
+bookingDate     DateTime?
   cost            Float
   environment     EventEnvironemnt       @default(OUTDOOR)
   status          EventStatus            @default(CREATED)
   maxParticipants Int                    @default(10)
   participants    ParticipantsOnEvents[]
-  Group           Group?                 @relation(fields: [groupId], references: [id], onDelete: Cascade)
+    Group           Group?                 @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId         String?
 
+  @@index([groupId])
+}
+
+model UserAvailability {
+  id        String   @id @default(cuid())
+  userId    String
+  groupId   String
+  date      DateTime
+  status    String   // AVAILABLE, UNAVAILABLE
+  user      User     @relation(fields: [userId], references: [id])
+  group     Group    @relation(fields: [groupId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
   @@index([groupId])
 }
 
@@ -121,6 +136,7 @@ model Group {
   owner        User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
   @@index([ownerId])
+  UserAvailability UserAvailability[]
 }
 
 model User {
@@ -140,6 +156,8 @@ model User {
   groups               UserOnGroups[]
   ownedGroups          Group[]
   Tokens               Tokens[]
+
+  UserAvailability UserAvailability[]
 }
 
 model UserOnGroups {

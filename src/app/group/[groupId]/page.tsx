@@ -1,19 +1,20 @@
-import { EventCard } from '@/src/components/Events/EventCard'
-import { addDays } from 'date-fns'
+import { isOwnerOfGroup } from "@/src/helpers/isOwnerOfGroup"
+import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
+import { redirect } from "next/navigation"
+import { getLatLong } from "./getLatLong"
 
-import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { EventCard } from "@/src/components/Events/EventCard"
 import { prisma } from '@/src/server/db/client'
-import { redis } from '@/src/server/db/redis'
-import { redirect } from 'next/navigation'
-import GroupAvailabilityPage from './GroupPage'
-import MyAvailabilityPage from './MyAvailability'
-import { getLatLong } from './getLatLong'
+import { redis } from "@/src/server/db/redis"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs"
+import { addDays } from "date-fns"
+import GroupAvailabilityPage from "./GroupPage"
+import MyAvailabilityPage from "./MyAvailability"
 
 const MainPage = async ({
-	params: { groupId }
+  params: { groupId }
 }: {
-	params: { groupId: string }
+  params: { groupId: string }
 }) => {
 	const isOwner = await isOwnerOfGroup()
 	const events = await prisma.event.findMany({
@@ -48,8 +49,15 @@ const MainPage = async ({
 		return <div>Du gehörst nicht zu dieser Gruppe</div>
 	}
 
-	return (
-		<div className='flex flex-col pb-2'>
+  return (
+    <div className="flex flex-col pb-2">
+      <Tabs defaultValue="events" className="w-full">
+        <TabsList className="w-full">
+          <TabsTrigger value="events">Aktuelle Events</TabsTrigger>
+          <TabsTrigger value="myAvailability">Meine Verfügbarkeit</TabsTrigger>
+          <TabsTrigger value="groupAvailability">Gruppenverfügbarkeit</TabsTrigger>
+        </TabsList>
+        <TabsContent value="events">
 			<div className='m-8 flex flex-col gap-y-3 justify-center items-center'>
 				<ul className='flex flex-col gap-y-2'>
 					{events &&
@@ -69,10 +77,16 @@ const MainPage = async ({
 						})}
 				</ul>
 			</div>
-			<GroupAvailabilityPage/>
-			<MyAvailabilityPage/>
-		</div>
-	)
+        </TabsContent>
+        <TabsContent value="myAvailability">
+          <MyAvailabilityPage />
+        </TabsContent>
+        <TabsContent value="groupAvailability">
+          <GroupAvailabilityPage/>
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
 }
 
 export default MainPage
