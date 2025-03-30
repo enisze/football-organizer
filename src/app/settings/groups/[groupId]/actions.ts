@@ -19,7 +19,11 @@ export const deleteGroup = authedActionClient
 	})
 
 export const createGroup = authedActionClient
-	.schema(z.object({ groupName: z.string() }))
+	.schema(
+		zfd.formData({
+			groupName: zfd.text()
+		})
+	)
 	.action(async ({ parsedInput: { groupName }, ctx: { userId } }) => {
 		await prisma.group.create({
 			data: {

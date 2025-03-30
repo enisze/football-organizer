@@ -37,7 +37,6 @@ export const updateNotification = authedActionClient
 	})
 
 export const deleteUser = authedActionClient
-	.schema(z.object({}))
 	.action(async ({ ctx: { userId } }) => {
 		await prisma.user.delete({
 			where: { id: userId }
