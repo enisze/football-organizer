@@ -6,6 +6,8 @@ import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { prisma } from '@/src/server/db/client'
 import { redis } from '@/src/server/db/redis'
 import { redirect } from 'next/navigation'
+import GroupAvailabilityPage from './GroupPage'
+import MyAvailabilityPage from './MyAvailability'
 import { getLatLong } from './getLatLong'
 
 const MainPage = async ({
@@ -67,6 +69,8 @@ const MainPage = async ({
 						})}
 				</ul>
 			</div>
+			<GroupAvailabilityPage/>
+			<MyAvailabilityPage/>
 		</div>
 	)
 }
