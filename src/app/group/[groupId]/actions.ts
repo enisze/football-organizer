@@ -63,11 +63,11 @@ export const bookEvent = authedActionClient
 	.schema(
 		z.object({
 			eventId: z.string(),
-			bookingdate: z.string()
+			bookingDate: z.string()
 		})
 	)
-	.action(async ({ parsedInput: { eventId, bookingdate } }) => {
-		const date = new Date(bookingdate)
+	.action(async ({ parsedInput: { eventId, bookingDate } }) => {
+		const date = new Date(bookingDate)
 
 		if (!eventId) throw new Error('BAD_REQUEST')
 

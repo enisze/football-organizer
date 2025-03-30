@@ -41,9 +41,14 @@ export const BookEventButton = ({ id }: { id: string }) => {
 							variant='outline'
 							color='info'
 							formAction={async (formData: FormData) => {
+								'use server'
+								const bookingDate = formData.get('bookingdate')?.toString()
+								if(!bookingDate) {
+									throw new Error('Booking date is required')
+								}
 								await bookEvent({
 									eventId: id,
-									formData
+									bookingDate 
 								})
 								setOpen(false)
 							}}

@@ -34,7 +34,12 @@ export const createGroup = authedActionClient
 	})
 
 export const updateGroupName = authedActionClient
-	.schema(z.object({ groupName: z.string(), groupId: z.string() }))
+	.schema(
+		zfd.formData({
+			groupName: zfd.text(),
+			groupId: zfd.text()
+		})
+	)
 	.action(async ({ parsedInput: { groupName, groupId }, ctx: { userId } }) => {
 		await prisma.group.update({
 			where: { id: groupId, ownerId: userId },
