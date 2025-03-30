@@ -1,4 +1,6 @@
 import { Button } from '@/ui/button'
+import {} from 'next-safe-action'
+
 import { setParticipatingStatus } from '../../group/[groupId]/actions'
 
 export const StatusButton = ({ eventId }: { eventId: string }) => {
@@ -7,19 +9,16 @@ export const StatusButton = ({ eventId }: { eventId: string }) => {
 			<Button
 				formAction={async () => {
 					'use server'
-
-					await setParticipatingStatus({ eventId: eventId, status: 'CANCELED' })
+					await setParticipatingStatus({
+						eventId,
+						status: 'CANCELED'
+					})
 				}}
 				variant='outline'
+				disabled={status === 'executing'}
 			>
 				Keine Emails mehr erhalten
 			</Button>
-
-			{/*  TODO: ADD THIS BACK{isSuccess && (
-        <span className="text-green-500">
-          Du hast dich erfolgreich abgemeldet.
-        </span>
-      )} */}
 		</form>
 	)
 }

@@ -36,8 +36,10 @@ export default async function AddToGroup({
 					<Button
 						formAction={async () => {
 							'use server'
+							if (!JWT) return
 							addUser({ userId, JWT })
 						}}
+						disabled={status === 'executing'}
 					>
 						Beitreten
 					</Button>

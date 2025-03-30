@@ -2,30 +2,35 @@
 
 import { getAddressAndCoordinatesRedisKeys } from '@/src/helpers/getAddressAndCoordinatesRedisKeys'
 import { revalidateGroup } from '@/src/helpers/isOwnerOfGroup'
+import { authedActionClient } from '@/src/lib/actionClient'
 import { inngest, prisma } from '@/src/server/db/client'
 import { redis } from '@/src/server/db/redis'
+import { z } from 'zod'
 
-export const sendReminderEvent = async (id: string) => {
-	await inngest.send({
-		name: 'event/reminder',
-		data: {
-			id
-		}
+export const sendReminderEventAction = authedActionClient
+	.schema(z.object({ id: z.string() }))
+	.action(async ({ parsedInput: { id } }) => {
+		await inngest.send({
+			name: 'event/reminder',
+			data: { id }
+		})
+		return { success: true }
 	})
-}
 
-export const deleteEvent = async (id: string) => {
-	const { addressKey, coordinatesKey } = getAddressAndCoordinatesRedisKeys(id)
+export const deleteEventAction = authedActionClient
+	.schema(z.object({ id: z.string() }))
+	.action(async ({ parsedInput: { id } }) => {
+		const { addressKey, coordinatesKey } = getAddressAndCoordinatesRedisKeys(id)
 
-	if (!redis.isOpen) {
-		await redis.connect()
-	}
+		if (!redis.isOpen) {
+			await redis.connect()
+		}
 
-	await redis.del(addressKey)
-	await redis.del(coordinatesKey)
-	await prisma.event.delete({ where: { id } })
+		await redis.del(addressKey)
+		await redis.del(coordinatesKey)
+		await prisma.event.delete({ where: { id } })
+		await redis.disconnect()
 
-	await redis.disconnect()
-
-	revalidateGroup()
-}
+		revalidateGroup()
+		return { success: true }
+	})
