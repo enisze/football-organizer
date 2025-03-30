@@ -9,10 +9,14 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '@/ui/dialog'
+import { useAction } from 'next-safe-action/hooks'
 import { useState } from 'react'
 
 export const BookEventButton = ({ id }: { id: string }) => {
 	const [open, setOpen] = useState(false)
+
+
+	const {execute} = useAction(bookEvent)
 	return (
 		<Dialog open={open} onOpenChange={() => setOpen(!open)}>
 			<DialogTrigger asChild>
@@ -29,7 +33,22 @@ export const BookEventButton = ({ id }: { id: string }) => {
 				</DialogHeader>
 
 				<div className='flex flex-col justify-center'>
-					<form>
+					<form
+						onSubmit={(e) => {
+							e.preventDefault()
+							const formData = new FormData(e.currentTarget)
+							const bookingDate = formData.get('bookingdate')?.toString()
+							if (!bookingDate) {
+								throw new Error('Booking date is required')
+							}
+							execute({
+								eventId: id,
+								bookingDate
+							})
+							setOpen(false)
+						}
+					}
+					>
 						<TextField
 							label='Datum'
 							type='date'
@@ -40,16 +59,8 @@ export const BookEventButton = ({ id }: { id: string }) => {
 						<Button
 							variant='outline'
 							color='info'
-							formAction={async (formData: FormData) => {
-								'use server'
-								const bookingDate = formData.get('bookingdate')?.toString()
-								if(!bookingDate) {
-									throw new Error('Booking date is required')
-								}
-								await bookEvent({
-									eventId: id,
-									bookingDate 
-								})
+							type='submit'
+							onClick={() => {
 								setOpen(false)
 							}}
 							className='w-36'
