@@ -4,5 +4,16 @@
 	"jest.runMode": {
 		"type": "on-demand",
 		"coverage": false
-	}
+	},
+	"[typescript][typescriptreact][json][html][javascript]": {
+		"editor.defaultFormatter": "biomejs.biome",
+		"editor.codeActionsOnSave": {
+			"source.organizeImports": "explicit",
+			"source.fixAll.eslint": "explicit"
+		}
+	},
+	"files.autoSave": "onFocusChange",
+	"editor.formatOnSave": true,
+	"editor.formatOnType": true,
+	"editor.formatOnPaste": true
 }

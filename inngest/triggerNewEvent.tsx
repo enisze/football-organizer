@@ -3,7 +3,7 @@ import { addDays, differenceInCalendarDays } from 'date-fns'
 import { getParticipantIdsByStatus } from './triggerPaymentAndEventReminder'
 
 export const triggerNewEvent = inngest.createFunction(
-	{ name: 'Trigger New Event Email' },
+	{ id: 'trigger-new-event-email' },
 	{ event: 'event/new' },
 	async ({ step, event: inngestEvent, prisma, logger }) => {
 		const eventId = inngestEvent.data.id
@@ -61,7 +61,7 @@ export const triggerNewEvent = inngest.createFunction(
 		filteredUsers.forEach(async (user) => {
 			if (!user) return
 
-			await step.sendEvent({
+			await step.sendEvent('send-event-new-email',{
 				name: 'event/newEmail',
 				data: {
 					user,
@@ -70,7 +70,7 @@ export const triggerNewEvent = inngest.createFunction(
 				}
 			})
 		})
-		await step.sleepUntil(addDays(new Date(event.createdAt), 7))
+		await step.sleepUntil('sleep-event',addDays(new Date(event.createdAt), 7))
 
 		const newEvent = await step.run('get event', async () => {
 			logger.info('getting event after some days')
@@ -142,7 +142,7 @@ export const triggerNewEvent = inngest.createFunction(
 		}
 
 		usersEventReminder.forEach(async (user) => {
-			await step.sendEvent({
+			await step.sendEvent('send-event-reminder-email',{
 				name: 'event/reminderEmail',
 				data: {
 					user,

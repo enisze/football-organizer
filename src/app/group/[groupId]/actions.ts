@@ -1,166 +1,87 @@
 'use server'
+
 import { sendPaidButCanceledMail } from '@/inngest/sendPaidButCanceledMail'
 import { revalidateGroup } from '@/src/helpers/isOwnerOfGroup'
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { authedActionClient } from '@/src/lib/actionClient'
 import { prisma } from '@/src/server/db/client'
-import type { UserEventStatus } from '@prisma/client'
 import { subDays } from 'date-fns'
-import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
 
-export const sendPaidButCanceledMailAction = async ({
-	eventId
-}: {
-	eventId: string
-}) => {
-	'use server'
-	const session = await getServerComponentAuthSession()
+export const sendPaidButCanceledMailAction = authedActionClient
+	.schema(z.object({ eventId: z.string() }))
+	.action(async ({ parsedInput: { eventId }, ctx: { userId } }) => {
+		const event = await prisma.event.findUnique({ where: { id: eventId } })
+		const user = await prisma.user.findUnique({ where: { id: userId } })
+		const group = await prisma.group.findUnique({
+			where: { id: event?.groupId ?? '' },
+			include: { owner: { select: { email: true, name: true } } }
+		})
 
-	if (!eventId) throw new Error('BAD_REQUEST')
+		if (!event || !user || !group) throw new Error('Not found')
 
-	if (!session?.user?.id) throw new Error('UNAUTHORIZED')
-
-	const event = await prisma.event.findUnique({ where: { id: eventId } })
-	const user = await prisma.user.findUnique({
-		where: { id: session?.user?.id }
+		await sendPaidButCanceledMail(event, user, group.owner)
+		revalidateGroup()
+		return { success: true }
 	})
 
-	const group = await prisma.group.findUnique({
-		where: { id: event?.groupId ?? '' },
-		include: { owner: { select: { email: true, name: true } } }
-	})
-
-	await sendPaidButCanceledMail(event, user, group?.owner ?? null)
-
-	revalidatePath(`/group/${event?.groupId}`)
-}
-
-export const setParticipatingStatus = async ({
-	eventId,
-	status,
-	comment
-}: {
-	eventId: string
-	status: UserEventStatus
-
-	comment?: string | null
-}) => {
-	'use server'
-	const session = await getServerComponentAuthSession()
-
-	const userId = session?.user?.id
-
-	if (!userId) throw new Error('UNAUTHORIZED')
-	const user = await prisma.user.findUnique({ where: { id: userId } })
-	if (!user) throw new Error('UNAUTHORIZED')
-
-	const event = await prisma.event.findUnique({
-		where: { id: eventId },
-		include: { participants: true }
-	})
-
-	if (!eventId) throw new Error('BAD_REQUEST')
-	if (
-		event?.participants.filter(
-			(participant) => participant.userEventStatus === 'JOINED'
-		).length === event?.maxParticipants &&
-		status === 'JOINED'
+export const setParticipatingStatus = authedActionClient
+	.schema(
+		z.object({
+			eventId: z.string(),
+			status: z.enum(['JOINED', 'CANCELED', 'MAYBE']),
+			comment: z.string().optional().nullable()
+		})
 	)
-		throw new Error('PRECONDITION_FAILED')
-
-	switch (status) {
-		case 'JOINED':
-			await prisma.participantsOnEvents.upsert({
-				create: {
-					eventId,
-					id: userId,
-					userEventStatus: 'JOINED',
-					comment: null
-				},
-				update: {
-					userEventStatus: 'JOINED',
-					comment: null
-				},
-				where: {
-					id_eventId: {
-						eventId,
-						id: userId
-					}
-				}
-			})
-			revalidatePath(`/group/${event?.groupId}`)
-			return
-		case 'CANCELED':
-			await prisma.participantsOnEvents.upsert({
-				create: {
-					eventId,
-					id: userId,
-					userEventStatus: 'CANCELED',
-					comment
-				},
-				update: {
-					userEventStatus: 'CANCELED',
-					comment
-				},
-				where: {
-					id_eventId: {
-						eventId,
-						id: userId
-					}
-				}
+	.action(
+		async ({ parsedInput: { eventId, status, comment }, ctx: { userId } }) => {
+			const event = await prisma.event.findUnique({
+				where: { id: eventId },
+				include: { participants: true }
 			})
 
-			revalidatePath(`/group/${event?.groupId}`)
-			return
+			if (!event) throw new Error('Event not found')
 
-		case 'MAYBE':
+			if (
+				status === 'JOINED' &&
+				event.participants.filter((p) => p.userEventStatus === 'JOINED')
+					.length >= event.maxParticipants
+			) {
+				throw new Error('Event is full')
+			}
+
 			await prisma.participantsOnEvents.upsert({
-				create: {
-					eventId,
-					id: userId,
-					userEventStatus: 'MAYBE',
-					comment: null
-				},
-				update: {
-					userEventStatus: 'MAYBE',
-					comment: null
-				},
-				where: {
-					id_eventId: {
-						eventId,
-						id: userId
-					}
-				}
+				create: { eventId, id: userId, userEventStatus: status, comment },
+				update: { userEventStatus: status, comment },
+				where: { id_eventId: { eventId, id: userId } }
 			})
-			revalidatePath(`/group/${event?.groupId}`)
-			return
-		default:
-			throw new Error('BAD_REQUEST')
-	}
-}
 
-export const bookEvent = async ({
-	formData,
-	eventId
-}: {
-	eventId: string
-	formData: FormData
-}) => {
-	'use server'
-	const dateString = formData.get('bookingdate') as string
+			return { success: true }
+		}
+	)
 
-	const date = new Date(dateString)
+export const bookEvent = authedActionClient
+	.schema(
+		z.object({
+			eventId: z.string(),
+			bookingdate: z.string()
+		})
+	)
+	.action(async ({ parsedInput: { eventId, bookingdate } }) => {
+		const date = new Date(bookingdate)
 
-	if (!eventId) throw new Error('BAD_REQUEST')
+		if (!eventId) throw new Error('BAD_REQUEST')
 
-	await prisma.event.update({
-		data: { status: 'BOOKED', bookingDate: subDays(date, 1) },
-		where: { id: eventId }
+		await prisma.event.update({
+			data: { status: 'BOOKED', bookingDate: subDays(date, 1) },
+			where: { id: eventId }
+		})
+
+		revalidateGroup()
+		return { success: true }
 	})
 
-	revalidateGroup()
-}
-
-export const revalidateGroupAction = async () => {
-	'use server'
-	revalidateGroup()
-}
+export const revalidateGroupAction = authedActionClient
+	.action(async () => {
+		revalidateGroup()
+		return { success: true }
+	})

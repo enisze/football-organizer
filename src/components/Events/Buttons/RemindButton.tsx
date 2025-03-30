@@ -1,14 +1,16 @@
 'use client'
 import { Button } from '@/ui/button'
 import { toast } from '@/ui/use-toast'
-import { sendReminderEvent } from './actions'
+import { sendReminderEventAction } from './actions'
 
 export const RemindButton = async ({ id }: { id: string }) => {
 	return (
 		<Button
 			variant='outline'
 			formAction={async () => {
-				await sendReminderEvent(id)
+				await sendReminderEventAction({
+					id
+				})
 
 				toast({
 					title: 'Erinnerung gesendet',

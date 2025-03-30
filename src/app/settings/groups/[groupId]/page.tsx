@@ -100,7 +100,7 @@ const GroupSettings = async ({
 													userId: userInGroup.id
 												})
 
-												if (res?.groupDeleted) {
+												if (res?.data?.groupDeleted) {
 													redirect('/settings/groups')
 												}
 											}}

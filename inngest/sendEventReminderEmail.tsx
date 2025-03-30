@@ -6,13 +6,13 @@ import { sendEmail } from './createSendEmail'
 import { getParticipantIdsByStatus } from './triggerPaymentAndEventReminder'
 
 export const sendEventReminderEmail = inngest.createFunction(
-	{ name: 'Send Event Reminder Email' },
+	{ id: 'send-event-reminder-email' },
 	{ event: 'event/reminderEmail' },
 
 	async ({ event: inngestEvent, prisma, step, logger }) => {
-		const id = inngestEvent.data.id
+		const id = inngestEvent.data?.id
 
-		const user = inngestEvent.data.user as {
+		const user = inngestEvent.data?.user as {
 			name: string
 			email: string
 		}

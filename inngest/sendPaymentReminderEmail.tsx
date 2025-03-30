@@ -5,7 +5,7 @@ import { sendEmail } from './createSendEmail'
 import { inngest } from '@/src/server/db/client'
 
 export const sendPaymentReminderEmail = inngest.createFunction(
-	{ name: 'Send Payment Reminder Email' },
+	{ id: 'send-payment-reminder-email' },
 	{ event: 'event/paymentReminderEmail' },
 
 	async ({ event: inngestEvent, prisma, step, logger }) => {

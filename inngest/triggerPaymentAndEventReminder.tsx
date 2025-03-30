@@ -2,7 +2,7 @@ import { inngest } from '@/src/server/db/client'
 import type { ParticipantsOnEvents, UserEventStatus } from '@prisma/client'
 
 export const triggerPaymentAndEventReminder = inngest.createFunction(
-	{ name: 'Trigger Payment and Event Reminder' },
+	{ id: 'trigger-payment-and-event-reminder' },
 	{ event: 'event/reminder' },
 	async ({ event: inngestEvent, prisma, step, logger }) => {
 		const id = inngestEvent.data.id
@@ -87,18 +87,19 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 		})
 
 		usersEventReminder.forEach(async (user) => {
-			await step.sendEvent({
+			await step.sendEvent('send-event-reminder-email',{
 				name: 'event/reminderEmail',
 				data: {
 					user,
 					id: event.id
+
 				}
 			})
 		})
 
 		if (usersPaymentReminder.length > 0) {
 			usersPaymentReminder.forEach(async (user) => {
-				await step.sendEvent({
+				await step.sendEvent('send-event-payment-reminder-email',{
 					name: 'event/paymentReminderEmail',
 					data: {
 						user,

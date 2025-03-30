@@ -7,7 +7,7 @@ import { OrganizerMenu } from './OrganizerMenu'
 export const OrganizerServerMenu = async () => {
 	const session = await getServerComponentAuthSession()
 
-	const groupId = getGroupId()
+	const groupId = await getGroupId()
 
 	const events = await prisma.event.findMany({
 		where: {

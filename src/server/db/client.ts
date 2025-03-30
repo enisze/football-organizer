@@ -70,7 +70,7 @@ const prismaMiddleware = new InngestMiddleware({
 })
 
 export const inngest = new Inngest({
-	name: 'Event-Wizard',
+	id: 'Event-Wizard',
 	eventKey: process.env.INNGEST_EVENT_KEY ?? '',
 	schemas: new EventSchemas().fromZod({
 		'event/newEmail': {

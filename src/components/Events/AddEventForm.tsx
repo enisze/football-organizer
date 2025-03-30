@@ -68,7 +68,7 @@ export const AddEventForm = ({ onSubmit }: { onSubmit: () => void }) => {
 				type='submit'
 				className='bg-[#73C8A9]'
 				formAction={async (formData: FormData) => {
-					await createEvent({ formData, groupId })
+					await createEvent(formData)
 					onSubmit()
 				}}
 			>

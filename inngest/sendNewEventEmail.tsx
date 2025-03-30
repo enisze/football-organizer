@@ -5,7 +5,7 @@ import { sendEmail } from './createSendEmail'
 import { inngest } from '@/src/server/db/client'
 
 export const sendNewEventEmail = inngest.createFunction(
-	{ name: 'Send new Event Email' },
+	{ id: 'send-new-event-email' },
 	{ event: 'event/newEmail' },
 
 	async ({ event: inngestEvent, prisma, step, logger }) => {

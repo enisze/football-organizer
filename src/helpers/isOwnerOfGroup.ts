@@ -7,7 +7,7 @@ import { revalidatePath } from 'next/cache'
 export const isOwnerOfGroup = async () => {
 	const session = await getServerComponentAuthSession()
 
-	const groupId = getGroupId()
+	const groupId = await getGroupId()
 
 	if (!groupId || !session?.user?.id) return false
 
@@ -35,13 +35,13 @@ const getIsOwnerFromURL = () => {
 	return isOwnerUrl
 }
 
-export const revalidateGroup = () => {
-	const groupId = getGroupId()
+export const revalidateGroup = async () => {
+	const groupId = await getGroupId()
 	revalidatePath(`group/${groupId}`)
 }
 
-export const getGroupId = () => {
-	const pathname = headers().get('x-pathname')
+export const getGroupId = async () => {
+	const pathname = await headers().get('x-pathname')
 	const groupId = pathname?.split('/').at(-1)
 
 	return groupId

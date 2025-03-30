@@ -9,7 +9,7 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '@/ui/dialog'
-import { deleteEvent } from './actions'
+import { deleteEventAction } from './actions'
 
 export const DeleteEventButton = async ({ id }: { id: string }) => {
 	return (
@@ -26,7 +26,9 @@ export const DeleteEventButton = async ({ id }: { id: string }) => {
 					<Button
 						variant='outline'
 						formAction={async () => {
-							await deleteEvent(id)
+							await deleteEventAction({
+								id
+							})
 						}}
 						className='w-full'
 					>
