@@ -1,34 +1,34 @@
-import { inngest } from '@/src/server/db/client'
-import type { ParticipantsOnEvents, UserEventStatus } from '@prisma/client'
+import { inngest } from "@/src/server/db/client"
+import type { ParticipantsOnEvents, UserEventStatus } from "@prisma/client"
 
 export const triggerPaymentAndEventReminder = inngest.createFunction(
-	{ id: 'trigger-payment-and-event-reminder' },
-	{ event: 'event/reminder' },
+	{ id: "trigger-payment-and-event-reminder" },
+	{ event: "event/reminder" },
 	async ({ event: inngestEvent, prisma, step, logger }) => {
 		const id = inngestEvent.data.id
 
 		const event = await step.run(
-			'Get Event',
+			"Get Event",
 			async () =>
 				await prisma.event.findUnique({
 					where: { id },
-					include: { participants: true }
-				})
+					include: { participants: true },
+				}),
 		)
 
-		if (!event?.groupId) return { message: 'No group id' }
+		if (!event?.groupId) return { message: "No group id" }
 
-		const membersToRemind = await step.run('Get members', async () => {
+		const membersToRemind = await step.run("Get members", async () => {
 			const groupMembersToRemind = await prisma.user.findMany({
 				where: {
 					notificationsEnabled: true,
 					groups: {
 						some: {
-							groupId: event.groupId ?? undefined
-						}
+							groupId: event.groupId ?? undefined,
+						},
 					},
-					events: { none: { id: event.id, userEventStatus: 'CANCELED' } }
-				}
+					events: { none: { id: event.id, userEventStatus: "CANCELED" } },
+				},
 			})
 
 			return groupMembersToRemind
@@ -36,23 +36,23 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 
 		if (!event)
 			return {
-				message: 'No event'
+				message: "No event",
 			}
 
 		if (!membersToRemind)
 			return {
-				message: 'No group members'
+				message: "No group members",
 			}
 
 		const { participants } = event
 
 		const joinedParticipantIds = getParticipantIdsByStatus(
 			participants,
-			'JOINED'
+			"JOINED",
 		)
 
 		const membersToRemindPayment = membersToRemind.filter((user) =>
-			joinedParticipantIds.find((id) => id === user.id)
+			joinedParticipantIds.find((id) => id === user.id),
 		)
 
 		const usersEventReminder: { name: string; email: string }[] = []
@@ -71,7 +71,7 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 			membersToRemindPayment.forEach(async (user) => {
 				if (!user) return
 				const payment = await prisma.participantsOnEvents.findUnique({
-					where: { id_eventId: { eventId: event.id, id: user.id } }
+					where: { id_eventId: { eventId: event.id, id: user.id } },
 				})
 
 				if (!payment?.paymentId) {
@@ -80,31 +80,30 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 			})
 		}
 
-		await step.run('logging', async () => {
-			logger.info('usersEventReminder', usersEventReminder)
+		await step.run("logging", async () => {
+			logger.info("usersEventReminder", usersEventReminder)
 
-			logger.info('usersPaymentReminder', usersPaymentReminder)
+			logger.info("usersPaymentReminder", usersPaymentReminder)
 		})
 
 		usersEventReminder.forEach(async (user) => {
-			await step.sendEvent('send-event-reminder-email',{
-				name: 'event/reminderEmail',
+			await step.sendEvent("send-event-reminder-email", {
+				name: "event/reminderEmail",
 				data: {
 					user,
-					id: event.id
-
-				}
+					id: event.id,
+				},
 			})
 		})
 
 		if (usersPaymentReminder.length > 0) {
 			usersPaymentReminder.forEach(async (user) => {
-				await step.sendEvent('send-event-payment-reminder-email',{
-					name: 'event/paymentReminderEmail',
+				await step.sendEvent("send-event-payment-reminder-email", {
+					name: "event/paymentReminderEmail",
 					data: {
 						user,
-						id: event.id
-					}
+						id: event.id,
+					},
 				})
 			})
 		}
@@ -112,14 +111,14 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 		return {
 			success: true,
 			usersEventReminder,
-			usersPaymentReminder
+			usersPaymentReminder,
 		}
-	}
+	},
 )
 
 export const getParticipantIdsByStatus = (
-	participants: Array<Omit<ParticipantsOnEvents, 'date'>>,
-	eventStatus: UserEventStatus
+	participants: Array<Omit<ParticipantsOnEvents, "date">>,
+	eventStatus: UserEventStatus,
 ) => {
 	return participants.reduce((acc: string[], participant) => {
 		if (participant.userEventStatus === eventStatus) {

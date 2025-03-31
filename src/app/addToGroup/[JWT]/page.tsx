@@ -1,13 +1,13 @@
-import { Button } from '@/ui/button'
-import { OrganizerLink } from '@/ui/OrganizerLink'
+import { Button } from "@/ui/button"
+import { OrganizerLink } from "@/ui/OrganizerLink"
 
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
-import { prisma } from '@/src/server/db/client'
-import { verifyJWT } from '@/src/server/verifyJWT'
-import { decode } from 'jsonwebtoken'
+import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
+import { prisma } from "@/src/server/db/client"
+import { verifyJWT } from "@/src/server/verifyJWT"
+import { decode } from "jsonwebtoken"
 
 export default async function AddToGroup({
-	params
+	params,
 }: {
 	params: { JWT: string }
 }) {
@@ -21,7 +21,7 @@ export default async function AddToGroup({
 
 	const isParticipating = await isParticipatingUser({
 		groupId: data.id,
-		userId: session?.user?.id
+		userId: session?.user?.id,
 	})
 
 	if (isParticipating) {
@@ -30,21 +30,21 @@ export default async function AddToGroup({
 
 	return (
 		<>
-			<div className='flex flex-col justify-center items-center w-full'>
+			<div className="flex flex-col justify-center items-center w-full">
 				<div>{`${data?.ownerName} hat dich eingeladen seiner Gruppe ${data?.groupName} beizutreten.`}</div>
 				<form>
 					<Button
 						formAction={async () => {
-							'use server'
+							"use server"
 							if (!JWT) return
 							addUser({ userId, JWT })
 						}}
-						disabled={status === 'executing'}
+						disabled={status === "executing"}
 					>
 						Beitreten
 					</Button>
 				</form>
-				<OrganizerLink href={'/'} className='justify-center'>
+				<OrganizerLink href={"/"} className="justify-center">
 					Zurück zu den Events
 				</OrganizerLink>
 			</div>
@@ -55,7 +55,7 @@ export default async function AddToGroup({
 const getDataFromJWT = async ({ JWT }: { JWT: string }) => {
 	const isValid = verifyJWT(JWT)
 
-	if (!isValid) throw new Error('BAD_REQUEST')
+	if (!isValid) throw new Error("BAD_REQUEST")
 
 	const data = decode(JWT) as {
 		id: string
@@ -68,15 +68,15 @@ const getDataFromJWT = async ({ JWT }: { JWT: string }) => {
 
 const addUser = async ({
 	userId,
-	JWT
+	JWT,
 }: {
 	userId: string | undefined
 	JWT: string
 }) => {
-	if (!userId) throw new Error('BAD_REQUEST')
+	if (!userId) throw new Error("BAD_REQUEST")
 	const isValid = verifyJWT(JWT)
 
-	if (!isValid) throw new Error('BAD_REQUEST')
+	if (!isValid) throw new Error("BAD_REQUEST")
 
 	const res = decode(JWT) as {
 		id: string
@@ -86,22 +86,22 @@ const addUser = async ({
 
 	await prisma.group.update({
 		data: {
-			users: { create: { id: userId } }
+			users: { create: { id: userId } },
 		},
-		where: { id: res.id }
+		where: { id: res.id },
 	})
 }
 
 const isParticipatingUser = async ({
 	userId,
-	groupId
+	groupId,
 }: {
 	userId: string | undefined
 	groupId: string
 }) => {
 	if (!userId) return false
 	const res = await prisma.group.findUnique({
-		where: { id: groupId, users: { some: { id: userId } } }
+		where: { id: groupId, users: { some: { id: userId } } },
 	})
 
 	return res ? true : false

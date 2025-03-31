@@ -1,7 +1,7 @@
-import type { RouteType } from 'next/dist/lib/load-custom-routes'
-import type { LinkProps } from 'next/link'
-import Link from 'next/link'
-import type { FunctionComponent, PropsWithChildren } from 'react'
+import type { RouteType } from "next/dist/lib/load-custom-routes"
+import type { LinkProps } from "next/link"
+import Link from "next/link"
+import type { FunctionComponent, PropsWithChildren } from "react"
 
 export const OrganizerLink: FunctionComponent<
 	PropsWithChildren<LinkProps<RouteType> & { className?: string }>

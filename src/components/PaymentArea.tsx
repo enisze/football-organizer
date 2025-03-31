@@ -1,16 +1,16 @@
-import { Button } from '@/ui/button'
-import { isDateInCertainRange } from '../helpers/isDateInCertainRange'
-import { getServerComponentAuthSession } from '../server/auth/authOptions'
+import { Button } from "@/ui/button"
+import { isDateInCertainRange } from "../helpers/isDateInCertainRange"
+import { getServerComponentAuthSession } from "../server/auth/authOptions"
 
-import { formatter } from '../helpers/formatter'
-import { prisma } from '../server/db/client'
+import { formatter } from "../helpers/formatter"
+import { prisma } from "../server/db/client"
 
 const paypalLink =
-	'https://www.paypal.com/paypalme/enz1994?country.x=DE&locale.x=de_DE'
+	"https://www.paypal.com/paypalme/enz1994?country.x=DE&locale.x=de_DE"
 
 export const PaymentArea = async ({
 	eventId,
-	bookingDate
+	bookingDate,
 }: {
 	eventId: string
 	bookingDate: Date | null
@@ -18,7 +18,7 @@ export const PaymentArea = async ({
 	const session = await getServerComponentAuthSession()
 
 	const payment = await prisma.payment.findFirst({
-		where: { eventId, userId: session?.user?.id }
+		where: { eventId, userId: session?.user?.id },
 	})
 
 	const isInCertainRange = bookingDate
@@ -29,18 +29,18 @@ export const PaymentArea = async ({
 
 	if (payment)
 		return (
-			<div className='flex items-center gap-x-2 text-green-500 font-bold'>
+			<div className="flex items-center gap-x-2 text-green-500 font-bold">
 				{formatter.format(payment?.amount) +
-					'€  am ' +
-					payment?.paymentDate.toLocaleDateString('de')}
+					"€  am " +
+					payment?.paymentDate.toLocaleDateString("de")}
 				<span>bezahlt</span>
 			</div>
 		)
 
 	return (
-		<div className='flex w-full flex-col items-center justify-center gap-y-2'>
-			<a href={paypalLink} className='w-full'>
-				<Button variant='outline' aria-label='paypal' className='w-full'>
+		<div className="flex w-full flex-col items-center justify-center gap-y-2">
+			<a href={paypalLink} className="w-full">
+				<Button variant="outline" aria-label="paypal" className="w-full">
 					Bezahlen per Paypal
 				</Button>
 			</a>

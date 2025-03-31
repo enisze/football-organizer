@@ -1,18 +1,18 @@
-import { sendEmail } from '@/inngest/createSendEmail'
-import { addWeeks, getWeek, setDay } from 'date-fns'
+import { sendEmail } from "@/inngest/createSendEmail"
+import { addWeeks, getWeek, setDay } from "date-fns"
 
-const redColor = 'rgb(175, 18, 29)'
-const greenColor = 'rgb(131, 176, 34)'
+const redColor = "rgb(175, 18, 29)"
+const greenColor = "rgb(131, 176, 34)"
 
-const time = '20:00h'
-const time2 = '8:00:h'
+const time = "20:00h"
+const time2 = "8:00:h"
 
 const date = new Date()
 const week = getWeek(date)
 
-const days = ['Mo']
+const days = ["Mo"]
 
-describe('Booking reminder', () => {
+describe("Booking reminder", () => {
 	const soccerboxesBookable: {
 		soccerbox: number
 		hrefValue: string | null
@@ -39,52 +39,52 @@ describe('Booking reminder', () => {
 				const cssSelector = `td[class="${day}"][datetime="${soccerDate.toISOString()}"]`
 
 				const tdElement = await page.waitForSelector(cssSelector, {
-					timeout: 5000
+					timeout: 5000,
 				})
 
 				if (!tdElement) {
 					soccerboxesError.push({
 						soccerbox,
-						error: 'Fehler, kein tdElement gefunden',
-						day
+						error: "Fehler, kein tdElement gefunden",
+						day,
 					})
 
 					continue
 				}
 
-				const linkName = '.uzk15__eventunit'
+				const linkName = ".uzk15__eventunit"
 				const linkElement = await tdElement.$(linkName)
 
 				if (!linkElement) {
 					soccerboxesError.push({
 						soccerbox,
-						error: 'Noch nicht buchbar, kein Link',
-						day
+						error: "Noch nicht buchbar, kein Link",
+						day,
 					})
 					continue
 				}
 
 				const hrefValue = await linkElement.evaluate((el) =>
-					el.getAttribute('href')
+					el.getAttribute("href"),
 				)
 
-				const className = '.uzk15__kreis'
+				const className = ".uzk15__kreis"
 
-				let colorValue = ''
+				let colorValue = ""
 
 				const color = await tdElement.$(className)
 
 				if (!color) {
 					soccerboxesError.push({
 						soccerbox,
-						error: 'Fehler, keine Color gefunden',
-						day
+						error: "Fehler, keine Color gefunden",
+						day,
 					})
 					continue
 				}
 
 				colorValue = await color.evaluate(
-					(el) => getComputedStyle(el).backgroundColor
+					(el) => getComputedStyle(el).backgroundColor,
 				)
 
 				const targetField = await tdElement.evaluate((el) => el.textContent)
@@ -96,7 +96,7 @@ describe('Booking reminder', () => {
 					soccerboxesError.push({
 						soccerbox,
 						error: `Falsche Uhrzeit ${targetField} ${time}`,
-						day
+						day,
 					})
 
 					continue
@@ -105,8 +105,8 @@ describe('Booking reminder', () => {
 				if (colorValue === redColor) {
 					soccerboxesError.push({
 						soccerbox,
-						error: 'Gebucht',
-						day
+						error: "Gebucht",
+						day,
 					})
 
 					continue
@@ -116,7 +116,7 @@ describe('Booking reminder', () => {
 					soccerboxesBookable.push({
 						soccerbox,
 						hrefValue,
-						day
+						day,
 					})
 				}
 			}
@@ -126,7 +126,7 @@ describe('Booking reminder', () => {
 		if (soccerboxesBookable.length > 0) {
 			try {
 				await sendEmail(
-					'eniszej@gmail.com',
+					"eniszej@gmail.com",
 					`
         <h1>Es gibt buchbare Soccerboxen für </h1>
         <ul>
@@ -134,18 +134,18 @@ describe('Booking reminder', () => {
 					(soccerbox) =>
 						`<li> <a href="${soccerbox.hrefValue}">
             Soccerbox ${soccerbox.soccerbox} hier buchen
-            hier buchen</a></li>`
+            hier buchen</a></li>`,
 				)}
         ${soccerboxesError.map(
 					(soccerbox) =>
-						`<li> Soccerbox ${soccerbox.soccerbox}, Fehler: ${soccerbox.error}</li>`
+						`<li> Soccerbox ${soccerbox.soccerbox}, Fehler: ${soccerbox.error}</li>`,
 				)}
         </ul>
         `,
-					'Es gibt buchbare Soccerboxen'
+					"Es gibt buchbare Soccerboxen",
 				)
 			} catch (error) {
-				console.log('Sending email failed')
+				console.log("Sending email failed")
 				console.log(error)
 			}
 		}

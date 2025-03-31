@@ -1,18 +1,18 @@
-'use server'
+"use server"
 
-import { getAddressAndCoordinatesRedisKeys } from '@/src/helpers/getAddressAndCoordinatesRedisKeys'
-import { revalidateGroup } from '@/src/helpers/isOwnerOfGroup'
-import { authedActionClient } from '@/src/lib/actionClient'
-import { inngest, prisma } from '@/src/server/db/client'
-import { redis } from '@/src/server/db/redis'
-import { z } from 'zod'
+import { getAddressAndCoordinatesRedisKeys } from "@/src/helpers/getAddressAndCoordinatesRedisKeys"
+import { revalidateGroup } from "@/src/helpers/isOwnerOfGroup"
+import { authedActionClient } from "@/src/lib/actionClient"
+import { inngest, prisma } from "@/src/server/db/client"
+import { redis } from "@/src/server/db/redis"
+import { z } from "zod"
 
 export const sendReminderEventAction = authedActionClient
 	.schema(z.object({ id: z.string() }))
 	.action(async ({ parsedInput: { id } }) => {
 		await inngest.send({
-			name: 'event/reminder',
-			data: { id }
+			name: "event/reminder",
+			data: { id },
 		})
 		return { success: true }
 	})

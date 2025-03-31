@@ -1,9 +1,9 @@
-'use client'
+"use client"
 
-import { cn } from '@/lib/utils/cn'
-import { Tabs, TabsList, TabsTrigger } from '@/ui/tabs'
-import { Clock } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { cn } from "@/lib/utils/cn"
+import { Tabs, TabsList, TabsTrigger } from "@/ui/tabs"
+import { Clock } from "lucide-react"
+import { useMemo, useState } from "react"
 
 interface User {
 	id: number
@@ -16,7 +16,7 @@ interface GroupAvailabilityViewProps {
 	users: User[]
 }
 
-type TimeSlotDuration = '30min' | '1hour' | '90min' | '2hours'
+type TimeSlotDuration = "30min" | "1hour" | "90min" | "2hours"
 
 // Generate mock availability data for demonstration
 const generateMockAvailability = (date: Date, users: User[]) => {
@@ -27,14 +27,14 @@ const generateMockAvailability = (date: Date, users: User[]) => {
 	const hours = []
 	for (let hour = startHour; hour <= endHour; hour++) {
 		for (let minute = 0; minute < 60; minute += 30) {
-			const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
+			const timeString = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`
 
 			// Generate random availability for each user
 			const availableUsers = users.filter(() => Math.random() > 0.4)
 
 			hours.push({
 				time: timeString,
-				availableUsers
+				availableUsers,
 			})
 		}
 	}
@@ -46,12 +46,12 @@ const generateMockAvailability = (date: Date, users: User[]) => {
 const aggregateTimeSlots = (
 	slots: any[],
 	duration: TimeSlotDuration,
-	users: User[]
+	users: User[],
 ) => {
-	if (duration === '30min') return slots
+	if (duration === "30min") return slots
 
 	const aggregatedSlots = []
-	const slotsPerGroup = duration === '1hour' ? 2 : duration === '90min' ? 3 : 4 // 2hours = 4 slots
+	const slotsPerGroup = duration === "1hour" ? 2 : duration === "90min" ? 3 : 4 // 2hours = 4 slots
 
 	for (let i = 0; i < slots.length; i += slotsPerGroup) {
 		if (i + slotsPerGroup <= slots.length) {
@@ -75,7 +75,7 @@ const aggregateTimeSlots = (
 			const minRequiredSlots = Math.ceil(slotsPerGroup / 2)
 			const availableUsers = Array.from(allUsers)
 				.filter(
-					(userId) => (userAvailabilityCounts[userId] || 0) >= minRequiredSlots
+					(userId) => (userAvailabilityCounts[userId] || 0) >= minRequiredSlots,
 				)
 				.map((userId) => users.find((user) => user.id === userId))
 				.filter(Boolean) as User[]
@@ -84,7 +84,7 @@ const aggregateTimeSlots = (
 				timeRange: `${startTime} - ${endTime}`,
 				startTime,
 				endTime,
-				availableUsers
+				availableUsers,
 			})
 		}
 	}
@@ -94,50 +94,50 @@ const aggregateTimeSlots = (
 
 export function GroupAvailabilityView({
 	date,
-	users
+	users,
 }: GroupAvailabilityViewProps) {
-	const [duration, setDuration] = useState<TimeSlotDuration>('30min')
+	const [duration, setDuration] = useState<TimeSlotDuration>("30min")
 
 	const rawAvailabilityData = useMemo(
 		() => generateMockAvailability(date, users),
-		[date, users]
+		[date, users],
 	)
 
 	const availabilityData = useMemo(
 		() => aggregateTimeSlots(rawAvailabilityData, duration, users),
-		[rawAvailabilityData, duration, users]
+		[rawAvailabilityData, duration, users],
 	)
 
 	return (
 		<div>
-			<div className='mb-6 flex flex-col gap-4'>
-				<div className='flex items-center'>
-					<Clock className='mr-2 h-5 w-5 text-primary' />
-					<h3 className='font-medium'>Group Availability</h3>
+			<div className="mb-6 flex flex-col gap-4">
+				<div className="flex items-center">
+					<Clock className="mr-2 h-5 w-5 text-primary" />
+					<h3 className="font-medium">Gruppen-Verfügbarkeit</h3>
 				</div>
 
 				<Tabs
 					value={duration}
 					onValueChange={(value) => setDuration(value as TimeSlotDuration)}
-					className='w-full'
+					className="w-full"
 				>
-					<TabsList className='grid w-full grid-cols-4'>
-						<TabsTrigger value='30min'>Detailed</TabsTrigger>
-						<TabsTrigger value='1hour'>1 Hour</TabsTrigger>
-						<TabsTrigger value='90min'>90 Min</TabsTrigger>
-						<TabsTrigger value='2hours'>2 Hours</TabsTrigger>
+					<TabsList className="grid w-full grid-cols-4">
+						<TabsTrigger value="30min">Detailliert</TabsTrigger>
+						<TabsTrigger value="1hour">1 Stunde</TabsTrigger>
+						<TabsTrigger value="90min">90 Min</TabsTrigger>
+						<TabsTrigger value="2hours">2 Stunden</TabsTrigger>
 					</TabsList>
 				</Tabs>
 			</div>
 
-			<div className='mb-4 flex flex-wrap gap-2'>
+			<div className="mb-4 flex flex-wrap gap-2">
 				{users.map((user) => (
 					<div
 						key={user.id}
-						className='flex items-center gap-2 rounded-full border px-3 py-1 text-sm'
+						className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm"
 					>
 						<div
-							className='h-3 w-3 rounded-full'
+							className="h-3 w-3 rounded-full"
 							style={{ backgroundColor: user.color }}
 						/>
 						{user.name}
@@ -147,12 +147,12 @@ export function GroupAvailabilityView({
 
 			<div
 				className={cn(
-					'grid gap-2',
-					duration === '30min'
-						? 'grid-cols-4 sm:grid-cols-6 md:grid-cols-8'
-						: duration === '1hour'
-							? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4'
-							: 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3'
+					"grid gap-2",
+					duration === "30min"
+						? "grid-cols-4 sm:grid-cols-6 md:grid-cols-8"
+						: duration === "1hour"
+							? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
+							: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3",
 				)}
 			>
 				{availabilityData.map((slot, index) => {
@@ -164,33 +164,33 @@ export function GroupAvailabilityView({
 						<div
 							key={index}
 							className={cn(
-								'relative flex flex-col justify-between rounded-md border p-2',
-								percentage === 100 ? 'border-green-500' : 'border-input',
-								duration !== '30min' ? 'h-24' : 'h-14'
+								"relative flex flex-col justify-between rounded-md border p-2",
+								percentage === 100 ? "border-green-500" : "border-input",
+								duration !== "30min" ? "h-24" : "h-14",
 							)}
 						>
-							<div className='z-10 text-xs font-medium'>
-								{duration === '30min' ? slot.time : slot.timeRange}
+							<div className="z-10 text-xs font-medium">
+								{duration === "30min" ? slot.time : slot.timeRange}
 							</div>
 
 							{/* Availability indicator */}
 							<div
-								className='absolute bottom-0 left-0 right-0 rounded-b-md bg-green-500/20'
+								className="absolute bottom-0 left-0 right-0 rounded-b-md bg-green-500/20"
 								style={{
 									height: `${percentage}%`,
 									backgroundColor:
 										percentage === 0
-											? 'transparent'
-											: `rgba(34, 197, 94, ${percentage / 100})`
+											? "transparent"
+											: `rgba(34, 197, 94, ${percentage / 100})`,
 								}}
 							/>
 
 							{/* User dots */}
-							<div className='relative z-10 flex flex-wrap gap-1'>
+							<div className="relative z-10 flex flex-wrap gap-1">
 								{slot.availableUsers.map((user: User) => (
 									<div
 										key={user.id}
-										className='h-2 w-2 rounded-full'
+										className="h-2 w-2 rounded-full"
 										style={{ backgroundColor: user.color }}
 										title={user.name}
 									/>
@@ -198,7 +198,7 @@ export function GroupAvailabilityView({
 							</div>
 
 							{/* Count */}
-							<div className='relative z-10 text-right text-xs'>
+							<div className="relative z-10 text-right text-xs">
 								{availableCount}/{users.length}
 							</div>
 						</div>

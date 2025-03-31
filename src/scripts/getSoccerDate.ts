@@ -1,12 +1,12 @@
-import { addWeeks, startOfWeek } from 'date-fns'
-import { de } from 'date-fns/locale'
+import { addWeeks, startOfWeek } from "date-fns"
+import { de } from "date-fns/locale"
 
 export const getSoccerDate = () => {
 	const date = new Date()
 
 	const dateForSoccer = startOfWeek(addWeeks(date, 1), {
 		weekStartsOn: 1,
-		locale: de
+		locale: de,
 	})
 
 	dateForSoccer.setHours(20)

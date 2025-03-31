@@ -1,7 +1,7 @@
 //prettier-ignore
 export const getEuroAmount = (snippet: string): number => {
 	let amount = 0
-	const convertCommaToDot = snippet.replaceAll(',', '.')
+	const convertCommaToDot = snippet.replaceAll(",", ".")
 
 	const allMatches = convertCommaToDot.match(/\d+(?:\.\d{1,3})|\d+/)
 

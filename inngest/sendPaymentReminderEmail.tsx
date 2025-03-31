@@ -1,12 +1,12 @@
-import PaymentReminder from '@/emails/PaymentReminder'
-import { render } from '@react-email/components'
-import { sendEmail } from './createSendEmail'
+import PaymentReminder from "@/emails/PaymentReminder"
+import { render } from "@react-email/components"
+import { sendEmail } from "./createSendEmail"
 
-import { inngest } from '@/src/server/db/client'
+import { inngest } from "@/src/server/db/client"
 
 export const sendPaymentReminderEmail = inngest.createFunction(
-	{ id: 'send-payment-reminder-email' },
-	{ event: 'event/paymentReminderEmail' },
+	{ id: "send-payment-reminder-email" },
+	{ event: "event/paymentReminderEmail" },
 
 	async ({ event: inngestEvent, prisma, step, logger }) => {
 		const id = inngestEvent.data.id as string
@@ -17,12 +17,12 @@ export const sendPaymentReminderEmail = inngest.createFunction(
 		}
 
 		const event = await step.run(
-			'get event',
+			"get event",
 			async () =>
 				await prisma.event.findUnique({
 					where: { id },
-					include: { participants: true }
-				})
+					include: { participants: true },
+				}),
 		)
 
 		if (!event) return
@@ -32,18 +32,18 @@ export const sendPaymentReminderEmail = inngest.createFunction(
 				event={{
 					...event,
 					date: new Date(event.date),
-					bookingDate: event.bookingDate ? new Date(event.bookingDate) : null
+					bookingDate: event.bookingDate ? new Date(event.bookingDate) : null,
 				}}
 				userName={user.name}
-			/>
+			/>,
 		)
 
-		const { response } = await step.run('sending mail', async () => {
+		const { response } = await step.run("sending mail", async () => {
 			try {
 				const response = await sendEmail(
 					user.email,
 					html,
-					'Erinnerung: Fussball bezahlen'
+					"Erinnerung: Fussball bezahlen",
 				)
 
 				return response
@@ -56,10 +56,10 @@ export const sendPaymentReminderEmail = inngest.createFunction(
 
 		logger.info(
 			`Message sent to: ${JSON.stringify(
-				user.email
-			)}, Code : ${response?.statusCode}`
+				user.email,
+			)}, Code : ${response?.statusCode}`,
 		)
 
 		return response
-	}
+	},
 )

@@ -1,14 +1,14 @@
-import { addWeeks, getWeek, startOfWeek } from 'date-fns'
-import puppeteer from 'puppeteer'
+import { addWeeks, getWeek, startOfWeek } from "date-fns"
+import puppeteer from "puppeteer"
 
-import { sendEmail } from '@/inngest/createSendEmail'
-import { de } from 'date-fns/locale'
+import { sendEmail } from "@/inngest/createSendEmail"
+import { de } from "date-fns/locale"
 
-const redColor = 'rgb(175, 18, 29)'
-const greenColor = 'rgb(131, 176, 34)'
+const redColor = "rgb(175, 18, 29)"
+const greenColor = "rgb(131, 176, 34)"
 
-const time = '20:00h'
-const time2 = '8:00:h'
+const time = "20:00h"
+const time2 = "8:00:h"
 
 const soccerboxesBookable: { soccerbox: number; hrefValue: string | null }[] =
 	[]
@@ -19,7 +19,7 @@ const soccerboxesError: {
 }[] = []
 
 const runScript = async () => {
-	console.log('starting script')
+	console.log("starting script")
 	const date = new Date()
 	const week = getWeek(date)
 
@@ -30,8 +30,8 @@ const runScript = async () => {
 
 	//---FOR LOCAL---
 	const browser = await puppeteer.launch({
-		args: ['--no-sandbox', '--disable-setuid-sandbox'],
-		headless: false
+		args: ["--no-sandbox", "--disable-setuid-sandbox"],
+		headless: false,
 	})
 
 	try {
@@ -50,53 +50,53 @@ const runScript = async () => {
 
 			console.log(soccerDate)
 
-			const classValue = 'Di'
+			const classValue = "Di"
 			const cssSelector = `td[class="${classValue}"][datetime="${soccerDate.toISOString()}"]`
 
 			const tdElement = await page.waitForSelector(cssSelector, {
-				timeout: 5000
+				timeout: 5000,
 			})
 
 			if (!tdElement) {
 				soccerboxesError.push({
 					soccerbox,
-					errror: 'Fehler, kein tdElement gefunden'
+					errror: "Fehler, kein tdElement gefunden",
 				})
 
 				continue
 			}
 
-			const linkName = '.uzk15__eventunit'
+			const linkName = ".uzk15__eventunit"
 			const linkElement = await tdElement.$(linkName)
 
 			if (!linkElement) {
 				soccerboxesError.push({
 					soccerbox,
-					errror: 'Noch nicht buchbar, kein Link'
+					errror: "Noch nicht buchbar, kein Link",
 				})
 				continue
 			}
 
 			const hrefValue = await linkElement.evaluate((el) =>
-				el.getAttribute('href')
+				el.getAttribute("href"),
 			)
 
-			const className = '.uzk15__kreis'
+			const className = ".uzk15__kreis"
 
-			let colorValue = ''
+			let colorValue = ""
 
 			const color = await tdElement.$(className)
 
 			if (!color) {
 				soccerboxesError.push({
 					soccerbox,
-					error: 'Fehler, keine Color gefunden'
+					error: "Fehler, keine Color gefunden",
 				})
 				continue
 			}
 
 			colorValue = await color.evaluate(
-				(el) => getComputedStyle(el).backgroundColor
+				(el) => getComputedStyle(el).backgroundColor,
 			)
 
 			const targetField = await tdElement.evaluate((el) => el.textContent)
@@ -107,7 +107,7 @@ const runScript = async () => {
 			) {
 				soccerboxesError.push({
 					soccerbox,
-					error: `Falsche Uhrzeit ${targetField} ${time}`
+					error: `Falsche Uhrzeit ${targetField} ${time}`,
 				})
 
 				continue
@@ -116,7 +116,7 @@ const runScript = async () => {
 			if (colorValue === redColor) {
 				soccerboxesError.push({
 					soccerbox,
-					error: 'Gebucht'
+					error: "Gebucht",
 				})
 
 				continue
@@ -125,13 +125,13 @@ const runScript = async () => {
 			if (colorValue === greenColor) {
 				soccerboxesBookable.push({
 					soccerbox,
-					hrefValue
+					hrefValue,
 				})
 			}
 		}
 	} catch (error) {
 		//@ts-expect-error there is such at hing
-		if ('response' in error) {
+		if ("response" in error) {
 			//@ts-expect-error there is such at hing
 			console.log(error.response?.body)
 		}
@@ -139,9 +139,9 @@ const runScript = async () => {
 
 	console.log(soccerboxesBookable, soccerboxesError)
 	if (soccerboxesBookable.length > 0) {
-		console.log('email send')
+		console.log("email send")
 		sendEmail(
-			'eniszej@gmail.com',
+			"eniszej@gmail.com",
 			`
         <h1>Es gibt buchbare Soccerboxen</h1>
         <ul>
@@ -149,15 +149,15 @@ const runScript = async () => {
 					(soccerbox) =>
 						`<li> <a href="${soccerbox.hrefValue}">
             Soccerbox ${soccerbox.soccerbox} hier buchen
-            hier buchen</a></li>`
+            hier buchen</a></li>`,
 				)}
         ${soccerboxesError.map(
 					(soccerbox) =>
-						`<li> Soccerbox ${soccerbox.soccerbox}, Fehler: ${soccerbox.error}</li>`
+						`<li> Soccerbox ${soccerbox.soccerbox}, Fehler: ${soccerbox.error}</li>`,
 				)}
         </ul>
         `,
-			'Es gibt buchbare Soccerboxen'
+			"Es gibt buchbare Soccerboxen",
 		)
 	}
 }
@@ -167,7 +167,7 @@ const getSoccerDate = () => {
 
 	const dateForSoccer = startOfWeek(addWeeks(date, 2), {
 		weekStartsOn: 2,
-		locale: de
+		locale: de,
 	})
 
 	dateForSoccer.setHours(20)

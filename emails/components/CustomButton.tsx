@@ -1,8 +1,8 @@
-import { Button } from '@react-email/button'
-import type { PropsWithChildren } from 'react'
+import { Button } from "@react-email/button"
+import type { PropsWithChildren } from "react"
 
 export const CustomButton = (
-	props: PropsWithChildren<{ className?: string; href?: string }>
+	props: PropsWithChildren<{ className?: string; href?: string }>,
 ) => {
 	const { className, children, ...propsWithoutClassName } = props
 

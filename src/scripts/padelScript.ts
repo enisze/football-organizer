@@ -1,14 +1,14 @@
-import { sendEmail } from '@/inngest/createSendEmail'
-import { addWeeks, getWeek, setDay } from 'date-fns'
-import puppeteer from 'puppeteer'
+import { sendEmail } from "@/inngest/createSendEmail"
+import { addWeeks, getWeek, setDay } from "date-fns"
+import puppeteer from "puppeteer"
 
-const redColor = 'rgb(175, 18, 29)'
-const greenColor = 'rgb(131, 176, 34)'
+const redColor = "rgb(175, 18, 29)"
+const greenColor = "rgb(131, 176, 34)"
 
 const date = new Date()
 const week = getWeek(date)
 
-const days = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
+const days = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
 
 const times = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
 
@@ -24,14 +24,14 @@ const padelError: {
 
 const script = async () => {
 	const browser = await puppeteer.launch({
-		args: ['--no-sandbox', '--disable-setuid-sandbox'],
-		headless: false
+		args: ["--no-sandbox", "--disable-setuid-sandbox"],
+		headless: false,
 	})
 
 	const page = await browser.newPage()
 	await page.setViewport({
 		height: 1080,
-		width: 1920
+		width: 1920,
 	})
 
 	for (const day of days) {
@@ -45,59 +45,59 @@ const script = async () => {
 			const cssSelector = `td[class="${day}"][datetime="${soccerDate.toISOString()}"]`
 
 			const tdElement = await page.waitForSelector(cssSelector, {
-				timeout: 5000
+				timeout: 5000,
 			})
 
 			if (!tdElement) {
 				padelError.push({
-					error: 'Fehler, kein tdElement gefunden',
+					error: "Fehler, kein tdElement gefunden",
 					day,
-					hour
+					hour,
 				})
 
 				continue
 			}
 
-			const linkName = '.uzk15__eventunit'
+			const linkName = ".uzk15__eventunit"
 			const linkElement = await tdElement.$(linkName)
 
 			if (!linkElement) {
 				padelError.push({
-					error: 'Noch nicht buchbar, kein Link',
+					error: "Noch nicht buchbar, kein Link",
 					day,
-					hour
+					hour,
 				})
 				continue
 			}
 
 			const hrefValue = await linkElement.evaluate((el) =>
-				el.getAttribute('href')
+				el.getAttribute("href"),
 			)
 
-			const className = '.uzk15__kreis'
+			const className = ".uzk15__kreis"
 
-			let colorValue = ''
+			let colorValue = ""
 
 			const color = await tdElement.$(className)
 
 			if (!color) {
 				padelError.push({
-					error: 'Fehler, keine Color gefunden',
+					error: "Fehler, keine Color gefunden",
 					day,
-					hour
+					hour,
 				})
 				continue
 			}
 
 			colorValue = await color.evaluate(
-				(el) => getComputedStyle(el).backgroundColor
+				(el) => getComputedStyle(el).backgroundColor,
 			)
 
 			if (colorValue === redColor) {
 				padelError.push({
-					error: 'Gebucht',
+					error: "Gebucht",
 					day,
-					hour
+					hour,
 				})
 
 				continue
@@ -106,7 +106,7 @@ const script = async () => {
 			if (colorValue === greenColor) {
 				padelBookable.push({
 					hrefValue,
-					day
+					day,
 				})
 			}
 		}
@@ -116,7 +116,7 @@ const script = async () => {
 	if (padelBookable.length > 0) {
 		try {
 			await sendEmail(
-				'eniszej@gmail.com',
+				"eniszej@gmail.com",
 				`
         <h1>Es gibt buchbare Soccerboxen für </h1>
         <ul>
@@ -124,17 +124,17 @@ const script = async () => {
 					(soccerbox) =>
 						`<li> <a href="${soccerbox.hrefValue}">
             Padel hier buchen
-            hier buchen</a></li>`
+            hier buchen</a></li>`,
 				)}
         ${padelError.map(
-					(soccerbox) => `<li> Padel Fehler: ${soccerbox.error}</li>`
+					(soccerbox) => `<li> Padel Fehler: ${soccerbox.error}</li>`,
 				)}
         </ul>
         `,
-				'Es gibt buchbare Soccerboxen'
+				"Es gibt buchbare Soccerboxen",
 			)
 		} catch (error) {
-			console.log('Sending email failed')
+			console.log("Sending email failed")
 			console.log(error)
 		}
 	}

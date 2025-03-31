@@ -1,4 +1,4 @@
-import { SuccessComp } from './_components/SuccessComp'
+import { SuccessComp } from "./_components/SuccessComp"
 
 const Page = async () => {
 	return (

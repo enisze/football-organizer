@@ -19,7 +19,7 @@ const calc = () => {
 		EMIMI: relative(EMIMIESG) + relative(EMIMI),
 		EURO: relative(EURO),
 		BC: relative(BC),
-		ETH: relative(ETH)
+		ETH: relative(ETH),
 	}
 
 	const relativeWithoutBCETH = (value: number) => {
@@ -29,7 +29,7 @@ const calc = () => {
 	const allRelativesWithoutBCETH = {
 		MSCI: relativeWithoutBCETH(MSCIESG) + relativeWithoutBCETH(MSCIWORLD),
 		EMIMI: relativeWithoutBCETH(EMIMIESG) + relativeWithoutBCETH(EMIMI),
-		EURO: relativeWithoutBCETH(EURO)
+		EURO: relativeWithoutBCETH(EURO),
 	}
 
 	console.log(allRelatives)

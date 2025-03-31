@@ -1,6 +1,6 @@
 export const transformDate = (date: Date) => {
-	const day = Intl.DateTimeFormat('de', { weekday: 'long' }).format(date)
+	const day = Intl.DateTimeFormat("de", { weekday: "long" }).format(date)
 	const dateString = date.toLocaleDateString()
 
-	return [day, dateString].join(' ')
+	return [day, dateString].join(" ")
 }

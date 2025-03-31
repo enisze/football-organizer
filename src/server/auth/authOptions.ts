@@ -1,67 +1,67 @@
-import { getServerSession, type NextAuthOptions } from 'next-auth'
+import { getServerSession, type NextAuthOptions } from "next-auth"
 // Prisma adapter for NextAuth, optional and can be removed
-import { PrismaAdapter } from '@next-auth/prisma-adapter'
-import CredentialsProvider from 'next-auth/providers/credentials'
+import { PrismaAdapter } from "@next-auth/prisma-adapter"
+import CredentialsProvider from "next-auth/providers/credentials"
 
-import { sendWelcomeMail } from '@/inngest/sendWelcomeMail'
-import type { GetServerSidePropsContext } from 'next'
-import type { Adapter } from 'next-auth/adapters'
-import DiscordProvider from 'next-auth/providers/discord'
-import GoogleProvider from 'next-auth/providers/google'
-import { prisma } from '../../server/db/client'
+import { sendWelcomeMail } from "@/inngest/sendWelcomeMail"
+import type { GetServerSidePropsContext } from "next"
+import type { Adapter } from "next-auth/adapters"
+import DiscordProvider from "next-auth/providers/discord"
+import GoogleProvider from "next-auth/providers/google"
+import { prisma } from "../../server/db/client"
 export const authOptions: NextAuthOptions = {
 	// figure one or more authentication providers
 	adapter: PrismaAdapter(prisma) as Adapter,
 	session: {
-		strategy: 'jwt',
-		updateAge: 1000 * 60 * 60 * 24
+		strategy: "jwt",
+		updateAge: 1000 * 60 * 60 * 24,
 	},
 
 	providers: [
 		DiscordProvider({
-			clientId: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID ?? '',
-			clientSecret: process.env.DISCORD_CLIENT_SECRET ?? '',
-			token: 'https://discord.com/api/oauth2/token',
-			userinfo: 'https://discord.com/api/users/@me',
-			name: 'Discord'
+			clientId: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID ?? "",
+			clientSecret: process.env.DISCORD_CLIENT_SECRET ?? "",
+			token: "https://discord.com/api/oauth2/token",
+			userinfo: "https://discord.com/api/users/@me",
+			name: "Discord",
 		}),
 		GoogleProvider({
-			clientId: process.env.GOOGLE_CLIENT_ID ?? '',
-			clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+			clientId: process.env.GOOGLE_CLIENT_ID ?? "",
+			clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
 			authorization: {
 				params: {
-					prompt: 'consent',
-					access_type: 'offline',
-					response_type: 'code'
-				}
-			}
+					prompt: "consent",
+					access_type: "offline",
+					response_type: "code",
+				},
+			},
 		}),
 		CredentialsProvider({
 			// The name to display on the sign in form (e.g. 'Sign in with...')
-			name: 'Credentials',
+			name: "Credentials",
 			// The credentials is used to generate a suitable form on the sign in page.
 			// You can specify whatever fields you are expecting to be submitted.
 			// e.g. domain, username, password, 2FA token, etc.
 			// You can pass any HTML attribute to the <input> tag through the object.
 			credentials: {
 				email: {
-					label: 'Email',
-					type: 'email'
+					label: "Email",
+					type: "email",
 				},
 				username: {
-					label: 'Paypal Name',
-					type: 'string',
-					placeholder: '(Nur, wenn nicht registriert)'
+					label: "Paypal Name",
+					type: "string",
+					placeholder: "(Nur, wenn nicht registriert)",
 				},
-				password: { label: 'Passwort', type: 'password' }
+				password: { label: "Passwort", type: "password" },
 			},
 			async authorize(credentials) {
 				if (!credentials?.username) {
 					const user = await prisma.user.findFirst({
 						where: {
 							email: credentials?.email as string,
-							password: credentials?.password as string
-						}
+							password: credentials?.password as string,
+						},
 					})
 
 					return user
@@ -72,11 +72,11 @@ export const authOptions: NextAuthOptions = {
 				try {
 					const createdUser = await prisma.user.create({
 						data: {
-							name: credentials?.username ?? '',
+							name: credentials?.username ?? "",
 							email: credentials?.email,
 							password: credentials?.password,
-							role: 'USER'
-						}
+							role: "USER",
+						},
 					})
 
 					await sendWelcomeMail(createdUser)
@@ -86,8 +86,8 @@ export const authOptions: NextAuthOptions = {
 					console.log(error)
 				}
 				return null
-			}
-		})
+			},
+		}),
 	],
 	secret: process.env.JWT_SECRET,
 	callbacks: {
@@ -119,7 +119,7 @@ export const authOptions: NextAuthOptions = {
 			if (!result) {
 				return {
 					...session,
-					user: {}
+					user: {},
 				}
 			}
 			if (token && session.user) {
@@ -128,8 +128,8 @@ export const authOptions: NextAuthOptions = {
 				session.user.paypalName = token.paypalName
 			}
 			return session
-		}
-	}
+		},
+	},
 }
 
 /**
@@ -138,8 +138,8 @@ export const authOptions: NextAuthOptions = {
  * @see https://next-auth.js.org/configuration/nextjs
  */
 export const getServerAuthSession = (ctx: {
-	req: GetServerSidePropsContext['req']
-	res: GetServerSidePropsContext['res']
+	req: GetServerSidePropsContext["req"]
+	res: GetServerSidePropsContext["res"]
 }) => {
 	return getServerSession(ctx.req, ctx.res, authOptions)
 }

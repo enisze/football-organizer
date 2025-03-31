@@ -1,10 +1,10 @@
-'use client'
-import { OrganizerLink } from '@/ui/OrganizerLink'
-import { Button } from '@/ui/button'
-import { Input } from '@/ui/input'
-import { CheckCircleIcon } from 'lucide-react'
-import { useState } from 'react'
-import { addToGroupAction } from './action'
+"use client"
+import { OrganizerLink } from "@/ui/OrganizerLink"
+import { Button } from "@/ui/button"
+import { Input } from "@/ui/input"
+import { CheckCircleIcon } from "lucide-react"
+import { useState } from "react"
+import { addToGroupAction } from "./action"
 
 export const SuccessComp = () => {
 	const [groupName, setGroupName] = useState<string | null>(null)
@@ -14,26 +14,25 @@ export const SuccessComp = () => {
 	return (
 		<form
 			action={async (formData) => {
-				const code = formData.get('code') as string
+				const code = formData.get("code") as string
 				const res = await addToGroupAction({
-					code
+					code,
 				}).then((res) => {
 					return res?.data
 				})
-
 
 				if (res?.group.name) {
 					setGroupName(res.group.name)
 					setGroupId(res.group.id)
 				}
 			}}
-			className='flex flex-col gap-2'
+			className="flex flex-col gap-2"
 		>
-			<Input name='code' placeholder='Group Code' type='text' />
-			<Button type='submit'>Beitreten</Button>
+			<Input name="code" placeholder="Group Code" type="text" />
+			<Button type="submit">Beitreten</Button>
 
 			{groupName && (
-				<div className='flex gap-2 justify-center'>
+				<div className="flex gap-2 justify-center">
 					<CheckCircleIcon />
 					<span>Du bist Gruppe {groupName} beigetreten</span>
 

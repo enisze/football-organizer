@@ -1,21 +1,21 @@
-import type { gmail_v1 } from 'googleapis'
-import { google } from 'googleapis'
-import { getEuroAmount } from '../src/helpers/getEuroAmount'
+import type { gmail_v1 } from "googleapis"
+import { google } from "googleapis"
+import { getEuroAmount } from "../src/helpers/getEuroAmount"
 
-import { isDateInCertainRange } from '@/src/helpers/isDateInCertainRange'
-import type { Event, Payment } from '@prisma/client'
-import { differenceInDays, subDays } from 'date-fns'
-import type { OAuth2ClientOptions } from 'google-auth-library'
+import { isDateInCertainRange } from "@/src/helpers/isDateInCertainRange"
+import type { Event, Payment } from "@prisma/client"
+import { differenceInDays, subDays } from "date-fns"
+import type { OAuth2ClientOptions } from "google-auth-library"
 
-import { prisma } from '@/src/server/db/client'
+import { prisma } from "@/src/server/db/client"
 
 const asyncForEach = async <T>(
 	array: (T | undefined)[],
 	callback: (
 		item: T,
 		index: number,
-		array: (T | undefined)[]
-	) => Promise<{ message: string } | undefined>
+		array: (T | undefined)[],
+	) => Promise<{ message: string } | undefined>,
 ) => {
 	for (let index = 0; index < array.length; index++) {
 		const item = array[index]
@@ -26,14 +26,14 @@ const asyncForEach = async <T>(
 }
 
 const runCron = async () => {
-	console.log('Starting cron')
+	console.log("Starting cron")
 
 	const ownerIds = await prisma.group.findMany({
 		select: {
 			ownerId: true,
 			id: true,
-			owner: { select: { email: true, name: true } }
-		}
+			owner: { select: { email: true, name: true } },
+		},
 	})
 
 	let emailAmount = 0
@@ -44,31 +44,31 @@ const runCron = async () => {
 		const result = await getPaypalEmails(
 			data.ownerId,
 			data.owner.email,
-			data.owner.name
+			data.owner.name,
 		)
 
-		if (!result?.result) return { message: 'No paypal emails' }
+		if (!result?.result) return { message: "No paypal emails" }
 
 		const events = await prisma.event.findMany({
-			where: { groupId: data.id, Group: {} }
+			where: { groupId: data.id, Group: {} },
 		})
 
 		const filteredEvents = events.filter((event) => Boolean(event.bookingDate))
 
 		console.log(
-			'filteredEvents',
+			"filteredEvents",
 			filteredEvents.length,
-			filteredEvents.map((event) => event.id)
+			filteredEvents.map((event) => event.id),
 		)
 
 		filteredEvents.forEach(async (event) => {
 			const participants = await prisma.participantsOnEvents.findMany({
-				where: { eventId: event.id, userEventStatus: 'JOINED' }
+				where: { eventId: event.id, userEventStatus: "JOINED" },
 			})
 
 			participants.forEach(async (participant) => {
 				const user = await prisma.user.findUnique({
-					where: { id: participant.id }
+					where: { id: participant.id },
 				})
 
 				if (!user) return
@@ -81,7 +81,7 @@ const runCron = async () => {
 				}) as gmail_v1.Schema$Message[]
 
 				console.log(
-					user.name + ' got ' + filteredByUser.length + ' paypalMails'
+					user.name + " got " + filteredByUser.length + " paypalMails",
 				)
 
 				emailAmount += filteredByUser.length
@@ -92,24 +92,24 @@ const runCron = async () => {
 					if (!mailId) return
 
 					const res = await prisma.payment.findFirst({
-						where: { gmailMailId: mailId, userId: user.id }
+						where: { gmailMailId: mailId, userId: user.id },
 					})
 
 					if (res) {
 						emailsAlreadyInDB.push(res)
-						console.log('payment already exists for ' + user.name)
+						console.log("payment already exists for " + user.name)
 						return
 					}
 
 					const result = isInAmountRangeAndEventBookingDate(email, event)
 
 					if (!result || !email.snippet || !email.id) {
-						console.log('email data missing')
+						console.log("email data missing")
 						return
 					}
 
 					if (!event?.id || !result) {
-						console.log('No event id or condition failed')
+						console.log("No event id or condition failed")
 						return
 					}
 					emailsWithConditions += 1
@@ -122,11 +122,11 @@ const runCron = async () => {
 							amount,
 							paymentDate: new Date(Number(email.internalDate)),
 							gmailMailId: email.id,
-							userId: user.id
-						}
+							userId: user.id,
+						},
 					})
 
-					console.log('added for ', user.name)
+					console.log("added for ", user.name)
 				})
 			})
 		})
@@ -144,53 +144,53 @@ const runCron = async () => {
 const credentials: OAuth2ClientOptions = {
 	clientId: process.env.GOOGLE_CLIENT_ID,
 	clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-	redirectUri: process.env.GMAIL_REDIRECT_URIS
+	redirectUri: process.env.GMAIL_REDIRECT_URIS,
 }
 
-const PAYPAL_LABEL = 'Label_3926228921657449356'
+const PAYPAL_LABEL = "Label_3926228921657449356"
 
 const oAuth2Client = new google.auth.OAuth2(credentials)
 
 const getPaypalEmails = async (
 	ownerId: string,
 	ownerEmail: string,
-	ownerName: string
+	ownerName: string,
 ) => {
 	console.log(ownerId)
 	const token = await prisma.tokens.findFirst({ where: { ownerId } })
 
 	if (!token) {
-		console.log('No token found')
+		console.log("No token found")
 		return
 	}
 
 	const { access_token, expiry_date, refresh_token } = token
 
 	try {
-		console.log('Getting Gmail emails')
+		console.log("Getting Gmail emails")
 		oAuth2Client.setCredentials({
 			access_token,
 			expiry_date: expiry_date.getTime(),
-			refresh_token
+			refresh_token,
 		})
 
-		const gmail = google.gmail({ version: 'v1', auth: oAuth2Client })
+		const gmail = google.gmail({ version: "v1", auth: oAuth2Client })
 
 		const { data } = await gmail.users.messages.list({
-			userId: 'me',
-			labelIds: [PAYPAL_LABEL]
+			userId: "me",
+			labelIds: [PAYPAL_LABEL],
 		})
 
 		const result = await Promise.all(
 			data.messages
 				? data.messages?.map(async (label) => {
 						const res = await gmail.users.messages.get({
-							userId: 'me',
-							id: label.id ?? undefined
+							userId: "me",
+							id: label.id ?? undefined,
 						})
 						return res.data
 					})
-				: []
+				: [],
 		)
 
 		const filteredResult = result.filter((res) => {
@@ -203,41 +203,41 @@ const getPaypalEmails = async (
 			return dateDiff < 0
 		})
 
-		console.log('filteredResult', filteredResult.length)
+		console.log("filteredResult", filteredResult.length)
 
 		if (!filteredResult) {
-			console.log('No Paypal data')
+			console.log("No Paypal data")
 			return
 		}
 
 		return { result: filteredResult, success: true }
 	} catch (error) {
-		console.log('token expired')
-		console.log('fetching new token')
+		console.log("token expired")
+		console.log("fetching new token")
 		const token = await oAuth2Client.getAccessToken()
 
 		if (token.token) {
 			const tokenId = await prisma.tokens.findFirst({
 				where: { ownerId },
-				select: { id: true }
+				select: { id: true },
 			})
 
 			if (!tokenId) {
-				console.log('No token found')
+				console.log("No token found")
 				return
 			}
 
-			console.log('token found')
+			console.log("token found")
 			await prisma.tokens.update({
 				where: { id: tokenId.id },
 				data: {
-					access_token: token.token
-				}
+					access_token: token.token,
+				},
 			})
-			console.log('token updated')
+			console.log("token updated")
 		}
 
-		return { ownerEmail, ownerName, error: 'Token has expired' }
+		return { ownerEmail, ownerName, error: "Token has expired" }
 	}
 }
 
@@ -245,7 +245,7 @@ const AMOUNT_LIST = [4.5, 5, 10, 11]
 
 const isInAmountRangeAndEventBookingDate = (
 	paymentMail: gmail_v1.Schema$Message,
-	event: Event | undefined
+	event: Event | undefined,
 ) => {
 	if (!paymentMail.internalDate) return undefined
 	if (!paymentMail.snippet) return undefined

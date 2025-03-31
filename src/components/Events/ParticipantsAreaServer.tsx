@@ -3,12 +3,12 @@ type ParticipantsAreaProps = {
 	maxParticipants?: number
 }
 
-import { prisma } from '@/src/server/db/client'
-import { ParticipantsArea } from './ParticipantsArea'
+import { prisma } from "@/src/server/db/client"
+import { ParticipantsArea } from "./ParticipantsArea"
 
 export const ParticipantsAreaServer = async ({
 	eventId,
-	maxParticipants
+	maxParticipants,
 }: ParticipantsAreaProps) => {
 	const participants = await prisma.participantsOnEvents.findMany({
 		where: { eventId },
@@ -18,21 +18,21 @@ export const ParticipantsAreaServer = async ({
 			user: {
 				select: {
 					id: true,
-					name: true
-				}
-			}
-		}
+					name: true,
+				},
+			},
+		},
 	})
 
 	const joinedUsers = participants.filter(
-		(participant) => participant.userEventStatus === 'JOINED'
+		(participant) => participant.userEventStatus === "JOINED",
 	)
 	const canceledUsers = participants.filter(
-		(participant) => participant.userEventStatus === 'CANCELED'
+		(participant) => participant.userEventStatus === "CANCELED",
 	)
 
 	const maybeUsers = participants.filter(
-		(participant) => participant.userEventStatus === 'MAYBE'
+		(participant) => participant.userEventStatus === "MAYBE",
 	)
 
 	const joinedUsersAmount = joinedUsers.length

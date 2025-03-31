@@ -1,12 +1,12 @@
-import NewEvent from '@/emails/NewEvent'
-import { render } from '@react-email/components'
-import { sendEmail } from './createSendEmail'
+import NewEvent from "@/emails/NewEvent"
+import { render } from "@react-email/components"
+import { sendEmail } from "./createSendEmail"
 
-import { inngest } from '@/src/server/db/client'
+import { inngest } from "@/src/server/db/client"
 
 export const sendNewEventEmail = inngest.createFunction(
-	{ id: 'send-new-event-email' },
-	{ event: 'event/newEmail' },
+	{ id: "send-new-event-email" },
+	{ event: "event/newEmail" },
 
 	async ({ event: inngestEvent, prisma, step, logger }) => {
 		const id = inngestEvent.data.id as string
@@ -19,11 +19,11 @@ export const sendNewEventEmail = inngest.createFunction(
 		const days = inngestEvent.data.days as number
 
 		const event = await step.run(
-			'get event',
+			"get event",
 			async () =>
 				await prisma.event.findUnique({
-					where: { id }
-				})
+					where: { id },
+				}),
 		)
 
 		if (!event) return
@@ -33,18 +33,18 @@ export const sendNewEventEmail = inngest.createFunction(
 				event={{
 					...event,
 					date: new Date(event.date),
-					bookingDate: event.bookingDate ? new Date(event.bookingDate) : null
+					bookingDate: event.bookingDate ? new Date(event.bookingDate) : null,
 				}}
 				userName={user.name}
-			/>
+			/>,
 		)
 
-		const { response } = await step.run('sending mail', async () => {
+		const { response } = await step.run("sending mail", async () => {
 			try {
 				const response = await sendEmail(
 					user.email,
 					html,
-					`NEUES FUSSBALL EVENT: In ${days} Tagen`
+					`NEUES FUSSBALL EVENT: In ${days} Tagen`,
 				)
 
 				return response
@@ -57,10 +57,10 @@ export const sendNewEventEmail = inngest.createFunction(
 
 		logger.info(
 			`Message sent to: ${JSON.stringify(
-				user.email
-			)}, Code : ${response?.statusCode}`
+				user.email,
+			)}, Code : ${response?.statusCode}`,
 		)
 
 		return response
-	}
+	},
 )

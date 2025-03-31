@@ -1,19 +1,19 @@
-'use client'
-import { setParticipatingStatus } from '@/src/app/group/[groupId]/actions'
-import { TextField } from '@/ui/TextField'
-import { Button } from '@/ui/button'
+"use client"
+import { setParticipatingStatus } from "@/src/app/group/[groupId]/actions"
+import { TextField } from "@/ui/TextField"
+import { Button } from "@/ui/button"
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger
-} from '@/ui/dialog'
-import type { Payment, UserEventStatus } from '@prisma/client'
-import { X } from 'lucide-react'
-import type { FunctionComponent } from 'react'
-import { useState } from 'react'
-import { LeaveModal } from './LeaveModal'
+	DialogTrigger,
+} from "@/ui/dialog"
+import type { Payment, UserEventStatus } from "@prisma/client"
+import { X } from "lucide-react"
+import type { FunctionComponent } from "react"
+import { useState } from "react"
+import { LeaveModal } from "./LeaveModal"
 
 type DeclineEventDialogProps = {
 	id: string
@@ -24,21 +24,21 @@ type DeclineEventDialogProps = {
 export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
 	id,
 	userStatus,
-	payment
+	payment,
 }) => {
-	const [comment, setComment] = useState('')
+	const [comment, setComment] = useState("")
 	const [showCommentModal, setShowCommentModal] = useState(false)
 	const [showLeaveModal, setShowLeaveModal] = useState(false)
 
 	const leave = async ({ comment }: { comment: string }) => {
 		if (!payment) {
-			await setParticipatingStatus({ eventId: id, status: 'CANCELED', comment })
+			await setParticipatingStatus({ eventId: id, status: "CANCELED", comment })
 		} else {
 			setShowLeaveModal(true)
 		}
 	}
 
-	const canceledMarkColor = userStatus === 'CANCELED' ? 'text-red-500' : ''
+	const canceledMarkColor = userStatus === "CANCELED" ? "text-red-500" : ""
 
 	return (
 		<>
@@ -48,10 +48,10 @@ export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
 			>
 				<DialogTrigger asChild>
 					<Button
-						aria-label='cancel-button'
-						variant='outline'
-						className='w-full'
-						type='button'
+						aria-label="cancel-button"
+						variant="outline"
+						className="w-full"
+						type="button"
 						onClick={() => {
 							setShowCommentModal(false)
 						}}
@@ -63,27 +63,27 @@ export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>
-							<h2 id='modal-title'>Bitte gib einen Grund an (optional)</h2>
+							<h2 id="modal-title">Bitte gib einen Grund an (optional)</h2>
 						</DialogTitle>
 					</DialogHeader>
-					<div className='flex flex-col w-full gap-y-2'>
+					<div className="flex flex-col w-full gap-y-2">
 						<TextField
-							label='Warum kannst du nicht teilnehmen?'
-							text={''}
+							label="Warum kannst du nicht teilnehmen?"
+							text={""}
 							onChange={(e) => setComment(e.target.value)}
 							maxLength={35}
 						/>
 
 						<form>
 							<Button
-								variant='outline'
-								color='info'
-								type='submit'
+								variant="outline"
+								color="info"
+								type="submit"
 								formAction={async () => {
 									await leave({ comment })
 									setShowCommentModal(false)
 								}}
-								className='w-full'
+								className="w-full"
 							>
 								Speichern
 							</Button>

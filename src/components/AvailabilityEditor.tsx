@@ -1,21 +1,29 @@
-'use client'
+"use client"
 
-import { cn } from '@/lib/utils/cn'
-import { Button } from '@/ui/button'
-import { Card, CardContent } from '@/ui/card'
-import { Input } from '@/ui/input'
+import { cn } from "@/lib/utils/cn"
+import {
+	createAvailabilityAction,
+	getAvailabilityAction,
+} from "@/src/app/group/[groupId]/availability/actions"
+import { Button } from "@/ui/button"
+import { Card, CardContent } from "@/ui/card"
+import { Input } from "@/ui/input"
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
-	TooltipTrigger
-} from '@/ui/tooltip'
-import { AlertCircle, Clock } from 'lucide-react'
-import { useEffect, useState } from 'react'
+	TooltipTrigger,
+} from "@/ui/tooltip"
+import { UserAvailability } from "@prisma/client"
+import { AlertCircle, Clock } from "lucide-react"
+import { useAction } from "next-safe-action/hooks"
+import { useEffect, useState } from "react"
 
 interface AvailabilityEditorProps {
 	date: Date
 	isWeekend: boolean
+	groupId: string
+	availabilities: UserAvailability[]
 }
 
 // Time slots for the day
@@ -27,8 +35,8 @@ const generateTimeSlots = (isWeekend: boolean) => {
 	for (let hour = startHour; hour <= endHour; hour++) {
 		for (let minute = 0; minute < 60; minute += 30) {
 			slots.push({
-				time: `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`,
-				available: false
+				time: `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`,
+				available: false,
 			})
 		}
 	}
@@ -38,44 +46,60 @@ const generateTimeSlots = (isWeekend: boolean) => {
 
 // Convert time string to minutes for comparison
 const timeToMinutes = (timeString: string) => {
-	const [hours, minutes] = timeString.split(':').map(Number)
+	const [hours, minutes] = timeString.split(":").map(Number)
 	return (hours ?? 0) * 60 + (minutes ?? 0)
 }
 
 export function AvailabilityEditor({
 	date,
-	isWeekend
+	isWeekend,
+	groupId,
 }: AvailabilityEditorProps) {
 	const [timeSlots, setTimeSlots] = useState(() => generateTimeSlots(isWeekend))
 	const [isDragging, setIsDragging] = useState(false)
 	const [dragValue, setDragValue] = useState(false)
-	const [startTime, setStartTime] = useState('')
-	const [endTime, setEndTime] = useState('')
-	const [error, setError] = useState('')
+	const [startTime, setStartTime] = useState("")
+	const [endTime, setEndTime] = useState("")
+	const [error, setError] = useState("")
 
-	// Reset time slots when date or weekend status changes
+	const { execute: fetchAvailability, status: fetchStatus } = useAction(
+		getAvailabilityAction,
+		{
+			onSuccess: (data) => {
+				const newSlots = generateTimeSlots(isWeekend)
+
+				data.forEach((availability) => {
+					const startMinutes = timeToMinutes(availability.startTime)
+					const endMinutes = timeToMinutes(availability.endTime)
+
+					newSlots.forEach((slot, index) => {
+						const slotMinutes = timeToMinutes(slot.time)
+						if (slotMinutes >= startMinutes && slotMinutes < endMinutes) {
+							newSlots[index].available = true
+						}
+					})
+				})
+
+				setTimeSlots(newSlots)
+			},
+		},
+	)
+
+	const {
+		execute: createAvailability,
+		status: saveStatus,
+		result,
+	} = useAction(createAvailabilityAction)
+
+	// Load initial data when date or groupId changes
 	useEffect(() => {
-		setTimeSlots(generateTimeSlots(isWeekend))
-	}, [date, isWeekend])
-
-	// Add global mouse up handler to stop dragging even if mouse leaves the component
-	useEffect(() => {
-		const handleGlobalMouseUp = () => {
-			if (isDragging) {
-				setIsDragging(false)
-			}
-		}
-
-		window.addEventListener('mouseup', handleGlobalMouseUp)
-		return () => {
-			window.removeEventListener('mouseup', handleGlobalMouseUp)
-		}
-	}, [isDragging])
+		fetchAvailability({ groupId, date })
+	}, [date, groupId])
 
 	const handleMouseDown = (index: number) => {
 		const newSlots = [...timeSlots]
 		// Toggle the current slot
-		const newValue = newSlots[index] ? !newSlots[index].available : false
+		const newValue = newSlots[index]?.available ?? false
 		if (newSlots[index]) {
 			newSlots[index].available = newValue
 		}
@@ -104,16 +128,16 @@ export function AvailabilityEditor({
 		setTimeSlots(
 			timeSlots.map((slot) => ({
 				...slot,
-				available: !allSelected
-			}))
+				available: !allSelected,
+			})),
 		)
 	}
 
 	const handleAddTimeSlot = () => {
-		setError('')
+		setError("")
 
 		if (!startTime || !endTime) {
-			setError('Please enter both start and end times')
+			setError("Bitte geben Sie Start- und Endzeit ein")
 			return
 		}
 
@@ -121,7 +145,7 @@ export function AvailabilityEditor({
 		const endMinutes = timeToMinutes(endTime)
 
 		if (startMinutes >= endMinutes) {
-			setError('End time must be after start time')
+			setError("Die Endzeit muss nach der Startzeit liegen")
 			return
 		}
 
@@ -131,13 +155,13 @@ export function AvailabilityEditor({
 
 		if (startMinutes < minStartMinutes) {
 			setError(
-				`Start time must be after ${minStartHour}:00 for ${isWeekend ? 'weekends' : 'weekdays'}`
+				`Die Startzeit muss nach ${minStartHour}:00 für ${isWeekend ? "Wochenenden" : "Werktage"} liegen`,
 			)
 			return
 		}
 
 		if (endMinutes > maxEndMinutes) {
-			setError('End time must be before 23:30')
+			setError("Die Endzeit muss vor 23:30 liegen")
 			return
 		}
 
@@ -153,71 +177,107 @@ export function AvailabilityEditor({
 		})
 
 		setTimeSlots(newSlots)
-		setStartTime('')
-		setEndTime('')
+		setStartTime("")
+		setEndTime("")
+	}
+
+	const handleSaveAvailability = () => {
+		const availableRanges: { startTime: string; endTime: string }[] = []
+		let currentRange: { startTime: string; endTime: string | null } | null =
+			null
+
+		timeSlots.forEach((slot, index) => {
+			if (slot.available && !currentRange) {
+				currentRange = { startTime: slot.time, endTime: null }
+			} else if (!slot.available && currentRange) {
+				currentRange.endTime = timeSlots[index - 1].time
+				availableRanges.push(
+					currentRange as { startTime: string; endTime: string },
+				)
+				currentRange = null
+			}
+		})
+
+		if (currentRange) {
+			currentRange.endTime = timeSlots[timeSlots.length - 1].time
+			availableRanges.push(
+				currentRange as { startTime: string; endTime: string },
+			)
+		}
+
+		for (const range of availableRanges) {
+			createAvailability({
+				groupId,
+				date,
+				startTime: range.startTime,
+				endTime: range.endTime,
+				status: "AVAILABLE",
+				type: "one-time",
+			})
+		}
 	}
 
 	return (
-		<div className='select-none'>
-			<div className='mb-6 flex flex-col gap-4'>
-				<div className='flex items-center'>
-					<Clock className='mr-2 h-5 w-5 text-primary' />
-					<h3 className='font-medium'>
+		<div className="select-none">
+			<div className="mb-6 flex flex-col gap-4">
+				<div className="flex items-center">
+					<Clock className="mr-2 h-5 w-5 text-primary" />
+					<h3 className="font-medium">
 						{isWeekend
-							? 'Weekend Availability (10:00-23:00)'
-							: 'Weekday Availability (18:00-23:00)'}
+							? "Wochenend-Verfügbarkeit (10:00-23:00)"
+							: "Werktags-Verfügbarkeit (18:00-23:00)"}
 					</h3>
 				</div>
 
-				<div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+				<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 					<Button
-						variant='outline'
+						variant="outline"
 						onClick={handleSelectAll}
-						className='w-full sm:w-auto'
+						className="w-full sm:w-auto"
 					>
 						{timeSlots.every((slot) => slot.available)
-							? 'Deselect All Times'
-							: 'Select All Times'}
+							? "Alle Zeiten abwählen"
+							: "Alle Zeiten auswählen"}
 					</Button>
 
-					<Card className='w-full sm:w-auto'>
-						<CardContent className='flex flex-col gap-3 p-3 sm:flex-row sm:items-center'>
-							<div className='grid grid-cols-2 gap-2'>
+					<Card className="w-full sm:w-auto">
+						<CardContent className="flex flex-col gap-3 p-3 sm:flex-row sm:items-center">
+							<div className="grid grid-cols-2 gap-2">
 								<div>
-									<p className='mb-1 text-xs text-muted-foreground'>From</p>
+									<p className="mb-1 text-xs text-muted-foreground">Von</p>
 									<Input
-										type='time'
+										type="time"
 										value={startTime}
 										onChange={(e) => setStartTime(e.target.value)}
-										min={isWeekend ? '10:00' : '18:00'}
-										max='23:00'
-										className='h-9'
+										min={isWeekend ? "10:00" : "18:00"}
+										max="23:00"
+										className="h-9"
 									/>
 								</div>
 
 								<div>
-									<p className='mb-1 text-xs text-muted-foreground'>To</p>
+									<p className="mb-1 text-xs text-muted-foreground">Bis</p>
 									<Input
-										type='time'
+										type="time"
 										value={endTime}
 										onChange={(e) => setEndTime(e.target.value)}
-										min={isWeekend ? '10:30' : '18:30'}
-										max='23:30'
-										className='h-9'
+										min={isWeekend ? "10:30" : "18:30"}
+										max="23:30"
+										className="h-9"
 									/>
 								</div>
 							</div>
 
-							<Button onClick={handleAddTimeSlot} className='w-full sm:w-auto'>
-								Add Time Slot
+							<Button onClick={handleAddTimeSlot} className="w-full sm:w-auto">
+								Zeitfenster hinzufügen
 							</Button>
 
 							{error && (
 								<TooltipProvider>
 									<Tooltip>
 										<TooltipTrigger asChild>
-											<div className='flex items-center text-destructive'>
-												<AlertCircle className='h-4 w-4' />
+											<div className="flex items-center text-destructive">
+												<AlertCircle className="h-4 w-4" />
 											</div>
 										</TooltipTrigger>
 										<TooltipContent>
@@ -231,15 +291,15 @@ export function AvailabilityEditor({
 				</div>
 			</div>
 
-			<div className='grid grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-8'>
+			<div className="grid grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-8">
 				{timeSlots.map((slot, index) => (
 					<div
 						key={index}
 						className={cn(
-							'flex h-12 cursor-pointer items-center justify-center rounded-md border text-sm font-medium transition-colors',
+							"flex h-12 cursor-pointer items-center justify-center rounded-md border text-sm font-medium transition-colors",
 							slot.available
-								? 'border-primary bg-primary text-primary-foreground'
-								: 'border-input bg-background hover:bg-accent hover:text-accent-foreground'
+								? "border-primary bg-primary text-primary-foreground"
+								: "border-input bg-background hover:bg-accent hover:text-accent-foreground",
 						)}
 						onMouseDown={() => handleMouseDown(index)}
 						onMouseEnter={() => handleMouseEnter(index)}
@@ -250,9 +310,35 @@ export function AvailabilityEditor({
 				))}
 			</div>
 
-			<div className='mt-4 text-sm text-muted-foreground'>
-				<p>Click and drag to select or deselect multiple time slots at once.</p>
+			<div className="mt-4 text-sm text-muted-foreground">
+				<p>
+					Klicken und ziehen Sie, um mehrere Zeitfenster auf einmal aus- oder
+					abzuwählen.
+				</p>
 			</div>
+
+			<div className="mt-4">
+				<Button
+					onClick={handleSaveAvailability}
+					className="w-full sm:w-auto"
+					disabled={saveStatus === "executing"}
+				>
+					{saveStatus === "executing"
+						? "Speichern..."
+						: "Verfügbarkeit speichern"}
+				</Button>
+				{saveStatus === "hasSucceeded" && (
+					<p className="mt-2 text-sm text-success">
+						Verfügbarkeit erfolgreich gespeichert!
+					</p>
+				)}
+			</div>
+
+			{fetchStatus === "executing" && (
+				<div className="mt-4 text-center text-muted-foreground">
+					Lade Verfügbarkeit...
+				</div>
+			)}
 		</div>
 	)
 }

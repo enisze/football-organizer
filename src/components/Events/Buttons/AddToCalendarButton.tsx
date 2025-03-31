@@ -1,19 +1,19 @@
-'use client'
-import { Button } from '@/ui/button'
+"use client"
+import { Button } from "@/ui/button"
 import {
 	Dialog,
 	DialogContent,
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger
-} from '@/ui/dialog'
-import type { CalendarOptions } from 'datebook'
-import { GoogleCalendar, ICalendar, OutlookCalendar } from 'datebook'
-import { CalendarPlus } from 'lucide-react'
-import type { FunctionComponent } from 'react'
+	DialogTrigger,
+} from "@/ui/dialog"
+import type { CalendarOptions } from "datebook"
+import { GoogleCalendar, ICalendar, OutlookCalendar } from "datebook"
+import { CalendarPlus } from "lucide-react"
+import type { FunctionComponent } from "react"
 
-import { saveAs } from 'file-saver'
+import { saveAs } from "file-saver"
 
 export type AddToCalendarButtonProps = {
 	startTime: string
@@ -25,8 +25,8 @@ export type AddToCalendarButtonProps = {
 export const AddToCalendarButton: FunctionComponent<
 	AddToCalendarButtonProps
 > = ({ startTime, endTime, date, address }) => {
-	const [startHours, startMinutes] = startTime.split(':')
-	const [endHours, endMinutes] = endTime.split(':')
+	const [startHours, startMinutes] = startTime.split(":")
+	const [endHours, endMinutes] = endTime.split(":")
 
 	const start = new Date(date)
 	const end = new Date(date)
@@ -35,12 +35,12 @@ export const AddToCalendarButton: FunctionComponent<
 	end.setHours(Number(endHours), Number(endMinutes))
 
 	const options: CalendarOptions = {
-		title: 'Fußball',
+		title: "Fußball",
 		location: address,
 		description:
-			'Das (hoffentlich) wöchentliche Cl-Finale! Spiel und Spass vorprogrammiert. Lets go.',
+			"Das (hoffentlich) wöchentliche Cl-Finale! Spiel und Spass vorprogrammiert. Lets go.",
 		start: start,
-		end: end
+		end: end,
 	}
 	const icalendar = new ICalendar(options)
 	const googleCalendar = new GoogleCalendar(options)
@@ -50,19 +50,19 @@ export const AddToCalendarButton: FunctionComponent<
 	const outlookLink = outlookCalendar.render()
 
 	return (
-		<Dialog aria-labelledby='modal-title' aria-describedby='modal-desc'>
+		<Dialog aria-labelledby="modal-title" aria-describedby="modal-desc">
 			<DialogTrigger asChild>
 				<Button
-					variant='ghost'
-					aria-label='add-to-calender'
-					className='p-0 h-fit'
+					variant="ghost"
+					aria-label="add-to-calender"
+					className="p-0 h-fit"
 				>
 					<CalendarPlus />
 				</Button>
 			</DialogTrigger>
 			<DialogContent
-				aria-labelledby='size-modal-title'
-				aria-describedby='size-modal-description'
+				aria-labelledby="size-modal-title"
+				aria-describedby="size-modal-description"
 			>
 				<DialogHeader>
 					<DialogTitle>Zum Kalender hinzufügen</DialogTitle>
@@ -71,23 +71,23 @@ export const AddToCalendarButton: FunctionComponent<
 					</DialogDescription>
 				</DialogHeader>
 
-				<div className='flex flex-col gap-y-2'>
+				<div className="flex flex-col gap-y-2">
 					<Button
-						variant='outline'
+						variant="outline"
 						onClick={() => {
 							const blob = new Blob([icalendar.render()], {
-								type: 'text/calendar'
+								type: "text/calendar",
 							})
 
-							saveAs(blob, 'my-calendar-event.ics')
+							saveAs(blob, "my-calendar-event.ics")
 						}}
-						aria-label='icalendar'
+						aria-label="icalendar"
 					>
 						ICal Kalendar
 					</Button>
 					<Button
-						variant='outline'
-						aria-label='google-calendar'
+						variant="outline"
+						aria-label="google-calendar"
 						onClick={() => {
 							window.open(googleLink)
 						}}
@@ -96,8 +96,8 @@ export const AddToCalendarButton: FunctionComponent<
 					</Button>
 
 					<Button
-						variant='outline'
-						aria-label='outlook-calendar'
+						variant="outline"
+						aria-label="outlook-calendar"
 						onClick={() => {
 							window.open(outlookLink)
 						}}

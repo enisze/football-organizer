@@ -28,37 +28,48 @@ enum EventEnvironemnt {
 
 model Event {
   id              String                 @id @default(cuid())
-    createdAt       DateTime               @default(now())
+  createdAt       DateTime               @default(now())
   updatedAt       DateTime               @updatedAt
   address         String
   date            DateTime
   endTime         String
   startTime       String
-bookingDate     DateTime?
+  bookingDate     DateTime?
   cost            Float
   environment     EventEnvironemnt       @default(OUTDOOR)
   status          EventStatus            @default(CREATED)
   maxParticipants Int                    @default(10)
   participants    ParticipantsOnEvents[]
-    Group           Group?                 @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  Group           Group?                 @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId         String?
 
   @@index([groupId])
 }
 
+enum AvailabilityStatus {
+  AVAILABLE
+  UNAVAILABLE
+  MAYBE
+}
+
 model UserAvailability {
-  id        String   @id @default(cuid())
+  id        String             @id @default(cuid())
   userId    String
   groupId   String
   date      DateTime
-  status    String   // AVAILABLE, UNAVAILABLE
-  user      User     @relation(fields: [userId], references: [id])
-  group     Group    @relation(fields: [groupId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  timeSlots Json // Array of {startTime: string, endTime: string}
+  status    AvailabilityStatus @default(AVAILABLE)
+  type      String             @default("one-time")
+  user      User               @relation(fields: [userId], references: [id])
+  group     Group              @relation(fields: [groupId], references: [id])
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
 
+  @@unique([userId, groupId, date])
   @@index([userId])
   @@index([groupId])
+  @@index([date])
+  @@index([type])
 }
 
 model ParticipantsOnEvents {
@@ -124,19 +135,19 @@ model Session {
 }
 
 model Group {
-  id           String         @id @default(cuid())
-  ownerId      String
-  name         String
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  events       Event[]
-  code         String?         @unique
-  users        UserOnGroups[]
-  pricingModel PricingModel   @default(FREE)
-  owner        User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  id               String             @id @default(cuid())
+  ownerId          String
+  name             String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  events           Event[]
+  code             String?            @unique
+  users            UserOnGroups[]
+  pricingModel     PricingModel       @default(FREE)
+  owner            User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  UserAvailability UserAvailability[]
 
   @@index([ownerId])
-  UserAvailability UserAvailability[]
 }
 
 model User {

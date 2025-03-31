@@ -1,11 +1,11 @@
-'use client'
+"use client"
 
-import { Switch } from '@/ui/switch'
-import { useState } from 'react'
-import { updateNotification } from './actions'
+import { Switch } from "@/ui/switch"
+import { useState } from "react"
+import { updateNotification } from "./actions"
 
 export const NotificationSwitch = ({
-	notificationsEnabled
+	notificationsEnabled,
 }: {
 	notificationsEnabled: boolean
 }) => {
@@ -13,9 +13,9 @@ export const NotificationSwitch = ({
 
 	return (
 		<Switch
-			id='notifications-enabled'
+			id="notifications-enabled"
 			checked={enabled}
-			type='submit'
+			type="submit"
 			onClick={() => {
 				setEnabled(!enabled)
 			}}

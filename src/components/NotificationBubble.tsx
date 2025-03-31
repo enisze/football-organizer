@@ -1,20 +1,20 @@
 export const NotificationBubble = ({
-	position = 'topRight',
-	className
+	position = "topRight",
+	className,
 }: {
-	position?: 'topLeft' | 'bottomRight' | 'topRight' | 'bottomLeft'
+	position?: "topLeft" | "bottomRight" | "topRight" | "bottomLeft"
 	className?: string
 }) => {
 	const getPos = () => {
 		switch (position) {
-			case 'topLeft':
-				return 'top-0 left-0'
-			case 'bottomRight':
-				return 'bottom-0 right-0'
-			case 'topRight':
-				return 'top-0 right-0'
-			case 'bottomLeft':
-				return 'bottom-0 left-0'
+			case "topLeft":
+				return "top-0 left-0"
+			case "bottomRight":
+				return "bottom-0 right-0"
+			case "topRight":
+				return "top-0 right-0"
+			case "bottomLeft":
+				return "bottom-0 left-0"
 		}
 	}
 
