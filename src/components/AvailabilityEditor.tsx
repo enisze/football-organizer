@@ -7,6 +7,7 @@ import type { UserAvailability } from "@prisma/client"
 import { Clock } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import { useCallback, useMemo, useState } from "react"
+import { reduce } from "remeda"
 
 interface AvailabilityEditorProps {
 	date: Date
@@ -15,19 +16,30 @@ interface AvailabilityEditorProps {
 	availability: UserAvailability | null
 }
 
-// Time slots for the day
+interface TimeSlot {
+	time: string
+	displayTime: string
+	available: boolean
+}
+
+type TimeSlots = TimeSlot[]
+
+interface TimeRange {
+	startTime: string
+	endTime: string | null
+}
+
 const generateTimeSlots = (isWeekend: boolean) => {
 	const slots = []
 	const startHour = isWeekend ? 10 : 18
 	const endHour = 23
 
 	for (let hour = startHour; hour <= endHour; hour++) {
-		for (let minute = 0; minute < 60; minute += 30) {
+		for (const minute of [0, 30]) {
 			const startTime = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`
 			const endHour = minute === 30 ? hour + 1 : hour
 			const endMinute = minute === 30 ? "00" : "30"
 			const endTime = `${endHour.toString().padStart(2, "0")}:${endMinute}`
-
 			slots.push({
 				time: startTime,
 				displayTime: `${startTime}-${endTime}`,
@@ -39,13 +51,10 @@ const generateTimeSlots = (isWeekend: boolean) => {
 	return slots
 }
 
-// Convert time string to minutes for comparison
-const timeToMinutes = (timeString: string) => {
-	const [hours, minutes] = timeString.split(":").map(Number)
+const timeToMinutes = (time: string) => {
+	const [hours, minutes] = time.split(":").map(Number)
 	return (hours ?? 0) * 60 + (minutes ?? 0)
 }
-
-type TimeSlots = { time: string; displayTime: string; available: boolean }[]
 
 const convertAvailabilityToTimeSlots = (
 	availability: UserAvailability | null,
@@ -53,30 +62,19 @@ const convertAvailabilityToTimeSlots = (
 ): TimeSlots => {
 	if (!availability) return defaultSlots
 
-	const slots = [...defaultSlots] // Create a copy of default slots
 	const availableTimeSlots = availability.timeSlots as {
 		startTime: string
 		endTime: string
 	}[]
-
-	for (let i = 0; i < availableTimeSlots.length; i++) {
-		const timeSlot = availableTimeSlots[i]
-		for (let j = 0; j < defaultSlots.length; j++) {
-			const slot = defaultSlots[j]
-			const slotTime = timeToMinutes(slot.time)
-			const startTime = timeToMinutes(timeSlot.startTime)
-			const endTime = timeToMinutes(timeSlot.endTime)
-
-			if (slotTime >= startTime && slotTime < endTime) {
-				slots[j] = {
-					...slot,
-					available: true,
-				}
-			}
-		}
-	}
-
-	return slots
+	return defaultSlots.map((slot) => {
+		const slotTime = timeToMinutes(slot.time)
+		const isAvailable = availableTimeSlots.some(
+			({ startTime, endTime }) =>
+				slotTime >= timeToMinutes(startTime) &&
+				slotTime < timeToMinutes(endTime),
+		)
+		return { ...slot, available: isAvailable }
+	})
 }
 
 export function AvailabilityEditor({
@@ -95,42 +93,42 @@ export function AvailabilityEditor({
 	)
 
 	const [isDragging, setIsDragging] = useState(false)
-
 	const { execute: createAvailability } = useAction(
 		createOrUpdateAvailabilityAction,
 	)
 
 	const saveAvailability = useCallback(
 		(newSlots: TimeSlots) => {
-			const availableRanges: { startTime: string; endTime: string }[] = []
-			let currentRange: { startTime: string; endTime: string | null } | null =
-				null
+			const availableRanges = reduce(
+				newSlots,
+				(ranges: TimeRange[], slot: TimeSlot, index: number) => {
+					if (slot.available) {
+						const lastRange = ranges[ranges.length - 1]
+						if (ranges.length === 0 || lastRange?.endTime !== null) {
+							ranges.push({ startTime: slot.time, endTime: null })
+						}
+					} else if (ranges.length > 0) {
+						const lastRange = ranges[ranges.length - 1]
+						if (lastRange && lastRange.endTime === null) {
+							lastRange.endTime =
+								newSlots[index - 1]?.displayTime.split("-")[1] ?? null
+						}
+					}
+					return ranges
+				},
+				[],
+			)
 
-			for (let i = 0; i < newSlots.length; i++) {
-				const slot = newSlots[i]
-				if (slot.available && !currentRange) {
-					currentRange = { startTime: slot.time, endTime: null }
-				} else if (!slot.available && currentRange) {
-					currentRange.endTime = newSlots[i - 1].displayTime.split("-")[1] // Use the end time from the previous slot
-					availableRanges.push(
-						currentRange as { startTime: string; endTime: string },
-					)
-					currentRange = null
-				}
-			}
-
-			if (currentRange) {
-				currentRange.endTime =
-					newSlots[newSlots.length - 1].displayTime.split("-")[1] // Use the end time from the last slot
-				availableRanges.push(
-					currentRange as { startTime: string; endTime: string },
-				)
+			const lastRange = availableRanges[availableRanges.length - 1]
+			if (lastRange && lastRange.endTime === null) {
+				lastRange.endTime =
+					newSlots[newSlots.length - 1]?.displayTime.split("-")[1] ?? ""
 			}
 
 			createAvailability({
 				groupId,
 				date,
-				timeSlots: availableRanges,
+				timeSlots: availableRanges as { startTime: string; endTime: string }[],
 				status: "AVAILABLE",
 				type: "one-time",
 			})
@@ -138,31 +136,28 @@ export function AvailabilityEditor({
 		[createAvailability, date, groupId],
 	)
 
-	const handleMouseDown = useCallback(
+	const toggleSlotAvailability = useCallback(
 		(index: number) => {
 			const newSlots = [...timeSlots]
-			newSlots[index] = {
-				...newSlots[index],
-				available: !newSlots[index].available,
-			}
+			newSlots[index].available = !newSlots[index].available
 			saveAvailability(newSlots)
-			setIsDragging(true)
 		},
 		[timeSlots, saveAvailability],
 	)
 
+	const handleMouseDown = useCallback(
+		(index: number) => {
+			toggleSlotAvailability(index)
+			setIsDragging(true)
+		},
+		[toggleSlotAvailability],
+	)
+
 	const handleMouseEnter = useCallback(
 		(index: number) => {
-			if (isDragging) {
-				const newSlots = [...timeSlots]
-				newSlots[index] = {
-					...newSlots[index],
-					available: !newSlots[index].available,
-				}
-				saveAvailability(newSlots)
-			}
+			if (isDragging) toggleSlotAvailability(index)
 		},
-		[isDragging, timeSlots, saveAvailability],
+		[isDragging, toggleSlotAvailability],
 	)
 
 	const handleSelectAll = useCallback(() => {
