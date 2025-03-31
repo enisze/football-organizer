@@ -13,8 +13,10 @@ import MyAvailabilityPage from "./MyAvailability"
 
 const MainPage = async ({
 	params: { groupId },
+	searchParams: { date },
 }: {
 	params: { groupId: string }
+	searchParams: { date: string }
 }) => {
 	const isOwner = await isOwnerOfGroup()
 	const events = await prisma.event.findMany({
@@ -48,6 +50,14 @@ const MainPage = async ({
 	if (!isInGroup) {
 		return <div>Du gehörst nicht zu dieser Gruppe</div>
 	}
+
+	const availability = await prisma.userAvailability.findFirst({
+		where: {
+			groupId,
+			userId: session?.user?.id,
+			date,
+		},
+	})
 
 	return (
 		<div className="flex flex-col pb-2">
@@ -85,7 +95,7 @@ const MainPage = async ({
 					</div>
 				</TabsContent>
 				<TabsContent value="myAvailability">
-					<MyAvailabilityPage groupId={groupId} />
+					<MyAvailabilityPage groupId={groupId} availability={availability} />
 				</TabsContent>
 				<TabsContent value="groupAvailability">
 					<GroupAvailabilityPage />

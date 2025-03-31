@@ -20,7 +20,7 @@ const availabilityInput = z.object({
 	type: z.enum(["one-time", "recurring"]).default("one-time"),
 })
 
-export const createAvailabilityAction = authedActionClient
+export const createOrUpdateAvailabilityAction = authedActionClient
 	.schema(availabilityInput)
 	.action(async ({ parsedInput, ctx: { userId } }) => {
 		const { groupId, date, timeSlots, status, type } = parsedInput

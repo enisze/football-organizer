@@ -2,6 +2,7 @@
 import { Toaster } from "@/ui/toaster"
 import { SessionProvider } from "next-auth/react"
 import { ThemeProvider } from "next-themes"
+import { NuqsAdapter } from "nuqs/adapters/next/app"
 import type { ReactNode } from "react"
 
 const Providers = ({ children }: { children: ReactNode }) => {
@@ -9,7 +10,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
 		<SessionProvider>
 			<ThemeProvider attribute="class">
 				<Toaster />
-				{children}
+				<NuqsAdapter>{children}</NuqsAdapter>
 			</ThemeProvider>
 		</SessionProvider>
 	)

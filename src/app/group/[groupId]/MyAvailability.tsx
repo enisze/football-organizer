@@ -1,28 +1,22 @@
 "use client"
 
-import { Save } from "lucide-react"
-import { useState } from "react"
-
 import { AvailabilityEditor } from "@/src/components/AvailabilityEditor"
-import { Button } from "@/ui/button"
 import { Calendar } from "@/ui/calendar"
 import type { UserAvailability } from "@prisma/client"
+import { useQueryState } from "nuqs"
 
 interface MyAvailabilityPageProps {
 	groupId: string
-	availabiliies: UserAvailability
+	availability: UserAvailability | null
 }
 
 export default function MyAvailabilityPage({
 	groupId,
+	availability,
 }: MyAvailabilityPageProps) {
-	const [date, setDate] = useState<Date | undefined>(new Date())
-	const [saved, setSaved] = useState(false)
-
-	const handleSave = () => {
-		setSaved(true)
-		setTimeout(() => setSaved(false), 2000)
-	}
+	const [date, setDate] = useQueryState("date", {
+		defaultValue: "",
+	})
 
 	const isWeekend = (date: Date) => {
 		const day = date.getDay()
@@ -33,12 +27,6 @@ export default function MyAvailabilityPage({
 		<div className="container mx-auto py-6">
 			<div className="mb-6 flex items-center">
 				<h1 className="ml-4 text-2xl font-bold">Meine Verfügbarkeit</h1>
-				<div className="ml-auto">
-					<Button onClick={handleSave}>
-						<Save className="mr-2 h-4 w-4" />
-						{saved ? "Gespeichert!" : "Speichern"}
-					</Button>
-				</div>
 			</div>
 
 			<div className="grid gap-6 md:grid-cols-[300px_1fr]">
@@ -46,8 +34,8 @@ export default function MyAvailabilityPage({
 					<div className="rounded-lg border p-4">
 						<Calendar
 							mode="single"
-							selected={date}
-							onSelect={setDate}
+							selected={new Date(date)}
+							onSelect={(date) => setDate(date?.toISOString() || "")}
 							className="mx-auto"
 						/>
 					</div>
@@ -68,13 +56,13 @@ export default function MyAvailabilityPage({
 					<h2 className="mb-4 text-xl font-semibold">
 						{date ? (
 							<>
-								{date.toLocaleDateString("de-DE", {
+								{new Date(date).toLocaleDateString("de-DE", {
 									weekday: "long",
 									month: "long",
 									day: "numeric",
 								})}
 								<span className="ml-2 text-sm font-normal text-muted-foreground">
-									{isWeekend(date!) ? "(Wochenende)" : "(Werktag)"}
+									{isWeekend(new Date(date)) ? "(Wochenende)" : "(Werktag)"}
 								</span>
 							</>
 						) : (
@@ -84,9 +72,10 @@ export default function MyAvailabilityPage({
 
 					{date && (
 						<AvailabilityEditor
-							date={date}
-							isWeekend={isWeekend(date)}
+							date={new Date(date)}
+							isWeekend={isWeekend(new Date(date))}
 							groupId={groupId}
+							availability={availability}
 						/>
 					)}
 				</div>
