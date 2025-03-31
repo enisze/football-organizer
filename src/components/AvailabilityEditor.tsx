@@ -6,7 +6,7 @@ import { Button } from "@/ui/button"
 import type { UserAvailability } from "@prisma/client"
 import { Clock } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
-import { useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 
 interface AvailabilityEditorProps {
 	date: Date
@@ -100,72 +100,79 @@ export function AvailabilityEditor({
 		createOrUpdateAvailabilityAction,
 	)
 
-	const saveAvailability = (newSlots: TimeSlots) => {
-		const availableRanges: { startTime: string; endTime: string }[] = []
-		let currentRange: { startTime: string; endTime: string | null } | null =
-			null
+	const saveAvailability = useCallback(
+		(newSlots: TimeSlots) => {
+			const availableRanges: { startTime: string; endTime: string }[] = []
+			let currentRange: { startTime: string; endTime: string | null } | null =
+				null
 
-		for (let i = 0; i < newSlots.length; i++) {
-			const slot = newSlots[i]
-			if (slot.available && !currentRange) {
-				currentRange = { startTime: slot.time, endTime: null }
-			} else if (!slot.available && currentRange) {
-				currentRange.endTime = newSlots[i - 1].displayTime.split("-")[1] // Use the end time from the previous slot
+			for (let i = 0; i < newSlots.length; i++) {
+				const slot = newSlots[i]
+				if (slot.available && !currentRange) {
+					currentRange = { startTime: slot.time, endTime: null }
+				} else if (!slot.available && currentRange) {
+					currentRange.endTime = newSlots[i - 1].displayTime.split("-")[1] // Use the end time from the previous slot
+					availableRanges.push(
+						currentRange as { startTime: string; endTime: string },
+					)
+					currentRange = null
+				}
+			}
+
+			if (currentRange) {
+				currentRange.endTime =
+					newSlots[newSlots.length - 1].displayTime.split("-")[1] // Use the end time from the last slot
 				availableRanges.push(
 					currentRange as { startTime: string; endTime: string },
 				)
-				currentRange = null
 			}
-		}
 
-		if (currentRange) {
-			currentRange.endTime =
-				newSlots[newSlots.length - 1].displayTime.split("-")[1] // Use the end time from the last slot
-			availableRanges.push(
-				currentRange as { startTime: string; endTime: string },
-			)
-		}
+			createAvailability({
+				groupId,
+				date,
+				timeSlots: availableRanges,
+				status: "AVAILABLE",
+				type: "one-time",
+			})
+		},
+		[createAvailability, date, groupId],
+	)
 
-		console.log(availableRanges)
-
-		createAvailability({
-			groupId,
-			date,
-			timeSlots: availableRanges,
-			status: "AVAILABLE",
-			type: "one-time",
-		})
-	}
-
-	const handleMouseDown = (index: number) => {
-		const newSlots = [...timeSlots]
-		newSlots[index] = {
-			...newSlots[index],
-			available: !newSlots[index].available,
-		}
-		saveAvailability(newSlots)
-		setIsDragging(true)
-	}
-
-	const handleMouseEnter = (index: number) => {
-		if (isDragging) {
+	const handleMouseDown = useCallback(
+		(index: number) => {
 			const newSlots = [...timeSlots]
 			newSlots[index] = {
 				...newSlots[index],
 				available: !newSlots[index].available,
 			}
 			saveAvailability(newSlots)
-		}
-	}
+			setIsDragging(true)
+		},
+		[timeSlots, saveAvailability],
+	)
 
-	const handleSelectAll = () => {
+	const handleMouseEnter = useCallback(
+		(index: number) => {
+			if (isDragging) {
+				const newSlots = [...timeSlots]
+				newSlots[index] = {
+					...newSlots[index],
+					available: !newSlots[index].available,
+				}
+				saveAvailability(newSlots)
+			}
+		},
+		[isDragging, timeSlots, saveAvailability],
+	)
+
+	const handleSelectAll = useCallback(() => {
 		const allSelected = timeSlots.every((slot) => slot.available)
 		const newSlots = timeSlots.map((slot) => ({
 			...slot,
 			available: !allSelected,
 		}))
 		saveAvailability(newSlots)
-	}
+	}, [timeSlots, saveAvailability])
 
 	return (
 		<div className="select-none">
