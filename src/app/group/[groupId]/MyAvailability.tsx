@@ -4,6 +4,7 @@ import { AvailabilityEditor } from "@/src/components/AvailabilityEditor"
 import { Calendar } from "@/ui/calendar"
 import type { UserAvailability } from "@prisma/client"
 import { useQueryState } from "nuqs"
+import { revalidateGroupAction } from "./actions"
 
 interface MyAvailabilityPageProps {
 	groupId: string
@@ -35,7 +36,10 @@ export default function MyAvailabilityPage({
 						<Calendar
 							mode="single"
 							selected={new Date(date)}
-							onSelect={(date) => setDate(date?.toISOString() || "")}
+							onSelect={async (date) => {
+								setDate(date?.toISOString() || "")
+								await revalidateGroupAction()
+							}}
 							className="mx-auto"
 						/>
 					</div>

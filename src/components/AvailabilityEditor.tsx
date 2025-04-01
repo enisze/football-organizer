@@ -138,8 +138,10 @@ export function AvailabilityEditor({
 
 	const toggleSlotAvailability = useCallback(
 		(index: number) => {
-			const newSlots = [...timeSlots]
-			newSlots[index].available = !newSlots[index].available
+			const newSlots = timeSlots.map((slot, i) => ({
+				...slot,
+				available: i === index ? !slot.available : slot.available,
+			}))
 			saveAvailability(newSlots)
 		},
 		[timeSlots, saveAvailability],
