@@ -2,49 +2,68 @@
 
 import { cn } from "@/lib/utils/cn"
 import { Tabs, TabsList, TabsTrigger } from "@/ui/tabs"
+import type { User, UserAvailability } from "@prisma/client"
 import { Clock } from "lucide-react"
 import { useMemo, useState } from "react"
-
-interface User {
-	id: number
-	name: string
-	color: string
-}
 
 interface GroupAvailabilityViewProps {
 	date: Date
 	users: User[]
+	allUserAvailabilities: UserAvailability[]
 }
 
 type TimeSlotDuration = "30min" | "1hour" | "90min" | "2hours"
 
-// Generate mock availability data for demonstration
-const generateMockAvailability = (date: Date, users: User[]) => {
+type TimeSlot = {
+	time: string
+	availableUsers: User[]
+}
+
+const processAvailabilities = (
+	date: Date,
+	users: User[],
+	availabilities: UserAvailability[],
+): TimeSlot[] => {
 	const isWeekend = date.getDay() === 0 || date.getDay() === 6
 	const startHour = isWeekend ? 10 : 18
 	const endHour = 23
 
-	const hours = []
+	const slots: TimeSlot[] = []
+
 	for (let hour = startHour; hour <= endHour; hour++) {
 		for (let minute = 0; minute < 60; minute += 30) {
 			const timeString = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`
 
-			// Generate random availability for each user
-			const availableUsers = users.filter(() => Math.random() > 0.4)
+			const availableUsers = users.filter((user) => {
+				const userAvail = availabilities.find((a) => a.userId === user.id)
+				if (!userAvail) return false
 
-			hours.push({
+				// Check if the current timeSlot is within any of the user's available slots
+				const timeSlots = userAvail.timeSlots as {
+					startTime: string
+					endTime: string
+				}[]
+				return timeSlots.some(
+					(slot) => slot.startTime <= timeString && timeString <= slot.endTime,
+				)
+			})
+
+			slots.push({
 				time: timeString,
 				availableUsers,
 			})
 		}
 	}
 
-	return hours
+	return slots
 }
 
 // Aggregate time slots based on duration
 const aggregateTimeSlots = (
-	slots: any[],
+	slots: {
+		time: string
+		availableUsers: User[]
+	}[],
 	duration: TimeSlotDuration,
 	users: User[],
 ) => {
@@ -53,33 +72,35 @@ const aggregateTimeSlots = (
 	const aggregatedSlots = []
 	const slotsPerGroup = duration === "1hour" ? 2 : duration === "90min" ? 3 : 4 // 2hours = 4 slots
 
-	for (let i = 0; i < slots.length; i += slotsPerGroup) {
-		if (i + slotsPerGroup <= slots.length) {
-			const groupSlots = slots.slice(i, i + slotsPerGroup)
-			const startTime = groupSlots[0].time
-			const endTime = groupSlots[groupSlots.length - 1].time
+	// Create overlapping groups
+	for (let i = 0; i < slots.length - (slotsPerGroup - 1); i++) {
+		const groupSlots = slots.slice(i, i + slotsPerGroup)
+		const startTime = groupSlots[0]?.time
+		const endTime = groupSlots[groupSlots.length - 1]?.time
 
-			// Calculate which users are available for the entire duration
-			const allUsers = new Set<number>()
-			const userAvailabilityCounts: Record<number, number> = {}
+		// Calculate which users are available for the entire duration
+		const allUsers = new Set<string>()
+		const userAvailabilityCounts: Record<string, number> = {}
 
-			groupSlots.forEach((slot) => {
-				slot.availableUsers.forEach((user: User) => {
-					allUsers.add(user.id)
-					userAvailabilityCounts[user.id] =
-						(userAvailabilityCounts[user.id] || 0) + 1
-				})
-			})
+		for (const slot of groupSlots) {
+			for (const user of slot.availableUsers) {
+				allUsers.add(user.id)
+				userAvailabilityCounts[user.id] =
+					(userAvailabilityCounts[user.id] || 0) + 1
+			}
+		}
 
-			// A user is considered available if they're available for at least half the slots
-			const minRequiredSlots = Math.ceil(slotsPerGroup / 2)
-			const availableUsers = Array.from(allUsers)
-				.filter(
-					(userId) => (userAvailabilityCounts[userId] || 0) >= minRequiredSlots,
-				)
-				.map((userId) => users.find((user) => user.id === userId))
-				.filter(Boolean) as User[]
+		// A user is considered available if they're available for at least half the slots
+		const minRequiredSlots = Math.ceil(slotsPerGroup / 2)
+		const availableUsers = Array.from(allUsers)
+			.filter(
+				(userId) => (userAvailabilityCounts[userId] || 0) >= minRequiredSlots,
+			)
+			.map((userId) => users.find((user) => user.id === userId))
+			.filter(Boolean) as User[]
 
+		// Only add slots that have at least one available user
+		if (availableUsers.length > 0) {
 			aggregatedSlots.push({
 				timeRange: `${startTime} - ${endTime}`,
 				startTime,
@@ -95,12 +116,13 @@ const aggregateTimeSlots = (
 export function GroupAvailabilityView({
 	date,
 	users,
+	allUserAvailabilities,
 }: GroupAvailabilityViewProps) {
 	const [duration, setDuration] = useState<TimeSlotDuration>("30min")
 
 	const rawAvailabilityData = useMemo(
-		() => generateMockAvailability(date, users),
-		[date, users],
+		() => processAvailabilities(date, users, allUserAvailabilities),
+		[date, users, allUserAvailabilities],
 	)
 
 	const availabilityData = useMemo(
@@ -131,16 +153,16 @@ export function GroupAvailabilityView({
 			</div>
 
 			<div className="mb-4 flex flex-wrap gap-2">
-				{users.map((user) => (
+				{availabilityData.map(({ availableUsers }) => (
 					<div
-						key={user.id}
+						key={availableUsers?.id}
 						className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm"
 					>
 						<div
 							className="h-3 w-3 rounded-full"
-							style={{ backgroundColor: user.color }}
+							style={{ backgroundColor: availableUsers.color }}
 						/>
-						{user.name}
+						{availableUsers?.name}
 					</div>
 				))}
 			</div>

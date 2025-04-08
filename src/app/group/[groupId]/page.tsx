@@ -59,6 +59,18 @@ const MainPage = async ({
 		},
 	})
 
+	const allUserAvailabilities = await prisma.userAvailability.findMany({
+		where: {
+			groupId,
+			date,
+		},
+		include: {
+			user: true,
+		},
+	})
+
+	const users = await prisma.user.findMany()
+
 	return (
 		<div className="flex flex-col pb-2">
 			<Tabs defaultValue="events" className="w-full">
@@ -98,7 +110,10 @@ const MainPage = async ({
 					<MyAvailabilityPage groupId={groupId} availability={availability} />
 				</TabsContent>
 				<TabsContent value="groupAvailability">
-					<GroupAvailabilityPage />
+					<GroupAvailabilityPage
+						users={users}
+						allUserAvailabilities={allUserAvailabilities}
+					/>
 				</TabsContent>
 			</Tabs>
 		</div>

@@ -32,7 +32,7 @@ interface TimeRange {
 const generateTimeSlots = (isWeekend: boolean) => {
 	const slots = []
 	const startHour = isWeekend ? 10 : 18
-	const endHour = 23
+	const endHour = 22
 
 	for (let hour = startHour; hour <= endHour; hour++) {
 		for (const minute of [0, 30]) {
