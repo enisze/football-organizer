@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils/cn"
 import { Calendar } from "@/ui/calendar"
 import { Card, CardContent } from "@/ui/card"
 import { Label } from "@/ui/label"
+import { Slider } from "@/ui/slider"
 import { Tabs, TabsList, TabsTrigger } from "@/ui/tabs"
 import type { User } from "@prisma/client"
 import { Clock } from "lucide-react"
@@ -30,12 +31,15 @@ export function GroupAvailabilityView({
 	const [duration, setDuration] = useQueryState("duration", {
 		parse: (value) => value as TimeSlotDuration,
 	})
+	const [minUsers, setMinUsers] = useQueryState("minUsers", {
+		defaultValue: "0",
+		parse: (value) => value,
+	})
 
 	const handleDateChange = useCallback(
 		async (newDate: Date | undefined) => {
 			if (!newDate) return
 			setDate(newDate.toISOString())
-			// Add a small delay before revalidating to prevent jumping
 			revalidateGroupAction()
 		},
 		[setDate],
@@ -49,7 +53,7 @@ export function GroupAvailabilityView({
 				<div className="space-y-4">
 					<div className="rounded-lg border p-4">
 						<div className="mb-2">
-							<Label htmlFor="date-picker">Select Date</Label>
+							<Label htmlFor="date-picker">Datum auswählen</Label>
 							<Calendar
 								id="date-picker"
 								mode="single"
@@ -57,6 +61,26 @@ export function GroupAvailabilityView({
 								onSelect={handleDateChange}
 								className="mx-auto"
 							/>
+						</div>
+					</div>
+
+					<div className="rounded-lg border p-4">
+						<div className="mb-2">
+							<Label>Mindestanzahl verfügbarer Nutzer</Label>
+							<div className="px-2 pt-4">
+								<Slider
+									defaultValue={[0]}
+									max={10}
+									step={1}
+									value={[Number.parseInt(minUsers || "0")]}
+									onValueChange={(value) =>
+										setMinUsers(value[0]?.toString() ?? "0")
+									}
+								/>
+							</div>
+							<div className="mt-2 text-center text-sm text-muted-foreground">
+								Mindestens {Number.parseInt(minUsers || "0")} Nutzer
+							</div>
 						</div>
 					</div>
 				</div>
@@ -75,6 +99,9 @@ export function GroupAvailabilityView({
 							<div className="flex items-center">
 								<Clock className="mr-2 h-5 w-5 text-primary" />
 								<h3 className="font-medium">Gruppenverfügbarkeit</h3>
+								<span className="ml-2 text-sm text-muted-foreground">
+									(Gruppengröße: {users.length})
+								</span>
 							</div>
 
 							<Tabs
@@ -86,7 +113,7 @@ export function GroupAvailabilityView({
 							>
 								<TabsList className="grid w-full grid-cols-3">
 									<TabsTrigger value="60min">1 Stunde</TabsTrigger>
-									<TabsTrigger value="90min">90 Min</TabsTrigger>
+									<TabsTrigger value="90min">90 Minuten</TabsTrigger>
 									<TabsTrigger value="120min">2 Stunden</TabsTrigger>
 								</TabsList>
 							</Tabs>
@@ -124,8 +151,8 @@ export function GroupAvailabilityView({
 													))}
 												</div>
 
-												<div className="mt-2 text-right text-xs text-muted-foreground">
-													{availableCount}/{users.length} verfügbar
+												<div className="mt-2 flex justify-between text-xs text-muted-foreground">
+													<span>{availableCount}/10</span>
 												</div>
 											</div>
 
@@ -143,7 +170,8 @@ export function GroupAvailabilityView({
 
 							{processedSlots.length === 0 && (
 								<div className="col-span-full text-center text-muted-foreground">
-									Keine verfügbaren Zeitfenster für die gewählte Dauer gefunden
+									Keine verfügbaren Zeitfenster für die gewählte Dauer und
+									Mindestanzahl an Teilnehmern gefunden
 								</div>
 							)}
 						</div>

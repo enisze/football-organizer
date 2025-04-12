@@ -18,13 +18,14 @@ import { getLatLong } from "./getLatLong"
 
 export default async function MainPage({
 	params: { groupId },
-	searchParams: { date, selectedDate, duration = "60min" },
+	searchParams: { date, selectedDate, duration = "60min", minUsers = "0" },
 }: {
 	params: { groupId: string }
 	searchParams: {
 		date?: string
 		selectedDate?: string
 		duration?: TimeSlotDuration
+		minUsers?: string
 	}
 }) {
 	const session = await getServerComponentAuthSession()
@@ -132,6 +133,11 @@ export default async function MainPage({
 		duration,
 	})
 
+	const minUsersValue = Number.parseInt(minUsers || "0")
+	const filteredAvailability = groupAvailability.filter(
+		(slot) => slot.availableUsers.length >= (minUsersValue * users.length) / 10,
+	)
+
 	return (
 		<div className="flex flex-col pb-2">
 			<Tabs defaultValue="events" className="w-full">
@@ -181,7 +187,7 @@ export default async function MainPage({
 					<GroupAvailabilityView
 						users={users}
 						date={currentDate}
-						processedSlots={groupAvailability}
+						processedSlots={filteredAvailability}
 					/>
 				</TabsContent>
 			</Tabs>
