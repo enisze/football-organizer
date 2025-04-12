@@ -1,34 +1,70 @@
+import { EventCard } from "@/src/components/Events/EventCard"
 import { isOwnerOfGroup } from "@/src/helpers/isOwnerOfGroup"
 import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
-import { redirect } from "next/navigation"
-import { getLatLong } from "./getLatLong"
-
-import { EventCard } from "@/src/components/Events/EventCard"
 import { prisma } from "@/src/server/db/client"
 import { redis } from "@/src/server/db/redis"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs"
+import type { Event } from "@prisma/client"
 import { addDays } from "date-fns"
+import { redirect } from "next/navigation"
 import GroupAvailabilityPage from "./GroupPage"
 import MyAvailabilityPage from "./MyAvailability"
+import { getLatLong } from "./getLatLong"
 
-const MainPage = async ({
+export default async function MainPage({
 	params: { groupId },
 	searchParams: { date },
 }: {
 	params: { groupId: string }
 	searchParams: { date: string }
-}) => {
-	const isOwner = await isOwnerOfGroup()
-	const events = await prisma.event.findMany({
-		where: {
-			groupId,
-		},
-		orderBy: { date: "asc" },
-	})
+}) {
+	const session = await getServerComponentAuthSession()
+	if (!session?.user?.id) redirect("/api/auth/signin")
 
-	const eventInfo = events.map((event) => {
-		return { address: event.address, id: event.id }
-	})
+	const isOwner = await isOwnerOfGroup()
+
+	const [events, group, timeSlots, userInGroup] = await Promise.all([
+		prisma.event.findMany({
+			where: { groupId },
+			orderBy: { date: "asc" },
+		}),
+		prisma.group.findUnique({
+			where: { id: groupId },
+			include: {
+				users: {
+					include: {
+						user: true,
+					},
+				},
+			},
+		}),
+		prisma.timeSlot.findMany({
+			where: {
+				user: { id: session.user.id },
+				groupId,
+			},
+			orderBy: [{ type: "asc" }, { date: "asc" }, { startTime: "asc" }],
+		}),
+		prisma.userOnGroups.findFirst({
+			where: {
+				user: { id: session.user.id },
+				groupId,
+			},
+		}),
+	])
+
+	if (!userInGroup) {
+		return <div>Du gehörst nicht zu dieser Gruppe</div>
+	}
+
+	if (!group) {
+		redirect("/")
+	}
+
+	const eventInfo = events.map((event: Event) => ({
+		address: event.address,
+		id: event.id,
+	}))
 
 	const data = await getLatLong(eventInfo)
 
@@ -36,40 +72,10 @@ const MainPage = async ({
 		await redis.disconnect()
 	}
 
-	const session = await getServerComponentAuthSession()
+	const users = group.users.map((u) => u.user)
 
-	if (!session?.user?.id) redirect("/api/auth/signin")
-
-	const isInGroup = await prisma.userOnGroups.findFirst({
-		where: {
-			groupId,
-			id: session?.user?.id,
-		},
-	})
-
-	if (!isInGroup) {
-		return <div>Du gehörst nicht zu dieser Gruppe</div>
-	}
-
-	const availability = await prisma.userAvailability.findFirst({
-		where: {
-			groupId,
-			userId: session?.user?.id,
-			date,
-		},
-	})
-
-	const allUserAvailabilities = await prisma.userAvailability.findMany({
-		where: {
-			groupId,
-			date,
-		},
-		include: {
-			user: true,
-		},
-	})
-
-	const users = await prisma.user.findMany()
+	const generalTimeSlots = timeSlots.filter((slot) => slot.type === "GENERAL")
+	const weekendTimeSlots = timeSlots.filter((slot) => slot.type === "WEEKEND")
 
 	return (
 		<div className="flex flex-col pb-2">
@@ -84,11 +90,13 @@ const MainPage = async ({
 				<TabsContent value="events">
 					<div className="m-8 flex flex-col gap-y-3 justify-center items-center">
 						<ul className="flex flex-col gap-y-2">
-							{events &&
-								events?.length > 0 &&
-								events.map(async (event) => {
+							{events?.length > 0 &&
+								events.map(async (event: Event) => {
 									const payment = await prisma.payment.findFirst({
-										where: { eventId: event.id, userId: session?.user?.id },
+										where: {
+											eventId: event.id,
+											userId: session.user?.id ?? "",
+										},
 									})
 									if (
 										addDays(event.date, 3) < new Date() &&
@@ -107,17 +115,16 @@ const MainPage = async ({
 					</div>
 				</TabsContent>
 				<TabsContent value="myAvailability">
-					<MyAvailabilityPage groupId={groupId} availability={availability} />
+					<MyAvailabilityPage
+						groupId={groupId}
+						timeSlots={timeSlots}
+						users={users}
+					/>
 				</TabsContent>
 				<TabsContent value="groupAvailability">
-					<GroupAvailabilityPage
-						users={users}
-						allUserAvailabilities={allUserAvailabilities}
-					/>
+					<GroupAvailabilityPage users={users} groupId={groupId} />
 				</TabsContent>
 			</Tabs>
 		</div>
 	)
 }
-
-export default MainPage

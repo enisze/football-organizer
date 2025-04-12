@@ -52,24 +52,29 @@ enum AvailabilityStatus {
   MAYBE
 }
 
-model UserAvailability {
-  id        String             @id @default(cuid())
+enum TimeSlotType {
+  GENERAL
+  WEEKEND
+  DAY_SPECIFIC
+}
+
+model TimeSlot {
+  id        String       @id @default(cuid())
+  startTime String
+  endTime   String
   userId    String
   groupId   String
-  date      DateTime
-  timeSlots Json // Array of {startTime: string, endTime: string}
-  status    AvailabilityStatus @default(AVAILABLE)
-  type      String             @default("one-time")
-  user      User               @relation(fields: [userId], references: [id])
-  group     Group              @relation(fields: [groupId], references: [id])
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
+  type      TimeSlotType
+  date      DateTime?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group     Group        @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, groupId, date])
   @@index([userId])
   @@index([groupId])
-  @@index([date])
   @@index([type])
+  @@index([date])
 }
 
 model ParticipantsOnEvents {
@@ -135,17 +140,17 @@ model Session {
 }
 
 model Group {
-  id               String             @id @default(cuid())
-  ownerId          String
-  name             String
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  events           Event[]
-  code             String?            @unique
-  users            UserOnGroups[]
-  pricingModel     PricingModel       @default(FREE)
-  owner            User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  UserAvailability UserAvailability[]
+  id           String         @id @default(cuid())
+  ownerId      String
+  name         String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  events       Event[]
+  code         String?        @unique
+  users        UserOnGroups[]
+  pricingModel PricingModel   @default(FREE)
+  owner        User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  timeSlots    TimeSlot[]
 
   @@index([ownerId])
 }
@@ -167,8 +172,7 @@ model User {
   groups               UserOnGroups[]
   ownedGroups          Group[]
   Tokens               Tokens[]
-
-  UserAvailability UserAvailability[]
+  timeSlots            TimeSlot[]
 }
 
 model UserOnGroups {
