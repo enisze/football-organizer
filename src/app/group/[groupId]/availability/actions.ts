@@ -50,46 +50,6 @@ export const updateGeneralAvailabilityAction = authedActionClient
 		return newSlots
 	})
 
-export const updateDayAvailabilityAction = authedActionClient
-	.schema(
-		z.object({
-			groupId: z.string(),
-			date: z.date(),
-			timeSlots: timeSlotSchema,
-		}),
-	)
-	.action(async ({ parsedInput, ctx: { userId } }) => {
-		const { groupId, date, timeSlots } = parsedInput
-
-		// Delete existing day-specific slots for this date and user
-		await prisma.timeSlot.deleteMany({
-			where: {
-				userId,
-				groupId,
-				type: "DAY_SPECIFIC",
-				date,
-			},
-		})
-
-		// Create new slots
-		const newSlots = await Promise.all(
-			timeSlots.map((slot) =>
-				prisma.timeSlot.create({
-					data: {
-						...slot,
-						type: "DAY_SPECIFIC",
-						date,
-						userId,
-						groupId,
-					},
-				}),
-			),
-		)
-
-		revalidatePath(`/group/${groupId}`)
-		return newSlots
-	})
-
 export const updateTimeSlotAction = authedActionClient
 	.schema(
 		z.object({
@@ -167,9 +127,7 @@ export const getGroupAvailabilityAction = authedActionClient
 		}),
 	)
 	.action(async ({ parsedInput: { groupId, date } }) => {
-		const isWeekend = date.getDay() === 0 || date.getDay() === 6
-
-		const [daySpecificSlots, regularSlots] = await Promise.all([
+		const [daySpecificSlots, generalSlots, weekendSlots] = await Promise.all([
 			// Get day-specific slots for this date
 			prisma.timeSlot.findMany({
 				where: {
@@ -188,10 +146,27 @@ export const getGroupAvailabilityAction = authedActionClient
 					user: true,
 				},
 			}),
-			// Get general/weekend slots depending on the day
+			// Get general slots
 			prisma.timeSlot.findMany({
 				where: {
-					type: isWeekend ? "WEEKEND" : "GENERAL",
+					type: "GENERAL",
+					groupId,
+					user: {
+						groups: {
+							some: {
+								groupId,
+							},
+						},
+					},
+				},
+				include: {
+					user: true,
+				},
+			}),
+			// Get weekend slots
+			prisma.timeSlot.findMany({
+				where: {
+					type: "WEEKEND",
 					groupId,
 					user: {
 						groups: {
@@ -209,6 +184,7 @@ export const getGroupAvailabilityAction = authedActionClient
 
 		return {
 			daySpecificSlots,
-			regularSlots,
+			generalSlots,
+			weekendSlots,
 		}
 	})

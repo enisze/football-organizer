@@ -10,46 +10,32 @@ import {
 	CardTitle,
 } from "@/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs"
-import type { TimeSlot, User } from "@prisma/client"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
-import { getTimeSlotsAction } from "../actions"
+import type { TimeSlot } from "@prisma/client"
+import { useQueryState } from "nuqs"
+import { revalidateGroupAction } from "../../actions"
 
 interface MyAvailabilityProps {
 	groupId: string
-	users: User[]
 	initialWeekdaySlots: Array<TimeSlot>
 	initialWeekendSlots: Array<TimeSlot>
+	initialDaySpecificSlots: Array<TimeSlot>
 }
 
 export function MyAvailability({
 	groupId,
-	users,
 	initialWeekdaySlots,
 	initialWeekendSlots,
+	initialDaySpecificSlots,
 }: MyAvailabilityProps) {
-	const [date, setDate] = useState<Date>()
-	const queryClient = useQueryClient()
-
-	const { data: daySpecificSlots } = useQuery({
-		queryKey: ["daySpecificSlots", groupId, date],
-		queryFn: async () => {
-			if (!date) {
-				const result = await getTimeSlotsAction({ groupId, date: new Date() })
-				return result?.data
-			}
-			const result = await getTimeSlotsAction({ groupId, date })
-			return result?.data
-		},
-		enabled: Boolean(date),
+	const [date, setDate] = useQueryState("selectedDate", {
+		defaultValue: new Date().toISOString(),
 	})
 
-	const handleDateSelect = (newDate: Date | undefined) => {
-		setDate(newDate)
+	const handleDateSelect = async (newDate: Date | undefined) => {
 		if (newDate) {
-			queryClient.invalidateQueries({
-				queryKey: ["daySpecificSlots", groupId, newDate],
-			})
+			await setDate(newDate.toISOString())
+
+			await revalidateGroupAction()
 		}
 	}
 
@@ -57,8 +43,8 @@ export function MyAvailability({
 		<div className="container mx-auto space-y-8 p-4">
 			<Tabs defaultValue="general" className="w-full">
 				<TabsList className="grid w-full grid-cols-2">
-					<TabsTrigger value="general">General Availability</TabsTrigger>
-					<TabsTrigger value="specific">Day-Specific</TabsTrigger>
+					<TabsTrigger value="general">Allgemeine Verfügbarkeit</TabsTrigger>
+					<TabsTrigger value="specific">Tagspezifisch</TabsTrigger>
 				</TabsList>
 
 				<TabsContent value="general" className="space-y-4">
@@ -109,7 +95,7 @@ export function MyAvailability({
 							<div className="rounded-lg border p-4">
 								<Calendar
 									mode="single"
-									selected={date}
+									selected={date ? new Date(date) : undefined}
 									onSelect={handleDateSelect}
 									className="mx-auto"
 								/>
@@ -118,16 +104,16 @@ export function MyAvailability({
 							{date ? (
 								<div>
 									<h3 className="mb-4 font-medium">
-										{date.toLocaleDateString("de-DE", {
+										{new Date(date).toLocaleDateString("de-DE", {
 											weekday: "long",
 											month: "long",
 											day: "numeric",
 										})}
 									</h3>
 									<TimeSlotEditor
-										timeSlots={daySpecificSlots ?? []}
+										timeSlots={initialDaySpecificSlots ?? []}
 										groupId={groupId}
-										date={date}
+										date={new Date(date)}
 										type="DAY_SPECIFIC"
 									/>
 								</div>

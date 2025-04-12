@@ -17,7 +17,7 @@ const Home = async () => {
 	})
 
 	if (group) {
-		redirect("/group/" + group.groupId)
+		redirect(`/group/${group.groupId}`)
 	}
 
 	return (

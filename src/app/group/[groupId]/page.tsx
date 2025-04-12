@@ -1,29 +1,47 @@
 import { EventCard } from "@/src/components/Events/EventCard"
+import { GroupAvailabilityView } from "@/src/components/GroupAvailability"
 import { isOwnerOfGroup } from "@/src/helpers/isOwnerOfGroup"
 import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
 import { prisma } from "@/src/server/db/client"
 import { redis } from "@/src/server/db/redis"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs"
-import type { Event } from "@prisma/client"
+import type { Event, User, UserOnGroups } from "@prisma/client"
 import { addDays } from "date-fns"
 import { redirect } from "next/navigation"
-import GroupAvailabilityPage from "./GroupPage"
-import MyAvailabilityPage from "./MyAvailability"
+import MyAvailabilityPage from "./MyAvailabilityPage"
+import { getGroupAvailabilityAction } from "./availability/actions"
+import {
+	processGroupAvailability,
+	type TimeSlotDuration,
+} from "./availability/processAvailability"
 import { getLatLong } from "./getLatLong"
 
 export default async function MainPage({
 	params: { groupId },
-	searchParams: { date },
+	searchParams: { date, selectedDate, duration = "60min" },
 }: {
 	params: { groupId: string }
-	searchParams: { date: string }
+	searchParams: {
+		date?: string
+		selectedDate?: string
+		duration?: TimeSlotDuration
+	}
 }) {
 	const session = await getServerComponentAuthSession()
 	if (!session?.user?.id) redirect("/api/auth/signin")
 
 	const isOwner = await isOwnerOfGroup()
+	const currentDate = date ? new Date(date) : new Date()
 
-	const [events, group, timeSlots, userInGroup] = await Promise.all([
+	const [
+		events,
+		group,
+		generalTimeSlots,
+		weekendTimeSlots,
+		daySpecificTimeSlots,
+		userInGroup,
+		availability,
+	] = await Promise.all([
 		prisma.event.findMany({
 			where: { groupId },
 			orderBy: { date: "asc" },
@@ -42,14 +60,45 @@ export default async function MainPage({
 			where: {
 				user: { id: session.user.id },
 				groupId,
+				type: "GENERAL",
 			},
-			orderBy: [{ type: "asc" }, { date: "asc" }, { startTime: "asc" }],
+			orderBy: [{ date: "asc" }, { startTime: "asc" }],
+			include: {
+				user: true,
+			},
+		}),
+		prisma.timeSlot.findMany({
+			where: {
+				user: { id: session.user.id },
+				groupId,
+				type: "WEEKEND",
+			},
+			orderBy: [{ date: "asc" }, { startTime: "asc" }],
+			include: {
+				user: true,
+			},
+		}),
+		prisma.timeSlot.findMany({
+			where: {
+				user: { id: session.user.id },
+				groupId,
+				date: selectedDate,
+				type: "DAY_SPECIFIC",
+			},
+			orderBy: [{ date: "asc" }, { startTime: "asc" }],
+			include: {
+				user: true,
+			},
 		}),
 		prisma.userOnGroups.findFirst({
 			where: {
 				user: { id: session.user.id },
 				groupId,
 			},
+		}),
+		getGroupAvailabilityAction({
+			date: currentDate,
+			groupId,
 		}),
 	])
 
@@ -72,10 +121,16 @@ export default async function MainPage({
 		await redis.disconnect()
 	}
 
-	const users = group.users.map((u) => u.user)
+	const users = group.users.map((u: UserOnGroups & { user: User }) => u.user)
 
-	const generalTimeSlots = timeSlots.filter((slot) => slot.type === "GENERAL")
-	const weekendTimeSlots = timeSlots.filter((slot) => slot.type === "WEEKEND")
+	const groupAvailability = processGroupAvailability({
+		date: currentDate,
+		users,
+		daySpecificSlots: daySpecificTimeSlots,
+		regularSlots: generalTimeSlots,
+		weekendSlots: weekendTimeSlots,
+		duration,
+	})
 
 	return (
 		<div className="flex flex-col pb-2">
@@ -117,12 +172,17 @@ export default async function MainPage({
 				<TabsContent value="myAvailability">
 					<MyAvailabilityPage
 						groupId={groupId}
-						timeSlots={timeSlots}
-						users={users}
+						generalTimeSlots={generalTimeSlots}
+						weekendTimeSlots={weekendTimeSlots}
+						daySpecificTimeSlots={daySpecificTimeSlots}
 					/>
 				</TabsContent>
 				<TabsContent value="groupAvailability">
-					<GroupAvailabilityPage users={users} groupId={groupId} />
+					<GroupAvailabilityView
+						users={users}
+						date={currentDate}
+						processedSlots={groupAvailability}
+					/>
 				</TabsContent>
 			</Tabs>
 		</div>

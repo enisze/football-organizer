@@ -55,10 +55,10 @@ export function AvailabilityEditor({
 		[isWeekend, type],
 	)
 
-	const handleAddSlot = async () => {
+	const handleAddSlot = () => {
 		if (!newSlot.startTime || !newSlot.endTime) return
 
-		await updateTimeSlot({
+		updateTimeSlot({
 			startTime: newSlot.startTime,
 			endTime: newSlot.endTime,
 			type,
