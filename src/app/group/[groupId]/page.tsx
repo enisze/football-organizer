@@ -126,9 +126,9 @@ export default async function MainPage({
 	const groupAvailability = processGroupAvailability({
 		date: currentDate,
 		users,
-		daySpecificSlots: daySpecificTimeSlots,
-		regularSlots: generalTimeSlots,
-		weekendSlots: weekendTimeSlots,
+		daySpecificSlots: availability?.data?.daySpecificSlots ?? [],
+		regularSlots: availability?.data?.generalSlots ?? [],
+		weekendSlots: availability?.data?.weekendSlots ?? [],
 		duration,
 	})
 

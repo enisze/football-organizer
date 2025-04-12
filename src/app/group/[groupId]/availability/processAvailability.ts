@@ -63,7 +63,6 @@ export function processGroupAvailability({
 							timeToMinutes(slot.endTime) >= timeToMinutes(currentSlotEnd),
 					)
 
-					console.log(userDaySpecificSlots, currentSlotStart, currentSlotEnd)
 					if (isAvailable) {
 						availableUsers.push(user)
 					}
@@ -131,7 +130,12 @@ export function processGroupAvailability({
 		}
 	}
 
-	return result.sort(
-		(a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime),
-	)
+	return result.sort((a, b) => {
+		// First sort by number of available users (descending)
+		const usersDiff = b.availableUsers.length - a.availableUsers.length
+		if (usersDiff !== 0) return usersDiff
+
+		// If same number of users, sort by start time
+		return timeToMinutes(a.startTime) - timeToMinutes(b.startTime)
+	})
 }
