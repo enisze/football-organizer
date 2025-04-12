@@ -70,10 +70,6 @@ export function AvailabilityEditor({
 		setIsAdding(false)
 	}
 
-	const handleDeleteSlot = async (id: string) => {
-		await deleteTimeSlot({ id })
-	}
-
 	const renderTimeSlots = () => {
 		const slots = []
 		for (const slot of timeSlots) {
@@ -88,7 +84,7 @@ export function AvailabilityEditor({
 					<Button
 						variant="ghost"
 						size="icon"
-						onClick={() => handleDeleteSlot(slot.id)}
+						onClick={() => deleteTimeSlot({ id: slot.id })}
 						aria-label="Delete time slot"
 					>
 						<X className="h-4 w-4" />

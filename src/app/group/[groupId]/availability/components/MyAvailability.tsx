@@ -18,8 +18,8 @@ import { getTimeSlotsAction } from "../actions"
 interface MyAvailabilityProps {
 	groupId: string
 	users: User[]
-	initialWeekdaySlots: Array<Pick<TimeSlot, "startTime" | "endTime">>
-	initialWeekendSlots: Array<Pick<TimeSlot, "startTime" | "endTime">>
+	initialWeekdaySlots: Array<TimeSlot>
+	initialWeekendSlots: Array<TimeSlot>
 }
 
 export function MyAvailability({
@@ -73,7 +73,6 @@ export function MyAvailability({
 							<CardContent>
 								<TimeSlotEditor
 									timeSlots={initialWeekdaySlots}
-									maxSlots={2}
 									groupId={groupId}
 									type="GENERAL"
 								/>
@@ -90,7 +89,6 @@ export function MyAvailability({
 							<CardContent>
 								<TimeSlotEditor
 									timeSlots={initialWeekendSlots}
-									maxSlots={2}
 									groupId={groupId}
 									type="WEEKEND"
 								/>
@@ -128,7 +126,6 @@ export function MyAvailability({
 									</h3>
 									<TimeSlotEditor
 										timeSlots={daySpecificSlots ?? []}
-										maxSlots={2}
 										groupId={groupId}
 										date={date}
 										type="DAY_SPECIFIC"

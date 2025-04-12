@@ -132,7 +132,7 @@ export const deleteTimeSlotAction = authedActionClient
 			},
 		})
 
-		return { success: true }
+		revalidatePath("/group")
 	})
 
 export const getTimeSlotsAction = authedActionClient
