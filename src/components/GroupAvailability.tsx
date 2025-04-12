@@ -87,8 +87,10 @@ export function GroupAvailabilityView({
 
 		for (let i = 0; i <= timeSlots.length - slotsNeeded; i++) {
 			const slotGroup = timeSlots.slice(i, i + slotsNeeded)
-			const startTime = slotGroup[0].startTime
-			const endTime = slotGroup[slotGroup.length - 1].endTime
+			const startTime = slotGroup[0]?.startTime
+			const endTime = slotGroup[slotGroup.length - 1]?.endTime
+
+			if (!startTime || !endTime) continue
 
 			// Find users available for the entire duration
 			const availableUsers = []
