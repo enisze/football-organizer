@@ -73,9 +73,10 @@ export function GroupAvailabilityView({
 									max={10}
 									step={1}
 									value={[Number.parseInt(minUsers || "0")]}
-									onValueChange={(value) =>
+									onValueChange={(value) => {
 										setMinUsers(value[0]?.toString() ?? "0")
-									}
+										revalidateGroupAction()
+									}}
 								/>
 							</div>
 							<div className="mt-2 text-center text-sm text-muted-foreground">
@@ -106,9 +107,10 @@ export function GroupAvailabilityView({
 
 							<Tabs
 								value={duration ?? undefined}
-								onValueChange={(value) =>
+								onValueChange={(value) => {
 									setDuration(value as TimeSlotDuration)
-								}
+									revalidateGroupAction()
+								}}
 								className="w-full"
 							>
 								<TabsList className="grid w-full grid-cols-3">
