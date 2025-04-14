@@ -159,7 +159,14 @@ export function GroupAvailabilityView({
 											</div>
 
 											<div
-												className="absolute bottom-0 left-0 right-0 bg-green-500/20"
+												className={cn(
+													"absolute bottom-0 left-0 right-0",
+													availableCount < 5
+														? "bg-red-500/20"
+														: availableCount < 8
+															? "bg-yellow-500/20"
+															: "bg-green-500/20",
+												)}
 												style={{
 													height: `${percentage}%`,
 													opacity: percentage / 100,

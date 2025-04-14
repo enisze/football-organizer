@@ -1,5 +1,6 @@
 import { Hero } from "@/src/components/Heading"
 import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
+import { routes } from "@/src/shared/navigation"
 import { Button } from "@/ui/button"
 import Link from "next/link"
 
@@ -13,13 +14,12 @@ const Home = async () => {
 			<main className="flex relative h-full w-full flex-col items-center justify-center">
 				<Hero />
 				{!session && (
-					<Link href="/api/auth/signin">
+					<Link href={routes.signIn()}>
 						<Button className="shadow-md shadow-yellow-300/50">
 							Login / Registrieren
 						</Button>
 					</Link>
 				)}
-				{/* <ContactForm /> */}
 			</main>
 		</div>
 	)

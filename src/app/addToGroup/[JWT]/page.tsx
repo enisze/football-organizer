@@ -1,17 +1,18 @@
-import { Button } from "@/ui/button"
 import { OrganizerLink } from "@/ui/OrganizerLink"
+import { Button } from "@/ui/button"
 
 import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
 import { prisma } from "@/src/server/db/client"
 import { verifyJWT } from "@/src/server/verifyJWT"
+import { routes } from "@/src/shared/navigation"
 import { decode } from "jsonwebtoken"
 
 export default async function AddToGroup({
 	params,
 }: {
-	params: { JWT: string }
+	params: Promise<{ JWT: string }>
 }) {
-	const JWT = params?.JWT
+	const { JWT } = await params
 
 	const session = await getServerComponentAuthSession()
 
@@ -44,7 +45,7 @@ export default async function AddToGroup({
 						Beitreten
 					</Button>
 				</form>
-				<OrganizerLink href={"/"} className="justify-center">
+				<OrganizerLink href={routes.home()} className="justify-center">
 					Zurück zu den Events
 				</OrganizerLink>
 			</div>
@@ -104,5 +105,5 @@ const isParticipatingUser = async ({
 		where: { id: groupId, users: { some: { id: userId } } },
 	})
 
-	return res ? true : false
+	return Boolean(res)
 }

@@ -12,7 +12,6 @@ import { updatePaypalName } from "./actions"
 
 const Settings = async () => {
 	const session = await getServerComponentAuthSession()
-
 	const userId = session?.user?.id ?? ""
 
 	if (!userId) return null
@@ -42,7 +41,7 @@ const Settings = async () => {
 				<TextField
 					id="user-name-input"
 					type="text"
-					label={`Paypal Name`}
+					label="Paypal Name"
 					text=""
 					name="paypalName"
 					infoContent={

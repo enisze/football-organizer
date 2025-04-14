@@ -1,20 +1,18 @@
 import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
+import { prisma } from "@/src/server/db/client"
 import { oAuth2Client } from "@/src/server/gmail"
+import { routes } from "@/src/shared/navigation"
 import { OrganizerLink } from "@/ui/OrganizerLink"
 
-import { prisma } from "@/src/server/db/client"
+interface PageProps {
+	searchParams: unknown
+}
 
-export default async function Page({
-	searchParams,
-}: {
-	searchParams?: { [key: string]: string | string[] | undefined }
-}) {
-	const code = searchParams?.code as string
-
+export default async function Page({ searchParams }: PageProps) {
+	const { code } = routes.oauth2callback.$parseSearchParams(searchParams)
 	const session = await getServerComponentAuthSession()
 
 	const { tokens } = await oAuth2Client.getToken(code)
-
 	const { expiry_date, access_token, refresh_token } = tokens
 
 	if (!expiry_date || !refresh_token || !access_token || !session?.user?.id)
@@ -36,8 +34,8 @@ export default async function Page({
 			<h1 className="text-2xl font-bold">
 				Das Token wurde erfolgreich gesetzt!
 			</h1>
-			<OrganizerLink href="/" className="justify-center">
-				<span className="text-lg">Zurück zur Startseite</span>
+			<OrganizerLink href={routes.home()} className="justify-center">
+				Zurück zur Startseite
 			</OrganizerLink>
 		</div>
 	)
