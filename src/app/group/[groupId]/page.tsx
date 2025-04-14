@@ -7,6 +7,7 @@ import { redis } from "@/src/server/db/redis"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs"
 import type { Event, User, UserOnGroups } from "@prisma/client"
 import { addDays } from "date-fns"
+import Link from "next/link"
 import { redirect } from "next/navigation"
 import MyAvailabilityPage from "./MyAvailabilityPage"
 import { getGroupAvailabilityAction } from "./availability/actions"
@@ -18,7 +19,13 @@ import { getLatLong } from "./getLatLong"
 
 export default async function MainPage({
 	params: { groupId },
-	searchParams: { date, selectedDate, duration = "60min", minUsers = "0" },
+	searchParams: {
+		date,
+		selectedDate,
+		duration = "60min",
+		minUsers = "0",
+		tab = "events",
+	},
 }: {
 	params: { groupId: string }
 	searchParams: {
@@ -26,6 +33,7 @@ export default async function MainPage({
 		selectedDate?: string
 		duration?: TimeSlotDuration
 		minUsers?: string
+		tab?: string
 	}
 }) {
 	const session = await getServerComponentAuthSession()
@@ -135,18 +143,32 @@ export default async function MainPage({
 
 	const minUsersValue = Number.parseInt(minUsers || "0")
 	const filteredAvailability = groupAvailability.filter(
-		(slot) => slot.availableUsers.length >= (minUsersValue * users.length) / 10,
+		(slot) => slot.availableUsers.length >= minUsersValue,
 	)
 
 	return (
 		<div className="flex flex-col pb-2">
-			<Tabs defaultValue="events" className="w-full">
+			<Tabs defaultValue={tab} className="w-full">
 				<TabsList className="w-full">
-					<TabsTrigger value="events">Aktuelle Events</TabsTrigger>
-					<TabsTrigger value="myAvailability">Meine Verfügbarkeit</TabsTrigger>
-					<TabsTrigger value="groupAvailability">
-						Gruppenverfügbarkeit
-					</TabsTrigger>
+					<Link href={`/group/${groupId}?tab=events`} className="w-full">
+						<TabsTrigger value="events">Aktuelle Events</TabsTrigger>
+					</Link>
+					<Link
+						href={`/group/${groupId}?tab=myAvailability`}
+						className="w-full"
+					>
+						<TabsTrigger value="myAvailability">
+							Meine Verfügbarkeit
+						</TabsTrigger>
+					</Link>
+					<Link
+						href={`/group/${groupId}?tab=groupAvailability`}
+						className="w-full"
+					>
+						<TabsTrigger value="groupAvailability">
+							Gruppenverfügbarkeit
+						</TabsTrigger>
+					</Link>
 				</TabsList>
 				<TabsContent value="events">
 					<div className="m-8 flex flex-col gap-y-3 justify-center items-center">
