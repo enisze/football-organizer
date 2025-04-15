@@ -40,8 +40,8 @@ model Event {
   status          EventStatus            @default(CREATED)
   maxParticipants Int                    @default(10)
   participants    ParticipantsOnEvents[]
-  Group           Group?                 @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  groupId         String?
+  Group           Group                  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId         String
 
   @@index([groupId])
 }

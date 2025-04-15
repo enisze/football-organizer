@@ -27,7 +27,7 @@ const EventPage = async ({ params }: PageProps) => {
 		},
 	})
 
-	if (!event || !event.groupId) {
+	if (!event) {
 		notFound()
 	}
 

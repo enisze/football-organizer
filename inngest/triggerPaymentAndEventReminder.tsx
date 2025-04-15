@@ -24,7 +24,7 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 					notificationsEnabled: true,
 					groups: {
 						some: {
-							groupId: event.groupId ?? undefined,
+							groupId: event.groupId,
 						},
 					},
 					events: { none: { id: event.id, userEventStatus: "CANCELED" } },
@@ -59,16 +59,18 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 		const usersPaymentReminder: { name: string; email: string }[] = []
 
 		if (joinedParticipantIds.length < event.maxParticipants) {
-			membersToRemind
-				.filter((user) => !membersToRemindPayment.find((u) => u.id === user.id))
-				.forEach((user) => {
-					if (!user) return
-					usersEventReminder.push({ email: user.email, name: user.name })
-				})
+			const filteredUsers = membersToRemind.filter(
+				(user) => user?.notificationsEnabled,
+			)
+
+			for (const user of filteredUsers) {
+				if (!user) return
+				usersEventReminder.push({ email: user.email, name: user.name })
+			}
 		}
 
 		if (event.bookingDate) {
-			membersToRemindPayment.forEach(async (user) => {
+			for (const user of membersToRemindPayment) {
 				if (!user) return
 				const payment = await prisma.participantsOnEvents.findUnique({
 					where: { id_eventId: { eventId: event.id, id: user.id } },
@@ -77,7 +79,7 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 				if (!payment?.paymentId) {
 					usersPaymentReminder.push({ email: user.email, name: user.name })
 				}
-			})
+			}
 		}
 
 		await step.run("logging", async () => {
@@ -86,7 +88,7 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 			logger.info("usersPaymentReminder", usersPaymentReminder)
 		})
 
-		usersEventReminder.forEach(async (user) => {
+		for (const user of usersEventReminder) {
 			await step.sendEvent("send-event-reminder-email", {
 				name: "event/reminderEmail",
 				data: {
@@ -94,10 +96,10 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 					id: event.id,
 				},
 			})
-		})
+		}
 
 		if (usersPaymentReminder.length > 0) {
-			usersPaymentReminder.forEach(async (user) => {
+			for (const user of usersPaymentReminder) {
 				await step.sendEvent("send-event-payment-reminder-email", {
 					name: "event/paymentReminderEmail",
 					data: {
@@ -105,7 +107,7 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 						id: event.id,
 					},
 				})
-			})
+			}
 		}
 
 		return {

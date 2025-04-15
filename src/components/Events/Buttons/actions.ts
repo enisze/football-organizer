@@ -26,11 +26,18 @@ export const deleteEventAction = authedActionClient
 			await redis.connect()
 		}
 
+		const event = await prisma.event.findUnique({
+			where: { id },
+			select: { groupId: true },
+		})
+
 		await redis.del(addressKey)
 		await redis.del(coordinatesKey)
 		await prisma.event.delete({ where: { id } })
 		await redis.disconnect()
 
-		revalidateGroup()
+		if (event?.groupId) {
+			revalidateGroup(event.groupId)
+		}
 		return { success: true }
 	})

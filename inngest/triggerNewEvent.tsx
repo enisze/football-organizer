@@ -20,14 +20,12 @@ export const triggerNewEvent = inngest.createFunction(
 
 		if (!event) return { message: `No event found ${eventId}` }
 
-		if (!event.groupId) return { message: `No group found ${event.groupId}` }
-
 		const usersOfGroup = await step.run("get users", async () => {
 			logger.info("getting users")
 			try {
 				const usersOnGroup = await prisma.group.findUnique({
 					where: {
-						id: event.groupId ?? undefined,
+						id: event.groupId,
 					},
 					select: { users: true },
 				})
@@ -46,7 +44,7 @@ export const triggerNewEvent = inngest.createFunction(
 			}
 		})
 
-		if (!usersOfGroup) return { message: `No users found` }
+		if (!usersOfGroup) return { message: "No users found" }
 
 		logger.info("sending event")
 
@@ -58,7 +56,7 @@ export const triggerNewEvent = inngest.createFunction(
 
 		logger.info("filtered users", filteredUsers)
 
-		filteredUsers.forEach(async (user) => {
+		for (const user of filteredUsers) {
 			if (!user) return
 
 			await step.sendEvent("send-event-new-email", {
@@ -69,7 +67,8 @@ export const triggerNewEvent = inngest.createFunction(
 					days,
 				},
 			})
-		})
+		}
+
 		await step.sleepUntil("sleep-event", addDays(new Date(event.createdAt), 7))
 
 		const newEvent = await step.run("get event", async () => {
@@ -89,7 +88,7 @@ export const triggerNewEvent = inngest.createFunction(
 
 		const allGroupMembers = await step.run("getting members", async () => {
 			const groupMembers = await prisma.group.findUnique({
-				where: { id: newEvent.groupId ?? undefined },
+				where: { id: newEvent.groupId },
 				select: { users: true },
 			})
 
@@ -133,15 +132,19 @@ export const triggerNewEvent = inngest.createFunction(
 		)
 
 		if (participants.length < newEvent.maxParticipants) {
-			membersToRemindEvent
-				.filter((user) => user?.notificationsEnabled)
-				.forEach((user) => {
-					if (!user) return
-					usersEventReminder.push({ email: user.email, name: user.name })
-				})
+			const filteredUsers = membersToRemindEvent.filter(
+				(user) => user?.notificationsEnabled,
+			)
+
+			for (const user of filteredUsers) {
+				if (!user) return
+				usersEventReminder.push({ email: user.email, name: user.name })
+			}
 		}
 
-		usersEventReminder.forEach(async (user) => {
+		for (const user of membersToRemindEvent) {
+			if (!user) continue
+
 			await step.sendEvent("send-event-reminder-email", {
 				name: "event/reminderEmail",
 				data: {
@@ -149,7 +152,7 @@ export const triggerNewEvent = inngest.createFunction(
 					id: newEvent.id,
 				},
 			})
-		})
+		}
 
 		return { success: true }
 	},

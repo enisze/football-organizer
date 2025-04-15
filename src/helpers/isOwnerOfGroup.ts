@@ -1,48 +1,39 @@
-import { headers } from "next/headers"
-import { getServerComponentAuthSession } from "../server/auth/authOptions"
-
 import { prisma } from "@/src/server/db/client"
 import { revalidatePath } from "next/cache"
+import { getServerComponentAuthSession } from "../server/auth/authOptions"
 
-export const isOwnerOfGroup = async () => {
+export const isOwnerOfGroup = async (groupId: string) => {
 	const session = await getServerComponentAuthSession()
-
-	const groupId = await getGroupId()
 
 	if (!groupId || !session?.user?.id) return false
 
-	const userOnGroup = prisma.userOnGroups.findUnique({
-		where: {
-			id_groupId: {
-				groupId,
-				id: session?.user?.id,
-			},
-		},
+	const group = await prisma.group.findUnique({
+		where: { id: groupId },
+		select: { ownerId: true },
 	})
 
-	const isOwnerUrl = getIsOwnerFromURL()
-
-	return isOwnerUrl !== undefined ? isOwnerUrl === "true" : Boolean(userOnGroup)
+	return group?.ownerId === session.user.id
 }
 
-const getIsOwnerFromURL = () => {
-	const params = headers().get("x-params")?.split("&")
+export const isOwnerOfGroupOfEvent = async (eventId: string) => {
+	const session = await getServerComponentAuthSession()
 
-	const isOwnerUrl = params
-		?.find((param) => param.includes("isOwner"))
-		?.split("=")[1]
+	if (!eventId || !session?.user?.id) return false
 
-	return isOwnerUrl
+	const event = await prisma.event.findUnique({
+		where: { id: eventId },
+		select: {
+			Group: {
+				select: {
+					ownerId: true
+				}
+			}
+		}
+	})
+
+	return event?.Group?.ownerId === session.user.id
 }
 
-export const revalidateGroup = async () => {
-	const groupId = await getGroupId()
+export const revalidateGroup = async (groupId: string) => {
 	revalidatePath(`group/${groupId}`)
-}
-
-export const getGroupId = async () => {
-	const pathname = await headers().get("x-pathname")
-	const groupId = pathname?.split("/").at(-1)
-
-	return groupId
 }

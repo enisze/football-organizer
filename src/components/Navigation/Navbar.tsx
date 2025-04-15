@@ -22,7 +22,7 @@ export const Navbar = async () => {
 				<Heading size="sm" />
 
 				<div className="flex gap-x-1 items-center cursor-pointer">
-					<OrganizerServerMenu />
+					<OrganizerServerMenu groupId={group?.id} />
 
 					{!data?.user && (
 						<Link href="/api/auth/signin">

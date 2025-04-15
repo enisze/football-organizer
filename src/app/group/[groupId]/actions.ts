@@ -20,7 +20,7 @@ export const sendPaidButCanceledMailAction = authedActionClient
 		if (!event || !user || !group) throw new Error("Not found")
 
 		await sendPaidButCanceledMail(event, user, group.owner)
-		revalidateGroup()
+		revalidateGroup(event.groupId)
 		return { success: true }
 	})
 
@@ -68,19 +68,27 @@ export const bookEvent = authedActionClient
 	)
 	.action(async ({ parsedInput: { eventId, bookingDate } }) => {
 		const date = new Date(bookingDate)
-
 		if (!eventId) throw new Error("BAD_REQUEST")
+
+		const event = await prisma.event.findUnique({
+			where: { id: eventId },
+			select: { groupId: true },
+		})
 
 		await prisma.event.update({
 			data: { status: "BOOKED", bookingDate: subDays(date, 1) },
 			where: { id: eventId },
 		})
 
-		revalidateGroup()
+		if (event?.groupId) {
+			revalidateGroup(event.groupId)
+		}
 		return { success: true }
 	})
 
-export const revalidateGroupAction = authedActionClient.action(async () => {
-	revalidateGroup()
-	return { success: true }
-})
+export const revalidateGroupAction = authedActionClient
+	.schema(z.object({ groupId: z.string() }))
+	.action(async ({ parsedInput: { groupId } }) => {
+		revalidateGroup(groupId)
+		return { success: true }
+	})

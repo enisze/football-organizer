@@ -37,7 +37,7 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 	const session = await getServerComponentAuthSession()
 	if (!session?.user?.id) redirect("/api/auth/signin")
 
-	const isOwner = await isOwnerOfGroup()
+	const isOwner = await isOwnerOfGroup(groupId)
 	const currentDate = date ? new Date(date) : new Date()
 
 	const [

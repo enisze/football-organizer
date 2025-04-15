@@ -1,4 +1,7 @@
-import { isOwnerOfGroup, revalidateGroup } from "@/src/helpers/isOwnerOfGroup"
+import {
+	isOwnerOfGroupOfEvent,
+	revalidateGroup,
+} from "@/src/helpers/isOwnerOfGroup"
 import { prisma } from "@/src/server/db/client"
 import { Button } from "@/ui/button"
 import { BookEventButton } from "./Buttons/BookEventButton"
@@ -12,7 +15,9 @@ type EventCardAdminAreaProps = {
 export const EventCardAdminArea = async ({
 	eventId,
 }: EventCardAdminAreaProps) => {
-	const isOwner = await isOwnerOfGroup()
+	const isOwner = await isOwnerOfGroupOfEvent(eventId)
+
+	if (!isOwner) return null
 
 	const participantsWithoutPayment = await prisma.participantsOnEvents.findMany(
 		{
@@ -43,12 +48,10 @@ export const EventCardAdminArea = async ({
 		}),
 	)
 
-	if (!isOwner) return null
-
 	return (
 		<>
 			<div className="flex flex-col items-center gap-y-3">
-				<span>{"Id: " + eventId}</span>
+				<span>{`Id: ${eventId}`}</span>
 				{payments && payments.length > 0 && (
 					<>
 						<span>Bezahlt aber nicht teilgenommen</span>
@@ -58,7 +61,7 @@ export const EventCardAdminArea = async ({
 								<div key={payment.id}>
 									<div key={payment.id} className="flex items-center gap-x-2">
 										<div>{payment?.user.name}</div>
-										<div>{payment?.amount + " €"}</div>
+										<div>{`${payment?.amount} €`}</div>
 										<div>{payment?.paymentDate?.toDateString()}</div>
 										<div color="success">Bezahlt</div>
 									</div>
@@ -77,12 +80,20 @@ export const EventCardAdminArea = async ({
 					variant="outline"
 					formAction={async () => {
 						"use server"
+
+						const event = await prisma.event.findUnique({
+							where: { id: eventId },
+							select: { groupId: true },
+						})
+
 						await prisma.event.update({
 							data: { status: "CANCELED", bookingDate: null },
 							where: { id: eventId },
 						})
 
-						revalidateGroup()
+						if (event?.groupId) {
+							revalidateGroup(event.groupId)
+						}
 					}}
 				>
 					Cancel Event
