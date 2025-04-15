@@ -1,7 +1,6 @@
 import { GroupAvailabilityView } from "@/src/components/GroupAvailability"
 import { prisma } from "@/src/server/db/client"
 import { Suspense } from "react"
-import { getGroupAvailabilityAction } from "./availability/actions"
 import { processGroupAvailability } from "./availability/processAvailability"
 
 interface GroupAvailabilityPageProps {
@@ -31,17 +30,67 @@ async function GroupAvailabilityData({
 	if (!group) return null
 
 	const users = group.users.map((u) => u.user)
-	const availability = await getGroupAvailabilityAction({
-		date,
-		groupId,
-	})
+	const [daySpecificSlots, generalSlots, weekendSlots] = await Promise.all([
+		// Get day-specific slots for this date
+		prisma.timeSlot.findMany({
+			where: {
+				type: "DAY_SPECIFIC",
+				date,
+				groupId,
+				user: {
+					groups: {
+						some: {
+							groupId,
+						},
+					},
+				},
+			},
+			include: {
+				user: true,
+			},
+		}),
+		// Get general slots
+		prisma.timeSlot.findMany({
+			where: {
+				type: "GENERAL",
+				groupId,
+				user: {
+					groups: {
+						some: {
+							groupId,
+						},
+					},
+				},
+			},
+			include: {
+				user: true,
+			},
+		}),
+		// Get weekend slots
+		prisma.timeSlot.findMany({
+			where: {
+				type: "WEEKEND",
+				groupId,
+				user: {
+					groups: {
+						some: {
+							groupId,
+						},
+					},
+				},
+			},
+			include: {
+				user: true,
+			},
+		}),
+	])
 
 	const groupAvailability = processGroupAvailability({
 		date,
 		users,
-		daySpecificSlots: availability?.data?.daySpecificSlots ?? [],
-		regularSlots: availability?.data?.generalSlots ?? [],
-		weekendSlots: availability?.data?.weekendSlots ?? [],
+		daySpecificSlots: daySpecificSlots ?? [],
+		regularSlots: generalSlots ?? [],
+		weekendSlots: weekendSlots ?? [],
 		duration,
 	})
 

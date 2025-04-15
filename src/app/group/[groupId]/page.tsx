@@ -89,7 +89,7 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 						groupId={groupId}
 						date={date}
 						minUsers={minUsers}
-						duration={duration as "60min" | "90min" | "120min"}
+						duration={duration}
 					/>
 				</TabsContent>
 			</Tabs>

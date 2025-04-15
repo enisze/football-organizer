@@ -4,6 +4,7 @@ import { authedActionClient } from "@/src/lib/actionClient"
 import { prisma } from "@/src/server/db/client"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
+import { processGroupAvailability } from "./processAvailability"
 
 const timeSlotSchema = z.array(
 	z.object({
@@ -124,9 +125,24 @@ export const getGroupAvailabilityAction = authedActionClient
 		z.object({
 			groupId: z.string(),
 			date: z.date(),
+			duration: z.enum(["60min", "90min", "120min"]),
 		}),
 	)
-	.action(async ({ parsedInput: { groupId, date } }) => {
+	.action(async ({ parsedInput: { groupId, date, duration } }) => {
+		const group = await prisma.group.findUnique({
+			where: { id: groupId },
+			include: {
+				users: {
+					include: {
+						user: true,
+					},
+				},
+			},
+		})
+
+		if (!group) return null
+
+		const users = group.users.map((u) => u.user)
 		const [daySpecificSlots, generalSlots, weekendSlots] = await Promise.all([
 			// Get day-specific slots for this date
 			prisma.timeSlot.findMany({
@@ -182,9 +198,12 @@ export const getGroupAvailabilityAction = authedActionClient
 			}),
 		])
 
-		return {
-			daySpecificSlots,
-			generalSlots,
-			weekendSlots,
-		}
+		return processGroupAvailability({
+			date,
+			users,
+			daySpecificSlots: daySpecificSlots ?? [],
+			regularSlots: generalSlots ?? [],
+			weekendSlots: weekendSlots ?? [],
+			duration,
+		})
 	})
