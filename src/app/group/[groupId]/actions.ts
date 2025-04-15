@@ -4,7 +4,9 @@ import { sendPaidButCanceledMail } from "@/inngest/sendPaidButCanceledMail"
 import { revalidateGroup } from "@/src/helpers/isOwnerOfGroup"
 import { authedActionClient } from "@/src/lib/actionClient"
 import { prisma } from "@/src/server/db/client"
+import { routes } from "@/src/shared/navigation"
 import { subDays } from "date-fns"
+import { revalidatePath } from "next/cache"
 import { z } from "zod"
 
 export const sendPaidButCanceledMailAction = authedActionClient
@@ -43,8 +45,9 @@ export const setParticipatingStatus = authedActionClient
 
 			if (
 				status === "JOINED" &&
-				event.participants.filter((p) => p.userEventStatus === "JOINED")
-					.length >= event.maxParticipants
+				event.participants.filter(
+					(p: { userEventStatus: string }) => p.userEventStatus === "JOINED",
+				).length >= event.maxParticipants
 			) {
 				throw new Error("Event is full")
 			}
@@ -89,6 +92,6 @@ export const bookEvent = authedActionClient
 export const revalidateGroupAction = authedActionClient
 	.schema(z.object({ groupId: z.string() }))
 	.action(async ({ parsedInput: { groupId } }) => {
-		revalidateGroup(groupId)
+		revalidatePath(routes.groupDetails({ groupId }))
 		return { success: true }
 	})

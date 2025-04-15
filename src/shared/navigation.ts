@@ -23,7 +23,8 @@ export const { routes, useSafeParams, useSafeSearchParams } =
 				})
 				.optional(),
 		}),
-		groupSettings: defineRoute("/settings/groups/[groupId]", {
+		groupSettings: defineRoute("/settings/groups"),
+		groupSettingsDetails: defineRoute("/settings/groups/[groupId]", {
 			params: z.object({
 				groupId: z.string(),
 			}),

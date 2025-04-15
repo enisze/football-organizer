@@ -1,9 +1,9 @@
 "use server"
 
 import { defaultValues } from "@/src/helpers/constants"
-import { getGroupId } from "@/src/helpers/isOwnerOfGroup"
 import { authedActionClient } from "@/src/lib/actionClient"
 import { inngest, prisma } from "@/src/server/db/client"
+import { routes } from "@/src/shared/navigation"
 import { nanoid } from "nanoid"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
@@ -33,7 +33,7 @@ export const createGroup = authedActionClient
 				users: { create: { id: userId, role: "OWNER" } },
 			},
 		})
-		revalidatePath(`/settings/groups`)
+		revalidatePath(routes.groupSettings())
 		return { success: true }
 	})
 
@@ -49,7 +49,7 @@ export const updateGroupName = authedActionClient
 			where: { id: groupId, ownerId: userId },
 			data: { name: groupName },
 		})
-		revalidatePath(`/settings/groups`)
+		revalidatePath(routes.groupSettings())
 		return { success: true, name: groupName }
 	})
 
@@ -59,8 +59,8 @@ export const deleteUserFromGroup = authedActionClient
 		async ({ parsedInput: { userId, groupId }, ctx: { userId: ownerId } }) => {
 			if (ownerId === userId) {
 				await prisma.group.delete({ where: { id: groupId } })
-				revalidatePath(`/settings/groups`)
-				revalidatePath(`/settings/groups/${groupId}`)
+				revalidatePath(routes.groupSettings())
+				revalidatePath(routes.groupSettingsDetails({ groupId }))
 				return { groupDeleted: true }
 			}
 
@@ -69,8 +69,8 @@ export const deleteUserFromGroup = authedActionClient
 				where: { id: groupId, ownerId },
 			})
 
-			revalidatePath(`/settings/groups`)
-			revalidatePath(`/settings/groups/${groupId}`)
+			revalidatePath(routes.groupSettings())
+			revalidatePath(routes.groupSettingsDetails({ groupId }))
 			return { groupDeleted: false }
 		},
 	)
@@ -83,13 +83,13 @@ const schema = zfd.formData({
 	cost: zfd.numeric().default(defaultValues.cost),
 	maxParticipants: zfd.numeric().default(defaultValues.maxParticipants),
 	environment: zfd.text().default(defaultValues.environment),
+	groupId: zfd.text(),
 })
 
 export const createEvent = authedActionClient
 	.schema(schema)
 	.action(async ({ parsedInput, ctx: { userId } }) => {
-		const groupId = await getGroupId()
-
+		const groupId = parsedInput.groupId
 		if (!userId) return { success: false }
 
 		const event = await prisma.event.create({
@@ -100,7 +100,7 @@ export const createEvent = authedActionClient
 				endTime: parsedInput.endTime,
 				cost: parsedInput.cost,
 				maxParticipants: parsedInput.maxParticipants,
-				groupId: groupId,
+				groupId,
 				environment: parsedInput.environment === "on" ? "INDOOR" : "OUTDOOR",
 			},
 			select: { id: true },
@@ -113,6 +113,6 @@ export const createEvent = authedActionClient
 			},
 		})
 
-		revalidatePath(`/groups/${groupId}`)
+		revalidatePath(routes.groupDetails({ groupId }))
 		return { success: true }
 	})

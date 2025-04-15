@@ -1,4 +1,5 @@
 import { prisma } from "@/src/server/db/client"
+import { routes } from "@/src/shared/navigation"
 import { revalidatePath } from "next/cache"
 import { getServerComponentAuthSession } from "../server/auth/authOptions"
 
@@ -25,15 +26,15 @@ export const isOwnerOfGroupOfEvent = async (eventId: string) => {
 		select: {
 			Group: {
 				select: {
-					ownerId: true
-				}
-			}
-		}
+					ownerId: true,
+				},
+			},
+		},
 	})
 
 	return event?.Group?.ownerId === session.user.id
 }
 
 export const revalidateGroup = async (groupId: string) => {
-	revalidatePath(`group/${groupId}`)
+	revalidatePath(routes.groupDetails({ groupId }))
 }

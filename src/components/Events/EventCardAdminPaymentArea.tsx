@@ -11,7 +11,7 @@ export const EventCardAdminPaymentArea = async ({
 	userId,
 }: EventCardAdminPaymentAreaProps) => {
 	const isOwner = await isOwnerOfGroupOfEvent(eventId)
-	
+
 	if (!isOwner) return null
 
 	const payment = await prisma.payment.findFirst({
