@@ -42,9 +42,9 @@ export function MyAvailability({
 	}
 
 	return (
-		<div className="container mx-auto space-y-8 p-4">
-			<Tabs defaultValue="general" className="w-full">
-				<TabsList className="grid w-full grid-cols-2">
+		<div className="container mx-auto space-y-8">
+			<Tabs defaultValue="general" className="w-full flex flex-col">
+				<TabsList className="grid w-fit grid-cols-2 self-center">
 					<TabsTrigger value="general">Allgemeine Verfügbarkeit</TabsTrigger>
 					<TabsTrigger value="specific">Tagspezifisch</TabsTrigger>
 				</TabsList>

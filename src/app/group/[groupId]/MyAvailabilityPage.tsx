@@ -42,14 +42,12 @@ async function MyAvailabilityData({ groupId, date }: MyAvailabilityPageProps) {
 		])
 
 	return (
-		<div className="py-6">
-			<MyAvailability
-				groupId={groupId}
-				initialWeekdaySlots={generalTimeSlots}
-				initialWeekendSlots={weekendTimeSlots}
-				initialDaySpecificSlots={daySpecificTimeSlots}
-			/>
-		</div>
+		<MyAvailability
+			groupId={groupId}
+			initialWeekdaySlots={generalTimeSlots}
+			initialWeekendSlots={weekendTimeSlots}
+			initialDaySpecificSlots={daySpecificTimeSlots}
+		/>
 	)
 }
 

@@ -44,8 +44,8 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 
 	return (
 		<div className="flex flex-col pb-2">
-			<Tabs defaultValue={tab} className="w-full">
-				<TabsList className="w-full">
+			<Tabs defaultValue={tab} className="flex flex-col">
+				<TabsList className="w-fit self-center">
 					<Link
 						href={routes.groupDetails({ groupId, search: { tab: "events" } })}
 						className="w-full"
