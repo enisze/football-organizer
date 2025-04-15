@@ -9,11 +9,12 @@ import { getLatLong } from "../../group/[groupId]/getLatLong"
 import { StatusButton } from "./StatusButton"
 
 interface PageProps {
-	params: unknown
+	params: Promise<unknown>
 }
 
 const EventPage = async ({ params }: PageProps) => {
-	const { eventId } = routes.event.$parseParams(params)
+	const resolvedParams = await params
+	const { eventId } = routes.event.$parseParams(resolvedParams)
 	const session = await getServerComponentAuthSession()
 
 	if (!session || !session.user?.id) {

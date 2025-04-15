@@ -16,14 +16,15 @@ import { processGroupAvailability } from "./availability/processAvailability"
 import { getLatLong } from "./getLatLong"
 
 interface PageProps {
-	params: unknown
-	searchParams: unknown
+	params: Promise<unknown>
+	searchParams: Promise<unknown>
 }
 
 export default async function MainPage({ params, searchParams }: PageProps) {
-	const { groupId } = routes.groupDetails.$parseParams(params)
-
-	const res = routes.groupDetails.$parseSearchParams(searchParams ?? {})
+	const resolvedParams = await params
+	const resolvedSearchParams = await searchParams
+	const { groupId } = routes.groupDetails.$parseParams(resolvedParams)
+	const res = routes.groupDetails.$parseSearchParams(resolvedSearchParams ?? {})
 
 	const date = res?.date
 

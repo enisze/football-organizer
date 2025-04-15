@@ -5,11 +5,13 @@ import { routes } from "@/src/shared/navigation"
 import { OrganizerLink } from "@/ui/OrganizerLink"
 
 interface PageProps {
-	searchParams: unknown
+	searchParams: Promise<unknown>
 }
 
-export default async function Page({ searchParams }: PageProps) {
-	const { code } = routes.oauth2callback.$parseSearchParams(searchParams)
+const OAuthCallbackPage = async ({ searchParams }: PageProps) => {
+	const resolvedSearchParams = await searchParams
+	const { code } =
+		routes.oauth2callback.$parseSearchParams(resolvedSearchParams)
 	const session = await getServerComponentAuthSession()
 
 	const { tokens } = await oAuth2Client.getToken(code)
@@ -40,3 +42,5 @@ export default async function Page({ searchParams }: PageProps) {
 		</div>
 	)
 }
+
+export default OAuthCallbackPage

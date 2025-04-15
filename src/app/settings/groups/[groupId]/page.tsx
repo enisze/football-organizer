@@ -8,6 +8,7 @@ import { XIcon } from "lucide-react"
 import { DeleteGroupForm } from "./DeleteGroupForm"
 
 import { prisma } from "@/src/server/db/client"
+import { routes } from "@/src/shared/navigation"
 import { sign } from "jsonwebtoken"
 import { redirect } from "next/navigation"
 import { ClipboardButton } from "./ClipboardButton"
@@ -16,13 +17,14 @@ import { EventDialog } from "./EventDialog"
 import { NameChange } from "./NameChange"
 import { deleteUserFromGroup } from "./actions"
 
-const GroupSettings = async ({
-	params: { groupId },
-}: {
-	params: {
-		groupId: string
-	}
-}) => {
+interface PageProps {
+	params: Promise<unknown>
+}
+
+const GroupSettings = async ({ params }: PageProps) => {
+	const resolvedParams = await params
+	const { groupId } = routes.groupSettings.$parseParams(resolvedParams)
+
 	const session = await getServerComponentAuthSession()
 	const userId = session?.user?.id
 

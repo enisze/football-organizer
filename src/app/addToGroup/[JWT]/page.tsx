@@ -7,12 +7,13 @@ import { verifyJWT } from "@/src/server/verifyJWT"
 import { routes } from "@/src/shared/navigation"
 import { decode } from "jsonwebtoken"
 
-export default async function AddToGroup({
-	params,
-}: {
-	params: Promise<{ JWT: string }>
-}) {
-	const { JWT } = await params
+interface PageProps {
+	params: Promise<unknown>
+}
+
+export default async function AddToGroup({ params }: PageProps) {
+	const resolvedParams = await params
+	const { JWT } = routes.addToGroup.$parseParams(resolvedParams)
 
 	const session = await getServerComponentAuthSession()
 
