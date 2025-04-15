@@ -1,10 +1,10 @@
-"use server"
+'use server'
 
-import { authedActionClient } from "@/src/lib/actionClient"
-import { prisma } from "@/src/server/db/client"
-import { revalidatePath } from "next/cache"
-import { z } from "zod"
-import { zfd } from "zod-form-data"
+import { authedActionClient } from '@/src/lib/actionClient'
+import { prisma } from '@/src/server/db/client'
+import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
+import { zfd } from 'zod-form-data'
 
 export const updatePaypalName = authedActionClient
 	.schema(
@@ -17,7 +17,7 @@ export const updatePaypalName = authedActionClient
 			where: { id: userId },
 			data: { paypalName },
 		})
-		revalidatePath("/settings/user")
+		revalidatePath('/settings/user')
 		return { success: true }
 	})
 

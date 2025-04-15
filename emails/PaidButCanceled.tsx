@@ -1,13 +1,13 @@
-import { Body, Head, Hr, Preview, Text } from "@react-email/components"
-import { Tailwind } from "@react-email/tailwind"
-import { EventTemplate } from "./components/EventTemplate"
-import { Footer } from "./components/Footer"
+import { Body, Head, Hr, Preview, Text } from '@react-email/components'
+import { Tailwind } from '@react-email/tailwind'
+import { EventTemplate } from './components/EventTemplate'
+import { Footer } from './components/Footer'
 
-import type { Event } from "@prisma/client"
-import { ContainerBox } from "./components/ContainerBox"
+import type { Event } from '@prisma/client'
+import { ContainerBox } from './components/ContainerBox'
 
 export const PaidButCanceled = ({
-	event = { id: "1", bookingDate: new Date(), maxParticipants: 10 },
+	event = { id: '1', bookingDate: new Date(), maxParticipants: 10 },
 	userName,
 	participantName,
 }: {

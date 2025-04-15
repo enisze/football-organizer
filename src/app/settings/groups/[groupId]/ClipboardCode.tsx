@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { Button } from "@/ui/button"
-import { Copy } from "lucide-react"
+import { Button } from '@/ui/button'
+import { Copy } from 'lucide-react'
 
 export const ClipboardCode = ({ code }: { code: string }) => {
 	return (

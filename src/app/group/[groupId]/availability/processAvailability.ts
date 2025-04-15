@@ -1,6 +1,6 @@
-import type { TimeSlot, User } from "@prisma/client"
+import type { TimeSlot, User } from '@prisma/client'
 
-export type TimeSlotDuration = "60min" | "90min" | "120min"
+export type TimeSlotDuration = '60min' | '90min' | '120min'
 export type ProcessedTimeSlot = {
 	startTime: string
 	endTime: string
@@ -14,7 +14,7 @@ type TimeRange = {
 
 // Helper function to parse time string to minutes
 const timeToMinutes = (time: string): number => {
-	const [hours, minutes] = time.split(":").map(Number)
+	const [hours, minutes] = time.split(':').map(Number)
 	return (hours || 0) * 60 + (minutes || 0)
 }
 
@@ -22,7 +22,7 @@ const timeToMinutes = (time: string): number => {
 const minutesToTime = (minutes: number): string => {
 	const hours = Math.floor(minutes / 60)
 	const mins = minutes % 60
-	return `${hours.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}`
+	return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
 }
 
 // Generate base 30-minute time slots for the day
@@ -63,14 +63,14 @@ const isUserAvailable = (
 	},
 ): boolean => {
 	const isWeekend = date.getDay() === 0 || date.getDay() === 6
-	const dateString = date.toISOString().split("T")[0]
+	const dateString = date.toISOString().split('T')[0]
 
 	// Check day-specific slots first
 	const userDaySpecificSlots = daySpecificSlots.filter(
 		(slot) =>
 			slot.user.id === user.id &&
 			slot.date &&
-			new Date(slot.date).toISOString().split("T")[0] === dateString,
+			new Date(slot.date).toISOString().split('T')[0] === dateString,
 	)
 
 	if (userDaySpecificSlots.length > 0) {
@@ -96,7 +96,7 @@ const combineConsecutiveSlots = (
 	slots: ProcessedTimeSlot[],
 	duration: TimeSlotDuration,
 ): ProcessedTimeSlot[] => {
-	const slotsNeeded = duration === "60min" ? 2 : duration === "90min" ? 3 : 4
+	const slotsNeeded = duration === '60min' ? 2 : duration === '90min' ? 3 : 4
 	const result: ProcessedTimeSlot[] = []
 
 	for (let i = 0; i <= slots.length - slotsNeeded; i++) {
@@ -148,7 +148,7 @@ export function processGroupAvailability({
 	daySpecificSlots,
 	regularSlots,
 	weekendSlots,
-	duration = "60min",
+	duration = '60min',
 }: {
 	date: Date
 	users: User[]

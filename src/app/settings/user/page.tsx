@@ -1,18 +1,18 @@
-import { TextField } from "@/ui/TextField"
-import { Button } from "@/ui/button"
-import { Label } from "@/ui/label"
+import { TextField } from '@/ui/TextField'
+import { Button } from '@/ui/button'
+import { Label } from '@/ui/label'
 
-import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
-import { Separator } from "@/ui/separator"
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { Separator } from '@/ui/separator'
 
-import { prisma } from "@/src/server/db/client"
-import { DeleteUserForm } from "./DeleteUserForm"
-import { NotificationSwitch } from "./NotificationSwitch"
-import { updatePaypalName } from "./actions"
+import { prisma } from '@/src/server/db/client'
+import { DeleteUserForm } from './DeleteUserForm'
+import { NotificationSwitch } from './NotificationSwitch'
+import { updatePaypalName } from './actions'
 
 const Settings = async () => {
 	const session = await getServerComponentAuthSession()
-	const userId = session?.user?.id ?? ""
+	const userId = session?.user?.id ?? ''
 
 	if (!userId) return null
 
@@ -59,7 +59,7 @@ const Settings = async () => {
 					Speichern
 				</Button>
 
-				<DeleteUserForm userName={userName ?? ""} />
+				<DeleteUserForm userName={userName ?? ''} />
 			</form>
 		</>
 	)

@@ -1,13 +1,13 @@
-"use server"
+'use server'
 
-import { sendPaidButCanceledMail } from "@/inngest/sendPaidButCanceledMail"
-import { revalidateGroup } from "@/src/helpers/isOwnerOfGroup"
-import { authedActionClient } from "@/src/lib/actionClient"
-import { prisma } from "@/src/server/db/client"
-import { routes } from "@/src/shared/navigation"
-import { subDays } from "date-fns"
-import { revalidatePath } from "next/cache"
-import { z } from "zod"
+import { sendPaidButCanceledMail } from '@/inngest/sendPaidButCanceledMail'
+import { revalidateGroup } from '@/src/helpers/isOwnerOfGroup'
+import { authedActionClient } from '@/src/lib/actionClient'
+import { prisma } from '@/src/server/db/client'
+import { routes } from '@/src/shared/navigation'
+import { subDays } from 'date-fns'
+import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
 
 export const sendPaidButCanceledMailAction = authedActionClient
 	.schema(z.object({ eventId: z.string() }))
@@ -15,11 +15,11 @@ export const sendPaidButCanceledMailAction = authedActionClient
 		const event = await prisma.event.findUnique({ where: { id: eventId } })
 		const user = await prisma.user.findUnique({ where: { id: userId } })
 		const group = await prisma.group.findUnique({
-			where: { id: event?.groupId ?? "" },
+			where: { id: event?.groupId ?? '' },
 			include: { owner: { select: { email: true, name: true } } },
 		})
 
-		if (!event || !user || !group) throw new Error("Not found")
+		if (!event || !user || !group) throw new Error('Not found')
 
 		await sendPaidButCanceledMail(event, user, group.owner)
 		revalidateGroup(event.groupId)
@@ -30,7 +30,7 @@ export const setParticipatingStatus = authedActionClient
 	.schema(
 		z.object({
 			eventId: z.string(),
-			status: z.enum(["JOINED", "CANCELED", "MAYBE"]),
+			status: z.enum(['JOINED', 'CANCELED', 'MAYBE']),
 			comment: z.string().optional().nullable(),
 		}),
 	)
@@ -41,15 +41,15 @@ export const setParticipatingStatus = authedActionClient
 				include: { participants: true },
 			})
 
-			if (!event) throw new Error("Event not found")
+			if (!event) throw new Error('Event not found')
 
 			if (
-				status === "JOINED" &&
+				status === 'JOINED' &&
 				event.participants.filter(
-					(p: { userEventStatus: string }) => p.userEventStatus === "JOINED",
+					(p: { userEventStatus: string }) => p.userEventStatus === 'JOINED',
 				).length >= event.maxParticipants
 			) {
-				throw new Error("Event is full")
+				throw new Error('Event is full')
 			}
 
 			await prisma.participantsOnEvents.upsert({
@@ -71,7 +71,7 @@ export const bookEvent = authedActionClient
 	)
 	.action(async ({ parsedInput: { eventId, bookingDate } }) => {
 		const date = new Date(bookingDate)
-		if (!eventId) throw new Error("BAD_REQUEST")
+		if (!eventId) throw new Error('BAD_REQUEST')
 
 		const event = await prisma.event.findUnique({
 			where: { id: eventId },
@@ -79,7 +79,7 @@ export const bookEvent = authedActionClient
 		})
 
 		await prisma.event.update({
-			data: { status: "BOOKED", bookingDate: subDays(date, 1) },
+			data: { status: 'BOOKED', bookingDate: subDays(date, 1) },
 			where: { id: eventId },
 		})
 

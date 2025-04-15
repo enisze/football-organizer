@@ -1,16 +1,16 @@
-"use client"
-import { bookEvent } from "@/src/app/group/[groupId]/actions"
-import { TextField } from "@/ui/TextField"
-import { Button } from "@/ui/button"
+'use client'
+import { bookEvent } from '@/src/app/group/[groupId]/actions'
+import { TextField } from '@/ui/TextField'
+import { Button } from '@/ui/button'
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@/ui/dialog"
-import { useAction } from "next-safe-action/hooks"
-import { useState } from "react"
+} from '@/ui/dialog'
+import { useAction } from 'next-safe-action/hooks'
+import { useState } from 'react'
 
 export const BookEventButton = ({ id }: { id: string }) => {
 	const [open, setOpen] = useState(false)
@@ -36,9 +36,9 @@ export const BookEventButton = ({ id }: { id: string }) => {
 						onSubmit={(e) => {
 							e.preventDefault()
 							const formData = new FormData(e.currentTarget)
-							const bookingDate = formData.get("bookingdate")?.toString()
+							const bookingDate = formData.get('bookingdate')?.toString()
 							if (!bookingDate) {
-								throw new Error("Booking date is required")
+								throw new Error('Booking date is required')
 							}
 							execute({
 								eventId: id,
@@ -51,7 +51,7 @@ export const BookEventButton = ({ id }: { id: string }) => {
 							label="Datum"
 							type="date"
 							name="bookingdate"
-							text={""}
+							text={''}
 							className="w-36"
 						/>
 						<Button

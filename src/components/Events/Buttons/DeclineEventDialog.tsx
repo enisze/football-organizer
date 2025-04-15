@@ -1,19 +1,19 @@
-"use client"
-import { setParticipatingStatus } from "@/src/app/group/[groupId]/actions"
-import { TextField } from "@/ui/TextField"
-import { Button } from "@/ui/button"
+'use client'
+import { setParticipatingStatus } from '@/src/app/group/[groupId]/actions'
+import { TextField } from '@/ui/TextField'
+import { Button } from '@/ui/button'
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@/ui/dialog"
-import type { Payment, UserEventStatus } from "@prisma/client"
-import { X } from "lucide-react"
-import type { FunctionComponent } from "react"
-import { useState } from "react"
-import { LeaveModal } from "./LeaveModal"
+} from '@/ui/dialog'
+import type { Payment, UserEventStatus } from '@prisma/client'
+import { X } from 'lucide-react'
+import type { FunctionComponent } from 'react'
+import { useState } from 'react'
+import { LeaveModal } from './LeaveModal'
 
 type DeclineEventDialogProps = {
 	id: string
@@ -26,19 +26,19 @@ export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
 	userStatus,
 	payment,
 }) => {
-	const [comment, setComment] = useState("")
+	const [comment, setComment] = useState('')
 	const [showCommentModal, setShowCommentModal] = useState(false)
 	const [showLeaveModal, setShowLeaveModal] = useState(false)
 
 	const leave = async ({ comment }: { comment: string }) => {
 		if (!payment) {
-			await setParticipatingStatus({ eventId: id, status: "CANCELED", comment })
+			await setParticipatingStatus({ eventId: id, status: 'CANCELED', comment })
 		} else {
 			setShowLeaveModal(true)
 		}
 	}
 
-	const canceledMarkColor = userStatus === "CANCELED" ? "text-red-500" : ""
+	const canceledMarkColor = userStatus === 'CANCELED' ? 'text-red-500' : ''
 
 	return (
 		<>
@@ -69,7 +69,7 @@ export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
 					<div className="flex flex-col w-full gap-y-2">
 						<TextField
 							label="Warum kannst du nicht teilnehmen?"
-							text={""}
+							text={''}
 							onChange={(e) => setComment(e.target.value)}
 							maxLength={35}
 						/>

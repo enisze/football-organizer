@@ -1,12 +1,12 @@
 import {
 	isOwnerOfGroupOfEvent,
 	revalidateGroup,
-} from "@/src/helpers/isOwnerOfGroup"
-import { prisma } from "@/src/server/db/client"
-import { Button } from "@/ui/button"
-import { BookEventButton } from "./Buttons/BookEventButton"
-import { DeleteEventButton } from "./Buttons/DeleteEventButton"
-import { RemindButton } from "./Buttons/RemindButton"
+} from '@/src/helpers/isOwnerOfGroup'
+import { prisma } from '@/src/server/db/client'
+import { Button } from '@/ui/button'
+import { BookEventButton } from './Buttons/BookEventButton'
+import { DeleteEventButton } from './Buttons/DeleteEventButton'
+import { RemindButton } from './Buttons/RemindButton'
 
 type EventCardAdminAreaProps = {
 	eventId: string
@@ -33,7 +33,7 @@ export const EventCardAdminArea = async ({
 
 			const paymentId = participant.paymentId
 
-			if (!paymentId) throw new Error("NOT_FOUND")
+			if (!paymentId) throw new Error('NOT_FOUND')
 
 			const payment = await prisma.payment.findUnique({
 				where: { id: paymentId },
@@ -79,7 +79,7 @@ export const EventCardAdminArea = async ({
 				<Button
 					variant="outline"
 					formAction={async () => {
-						"use server"
+						'use server'
 
 						const event = await prisma.event.findUnique({
 							where: { id: eventId },
@@ -87,7 +87,7 @@ export const EventCardAdminArea = async ({
 						})
 
 						await prisma.event.update({
-							data: { status: "CANCELED", bookingDate: null },
+							data: { status: 'CANCELED', bookingDate: null },
 							where: { id: eventId },
 						})
 

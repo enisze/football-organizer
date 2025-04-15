@@ -1,5 +1,5 @@
-"use client"
-import { Button } from "@/ui/button"
+'use client'
+import { Button } from '@/ui/button'
 
 import {
 	Dialog,
@@ -8,8 +8,8 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@/ui/dialog"
-import { deleteEventAction } from "./actions"
+} from '@/ui/dialog'
+import { deleteEventAction } from './actions'
 
 export const DeleteEventButton = async ({ id }: { id: string }) => {
 	return (

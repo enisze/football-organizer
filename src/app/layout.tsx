@@ -1,13 +1,13 @@
-import "../../styles/globals.css"
-import { Navbar } from "../components/Navigation/Navbar"
-import Providers from "./Providers"
+import '../../styles/globals.css'
+import { Navbar } from '../components/Navigation/Navbar'
+import Providers from './Providers'
 
 export const metadata = {
 	title: {
-		template: "Event Wizard",
-		default: "Event Wizard",
+		template: 'Event Wizard',
+		default: 'Event Wizard',
 	},
-	description: "A simple Event Wizard showing payments based on emails",
+	description: 'A simple Event Wizard showing payments based on emails',
 }
 
 export default function RootLayout({

@@ -1,13 +1,13 @@
-"use server"
+'use server'
 
-import { defaultValues } from "@/src/helpers/constants"
-import { authedActionClient } from "@/src/lib/actionClient"
-import { inngest, prisma } from "@/src/server/db/client"
-import { routes } from "@/src/shared/navigation"
-import { nanoid } from "nanoid"
-import { revalidatePath } from "next/cache"
-import { z } from "zod"
-import { zfd } from "zod-form-data"
+import { defaultValues } from '@/src/helpers/constants'
+import { authedActionClient } from '@/src/lib/actionClient'
+import { inngest, prisma } from '@/src/server/db/client'
+import { routes } from '@/src/shared/navigation'
+import { nanoid } from 'nanoid'
+import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
+import { zfd } from 'zod-form-data'
 
 export const deleteGroup = authedActionClient
 	.schema(z.object({ groupId: z.string() }))
@@ -30,7 +30,7 @@ export const createGroup = authedActionClient
 				name: groupName,
 				code: nanoid(6),
 				owner: { connect: { id: userId } },
-				users: { create: { id: userId, role: "OWNER" } },
+				users: { create: { id: userId, role: 'OWNER' } },
 			},
 		})
 		revalidatePath(routes.groupSettings())
@@ -101,13 +101,13 @@ export const createEvent = authedActionClient
 				cost: parsedInput.cost,
 				maxParticipants: parsedInput.maxParticipants,
 				groupId,
-				environment: parsedInput.environment === "on" ? "INDOOR" : "OUTDOOR",
+				environment: parsedInput.environment === 'on' ? 'INDOOR' : 'OUTDOOR',
 			},
 			select: { id: true },
 		})
 
 		await inngest.send({
-			name: "event/new",
+			name: 'event/new',
 			data: {
 				id: event.id,
 			},

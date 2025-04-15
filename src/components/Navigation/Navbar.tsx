@@ -1,12 +1,12 @@
-import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
-import { Button } from "@/ui/button"
-import { ThemeToggle } from "@/ui/theme-toggle"
-import Link from "next/link"
-import { Heading } from "../Heading"
-import { DashboardLink } from "./DashboardLink"
-import { OrganizerServerMenu } from "./OrganizerServerMenu"
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { Button } from '@/ui/button'
+import { ThemeToggle } from '@/ui/theme-toggle'
+import Link from 'next/link'
+import { Heading } from '../Heading'
+import { DashboardLink } from './DashboardLink'
+import { OrganizerServerMenu } from './OrganizerServerMenu'
 
-import { prisma } from "@/src/server/db/client"
+import { prisma } from '@/src/server/db/client'
 
 export const Navbar = async () => {
 	const data = await getServerComponentAuthSession()

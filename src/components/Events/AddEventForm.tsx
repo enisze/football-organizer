@@ -1,10 +1,10 @@
-import { createEvent } from "@/src/app/settings/groups/[groupId]/actions"
-import { defaultValues } from "@/src/helpers/constants"
-import { TextField } from "@/ui/TextField"
-import { Button } from "@/ui/button"
-import { Label } from "@/ui/label"
-import { Switch } from "@/ui/switch"
-import { useParams } from "next/navigation"
+import { createEvent } from '@/src/app/settings/groups/[groupId]/actions'
+import { defaultValues } from '@/src/helpers/constants'
+import { TextField } from '@/ui/TextField'
+import { Button } from '@/ui/button'
+import { Label } from '@/ui/label'
+import { Switch } from '@/ui/switch'
+import { useParams } from 'next/navigation'
 
 export const AddEventForm = ({ onSubmit }: { onSubmit: () => void }) => {
 	const params = useParams()
@@ -68,7 +68,7 @@ export const AddEventForm = ({ onSubmit }: { onSubmit: () => void }) => {
 				type="submit"
 				className="bg-[#73C8A9]"
 				formAction={async (formData: FormData) => {
-					formData.append("groupId", groupId)
+					formData.append('groupId', groupId)
 					await createEvent(formData)
 					onSubmit()
 				}}

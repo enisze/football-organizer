@@ -1,12 +1,12 @@
-import { EventCard } from "@/src/components/Events/EventCard"
-import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
-import { prisma } from "@/src/server/db/client"
-import { routes } from "@/src/shared/navigation"
-import { OrganizerLink } from "@/ui/OrganizerLink"
-import Link from "next/link"
-import { notFound } from "next/navigation"
-import { getLatLong } from "../../group/[groupId]/getLatLong"
-import { StatusButton } from "./StatusButton"
+import { EventCard } from '@/src/components/Events/EventCard'
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { prisma } from '@/src/server/db/client'
+import { routes } from '@/src/shared/navigation'
+import { OrganizerLink } from '@/ui/OrganizerLink'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { getLatLong } from '../../group/[groupId]/getLatLong'
+import { StatusButton } from './StatusButton'
 
 interface PageProps {
 	params: Promise<unknown>

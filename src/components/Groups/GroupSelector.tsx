@@ -1,4 +1,4 @@
-"use client"
+'use client'
 import {
 	Select,
 	SelectContent,
@@ -6,12 +6,12 @@ import {
 	SelectLabel,
 	SelectTrigger,
 	SelectValue,
-} from "@/ui/select"
-import type { UserOnGroups } from "@prisma/client"
-import { SelectGroup } from "@radix-ui/react-select"
-import { atom } from "jotai"
-import { useParams, useRouter } from "next/navigation"
-import type { FunctionComponent } from "react"
+} from '@/ui/select'
+import type { UserOnGroups } from '@prisma/client'
+import { SelectGroup } from '@radix-ui/react-select'
+import { atom } from 'jotai'
+import { useParams, useRouter } from 'next/navigation'
+import type { FunctionComponent } from 'react'
 
 export const selectedGroupAtom = atom<string | undefined>(undefined)
 

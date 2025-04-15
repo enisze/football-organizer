@@ -1,8 +1,8 @@
-import { PrismaClient } from "@prisma/client"
-import { EventSchemas, Inngest, InngestMiddleware } from "inngest"
+import { PrismaClient } from '@prisma/client'
+import { EventSchemas, Inngest, InngestMiddleware } from 'inngest'
 
-import { env } from "@/src/env/server.mjs"
-import { z } from "zod"
+import { env } from '@/src/env/server.mjs'
+import { z } from 'zod'
 
 declare global {
 	// eslint-disable-next-line no-var
@@ -46,7 +46,7 @@ export const Event__NewEmail = z.object({
 	days: z.number(),
 })
 const prismaMiddleware = new InngestMiddleware({
-	name: "Prisma Middleware",
+	name: 'Prisma Middleware',
 	init() {
 		const prisma = new PrismaClient()
 
@@ -70,22 +70,22 @@ const prismaMiddleware = new InngestMiddleware({
 })
 
 export const inngest = new Inngest({
-	id: "Event-Wizard",
-	eventKey: process.env.INNGEST_EVENT_KEY ?? "",
+	id: 'Event-Wizard',
+	eventKey: process.env.INNGEST_EVENT_KEY ?? '',
 	schemas: new EventSchemas().fromZod({
-		"event/newEmail": {
+		'event/newEmail': {
 			data: Event__NewEmail,
 		},
-		"event/reminder": {
+		'event/reminder': {
 			data: Event__Reminder,
 		},
-		"event/reminderEmail": {
+		'event/reminderEmail': {
 			data: Event__ReminderEmail,
 		},
-		"event/paymentReminderEmail": {
+		'event/paymentReminderEmail': {
 			data: Event__PaymentReminderEmail,
 		},
-		"event/new": {
+		'event/new': {
 			data: Event__New,
 		},
 	}),
@@ -94,8 +94,8 @@ export const inngest = new Inngest({
 
 export const prisma = globals.prisma ?? new PrismaClient()
 
-if (process.env.NODE_ENV !== "production") globals.prisma = prisma
+if (process.env.NODE_ENV !== 'production') globals.prisma = prisma
 
-if (env.NODE_ENV !== "production") {
+if (env.NODE_ENV !== 'production') {
 	globals.prisma = prisma
 }

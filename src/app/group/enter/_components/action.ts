@@ -1,8 +1,8 @@
-"use server"
+'use server'
 
-import { authedActionClient } from "@/src/lib/actionClient"
-import { prisma } from "@/src/server/db/client"
-import { z } from "zod"
+import { authedActionClient } from '@/src/lib/actionClient'
+import { prisma } from '@/src/server/db/client'
+import { z } from 'zod'
 
 export const addToGroupAction = authedActionClient
 	.schema(z.object({ code: z.string() }))
@@ -11,7 +11,7 @@ export const addToGroupAction = authedActionClient
 			where: { code },
 		})
 
-		if (!group) throw new Error("Group not found")
+		if (!group) throw new Error('Group not found')
 
 		const isOnGroup = await prisma.userOnGroups.findFirst({
 			where: {

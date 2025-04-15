@@ -1,8 +1,8 @@
-import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
-import { prisma } from "@/src/server/db/client"
-import { oAuth2Client } from "@/src/server/gmail"
-import { routes } from "@/src/shared/navigation"
-import { OrganizerLink } from "@/ui/OrganizerLink"
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { prisma } from '@/src/server/db/client'
+import { oAuth2Client } from '@/src/server/gmail'
+import { routes } from '@/src/shared/navigation'
+import { OrganizerLink } from '@/ui/OrganizerLink'
 
 interface PageProps {
 	searchParams: Promise<unknown>
@@ -18,7 +18,7 @@ const OAuthCallbackPage = async ({ searchParams }: PageProps) => {
 	const { expiry_date, access_token, refresh_token } = tokens
 
 	if (!expiry_date || !refresh_token || !access_token || !session?.user?.id)
-		throw new Error("INTERNAL_SERVER_ERROR" + "Access revoked")
+		throw new Error('INTERNAL_SERVER_ERROR' + 'Access revoked')
 
 	await prisma.tokens.deleteMany({ where: { ownerId: session.user.id } })
 

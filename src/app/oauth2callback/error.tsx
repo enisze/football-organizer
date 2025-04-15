@@ -1,6 +1,6 @@
-"use client"
-import { OrganizerLink } from "@/ui/OrganizerLink"
-import { Button } from "@/ui/button"
+'use client'
+import { OrganizerLink } from '@/ui/OrganizerLink'
+import { Button } from '@/ui/button'
 
 const Error = ({ error, reset }: { error: Error; reset: () => void }) => {
 	return (

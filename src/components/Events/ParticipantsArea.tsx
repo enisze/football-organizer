@@ -3,11 +3,11 @@ import {
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
-} from "@/ui/accordion"
-import type { UserEventStatus } from "@prisma/client"
-import { User } from "lucide-react"
-import { AvatarStatus } from "./AvatarStatus"
-import { EventCardAdminPaymentArea } from "./EventCardAdminPaymentArea"
+} from '@/ui/accordion'
+import type { UserEventStatus } from '@prisma/client'
+import { User } from 'lucide-react'
+import { AvatarStatus } from './AvatarStatus'
+import { EventCardAdminPaymentArea } from './EventCardAdminPaymentArea'
 
 type ParticipantsAreaProps = {
 	joinedUsersAmount: number
@@ -60,7 +60,7 @@ export const ParticipantsArea = async ({
 					<AccordionTrigger className="p-0 hover:no-underline">
 						<div
 							className="rounded flex border w-full mr-1"
-							style={{ border: "solid" }}
+							style={{ border: 'solid' }}
 						>
 							<div className="bg-green-400 overflow-hidden" style={joinedWidth}>
 								{joinedUsersAmount}
@@ -77,11 +77,11 @@ export const ParticipantsArea = async ({
 				<AccordionContent className="[&>div]:pb-0 [&>div]:pt-2">
 					<div className="flex flex-col gap-y-1">
 						{participants.map((participant) => {
-							const res = participant?.user?.name?.split(" ") as string[]
+							const res = participant?.user?.name?.split(' ') as string[]
 
 							if (!res) return null
-							const first = res[0]?.charAt(0) ?? "X"
-							const second = res[1]?.charAt(0) ?? "X"
+							const first = res[0]?.charAt(0) ?? 'X'
+							const second = res[1]?.charAt(0) ?? 'X'
 
 							return (
 								<div
@@ -89,7 +89,7 @@ export const ParticipantsArea = async ({
 									className="flex items-center gap-x-2"
 								>
 									<AvatarStatus
-										name={participant?.user.name ?? ""}
+										name={participant?.user.name ?? ''}
 										shortName={`${first}${second}`}
 										userEventStatus={participant?.userEventStatus}
 										comment={participant?.comment}
@@ -97,7 +97,7 @@ export const ParticipantsArea = async ({
 
 									<EventCardAdminPaymentArea
 										eventId={eventId}
-										userId={participant?.user.id ?? ""}
+										userId={participant?.user.id ?? ''}
 									/>
 								</div>
 							)

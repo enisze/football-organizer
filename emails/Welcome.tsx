@@ -1,17 +1,17 @@
-import { Body, Head, Preview, Section, Text } from "@react-email/components"
-import { Tailwind } from "@react-email/tailwind"
-import { ContainerBox } from "./components/ContainerBox"
-import { CustomButton } from "./components/CustomButton"
-import { FAQArea } from "./components/FAQArea"
-import { Footer } from "./components/Footer"
+import { Body, Head, Preview, Section, Text } from '@react-email/components'
+import { Tailwind } from '@react-email/tailwind'
+import { ContainerBox } from './components/ContainerBox'
+import { CustomButton } from './components/CustomButton'
+import { FAQArea } from './components/FAQArea'
+import { Footer } from './components/Footer'
 
 type WelcomeEmailProps = {
 	userFirstname: string
 }
 
-const url = process.env.NEXT_PUBLIC_BASE_URL ?? ""
+const url = process.env.NEXT_PUBLIC_BASE_URL ?? ''
 
-export const WelcomeEmail = ({ userFirstname = "Zeno" }: WelcomeEmailProps) => (
+export const WelcomeEmail = ({ userFirstname = 'Zeno' }: WelcomeEmailProps) => (
 	<Tailwind>
 		<Head />
 		<Preview>The platform to organize your events magically.</Preview>

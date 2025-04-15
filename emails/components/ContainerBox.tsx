@@ -1,5 +1,5 @@
-import type { ContainerProps } from "@react-email/container"
-import { Container } from "@react-email/container"
+import type { ContainerProps } from '@react-email/container'
+import { Container } from '@react-email/container'
 
 export const ContainerBox = (props: ContainerProps) => {
 	const { className, ...propsWithoutClassName } = props

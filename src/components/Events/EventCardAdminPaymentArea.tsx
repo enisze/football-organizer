@@ -1,5 +1,5 @@
-import { isOwnerOfGroupOfEvent } from "@/src/helpers/isOwnerOfGroup"
-import { prisma } from "@/src/server/db/client"
+import { isOwnerOfGroupOfEvent } from '@/src/helpers/isOwnerOfGroup'
+import { prisma } from '@/src/server/db/client'
 
 type EventCardAdminPaymentAreaProps = {
 	eventId: string

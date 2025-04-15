@@ -1,20 +1,20 @@
-"use client"
-import { revalidateGroupAction } from "@/src/app/group/[groupId]/actions"
-import { Avatar, AvatarFallback } from "@/ui/avatar"
+'use client'
+import { revalidateGroupAction } from '@/src/app/group/[groupId]/actions'
+import { Avatar, AvatarFallback } from '@/ui/avatar'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@/ui/dropdown-menu"
-import { Label } from "@/ui/label"
-import { Separator } from "@/ui/separator"
-import { Switch } from "@/ui/switch"
-import { signOut, useSession } from "next-auth/react"
-import Link from "next/link"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useCallback, useState, type FunctionComponent } from "react"
-import { NotificationBubble } from "../NotificationBubble"
+} from '@/ui/dropdown-menu'
+import { Label } from '@/ui/label'
+import { Separator } from '@/ui/separator'
+import { Switch } from '@/ui/switch'
+import { signOut, useSession } from 'next-auth/react'
+import Link from 'next/link'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useCallback, useState, type FunctionComponent } from 'react'
+import { NotificationBubble } from '../NotificationBubble'
 
 export const OrganizerMenu: FunctionComponent<{
 	balance: number | null | undefined
@@ -27,9 +27,9 @@ export const OrganizerMenu: FunctionComponent<{
 	const searchParams = useSearchParams()
 	const router = useRouter()
 
-	const groupId = pathname?.split("/").at(-1)
+	const groupId = pathname?.split('/').at(-1)
 
-	const isOnDashboard = pathname?.includes("/group/")
+	const isOnDashboard = pathname?.includes('/group/')
 
 	const createQueryString = useCallback(
 		(name: string, value: string) => {
@@ -46,9 +46,9 @@ export const OrganizerMenu: FunctionComponent<{
 	const hasPaypalName = Boolean(data.user.paypalName)
 
 	const name = data.user.name
-	const res = name?.split(" ")
-	const first = res ? (res[0]?.charAt(0) ?? "X") : "X"
-	const second = res ? (res[1]?.charAt(0) ?? "X") : "X"
+	const res = name?.split(' ')
+	const first = res ? (res[0]?.charAt(0) ?? 'X') : 'X'
+	const second = res ? (res[1]?.charAt(0) ?? 'X') : 'X'
 
 	return (
 		<DropdownMenu open={open} onOpenChange={setOpen}>
@@ -79,7 +79,7 @@ export const OrganizerMenu: FunctionComponent<{
 							onClick={async () => {
 								router.push(
 									//@ts-expect-error next issue
-									pathname + "?" + createQueryString("isOwner", !isOwner),
+									pathname + '?' + createQueryString('isOwner', !isOwner),
 								)
 
 								await new Promise((resolve) => setTimeout(resolve, 500))
@@ -103,13 +103,13 @@ export const OrganizerMenu: FunctionComponent<{
 
 				<DropdownMenuItem onClick={() => setOpen(!open)}>
 					<div className="relative flex w-full">
-						<Link href={"/settings/user"}>Accounteinstellungen</Link>
+						<Link href={'/settings/user'}>Accounteinstellungen</Link>
 						{!hasPaypalName && <NotificationBubble />}
 					</div>
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					onClick={async () => {
-						await signOut({ callbackUrl: "/" })
+						await signOut({ callbackUrl: '/' })
 					}}
 				>
 					Ausloggen

@@ -1,20 +1,20 @@
-"use client"
+'use client'
 
-import { Button } from "@/ui/button"
-import { Label } from "@/ui/label"
+import { Button } from '@/ui/button'
+import { Label } from '@/ui/label'
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/ui/select"
-import type { TimeSlot } from "@prisma/client"
-import { PlusCircle, X } from "lucide-react"
-import { useAction } from "next-safe-action/hooks"
-import { useFieldArray, useForm } from "react-hook-form"
-import { z } from "zod"
-import { updateGeneralAvailabilityAction } from "../actions"
+} from '@/ui/select'
+import type { TimeSlot } from '@prisma/client'
+import { PlusCircle, X } from 'lucide-react'
+import { useAction } from 'next-safe-action/hooks'
+import { useFieldArray, useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { updateGeneralAvailabilityAction } from '../actions'
 
 const timeSlotSchema = z.object({
 	timeSlots: z.array(
@@ -28,7 +28,7 @@ const timeSlotSchema = z.object({
 type TimeSlotFormData = z.infer<typeof timeSlotSchema>
 
 interface TimeSlotEditorFormProps {
-	timeSlots: Array<Pick<TimeSlot, "startTime" | "endTime">>
+	timeSlots: Array<Pick<TimeSlot, 'startTime' | 'endTime'>>
 	maxSlots?: number
 	isWeekend?: boolean
 	groupId: string
@@ -41,7 +41,7 @@ const generateTimeOptions = (intervalMinutes: number) => {
 
 	for (let hour = startHour; hour <= endHour; hour++) {
 		for (let minute = 0; minute < 60; minute += intervalMinutes) {
-			const time = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`
+			const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
 			slots.push(time)
 		}
 	}
@@ -59,13 +59,13 @@ export function TimeSlotEditorForm({
 		useForm<TimeSlotFormData>({
 			defaultValues: {
 				timeSlots:
-					timeSlots.length > 0 ? timeSlots : [{ startTime: "", endTime: "" }],
+					timeSlots.length > 0 ? timeSlots : [{ startTime: '', endTime: '' }],
 			},
 		})
 
 	const { fields, append, remove } = useFieldArray({
 		control,
-		name: "timeSlots",
+		name: 'timeSlots',
 	})
 
 	const timeOptions = generateTimeOptions(30) // 30-minute intervals
@@ -155,7 +155,7 @@ export function TimeSlotEditorForm({
 					type="button"
 					variant="outline"
 					size="sm"
-					onClick={() => append({ startTime: "", endTime: "" })}
+					onClick={() => append({ startTime: '', endTime: '' })}
 					className="w-full"
 					aria-label="Add time slot"
 				>

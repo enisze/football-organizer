@@ -1,16 +1,16 @@
-"use client"
+'use client'
 
-import { TextField } from "@/ui/TextField"
-import { Button } from "@/ui/button"
-import { toast } from "@/ui/use-toast"
-import { updateGroupName } from "./actions"
+import { TextField } from '@/ui/TextField'
+import { Button } from '@/ui/button'
+import { toast } from '@/ui/use-toast'
+import { updateGroupName } from './actions'
 
 export const NameChange = ({ groupName }: { groupName: string }) => {
 	const updateName = async (formData: FormData) => {
 		const groupNameEdit = await updateGroupName(formData)
 
 		toast({
-			title: "Gruppenname geändert",
+			title: 'Gruppenname geändert',
 			description: `Der Gruppenname wurde erfolgreich zu ${groupNameEdit} geändert.`,
 		})
 	}

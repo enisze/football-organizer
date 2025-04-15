@@ -1,11 +1,11 @@
-"use client"
+'use client'
 
-import type { User } from "@prisma/client"
-import type { Dispatch, SetStateAction } from "react"
+import type { User } from '@prisma/client'
+import type { Dispatch, SetStateAction } from 'react'
 
 const getRandomColor = () => {
-	const letters = "0123456789ABCDEF"
-	let color = "#"
+	const letters = '0123456789ABCDEF'
+	let color = '#'
 	for (let i = 0; i < 6; i++) {
 		color += letters[Math.floor(Math.random() * 16)]
 	}
@@ -39,7 +39,7 @@ export function UserList({ users, selectedUsers, onChange }: UserListProps) {
 					className="flex cursor-pointer items-center justify-between rounded-md border p-2 hover:bg-accent"
 					onClick={() => handleUserClick(user)}
 					onKeyDown={(e) => {
-						if (e.key === "Enter" || e.key === " ") {
+						if (e.key === 'Enter' || e.key === ' ') {
 							handleUserClick(user)
 						}
 					}}

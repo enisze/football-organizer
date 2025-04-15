@@ -1,7 +1,7 @@
-import { prisma } from "@/src/server/db/client"
-import { routes } from "@/src/shared/navigation"
-import { revalidatePath } from "next/cache"
-import { getServerComponentAuthSession } from "../server/auth/authOptions"
+import { prisma } from '@/src/server/db/client'
+import { routes } from '@/src/shared/navigation'
+import { revalidatePath } from 'next/cache'
+import { getServerComponentAuthSession } from '../server/auth/authOptions'
 
 export const isOwnerOfGroup = async (groupId: string) => {
 	const session = await getServerComponentAuthSession()

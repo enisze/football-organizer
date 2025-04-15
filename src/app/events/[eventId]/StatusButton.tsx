@@ -1,21 +1,21 @@
-import { Button } from "@/ui/button"
-import {} from "next-safe-action"
+import { Button } from '@/ui/button'
+import {} from 'next-safe-action'
 
-import { setParticipatingStatus } from "../../group/[groupId]/actions"
+import { setParticipatingStatus } from '../../group/[groupId]/actions'
 
 export const StatusButton = ({ eventId }: { eventId: string }) => {
 	return (
 		<form>
 			<Button
 				formAction={async () => {
-					"use server"
+					'use server'
 					await setParticipatingStatus({
 						eventId,
-						status: "CANCELED",
+						status: 'CANCELED',
 					})
 				}}
 				variant="outline"
-				disabled={status === "executing"}
+				disabled={status === 'executing'}
 			>
 				Keine Emails mehr erhalten
 			</Button>

@@ -1,24 +1,24 @@
-import { Body, Column, Head, Preview, Row, Text } from "@react-email/components"
-import { Tailwind } from "@react-email/tailwind"
-import { CustomButton } from "./components/CustomButton"
-import { Footer } from "./components/Footer"
+import { Body, Column, Head, Preview, Row, Text } from '@react-email/components'
+import { Tailwind } from '@react-email/tailwind'
+import { CustomButton } from './components/CustomButton'
+import { Footer } from './components/Footer'
 
-import type { Event } from "@prisma/client"
-import { ContainerBox } from "./components/ContainerBox"
-import { EventTemplate } from "./components/EventTemplate"
-import { paypalLink } from "./helpers/constants"
+import type { Event } from '@prisma/client'
+import { ContainerBox } from './components/ContainerBox'
+import { EventTemplate } from './components/EventTemplate'
+import { paypalLink } from './helpers/constants'
 
 export const EventReminder = ({
-	event = { id: "1", bookingDate: new Date(), maxParticipants: 10 },
-	userName = "Test",
+	event = { id: '1', bookingDate: new Date(), maxParticipants: 10 },
+	userName = 'Test',
 	participantsAmount = 0,
 }: {
-	event: Partial<Omit<Event, "createdAt" | "updatedAt">>
+	event: Partial<Omit<Event, 'createdAt' | 'updatedAt'>>
 	userName: string
 	participantsAmount: number
 }) => {
 	const { id, date } = event
-	const eventLink = process.env.NEXT_PUBLIC_BASE_URL + "/events/" + id
+	const eventLink = process.env.NEXT_PUBLIC_BASE_URL + '/events/' + id
 
 	return (
 		<Tailwind>
@@ -36,7 +36,7 @@ export const EventReminder = ({
 						Ein Event zu dem du weder zu- noch abgesagt hast steht noch an.
 					</Text>
 					<Text>
-						Es sind noch {(event.maxParticipants ?? 10) - participantsAmount}{" "}
+						Es sind noch {(event.maxParticipants ?? 10) - participantsAmount}{' '}
 						Plätze frei.
 					</Text>
 					<EventTemplate event={event} />

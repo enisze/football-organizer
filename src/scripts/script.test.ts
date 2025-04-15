@@ -1,18 +1,18 @@
-import { sendEmail } from "@/inngest/createSendEmail"
-import { addWeeks, getWeek, setDay } from "date-fns"
+import { sendEmail } from '@/inngest/createSendEmail'
+import { addWeeks, getWeek, setDay } from 'date-fns'
 
-const redColor = "rgb(175, 18, 29)"
-const greenColor = "rgb(131, 176, 34)"
+const redColor = 'rgb(175, 18, 29)'
+const greenColor = 'rgb(131, 176, 34)'
 
-const time = "20:00h"
-const time2 = "8:00:h"
+const time = '20:00h'
+const time2 = '8:00:h'
 
 const date = new Date()
 const week = getWeek(date)
 
-const days = ["Mo"]
+const days = ['Mo']
 
-describe("Booking reminder", () => {
+describe('Booking reminder', () => {
 	const soccerboxesBookable: {
 		soccerbox: number
 		hrefValue: string | null
@@ -45,39 +45,39 @@ describe("Booking reminder", () => {
 				if (!tdElement) {
 					soccerboxesError.push({
 						soccerbox,
-						error: "Fehler, kein tdElement gefunden",
+						error: 'Fehler, kein tdElement gefunden',
 						day,
 					})
 
 					continue
 				}
 
-				const linkName = ".uzk15__eventunit"
+				const linkName = '.uzk15__eventunit'
 				const linkElement = await tdElement.$(linkName)
 
 				if (!linkElement) {
 					soccerboxesError.push({
 						soccerbox,
-						error: "Noch nicht buchbar, kein Link",
+						error: 'Noch nicht buchbar, kein Link',
 						day,
 					})
 					continue
 				}
 
 				const hrefValue = await linkElement.evaluate((el) =>
-					el.getAttribute("href"),
+					el.getAttribute('href'),
 				)
 
-				const className = ".uzk15__kreis"
+				const className = '.uzk15__kreis'
 
-				let colorValue = ""
+				let colorValue = ''
 
 				const color = await tdElement.$(className)
 
 				if (!color) {
 					soccerboxesError.push({
 						soccerbox,
-						error: "Fehler, keine Color gefunden",
+						error: 'Fehler, keine Color gefunden',
 						day,
 					})
 					continue
@@ -105,7 +105,7 @@ describe("Booking reminder", () => {
 				if (colorValue === redColor) {
 					soccerboxesError.push({
 						soccerbox,
-						error: "Gebucht",
+						error: 'Gebucht',
 						day,
 					})
 
@@ -126,7 +126,7 @@ describe("Booking reminder", () => {
 		if (soccerboxesBookable.length > 0) {
 			try {
 				await sendEmail(
-					"eniszej@gmail.com",
+					'eniszej@gmail.com',
 					`
         <h1>Es gibt buchbare Soccerboxen für </h1>
         <ul>
@@ -142,10 +142,10 @@ describe("Booking reminder", () => {
 				)}
         </ul>
         `,
-					"Es gibt buchbare Soccerboxen",
+					'Es gibt buchbare Soccerboxen',
 				)
 			} catch (error) {
-				console.log("Sending email failed")
+				console.log('Sending email failed')
 				console.log(error)
 			}
 		}

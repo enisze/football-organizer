@@ -1,9 +1,9 @@
-import { getAddressAndCoordinatesRedisKeys } from "@/src/helpers/getAddressAndCoordinatesRedisKeys"
-import { mapCoordinatesToArray } from "@/src/server/map"
+import { getAddressAndCoordinatesRedisKeys } from '@/src/helpers/getAddressAndCoordinatesRedisKeys'
+import { mapCoordinatesToArray } from '@/src/server/map'
 
-import { redis } from "@/src/server/db/redis"
+import { redis } from '@/src/server/db/redis'
 
-import axios from "axios"
+import axios from 'axios'
 
 const LATLONG_API_KEY = process.env.LATLONG_API_KEY
 
@@ -29,7 +29,7 @@ export const getLatLong = async (
 				const coordinates = await redis.get(coordinatesKey)
 
 				if (
-					coordinates !== "undefined,undefined" &&
+					coordinates !== 'undefined,undefined' &&
 					coordinates &&
 					cachedAddress === address
 				) {
@@ -60,7 +60,7 @@ export const getLatLong = async (
 		return map
 	} catch (error) {
 		console.log(error)
-		throw new Error("INTERNAL_SERVER_ERROR")
+		throw new Error('INTERNAL_SERVER_ERROR')
 	}
 }
 

@@ -1,15 +1,15 @@
-"use client"
+'use client'
 
 import {
 	deleteTimeSlotAction,
 	updateTimeSlotAction,
-} from "@/src/app/group/[groupId]/availability/actions"
-import { Button } from "@/ui/button"
-import { Label } from "@/ui/label"
-import type { TimeSlot, TimeSlotType } from "@prisma/client"
-import { Clock, Plus, X } from "lucide-react"
-import { useAction } from "next-safe-action/hooks"
-import { useMemo, useState } from "react"
+} from '@/src/app/group/[groupId]/availability/actions'
+import { Button } from '@/ui/button'
+import { Label } from '@/ui/label'
+import type { TimeSlot, TimeSlotType } from '@prisma/client'
+import { Clock, Plus, X } from 'lucide-react'
+import { useAction } from 'next-safe-action/hooks'
+import { useMemo, useState } from 'react'
 
 interface AvailabilityEditorProps {
 	date?: Date
@@ -30,7 +30,7 @@ const generateTimeOptions = (isWeekend: boolean) => {
 
 	for (let hour = startHour; hour <= endHour; hour++) {
 		for (const minute of [0, 30]) {
-			const time = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`
+			const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
 			slots.push(time)
 		}
 	}
@@ -49,9 +49,9 @@ export function AvailabilityEditor({
 	const [isAdding, setIsAdding] = useState(false)
 	const [newSlot, setNewSlot] = useState<Partial<TimeRange>>({})
 
-	const isWeekend = type === "WEEKEND"
+	const isWeekend = type === 'WEEKEND'
 	const timeOptions = useMemo(
-		() => generateTimeOptions(isWeekend || type === "DAY_SPECIFIC"),
+		() => generateTimeOptions(isWeekend || type === 'DAY_SPECIFIC'),
 		[isWeekend, type],
 	)
 
@@ -62,7 +62,7 @@ export function AvailabilityEditor({
 			startTime: newSlot.startTime,
 			endTime: newSlot.endTime,
 			type,
-			date: type === "DAY_SPECIFIC" ? date : undefined,
+			date: type === 'DAY_SPECIFIC' ? date : undefined,
 			groupId,
 		})
 
@@ -110,7 +110,7 @@ export function AvailabilityEditor({
 	const renderEndTimeOptions = () => {
 		const options = []
 		for (const time of timeOptions) {
-			if (time > (newSlot.startTime || "")) {
+			if (time > (newSlot.startTime || '')) {
 				options.push(
 					<option key={time} value={time}>
 						{time}
@@ -122,9 +122,9 @@ export function AvailabilityEditor({
 	}
 
 	const getTimeRangeLabel = () => {
-		if (type === "GENERAL") return "Werktags-Verfügbarkeit (18:00-23:00)"
-		if (type === "WEEKEND") return "Wochenend-Verfügbarkeit (10:00-23:00)"
-		return "Spezifische Verfügbarkeit (10:00-23:00)"
+		if (type === 'GENERAL') return 'Werktags-Verfügbarkeit (18:00-23:00)'
+		if (type === 'WEEKEND') return 'Wochenend-Verfügbarkeit (10:00-23:00)'
+		return 'Spezifische Verfügbarkeit (10:00-23:00)'
 	}
 
 	return (
@@ -146,7 +146,7 @@ export function AvailabilityEditor({
 									<select
 										id="start-time"
 										className="w-full rounded-md border p-2"
-										value={newSlot.startTime || ""}
+										value={newSlot.startTime || ''}
 										onChange={(e) =>
 											setNewSlot((prev) => ({
 												...prev,
@@ -163,7 +163,7 @@ export function AvailabilityEditor({
 									<select
 										id="end-time"
 										className="w-full rounded-md border p-2"
-										value={newSlot.endTime || ""}
+										value={newSlot.endTime || ''}
 										onChange={(e) =>
 											setNewSlot((prev) => ({
 												...prev,

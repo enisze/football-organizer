@@ -1,6 +1,6 @@
-"use client"
-import { AddEventForm } from "@/src/components/Events/AddEventForm"
-import { Button } from "@/ui/button"
+'use client'
+import { AddEventForm } from '@/src/components/Events/AddEventForm'
+import { Button } from '@/ui/button'
 import {
 	Dialog,
 	DialogContent,
@@ -8,10 +8,10 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@/ui/dialog"
-import { Label } from "@/ui/label"
-import { toast } from "@/ui/use-toast"
-import { useState } from "react"
+} from '@/ui/dialog'
+import { Label } from '@/ui/label'
+import { toast } from '@/ui/use-toast'
+import { useState } from 'react'
 
 export const EventDialog = () => {
 	const [open, setOpen] = useState(false)
@@ -33,7 +33,7 @@ export const EventDialog = () => {
 					onSubmit={() => {
 						setOpen(false)
 						toast({
-							title: "Event erstellt",
+							title: 'Event erstellt',
 							description: `Das Event wurde erfolgreich erstellt.`,
 						})
 					}}

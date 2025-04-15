@@ -10,7 +10,7 @@ export const generateTimeOptions = (intervalMinutes: number) => {
 		const hours = Math.floor(minutes / 60)
 		const mins = minutes % 60
 		options.push(
-			`${hours.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}`,
+			`${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`,
 		)
 	}
 

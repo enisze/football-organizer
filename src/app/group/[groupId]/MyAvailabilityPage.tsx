@@ -1,7 +1,7 @@
-import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
-import { prisma } from "@/src/server/db/client"
-import { Suspense } from "react"
-import { MyAvailability } from "./availability/components/MyAvailability"
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { prisma } from '@/src/server/db/client'
+import { Suspense } from 'react'
+import { MyAvailability } from './availability/components/MyAvailability'
 
 interface MyAvailabilityPageProps {
 	groupId: string
@@ -18,26 +18,26 @@ async function MyAvailabilityData({ groupId, date }: MyAvailabilityPageProps) {
 				where: {
 					user: { id: session.user.id },
 					groupId,
-					type: "GENERAL",
+					type: 'GENERAL',
 				},
-				orderBy: [{ date: "asc" }, { startTime: "asc" }],
+				orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
 			}),
 			prisma.timeSlot.findMany({
 				where: {
 					user: { id: session.user.id },
 					groupId,
-					type: "WEEKEND",
+					type: 'WEEKEND',
 				},
-				orderBy: [{ date: "asc" }, { startTime: "asc" }],
+				orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
 			}),
 			prisma.timeSlot.findMany({
 				where: {
 					user: { id: session.user.id },
 					date: date ? new Date(date) : new Date(),
 					groupId,
-					type: "DAY_SPECIFIC",
+					type: 'DAY_SPECIFIC',
 				},
-				orderBy: [{ date: "asc" }, { startTime: "asc" }],
+				orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
 			}),
 		])
 

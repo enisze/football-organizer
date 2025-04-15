@@ -1,18 +1,18 @@
-"use client"
+'use client'
 
-import { TimeSlotEditor } from "@/src/components/TimeSlotEditor"
-import { Calendar } from "@/ui/calendar"
+import { TimeSlotEditor } from '@/src/components/TimeSlotEditor'
+import { Calendar } from '@/ui/calendar'
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs"
-import type { TimeSlot } from "@prisma/client"
-import { useQueryState } from "nuqs"
-import { revalidateGroupAction } from "../../actions"
+} from '@/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs'
+import type { TimeSlot } from '@prisma/client'
+import { useQueryState } from 'nuqs'
+import { revalidateGroupAction } from '../../actions'
 
 interface MyAvailabilityProps {
 	groupId: string
@@ -27,7 +27,7 @@ export function MyAvailability({
 	initialWeekendSlots,
 	initialDaySpecificSlots,
 }: MyAvailabilityProps) {
-	const [date, setDate] = useQueryState("selectedDate", {
+	const [date, setDate] = useQueryState('selectedDate', {
 		defaultValue: new Date().toISOString(),
 	})
 
@@ -106,10 +106,10 @@ export function MyAvailability({
 							{date ? (
 								<div>
 									<h3 className="mb-4 font-medium">
-										{new Date(date).toLocaleDateString("de-DE", {
-											weekday: "long",
-											month: "long",
-											day: "numeric",
+										{new Date(date).toLocaleDateString('de-DE', {
+											weekday: 'long',
+											month: 'long',
+											day: 'numeric',
 										})}
 									</h3>
 									<TimeSlotEditor

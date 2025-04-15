@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import { TextField } from "@/ui/TextField"
-import { Button } from "@/ui/button"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
-import { deleteGroup } from "./actions"
+import { TextField } from '@/ui/TextField'
+import { Button } from '@/ui/button'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { deleteGroup } from './actions'
 
 export const DeleteGroupForm = ({
 	groupName,
@@ -13,13 +13,13 @@ export const DeleteGroupForm = ({
 	groupName: string
 	groupId: string
 }) => {
-	const [groupNameForDeletion, setGroupNameForDeletion] = useState("")
+	const [groupNameForDeletion, setGroupNameForDeletion] = useState('')
 
 	const router = useRouter()
 	const deleteGroupAction = async () => {
 		await deleteGroup({ groupId })
 
-		router.push("/settings/groups")
+		router.push('/settings/groups')
 	}
 
 	return (

@@ -1,11 +1,11 @@
-import { OrganizerLink } from "@/ui/OrganizerLink"
-import { Button } from "@/ui/button"
+import { OrganizerLink } from '@/ui/OrganizerLink'
+import { Button } from '@/ui/button'
 
-import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
-import { prisma } from "@/src/server/db/client"
-import { verifyJWT } from "@/src/server/verifyJWT"
-import { routes } from "@/src/shared/navigation"
-import { decode } from "jsonwebtoken"
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { prisma } from '@/src/server/db/client'
+import { verifyJWT } from '@/src/server/verifyJWT'
+import { routes } from '@/src/shared/navigation'
+import { decode } from 'jsonwebtoken'
 
 interface PageProps {
 	params: Promise<unknown>
@@ -37,11 +37,11 @@ export default async function AddToGroup({ params }: PageProps) {
 				<form>
 					<Button
 						formAction={async () => {
-							"use server"
+							'use server'
 							if (!JWT) return
 							addUser({ userId, JWT })
 						}}
-						disabled={status === "executing"}
+						disabled={status === 'executing'}
 					>
 						Beitreten
 					</Button>
@@ -57,7 +57,7 @@ export default async function AddToGroup({ params }: PageProps) {
 const getDataFromJWT = async ({ JWT }: { JWT: string }) => {
 	const isValid = verifyJWT(JWT)
 
-	if (!isValid) throw new Error("BAD_REQUEST")
+	if (!isValid) throw new Error('BAD_REQUEST')
 
 	const data = decode(JWT) as {
 		id: string
@@ -75,10 +75,10 @@ const addUser = async ({
 	userId: string | undefined
 	JWT: string
 }) => {
-	if (!userId) throw new Error("BAD_REQUEST")
+	if (!userId) throw new Error('BAD_REQUEST')
 	const isValid = verifyJWT(JWT)
 
-	if (!isValid) throw new Error("BAD_REQUEST")
+	if (!isValid) throw new Error('BAD_REQUEST')
 
 	const res = decode(JWT) as {
 		id: string

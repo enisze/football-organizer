@@ -1,5 +1,5 @@
-import Link from "next/link"
-import type { AnchorHTMLAttributes, PropsWithChildren } from "react"
+import Link from 'next/link'
+import type { AnchorHTMLAttributes, PropsWithChildren } from 'react'
 
 export const OrganizerLink = ({
 	children,

@@ -1,17 +1,17 @@
-"use client"
+'use client'
 import {
 	Accordion,
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
-} from "@/ui/accordion"
-import { MapPin } from "lucide-react"
-import dynamic from "next/dynamic"
-import type { FunctionComponent } from "react"
-import type { OrganizerMapProps } from "../Map/OrganizerMap"
+} from '@/ui/accordion'
+import { MapPin } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import type { FunctionComponent } from 'react'
+import type { OrganizerMapProps } from '../Map/OrganizerMap'
 
 const DynamicOrganizerMap = dynamic<OrganizerMapProps>(
-	() => import("../Map/OrganizerMap").then((module) => module.OrganizerMap),
+	() => import('../Map/OrganizerMap').then((module) => module.OrganizerMap),
 	{
 		ssr: false,
 	},

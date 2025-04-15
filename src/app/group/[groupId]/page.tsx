@@ -1,12 +1,12 @@
-import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
-import { prisma } from "@/src/server/db/client"
-import { routes } from "@/src/shared/navigation"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs"
-import Link from "next/link"
-import { redirect } from "next/navigation"
-import CurrentEventsPage from "./CurrentEventsPage"
-import GroupAvailabilityPage from "./GroupAvailabilityPage"
-import MyAvailabilityPage from "./MyAvailabilityPage"
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { prisma } from '@/src/server/db/client'
+import { routes } from '@/src/shared/navigation'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs'
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import CurrentEventsPage from './CurrentEventsPage'
+import GroupAvailabilityPage from './GroupAvailabilityPage'
+import MyAvailabilityPage from './MyAvailabilityPage'
 
 interface PageProps {
 	params: Promise<unknown>
@@ -22,13 +22,13 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 	const date = res?.date ? new Date(res.date) : new Date()
 
 	const selectedDate = res?.selectedDate
-	const duration = res?.duration ?? "60min"
+	const duration = res?.duration ?? '60min'
 	const minUsers = res?.minUsers ?? 0
 
 	const tab = res?.tab
 
 	const session = await getServerComponentAuthSession()
-	if (!session?.user?.id) redirect("/api/auth/signin")
+	if (!session?.user?.id) redirect('/api/auth/signin')
 
 	// Just check if user belongs to group
 	const userInGroup = await prisma.userOnGroups.findFirst({
@@ -47,7 +47,7 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 			<Tabs defaultValue={tab} className="flex flex-col">
 				<TabsList className="w-fit self-center">
 					<Link
-						href={routes.groupDetails({ groupId, search: { tab: "events" } })}
+						href={routes.groupDetails({ groupId, search: { tab: 'events' } })}
 						className="w-full"
 					>
 						<TabsTrigger value="events">Aktuelle Events</TabsTrigger>
@@ -55,7 +55,7 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 					<Link
 						href={routes.groupDetails({
 							groupId,
-							search: { tab: "myAvailability" },
+							search: { tab: 'myAvailability' },
 						})}
 						className="w-full"
 					>
@@ -66,7 +66,7 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 					<Link
 						href={routes.groupDetails({
 							groupId,
-							search: { tab: "groupAvailability" },
+							search: { tab: 'groupAvailability' },
 						})}
 						className="w-full"
 					>

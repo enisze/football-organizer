@@ -1,8 +1,8 @@
-"use client"
+'use client'
 
-import { Switch } from "@/ui/switch"
-import { useState } from "react"
-import { updateNotification } from "./actions"
+import { Switch } from '@/ui/switch'
+import { useState } from 'react'
+import { updateNotification } from './actions'
 
 export const NotificationSwitch = ({
 	notificationsEnabled,

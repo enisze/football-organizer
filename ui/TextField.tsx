@@ -1,12 +1,12 @@
-"use client"
-import { NotificationBubble } from "@/src/components/NotificationBubble"
-import { Label } from "@radix-ui/react-label"
-import { InfoIcon } from "lucide-react"
-import type { ReactNode } from "react"
-import React, { useState } from "react"
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./hover-card"
-import type { InputProps } from "./input"
-import { Input } from "./input"
+'use client'
+import { NotificationBubble } from '@/src/components/NotificationBubble'
+import { Label } from '@radix-ui/react-label'
+import { InfoIcon } from 'lucide-react'
+import type { ReactNode } from 'react'
+import React, { useState } from 'react'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from './hover-card'
+import type { InputProps } from './input'
+import { Input } from './input'
 
 type TextFieldProps = InputProps & {
 	text: string
@@ -52,6 +52,6 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
 	},
 )
 
-TextField.displayName = "Input"
+TextField.displayName = 'Input'
 
 export { TextField }

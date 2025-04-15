@@ -1,8 +1,8 @@
-import { redirect } from "next/navigation"
+import { redirect } from 'next/navigation'
 
-import { GroupSelectorServer } from "@/src/components/Groups/GroupSelectorServer"
-import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
-import { prisma } from "../../server/db/client"
+import { GroupSelectorServer } from '@/src/components/Groups/GroupSelectorServer'
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { prisma } from '../../server/db/client'
 
 const MainPage = async () => {
 	const session = await getServerComponentAuthSession()

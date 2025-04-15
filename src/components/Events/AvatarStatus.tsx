@@ -1,6 +1,6 @@
-import { Avatar, AvatarFallback } from "@/ui/avatar"
-import type { UserEventStatus } from "@prisma/client"
-import type { FunctionComponent } from "react"
+import { Avatar, AvatarFallback } from '@/ui/avatar'
+import type { UserEventStatus } from '@prisma/client'
+import type { FunctionComponent } from 'react'
 
 export const AvatarStatus: FunctionComponent<{
 	shortName: string
@@ -9,11 +9,11 @@ export const AvatarStatus: FunctionComponent<{
 	comment: string | null
 }> = ({ name, shortName, userEventStatus, comment }) => {
 	const color =
-		userEventStatus === "JOINED"
-			? "text-green-500 !border-green-500"
-			: userEventStatus === "MAYBE"
-				? "text-yellow-500 !border-yellow-500"
-				: "text-red-500 !border-red-500"
+		userEventStatus === 'JOINED'
+			? 'text-green-500 !border-green-500'
+			: userEventStatus === 'MAYBE'
+				? 'text-yellow-500 !border-yellow-500'
+				: 'text-red-500 !border-red-500'
 
 	return (
 		<div className={`flex items-center gap-x-2 ${color}`}>

@@ -1,11 +1,11 @@
-import { Button } from "@/ui/button"
-import { Check } from "lucide-react"
-import { QuestionMark } from "../../QuestionMark"
+import { Button } from '@/ui/button'
+import { Check } from 'lucide-react'
+import { QuestionMark } from '../../QuestionMark'
 
-import { setParticipatingStatus } from "@/src/app/group/[groupId]/actions"
-import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
-import { prisma } from "@/src/server/db/client"
-import { DeclineEventDialog } from "./DeclineEventDialog"
+import { setParticipatingStatus } from '@/src/app/group/[groupId]/actions'
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { prisma } from '@/src/server/db/client'
+import { DeclineEventDialog } from './DeclineEventDialog'
 
 export const EventStatusArea = async ({ id }: { id: string }) => {
 	const session = await getServerComponentAuthSession()
@@ -28,8 +28,8 @@ export const EventStatusArea = async ({ id }: { id: string }) => {
 		(participant) => participant.user.id === session?.user?.id,
 	)?.userEventStatus
 
-	const checkMarkColor = userStatus === "JOINED" ? "text-green-500" : ""
-	const maybeMarkColor = userStatus === "MAYBE" ? "!fill-yellow-500" : ""
+	const checkMarkColor = userStatus === 'JOINED' ? 'text-green-500' : ''
+	const maybeMarkColor = userStatus === 'MAYBE' ? '!fill-yellow-500' : ''
 
 	const payment = await prisma.payment.findFirst({
 		where: { eventId: id, userId: session?.user?.id },
@@ -44,11 +44,11 @@ export const EventStatusArea = async ({ id }: { id: string }) => {
 					variant="outline"
 					type="submit"
 					formAction={async () => {
-						"use server"
+						'use server'
 						try {
-							await setParticipatingStatus({ eventId: id, status: "JOINED" })
+							await setParticipatingStatus({ eventId: id, status: 'JOINED' })
 						} catch (error) {
-							console.log("error", error)
+							console.log('error', error)
 						}
 					}}
 					className="w-full"
@@ -61,8 +61,8 @@ export const EventStatusArea = async ({ id }: { id: string }) => {
 					variant="outline"
 					type="submit"
 					formAction={async () => {
-						"use server"
-						await setParticipatingStatus({ eventId: id, status: "MAYBE" })
+						'use server'
+						await setParticipatingStatus({ eventId: id, status: 'MAYBE' })
 					}}
 					className="w-full"
 				>

@@ -1,21 +1,21 @@
-import { Body, Head, Preview, Section, Text } from "@react-email/components"
-import { Tailwind } from "@react-email/tailwind"
-import { CustomButton } from "./components/CustomButton"
-import { EventTemplate } from "./components/EventTemplate"
-import { Footer } from "./components/Footer"
+import { Body, Head, Preview, Section, Text } from '@react-email/components'
+import { Tailwind } from '@react-email/tailwind'
+import { CustomButton } from './components/CustomButton'
+import { EventTemplate } from './components/EventTemplate'
+import { Footer } from './components/Footer'
 
-import type { Event } from "@prisma/client"
-import { ContainerBox } from "./components/ContainerBox"
+import type { Event } from '@prisma/client'
+import { ContainerBox } from './components/ContainerBox'
 
 export const NewEvent = ({
-	event = { id: "1", bookingDate: new Date(), maxParticipants: 10 },
-	userName = "Test",
+	event = { id: '1', bookingDate: new Date(), maxParticipants: 10 },
+	userName = 'Test',
 }: {
-	event: Partial<Omit<Event, "createdAt" | "updatedAt">>
+	event: Partial<Omit<Event, 'createdAt' | 'updatedAt'>>
 	userName: string
 }) => {
 	const { id } = event
-	const eventLink = process.env.NEXT_PUBLIC_BASE_URL + "/events/" + id
+	const eventLink = process.env.NEXT_PUBLIC_BASE_URL + '/events/' + id
 
 	return (
 		<Tailwind>

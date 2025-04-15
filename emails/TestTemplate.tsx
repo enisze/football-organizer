@@ -13,8 +13,8 @@ import {
 	Section,
 	Tailwind,
 	Text,
-} from "@react-email/components"
-import { ContainerBox } from "./components/ContainerBox"
+} from '@react-email/components'
+import { ContainerBox } from './components/ContainerBox'
 
 interface VercelInviteUserEmailProps {
 	username?: string
@@ -30,18 +30,18 @@ interface VercelInviteUserEmailProps {
 
 const baseUrl = process.env.VERCEL_URL
 	? `https://${process.env.VERCEL_URL}`
-	: ""
+	: ''
 
 export const VercelInviteUserEmail = ({
-	username = "zenorocha",
+	username = 'zenorocha',
 	userImage = `${baseUrl}/static/vercel-user.png`,
-	invitedByUsername = "bukinoshita",
-	invitedByEmail = "bukinoshita@example.com",
-	teamName: groupName = "My Project",
+	invitedByUsername = 'bukinoshita',
+	invitedByEmail = 'bukinoshita@example.com',
+	teamName: groupName = 'My Project',
 	teamImage = `${baseUrl}/static/vercel-team.png`,
-	inviteLink = "https://vercel.com/teams/invite/foo",
-	inviteFromIp = "204.13.186.218",
-	inviteFromLocation = "São Paulo, Brazil",
+	inviteLink = 'https://vercel.com/teams/invite/foo',
+	inviteFromIp = '204.13.186.218',
+	inviteFromLocation = 'São Paulo, Brazil',
 }: VercelInviteUserEmailProps) => {
 	const previewText = `Join ${invitedByUsername} on Vercel`
 
@@ -62,7 +62,7 @@ export const VercelInviteUserEmail = ({
 							/>
 						</Section>
 						<Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
-							Tritt <strong>{groupName}</strong> beim{" "}
+							Tritt <strong>{groupName}</strong> beim{' '}
 							<strong>Event Wizard</strong> bei
 						</Heading>
 						<Text className="text-black text-[14px] leading-[24px]">
@@ -76,7 +76,7 @@ export const VercelInviteUserEmail = ({
 							>
 								{invitedByEmail}
 							</Link>
-							) has invited you to the <strong>{groupName}</strong> team on{" "}
+							) has invited you to the <strong>{groupName}</strong> team on{' '}
 							<strong>Vercel</strong>.
 						</Text>
 						<Section>
@@ -116,17 +116,17 @@ export const VercelInviteUserEmail = ({
 							</Button>
 						</Section>
 						<Text className="text-black text-[14px] leading-[24px]">
-							or copy and paste this URL into your browser:{" "}
+							or copy and paste this URL into your browser:{' '}
 							<Link href={inviteLink} className="text-blue-600 no-underline">
 								{inviteLink}
 							</Link>
 						</Text>
 						<Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
 						<Text className="text-[#666666] text-[12px] leading-[24px]">
-							This invitation was intended for{" "}
+							This invitation was intended for{' '}
 							<span className="text-black">{username} </span>.This invite was
-							sent from <span className="text-black">{inviteFromIp}</span>{" "}
-							located in{" "}
+							sent from <span className="text-black">{inviteFromIp}</span>{' '}
+							located in{' '}
 							<span className="text-black">{inviteFromLocation}</span>. If you
 							were not expecting this invitation, you can ignore this email. If
 							you are concerned about your accounts safety, please reply to this

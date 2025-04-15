@@ -1,10 +1,10 @@
-"use client"
-import { OrganizerLink } from "@/ui/OrganizerLink"
-import { Button } from "@/ui/button"
-import { Input } from "@/ui/input"
-import { CheckCircleIcon } from "lucide-react"
-import { useState } from "react"
-import { addToGroupAction } from "./action"
+'use client'
+import { OrganizerLink } from '@/ui/OrganizerLink'
+import { Button } from '@/ui/button'
+import { Input } from '@/ui/input'
+import { CheckCircleIcon } from 'lucide-react'
+import { useState } from 'react'
+import { addToGroupAction } from './action'
 
 export const SuccessComp = () => {
 	const [groupName, setGroupName] = useState<string | null>(null)
@@ -14,7 +14,7 @@ export const SuccessComp = () => {
 	return (
 		<form
 			action={async (formData) => {
-				const code = formData.get("code") as string
+				const code = formData.get('code') as string
 				const res = await addToGroupAction({
 					code,
 				}).then((res) => {

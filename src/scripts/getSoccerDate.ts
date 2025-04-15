@@ -1,5 +1,5 @@
-import { addWeeks, startOfWeek } from "date-fns"
-import { de } from "date-fns/locale"
+import { addWeeks, startOfWeek } from 'date-fns'
+import { de } from 'date-fns/locale'
 
 export const getSoccerDate = () => {
 	const date = new Date()

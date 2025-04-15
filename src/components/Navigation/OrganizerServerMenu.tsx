@@ -1,8 +1,8 @@
-import { isOwnerOfGroup } from "@/src/helpers/isOwnerOfGroup"
-import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
-import { prisma } from "@/src/server/db/client"
-import { GroupSelectorServer } from "../Groups/GroupSelectorServer"
-import { OrganizerMenu } from "./OrganizerMenu"
+import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { prisma } from '@/src/server/db/client'
+import { GroupSelectorServer } from '../Groups/GroupSelectorServer'
+import { OrganizerMenu } from './OrganizerMenu'
 
 type Props = {
 	groupId?: string
@@ -33,10 +33,10 @@ export const OrganizerServerMenu = async ({ groupId }: Props) => {
 
 		const cost: number = event.cost / event.maxParticipants
 
-		if (userEvent.userEventStatus === "JOINED") {
+		if (userEvent.userEventStatus === 'JOINED') {
 			if (!payment) return (await acc) - cost
 		}
-		if (userEvent.userEventStatus === "CANCELED") {
+		if (userEvent.userEventStatus === 'CANCELED') {
 			if (payment) return (await acc) + cost
 		}
 		return acc

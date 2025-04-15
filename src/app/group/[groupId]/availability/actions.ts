@@ -1,10 +1,10 @@
-"use server"
+'use server'
 
-import { authedActionClient } from "@/src/lib/actionClient"
-import { prisma } from "@/src/server/db/client"
-import { revalidatePath } from "next/cache"
-import { z } from "zod"
-import { processGroupAvailability } from "./processAvailability"
+import { authedActionClient } from '@/src/lib/actionClient'
+import { prisma } from '@/src/server/db/client'
+import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
+import { processGroupAvailability } from './processAvailability'
 
 const timeSlotSchema = z.array(
 	z.object({
@@ -29,7 +29,7 @@ export const updateGeneralAvailabilityAction = authedActionClient
 			where: {
 				userId,
 				groupId,
-				type: isWeekend ? "WEEKEND" : "GENERAL",
+				type: isWeekend ? 'WEEKEND' : 'GENERAL',
 			},
 		})
 
@@ -39,7 +39,7 @@ export const updateGeneralAvailabilityAction = authedActionClient
 				prisma.timeSlot.create({
 					data: {
 						...slot,
-						type: isWeekend ? "WEEKEND" : "GENERAL",
+						type: isWeekend ? 'WEEKEND' : 'GENERAL',
 						userId,
 						groupId,
 					},
@@ -56,7 +56,7 @@ export const updateTimeSlotAction = authedActionClient
 		z.object({
 			startTime: z.string(),
 			endTime: z.string(),
-			type: z.enum(["GENERAL", "WEEKEND", "DAY_SPECIFIC"]),
+			type: z.enum(['GENERAL', 'WEEKEND', 'DAY_SPECIFIC']),
 			date: z.date().optional(),
 			groupId: z.string(),
 		}),
@@ -64,8 +64,8 @@ export const updateTimeSlotAction = authedActionClient
 	.action(async ({ parsedInput, ctx: { userId } }) => {
 		const { startTime, endTime, type, date, groupId } = parsedInput
 
-		if (type === "DAY_SPECIFIC" && !date) {
-			throw new Error("Date is required for day-specific time slots")
+		if (type === 'DAY_SPECIFIC' && !date) {
+			throw new Error('Date is required for day-specific time slots')
 		}
 
 		const timeSlot = await prisma.timeSlot.create({
@@ -73,7 +73,7 @@ export const updateTimeSlotAction = authedActionClient
 				startTime,
 				endTime,
 				type,
-				date: type === "DAY_SPECIFIC" ? date : null,
+				date: type === 'DAY_SPECIFIC' ? date : null,
 				userId,
 				groupId,
 			},
@@ -93,14 +93,14 @@ export const deleteTimeSlotAction = authedActionClient
 			},
 		})
 
-		revalidatePath("/group")
+		revalidatePath('/group')
 	})
 
 export const getTimeSlotsAction = authedActionClient
 	.schema(
 		z.object({
 			date: z.date().optional(),
-			type: z.enum(["GENERAL", "WEEKEND", "DAY_SPECIFIC"]).optional(),
+			type: z.enum(['GENERAL', 'WEEKEND', 'DAY_SPECIFIC']).optional(),
 			groupId: z.string(),
 		}),
 	)
@@ -114,7 +114,7 @@ export const getTimeSlotsAction = authedActionClient
 				...(type ? { type } : {}),
 				...(date ? { date } : {}),
 			},
-			orderBy: [{ type: "asc" }, { date: "asc" }, { startTime: "asc" }],
+			orderBy: [{ type: 'asc' }, { date: 'asc' }, { startTime: 'asc' }],
 		})
 
 		return timeSlots
@@ -125,7 +125,7 @@ export const getGroupAvailabilityAction = authedActionClient
 		z.object({
 			groupId: z.string(),
 			date: z.date(),
-			duration: z.enum(["60min", "90min", "120min"]),
+			duration: z.enum(['60min', '90min', '120min']),
 		}),
 	)
 	.action(async ({ parsedInput: { groupId, date, duration } }) => {
@@ -147,7 +147,7 @@ export const getGroupAvailabilityAction = authedActionClient
 			// Get day-specific slots for this date
 			prisma.timeSlot.findMany({
 				where: {
-					type: "DAY_SPECIFIC",
+					type: 'DAY_SPECIFIC',
 					date,
 					groupId,
 					user: {
@@ -165,7 +165,7 @@ export const getGroupAvailabilityAction = authedActionClient
 			// Get general slots
 			prisma.timeSlot.findMany({
 				where: {
-					type: "GENERAL",
+					type: 'GENERAL',
 					groupId,
 					user: {
 						groups: {
@@ -182,7 +182,7 @@ export const getGroupAvailabilityAction = authedActionClient
 			// Get weekend slots
 			prisma.timeSlot.findMany({
 				where: {
-					type: "WEEKEND",
+					type: 'WEEKEND',
 					groupId,
 					user: {
 						groups: {

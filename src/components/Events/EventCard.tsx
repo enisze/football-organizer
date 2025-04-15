@@ -1,16 +1,16 @@
-import { formatter } from "@/src/helpers/formatter"
-import type { Event } from "@prisma/client"
-import { differenceInCalendarDays } from "date-fns"
-import { CalendarDays, Euro } from "lucide-react"
-import { MapAccordion } from "../Map/MapAccordion"
-import { PaymentArea } from "../PaymentArea"
-import { AddToCalendarButton } from "./Buttons/AddToCalendarButton"
-import { EventStatusArea } from "./Buttons/EventStatusArea"
-import { DateInfo } from "./DateInfo"
-import { EnvironmentInfo } from "./EnvironmentInfo"
-import { EventCardAdminArea } from "./EventCardAdminArea"
-import { ParticipantsAreaServer } from "./ParticipantsAreaServer"
-import { StatusChip } from "./StatusChip"
+import { formatter } from '@/src/helpers/formatter'
+import type { Event } from '@prisma/client'
+import { differenceInCalendarDays } from 'date-fns'
+import { CalendarDays, Euro } from 'lucide-react'
+import { MapAccordion } from '../Map/MapAccordion'
+import { PaymentArea } from '../PaymentArea'
+import { AddToCalendarButton } from './Buttons/AddToCalendarButton'
+import { EventStatusArea } from './Buttons/EventStatusArea'
+import { DateInfo } from './DateInfo'
+import { EnvironmentInfo } from './EnvironmentInfo'
+import { EventCardAdminArea } from './EventCardAdminArea'
+import { ParticipantsAreaServer } from './ParticipantsAreaServer'
+import { StatusChip } from './StatusChip'
 
 type EventCardProps = {
 	event: Event
@@ -38,12 +38,12 @@ export const EventCard = async ({ event, location }: EventCardProps) => {
 	const days = differenceInCalendarDays(date, currentDate)
 
 	const eventString =
-		days < 0 ? "Vergangenes Event" : days === 0 ? "Heute" : `In ${days} Tagen`
+		days < 0 ? 'Vergangenes Event' : days === 0 ? 'Heute' : `In ${days} Tagen`
 
-	const fullEventString = status === "CANCELED" ? "Abgesagt" : eventString
-	const fullEventStringStyle = status === "CANCELED" ? "text-red-500" : "none"
+	const fullEventString = status === 'CANCELED' ? 'Abgesagt' : eventString
+	const fullEventStringStyle = status === 'CANCELED' ? 'text-red-500' : 'none'
 
-	const iconStyle = "h-4 w-4 opacity-70 flex-none"
+	const iconStyle = 'h-4 w-4 opacity-70 flex-none'
 
 	return (
 		<div className="relative h-full w-full rounded-2xl bg-gradient-to-b from-purple-400 to-purple-100 p-[1px] md:w-[400px]">
@@ -73,7 +73,7 @@ export const EventCard = async ({ event, location }: EventCardProps) => {
 					<div className="flex flex-col gap-y-1">
 						<div className="flex items-center gap-x-1">
 							<CalendarDays className={iconStyle} />
-							<span>{[startTime, endTime].join("-")}</span>
+							<span>{[startTime, endTime].join('-')}</span>
 							<Euro className={iconStyle} />
 							<span> {`${formatter.format(cost / maxParticipants)}`}</span>
 						</div>

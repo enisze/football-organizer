@@ -1,12 +1,12 @@
-import type { TimeSlot } from "@prisma/client"
-import { AvailabilityEditor } from "./AvailabilityEditor"
+import type { TimeSlot } from '@prisma/client'
+import { AvailabilityEditor } from './AvailabilityEditor'
 
 interface TimeSlotEditorProps {
 	timeSlots: TimeSlot[]
 	isWeekend?: boolean
 	groupId: string
 	date?: Date
-	type: "GENERAL" | "WEEKEND" | "DAY_SPECIFIC"
+	type: 'GENERAL' | 'WEEKEND' | 'DAY_SPECIFIC'
 }
 
 export function TimeSlotEditor({

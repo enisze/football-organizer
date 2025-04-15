@@ -1,12 +1,12 @@
-import { Button } from "@/ui/button"
-import { isDateInCertainRange } from "../helpers/isDateInCertainRange"
-import { getServerComponentAuthSession } from "../server/auth/authOptions"
+import { Button } from '@/ui/button'
+import { isDateInCertainRange } from '../helpers/isDateInCertainRange'
+import { getServerComponentAuthSession } from '../server/auth/authOptions'
 
-import { formatter } from "../helpers/formatter"
-import { prisma } from "../server/db/client"
+import { formatter } from '../helpers/formatter'
+import { prisma } from '../server/db/client'
 
 const paypalLink =
-	"https://www.paypal.com/paypalme/enz1994?country.x=DE&locale.x=de_DE"
+	'https://www.paypal.com/paypalme/enz1994?country.x=DE&locale.x=de_DE'
 
 export const PaymentArea = async ({
 	eventId,
@@ -31,8 +31,8 @@ export const PaymentArea = async ({
 		return (
 			<div className="flex items-center gap-x-2 text-green-500 font-bold">
 				{formatter.format(payment?.amount) +
-					"€  am " +
-					payment?.paymentDate.toLocaleDateString("de")}
+					'€  am ' +
+					payment?.paymentDate.toLocaleDateString('de')}
 				<span>bezahlt</span>
 			</div>
 		)

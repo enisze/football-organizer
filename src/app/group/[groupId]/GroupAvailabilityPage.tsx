@@ -1,13 +1,13 @@
-import { GroupAvailabilityView } from "@/src/components/GroupAvailability"
-import { prisma } from "@/src/server/db/client"
-import { Suspense } from "react"
-import { processGroupAvailability } from "./availability/processAvailability"
+import { GroupAvailabilityView } from '@/src/components/GroupAvailability'
+import { prisma } from '@/src/server/db/client'
+import { Suspense } from 'react'
+import { processGroupAvailability } from './availability/processAvailability'
 
 interface GroupAvailabilityPageProps {
 	groupId: string
 	date: Date
 	minUsers: number
-	duration: "60min" | "90min" | "120min"
+	duration: '60min' | '90min' | '120min'
 }
 
 async function GroupAvailabilityData({
@@ -34,7 +34,7 @@ async function GroupAvailabilityData({
 		// Get day-specific slots for this date
 		prisma.timeSlot.findMany({
 			where: {
-				type: "DAY_SPECIFIC",
+				type: 'DAY_SPECIFIC',
 				date,
 				groupId,
 				user: {
@@ -52,7 +52,7 @@ async function GroupAvailabilityData({
 		// Get general slots
 		prisma.timeSlot.findMany({
 			where: {
-				type: "GENERAL",
+				type: 'GENERAL',
 				groupId,
 				user: {
 					groups: {
@@ -69,7 +69,7 @@ async function GroupAvailabilityData({
 		// Get weekend slots
 		prisma.timeSlot.findMany({
 			where: {
-				type: "WEEKEND",
+				type: 'WEEKEND',
 				groupId,
 				user: {
 					groups: {

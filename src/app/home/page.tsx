@@ -1,8 +1,8 @@
-import { Hero } from "@/src/components/Heading"
-import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
-import { routes } from "@/src/shared/navigation"
-import { Button } from "@/ui/button"
-import Link from "next/link"
+import { Hero } from '@/src/components/Heading'
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { routes } from '@/src/shared/navigation'
+import { Button } from '@/ui/button'
+import Link from 'next/link'
 
 const Home = async () => {
 	const session = await getServerComponentAuthSession()

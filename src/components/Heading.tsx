@@ -1,19 +1,19 @@
-import Link from "next/link"
-import type { FunctionComponent } from "react"
-import { Phone } from "./Phone"
+import Link from 'next/link'
+import type { FunctionComponent } from 'react'
+import { Phone } from './Phone'
 
 export const Heading: FunctionComponent<{
-	size?: "sm" | "md" | "lg"
-}> = ({ size = "lg" }) => {
+	size?: 'sm' | 'md' | 'lg'
+}> = ({ size = 'lg' }) => {
 	const fontSize =
-		size === "lg"
-			? "text-[80px]"
-			: size === "md"
-				? "text-[48px]"
-				: "text-[20px]"
+		size === 'lg'
+			? 'text-[80px]'
+			: size === 'md'
+				? 'text-[48px]'
+				: 'text-[20px]'
 
 	return (
-		<Link href={"/home"}>
+		<Link href={'/home'}>
 			<div className="text-center">
 				<span
 					className={`cursor-pointer font-extrabold leading-normal ${fontSize} bg-gradient-to-r from-blue-400 to-blue-200 bg-clip-text text-transparent dark:from-blue-800 dark:to-slate-800`}

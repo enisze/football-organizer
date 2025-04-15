@@ -1,4 +1,4 @@
-import { addDays, isAfter, isBefore, subDays } from "date-fns"
+import { addDays, isAfter, isBefore, subDays } from 'date-fns'
 
 const DAYS_AFTER_BOOKING_DATE = 9
 export const isDateInCertainRange = (

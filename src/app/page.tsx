@@ -1,9 +1,9 @@
-import { Button } from "@/ui/button"
-import Link from "next/link"
-import { redirect } from "next/navigation"
-import { Hero } from "../components/Heading"
-import { getServerComponentAuthSession } from "../server/auth/authOptions"
-import { prisma } from "../server/db/client"
+import { Button } from '@/ui/button'
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { Hero } from '../components/Heading'
+import { getServerComponentAuthSession } from '../server/auth/authOptions'
+import { prisma } from '../server/db/client'
 
 const Home = async () => {
 	const session = await getServerComponentAuthSession()

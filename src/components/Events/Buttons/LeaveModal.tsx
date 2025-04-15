@@ -1,15 +1,15 @@
 import {
 	sendPaidButCanceledMailAction,
 	setParticipatingStatus,
-} from "@/src/app/group/[groupId]/actions"
-import { Button } from "@/ui/button"
+} from '@/src/app/group/[groupId]/actions'
+import { Button } from '@/ui/button'
 import {
 	Dialog,
 	DialogContent,
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-} from "@/ui/dialog"
+} from '@/ui/dialog'
 
 export const LeaveModal = ({
 	eventId,
@@ -21,7 +21,7 @@ export const LeaveModal = ({
 	setShowLeaveModal: (open: boolean) => void
 }) => {
 	const test = async () => {
-		await setParticipatingStatus({ eventId: eventId, status: "CANCELED" })
+		await setParticipatingStatus({ eventId: eventId, status: 'CANCELED' })
 		await sendPaidButCanceledMailAction({ eventId })
 		setShowLeaveModal(false)
 	}

@@ -1,10 +1,10 @@
-import { EventCard } from "@/src/components/Events/EventCard"
-import { isOwnerOfGroup } from "@/src/helpers/isOwnerOfGroup"
-import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
-import { prisma } from "@/src/server/db/client"
-import { addDays } from "date-fns"
-import { Suspense } from "react"
-import { getLatLong } from "./getLatLong"
+import { EventCard } from '@/src/components/Events/EventCard'
+import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { prisma } from '@/src/server/db/client'
+import { addDays } from 'date-fns'
+import { Suspense } from 'react'
+import { getLatLong } from './getLatLong'
 
 interface CurrentEventsPageProps {
 	groupId: string
@@ -16,7 +16,7 @@ async function EventsList({ groupId }: CurrentEventsPageProps) {
 
 	const events = await prisma.event.findMany({
 		where: { groupId },
-		orderBy: { date: "asc" },
+		orderBy: { date: 'asc' },
 	})
 
 	const eventInfo = events.map((event) => ({
@@ -34,7 +34,7 @@ async function EventsList({ groupId }: CurrentEventsPageProps) {
 						const payment = await prisma.payment.findFirst({
 							where: {
 								eventId: event.id,
-								userId: session?.user?.id ?? "",
+								userId: session?.user?.id ?? '',
 							},
 						})
 						if (addDays(event.date, 3) < new Date() && !isOwner && payment)

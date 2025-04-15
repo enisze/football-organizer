@@ -1,8 +1,8 @@
-import { GroupRequestEmail } from "@/emails/GroupRequestEmail"
-import { render } from "@react-email/components"
+import { GroupRequestEmail } from '@/emails/GroupRequestEmail'
+import { render } from '@react-email/components'
 
-import { sign } from "jsonwebtoken"
-import { sendEmail } from "./createSendEmail"
+import { sign } from 'jsonwebtoken'
+import { sendEmail } from './createSendEmail'
 
 export const sendGroupRequestEmail = async ({
 	requester,
@@ -10,15 +10,15 @@ export const sendGroupRequestEmail = async ({
 	requester: string
 }) => {
 	const token = sign({ email: requester }, process.env.JWT_SECRET as string, {
-		expiresIn: "1d",
+		expiresIn: '1d',
 	})
 
 	const html = render(<GroupRequestEmail email={requester} token={token} />)
 
 	const { response } = await sendEmail(
-		"eniszej@gmail.com",
+		'eniszej@gmail.com',
 		html,
-		"Neue Gruppenanfrage",
+		'Neue Gruppenanfrage',
 	)
 
 	return { success: response.statusCode === 201 }

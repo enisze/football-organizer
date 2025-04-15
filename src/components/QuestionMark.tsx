@@ -1,4 +1,4 @@
-import type { FunctionComponent } from "react"
+import type { FunctionComponent } from 'react'
 
 export const QuestionMark: FunctionComponent<{ className: string }> = ({
 	className,

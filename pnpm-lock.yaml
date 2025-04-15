@@ -71,6 +71,9 @@ importers:
       '@react-email/components':
         specifier: ^0.0.11
         version: 0.0.11(@types/react@18.2.15)(react@18.2.0)(ts-node@10.9.2(@swc/core@1.3.101(@swc/helpers@0.5.15))(@types/node@20.4.4)(typescript@5.7.2))
+      '@react-email/container':
+        specifier: ^0.0.15
+        version: 0.0.15(react@18.2.0)
       '@react-email/render':
         specifier: 0.0.9-canary.2
         version: 0.0.9-canary.2
@@ -2423,6 +2426,12 @@ packages:
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: 18.2.0
+
+  '@react-email/container@0.0.15':
+    resolution: {integrity: sha512-Qo2IQo0ru2kZq47REmHW3iXjAQaKu4tpeq/M8m1zHIVwKduL2vYOBQWbC2oDnMtWPmkBjej6XxgtZByxM6cCFg==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      react: ^18.0 || ^19.0 || ^19.0.0-rc
 
   '@react-email/font@0.0.4':
     resolution: {integrity: sha512-rN/pFlAcDNmfYFxpufT/rFRrM5KYBJM4nTA2uylTehlVOro6fb/q6n0zUwLF6OmQ4QIuRbqdEy7DI9mmJiNHxA==}
@@ -8605,6 +8614,10 @@ snapshots:
       react: 18.2.0
 
   '@react-email/container@0.0.11(react@18.2.0)':
+    dependencies:
+      react: 18.2.0
+
+  '@react-email/container@0.0.15(react@18.2.0)':
     dependencies:
       react: 18.2.0
 

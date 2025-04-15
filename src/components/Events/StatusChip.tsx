@@ -1,8 +1,8 @@
-import { Popover, PopoverContent, PopoverTrigger } from "@/ui/popover"
-import type { EventStatus } from "@prisma/client"
-import { Check, X } from "lucide-react"
-import type { FunctionComponent } from "react"
-import { QuestionMark } from "../QuestionMark"
+import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover'
+import type { EventStatus } from '@prisma/client'
+import { Check, X } from 'lucide-react'
+import type { FunctionComponent } from 'react'
+import { QuestionMark } from '../QuestionMark'
 
 export const StatusChip: FunctionComponent<{
 	status: EventStatus
@@ -11,11 +11,11 @@ export const StatusChip: FunctionComponent<{
 		<Popover>
 			<PopoverTrigger aria-label="event-status-button">
 				<div className="flex items-center ">
-					{status === "BOOKED" ? (
+					{status === 'BOOKED' ? (
 						<>
 							<Check className="h-4 w-4 text-green-500" />
 						</>
-					) : status === "CANCELED" ? (
+					) : status === 'CANCELED' ? (
 						<X className="h-4 w-4 text-red-500" />
 					) : (
 						<>

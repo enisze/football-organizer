@@ -1,5 +1,5 @@
-"use client"
-import { Button } from "@/ui/button"
+'use client'
+import { Button } from '@/ui/button'
 import {
 	Dialog,
 	DialogContent,
@@ -7,13 +7,13 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@/ui/dialog"
-import type { CalendarOptions } from "datebook"
-import { GoogleCalendar, ICalendar, OutlookCalendar } from "datebook"
-import { CalendarPlus } from "lucide-react"
-import type { FunctionComponent } from "react"
+} from '@/ui/dialog'
+import type { CalendarOptions } from 'datebook'
+import { GoogleCalendar, ICalendar, OutlookCalendar } from 'datebook'
+import { CalendarPlus } from 'lucide-react'
+import type { FunctionComponent } from 'react'
 
-import { saveAs } from "file-saver"
+import { saveAs } from 'file-saver'
 
 export type AddToCalendarButtonProps = {
 	startTime: string
@@ -25,8 +25,8 @@ export type AddToCalendarButtonProps = {
 export const AddToCalendarButton: FunctionComponent<
 	AddToCalendarButtonProps
 > = ({ startTime, endTime, date, address }) => {
-	const [startHours, startMinutes] = startTime.split(":")
-	const [endHours, endMinutes] = endTime.split(":")
+	const [startHours, startMinutes] = startTime.split(':')
+	const [endHours, endMinutes] = endTime.split(':')
 
 	const start = new Date(date)
 	const end = new Date(date)
@@ -35,10 +35,10 @@ export const AddToCalendarButton: FunctionComponent<
 	end.setHours(Number(endHours), Number(endMinutes))
 
 	const options: CalendarOptions = {
-		title: "Fußball",
+		title: 'Fußball',
 		location: address,
 		description:
-			"Das (hoffentlich) wöchentliche Cl-Finale! Spiel und Spass vorprogrammiert. Lets go.",
+			'Das (hoffentlich) wöchentliche Cl-Finale! Spiel und Spass vorprogrammiert. Lets go.',
 		start: start,
 		end: end,
 	}
@@ -76,10 +76,10 @@ export const AddToCalendarButton: FunctionComponent<
 						variant="outline"
 						onClick={() => {
 							const blob = new Blob([icalendar.render()], {
-								type: "text/calendar",
+								type: 'text/calendar',
 							})
 
-							saveAs(blob, "my-calendar-event.ics")
+							saveAs(blob, 'my-calendar-event.ics')
 						}}
 						aria-label="icalendar"
 					>

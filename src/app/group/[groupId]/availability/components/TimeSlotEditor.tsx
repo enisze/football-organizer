@@ -1,16 +1,16 @@
-"use server"
+'use server'
 
-import type { TimeSlot } from "@prisma/client"
-import dynamic from "next/dynamic"
+import type { TimeSlot } from '@prisma/client'
+import dynamic from 'next/dynamic'
 
 // Import form component dynamically to avoid SSR issues
 const TimeSlotEditorForm = dynamic(
-	() => import("./TimeSlotEditorForm").then((mod) => mod.TimeSlotEditorForm),
+	() => import('./TimeSlotEditorForm').then((mod) => mod.TimeSlotEditorForm),
 	{ ssr: false },
 )
 
 interface TimeSlotEditorProps {
-	timeSlots: Array<Pick<TimeSlot, "startTime" | "endTime">>
+	timeSlots: Array<Pick<TimeSlot, 'startTime' | 'endTime'>>
 	maxSlots?: number
 	isWeekend?: boolean
 	groupId: string

@@ -1,17 +1,17 @@
-import { NewGroup } from "@/src/components/Groups/NewGroup"
-import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
-import { prisma } from "@/src/server/db/client"
-import { SCOPES, oAuth2Client } from "@/src/server/gmail"
-import { routes } from "@/src/shared/navigation"
-import { OrganizerLink } from "@/ui/OrganizerLink"
-import { Container } from "@/ui/container"
-import { Separator } from "@/ui/separator"
+import { NewGroup } from '@/src/components/Groups/NewGroup'
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { prisma } from '@/src/server/db/client'
+import { SCOPES, oAuth2Client } from '@/src/server/gmail'
+import { routes } from '@/src/shared/navigation'
+import { OrganizerLink } from '@/ui/OrganizerLink'
+import { Container } from '@/ui/container'
+import { Separator } from '@/ui/separator'
 
 const GroupSettings = async () => {
 	const session = await getServerComponentAuthSession()
 	const userId = session?.user?.id
 
-	const isAdmin = session?.user?.role === "ADMIN"
+	const isAdmin = session?.user?.role === 'ADMIN'
 
 	const groups = await prisma.group.findMany({
 		where: {
@@ -21,9 +21,9 @@ const GroupSettings = async () => {
 	})
 
 	const link = oAuth2Client.generateAuthUrl({
-		access_type: "offline",
+		access_type: 'offline',
 		scope: SCOPES,
-		prompt: "consent",
+		prompt: 'consent',
 		redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/oauth2callback`,
 	})
 

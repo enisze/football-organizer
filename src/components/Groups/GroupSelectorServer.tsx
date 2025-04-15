@@ -1,8 +1,8 @@
-import { getServerComponentAuthSession } from "@/src/server/auth/authOptions"
+import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 
-import { prisma } from "@/src/server/db/client"
-import { OrganizerLink } from "@/ui/OrganizerLink"
-import { GroupSelector } from "./GroupSelector"
+import { prisma } from '@/src/server/db/client'
+import { OrganizerLink } from '@/ui/OrganizerLink'
+import { GroupSelector } from './GroupSelector'
 
 export const GroupSelectorServer = async () => {
 	const session = await getServerComponentAuthSession()

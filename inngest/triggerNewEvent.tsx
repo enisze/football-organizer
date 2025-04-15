@@ -1,15 +1,15 @@
-import { inngest } from "@/src/server/db/client"
-import { addDays, differenceInCalendarDays } from "date-fns"
-import { getParticipantIdsByStatus } from "./triggerPaymentAndEventReminder"
+import { inngest } from '@/src/server/db/client'
+import { addDays, differenceInCalendarDays } from 'date-fns'
+import { getParticipantIdsByStatus } from './triggerPaymentAndEventReminder'
 
 export const triggerNewEvent = inngest.createFunction(
-	{ id: "trigger-new-event-email" },
-	{ event: "event/new" },
+	{ id: 'trigger-new-event-email' },
+	{ event: 'event/new' },
 	async ({ step, event: inngestEvent, prisma, logger }) => {
 		const eventId = inngestEvent.data.id
 
-		const event = await step.run("get event", async () => {
-			logger.info("getting event")
+		const event = await step.run('get event', async () => {
+			logger.info('getting event')
 
 			const event = await prisma.event.findUnique({
 				where: { id: eventId },
@@ -20,8 +20,8 @@ export const triggerNewEvent = inngest.createFunction(
 
 		if (!event) return { message: `No event found ${eventId}` }
 
-		const usersOfGroup = await step.run("get users", async () => {
-			logger.info("getting users")
+		const usersOfGroup = await step.run('get users', async () => {
+			logger.info('getting users')
 			try {
 				const usersOnGroup = await prisma.group.findUnique({
 					where: {
@@ -44,9 +44,9 @@ export const triggerNewEvent = inngest.createFunction(
 			}
 		})
 
-		if (!usersOfGroup) return { message: "No users found" }
+		if (!usersOfGroup) return { message: 'No users found' }
 
-		logger.info("sending event")
+		logger.info('sending event')
 
 		const days = differenceInCalendarDays(new Date(event.date), new Date())
 
@@ -54,13 +54,13 @@ export const triggerNewEvent = inngest.createFunction(
 			(user) => user?.notificationsEnabled,
 		)
 
-		logger.info("filtered users", filteredUsers)
+		logger.info('filtered users', filteredUsers)
 
 		for (const user of filteredUsers) {
 			if (!user) return
 
-			await step.sendEvent("send-event-new-email", {
-				name: "event/newEmail",
+			await step.sendEvent('send-event-new-email', {
+				name: 'event/newEmail',
 				data: {
 					user,
 					id: event.id,
@@ -69,13 +69,13 @@ export const triggerNewEvent = inngest.createFunction(
 			})
 		}
 
-		await step.sleepUntil("sleep-event", addDays(new Date(event.createdAt), 7))
+		await step.sleepUntil('sleep-event', addDays(new Date(event.createdAt), 7))
 
-		const newEvent = await step.run("get event", async () => {
-			logger.info("getting event after some days")
+		const newEvent = await step.run('get event', async () => {
+			logger.info('getting event after some days')
 
 			const event = await prisma.event.findUnique({
-				where: { id: eventId, NOT: { status: "CANCELED" } },
+				where: { id: eventId, NOT: { status: 'CANCELED' } },
 				include: { participants: true },
 			})
 			return event
@@ -86,7 +86,7 @@ export const triggerNewEvent = inngest.createFunction(
 
 		const usersEventReminder: { name: string; email: string }[] = []
 
-		const allGroupMembers = await step.run("getting members", async () => {
+		const allGroupMembers = await step.run('getting members', async () => {
 			const groupMembers = await prisma.group.findUnique({
 				where: { id: newEvent.groupId },
 				select: { users: true },
@@ -105,30 +105,30 @@ export const triggerNewEvent = inngest.createFunction(
 
 		if (!newEvent)
 			return {
-				message: "No event",
+				message: 'No event',
 			}
 
 		if (!allGroupMembers)
 			return {
-				message: "No group members",
+				message: 'No group members',
 			}
 
 		const { participants } = newEvent
 
 		const canceledParticipantIds = getParticipantIdsByStatus(
 			newEvent.participants,
-			"CANCELED",
+			'CANCELED',
 		)
 
 		const joinedParticipantIds = getParticipantIdsByStatus(
 			newEvent.participants,
-			"JOINED",
+			'JOINED',
 		)
 
 		const membersToRemindEvent = allGroupMembers.filter(
 			(user) =>
-				!canceledParticipantIds.includes(user?.id ?? "") &&
-				!joinedParticipantIds.includes(user?.id ?? ""),
+				!canceledParticipantIds.includes(user?.id ?? '') &&
+				!joinedParticipantIds.includes(user?.id ?? ''),
 		)
 
 		if (participants.length < newEvent.maxParticipants) {
@@ -145,8 +145,8 @@ export const triggerNewEvent = inngest.createFunction(
 		for (const user of membersToRemindEvent) {
 			if (!user) continue
 
-			await step.sendEvent("send-event-reminder-email", {
-				name: "event/reminderEmail",
+			await step.sendEvent('send-event-reminder-email', {
+				name: 'event/reminderEmail',
 				data: {
 					user,
 					id: newEvent.id,

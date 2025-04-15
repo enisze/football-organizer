@@ -1,20 +1,20 @@
-"use client"
+'use client'
 
-import { cn } from "@/lib/utils/cn"
-import { Calendar } from "@/ui/calendar"
-import { Card, CardContent } from "@/ui/card"
-import { Label } from "@/ui/label"
-import { Slider } from "@/ui/slider"
-import { Tabs, TabsList, TabsTrigger } from "@/ui/tabs"
-import type { User } from "@prisma/client"
-import { Clock } from "lucide-react"
-import { useQueryState } from "nuqs"
-import { useCallback } from "react"
-import { revalidateGroupAction } from "../app/group/[groupId]/actions"
+import { cn } from '@/lib/utils/cn'
+import { Calendar } from '@/ui/calendar'
+import { Card, CardContent } from '@/ui/card'
+import { Label } from '@/ui/label'
+import { Slider } from '@/ui/slider'
+import { Tabs, TabsList, TabsTrigger } from '@/ui/tabs'
+import type { User } from '@prisma/client'
+import { Clock } from 'lucide-react'
+import { useQueryState } from 'nuqs'
+import { useCallback } from 'react'
+import { revalidateGroupAction } from '../app/group/[groupId]/actions'
 import type {
 	ProcessedTimeSlot,
 	TimeSlotDuration,
-} from "../app/group/[groupId]/availability/processAvailability"
+} from '../app/group/[groupId]/availability/processAvailability'
 
 interface GroupAvailabilityViewProps {
 	users: User[]
@@ -29,12 +29,12 @@ export function GroupAvailabilityView({
 	processedSlots,
 	groupId,
 }: GroupAvailabilityViewProps) {
-	const [date, setDate] = useQueryState("date")
-	const [duration, setDuration] = useQueryState("duration", {
+	const [date, setDate] = useQueryState('date')
+	const [duration, setDuration] = useQueryState('duration', {
 		parse: (value) => value as TimeSlotDuration,
 	})
-	const [minUsers, setMinUsers] = useQueryState("minUsers", {
-		defaultValue: "0",
+	const [minUsers, setMinUsers] = useQueryState('minUsers', {
+		defaultValue: '0',
 		parse: (value) => value,
 	})
 
@@ -74,15 +74,15 @@ export function GroupAvailabilityView({
 									defaultValue={[0]}
 									max={10}
 									step={1}
-									value={[Number.parseInt(minUsers || "0")]}
+									value={[Number.parseInt(minUsers || '0')]}
 									onValueChange={(value) => {
-										setMinUsers(value[0]?.toString() ?? "0")
+										setMinUsers(value[0]?.toString() ?? '0')
 										revalidateGroupAction({ groupId })
 									}}
 								/>
 							</div>
 							<div className="mt-2 text-center text-sm text-muted-foreground">
-								Mindestens {Number.parseInt(minUsers || "0")} Nutzer
+								Mindestens {Number.parseInt(minUsers || '0')} Nutzer
 							</div>
 						</div>
 					</div>
@@ -90,10 +90,10 @@ export function GroupAvailabilityView({
 
 				<div className="rounded-lg border p-4">
 					<h2 className="mb-4 text-xl font-semibold">
-						{currentDate.toLocaleDateString("de-DE", {
-							weekday: "long",
-							month: "long",
-							day: "numeric",
+						{currentDate.toLocaleDateString('de-DE', {
+							weekday: 'long',
+							month: 'long',
+							day: 'numeric',
 						})}
 					</h2>
 
@@ -133,8 +133,8 @@ export function GroupAvailabilityView({
 									<Card
 										key={index}
 										className={cn(
-											"relative overflow-hidden",
-											percentage === 100 ? "border-green-500" : undefined,
+											'relative overflow-hidden',
+											percentage === 100 ? 'border-green-500' : undefined,
 										)}
 									>
 										<CardContent className="p-4">
@@ -162,12 +162,12 @@ export function GroupAvailabilityView({
 
 											<div
 												className={cn(
-													"absolute bottom-0 left-0 right-0",
+													'absolute bottom-0 left-0 right-0',
 													availableCount < 5
-														? "bg-red-500/20"
+														? 'bg-red-500/20'
 														: availableCount < 8
-															? "bg-yellow-500/20"
-															: "bg-green-500/20",
+															? 'bg-yellow-500/20'
+															: 'bg-green-500/20',
 												)}
 												style={{
 													height: `${percentage}%`,
