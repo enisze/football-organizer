@@ -50,6 +50,7 @@
 		"@types/lodash": "^4.14.195",
 		"@types/nodemailer": "^6.4.8",
 		"axios": "^1.3.4",
+		"better-auth": "^1.2.7",
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.0.0",
 		"date-fns": "^4.1.0",
