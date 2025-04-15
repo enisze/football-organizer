@@ -130,7 +130,5 @@ const getPricingInfos = (group: Group | null | undefined) => {
 			return { maximalMembers: 15 }
 		case "SUPPORTER":
 			return { maximalMembers: 30 }
-		case "FREE":
-			return { maximalMembers: 100 }
 	}
 }
