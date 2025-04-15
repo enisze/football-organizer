@@ -216,6 +216,7 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 						users={users}
 						date={currentDate}
 						processedSlots={filteredAvailability}
+						groupId={groupId}
 					/>
 				</TabsContent>
 			</Tabs>

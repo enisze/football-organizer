@@ -20,12 +20,14 @@ interface GroupAvailabilityViewProps {
 	users: User[]
 	date: Date
 	processedSlots: ProcessedTimeSlot[]
+	groupId: string
 }
 
 export function GroupAvailabilityView({
 	date: initialDate,
 	users,
 	processedSlots,
+	groupId,
 }: GroupAvailabilityViewProps) {
 	const [date, setDate] = useQueryState("date")
 	const [duration, setDuration] = useQueryState("duration", {
@@ -40,9 +42,9 @@ export function GroupAvailabilityView({
 		async (newDate: Date | undefined) => {
 			if (!newDate) return
 			setDate(newDate.toISOString())
-			revalidateGroupAction()
+			revalidateGroupAction({ groupId })
 		},
-		[setDate],
+		[setDate, groupId],
 	)
 
 	const currentDate = date ? new Date(date) : initialDate
@@ -75,7 +77,7 @@ export function GroupAvailabilityView({
 									value={[Number.parseInt(minUsers || "0")]}
 									onValueChange={(value) => {
 										setMinUsers(value[0]?.toString() ?? "0")
-										revalidateGroupAction()
+										revalidateGroupAction({ groupId })
 									}}
 								/>
 							</div>
@@ -109,7 +111,7 @@ export function GroupAvailabilityView({
 								value={duration ?? undefined}
 								onValueChange={(value) => {
 									setDuration(value as TimeSlotDuration)
-									revalidateGroupAction()
+									revalidateGroupAction({ groupId })
 								}}
 								className="w-full"
 							>
