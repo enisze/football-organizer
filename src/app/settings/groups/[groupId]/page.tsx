@@ -23,7 +23,7 @@ interface PageProps {
 
 const GroupSettings = async ({ params }: PageProps) => {
 	const resolvedParams = await params
-	const { groupId } = routes.groupSettings.$parseParams(resolvedParams)
+	const { groupId } = routes.groupSettingsDetails.$parseParams(resolvedParams)
 
 	const session = await getServerComponentAuthSession()
 	const userId = session?.user?.id
