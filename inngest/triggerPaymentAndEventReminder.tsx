@@ -124,7 +124,8 @@ export const getParticipantIdsByStatus = (
 ) => {
 	return participants.reduce((acc: string[], participant) => {
 		if (participant.userEventStatus === eventStatus) {
-			return [...acc, participant.id]
+			acc.push(participant.id)
+			return acc
 		}
 		return acc
 	}, [])
