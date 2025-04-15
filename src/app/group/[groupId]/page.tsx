@@ -122,7 +122,7 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 		id: event.id,
 	}))
 
-	const data = await getLatLong(eventInfo)
+	const data = eventInfo.length > 0 ? await getLatLong(eventInfo) : new Map()
 
 	if (redis.isOpen) {
 		await redis.disconnect()
