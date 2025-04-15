@@ -49,6 +49,7 @@ export const OrganizerServerMenu = async ({ groupId }: Props) => {
 			balance={balance}
 			selector={<GroupSelectorServer />}
 			isOwner={isOwner}
+			groupId={groupId}
 		/>
 	)
 }

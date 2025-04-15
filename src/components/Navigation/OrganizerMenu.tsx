@@ -13,21 +13,20 @@ import { Switch } from '@/ui/switch'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useCallback, useState, type FunctionComponent } from 'react'
+import { type FunctionComponent, useCallback, useState } from 'react'
 import { NotificationBubble } from '../NotificationBubble'
 
 export const OrganizerMenu: FunctionComponent<{
 	balance: number | null | undefined
 	selector: JSX.Element
 	isOwner: boolean
-}> = ({ balance, selector, isOwner }) => {
+	groupId?: string
+}> = ({ balance, selector, isOwner, groupId }) => {
 	const [open, setOpen] = useState(false)
 	const { data } = useSession()
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
 	const router = useRouter()
-
-	const groupId = pathname?.split('/').at(-1)
 
 	const isOnDashboard = pathname?.includes('/group/')
 
@@ -78,12 +77,15 @@ export const OrganizerMenu: FunctionComponent<{
 							checked={isOwner}
 							onClick={async () => {
 								router.push(
-									//@ts-expect-error next issue
-									pathname + '?' + createQueryString('isOwner', !isOwner),
+									`${pathname}?${createQueryString('isOwner', isOwner ? 'false' : 'true')}`,
 								)
 
 								await new Promise((resolve) => setTimeout(resolve, 500))
-								await revalidateGroupAction()
+								if (groupId) {
+									await revalidateGroupAction({
+										groupId,
+									})
+								}
 							}}
 						/>
 					</div>
