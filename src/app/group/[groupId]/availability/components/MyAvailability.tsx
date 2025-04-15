@@ -35,7 +35,9 @@ export function MyAvailability({
 		if (newDate) {
 			await setDate(newDate.toISOString())
 
-			await revalidateGroupAction()
+			await revalidateGroupAction({
+				groupId,
+			})
 		}
 	}
 
