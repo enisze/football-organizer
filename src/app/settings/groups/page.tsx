@@ -48,7 +48,7 @@ const GroupSettings = async () => {
 								<span>{`Pricing: ${group.pricingModel}`}</span>
 
 								<OrganizerLink
-									href={routes.groupSettings({ groupId: group.id })}
+									href={routes.groupSettingsDetails({ groupId: group.id })}
 									className="flex w-full rounded-md border border-slate-300 bg-transparent mt-3 text-sm dark:border-slate-700 dark:text-slate-50"
 								>
 									Bearbeiten
