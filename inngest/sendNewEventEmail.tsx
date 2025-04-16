@@ -28,7 +28,7 @@ export const sendNewEventEmail = inngest.createFunction(
 
 		if (!event) return
 
-		const html = render(
+		const html = await render(
 			<NewEvent
 				event={{
 					...event,

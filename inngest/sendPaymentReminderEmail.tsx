@@ -27,7 +27,7 @@ export const sendPaymentReminderEmail = inngest.createFunction(
 
 		if (!event) return
 
-		const html = render(
+		const html = await render(
 			<PaymentReminder
 				event={{
 					...event,

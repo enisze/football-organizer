@@ -19,7 +19,9 @@ export const NotificationSwitch = ({
 			onClick={() => {
 				setEnabled(!enabled)
 			}}
-			formAction={updateNotification}
+			formAction={async (formData) => {
+				updateNotification(formData)
+			}}
 		/>
 	)
 }

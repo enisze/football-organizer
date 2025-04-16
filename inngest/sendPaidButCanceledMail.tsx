@@ -8,7 +8,7 @@ export const sendPaidButCanceledMail = async (
 	user: User | null,
 	owner: Pick<User, 'email' | 'name'> | null,
 ) => {
-	const html = render(
+	const html = await render(
 		<PaidButCanceled
 			event={{
 				...event,

@@ -55,7 +55,14 @@ const Settings = async () => {
 					withBubble={!paypalName}
 				/>
 
-				<Button type="submit" className="w-fit" formAction={updatePaypalName}>
+				<Button
+					type="submit"
+					className="w-fit"
+					formAction={async (formData) => {
+						'use server'
+						updatePaypalName(formData)
+					}}
+				>
 					Speichern
 				</Button>
 

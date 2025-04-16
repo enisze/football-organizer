@@ -1,5 +1,5 @@
-import { Button } from '@/ui/button'
 import { TextField } from '@/ui/TextField'
+import { Button } from '@/ui/button'
 
 import { createGroup } from '@/src/app/settings/groups/[groupId]/actions'
 
@@ -20,7 +20,10 @@ export const NewGroup = async () => {
 				type="submit"
 				variant="outline"
 				className="w-fit"
-				formAction={createGroup}
+				formAction={async (formData) => {
+					'use server'
+					createGroup(formData)
+				}}
 			>
 				Gruppe erstellen
 			</Button>

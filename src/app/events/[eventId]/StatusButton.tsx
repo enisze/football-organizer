@@ -1,5 +1,4 @@
 import { Button } from '@/ui/button'
-import {} from 'next-safe-action'
 
 import { setParticipatingStatus } from '../../group/[groupId]/actions'
 

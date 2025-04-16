@@ -13,7 +13,9 @@ export const sendGroupRequestEmail = async ({
 		expiresIn: '1d',
 	})
 
-	const html = render(<GroupRequestEmail email={requester} token={token} />)
+	const html = await render(
+		<GroupRequestEmail email={requester} token={token} />,
+	)
 
 	const { response } = await sendEmail(
 		'eniszej@gmail.com',

@@ -4,7 +4,7 @@ import { render } from '@react-email/render'
 import { sendEmail } from './createSendEmail'
 
 export const sendWelcomeMail = async (user: User | null) => {
-	const html = render(<WelcomeEmail userFirstname={user?.name ?? ''} />)
+	const html = await render(<WelcomeEmail userFirstname={user?.name ?? ''} />)
 
 	if (!user?.email) return { success: false }
 

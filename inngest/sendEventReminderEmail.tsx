@@ -33,7 +33,7 @@ export const sendEventReminderEmail = inngest.createFunction(
 			'JOINED',
 		).length
 
-		const html = render(
+		const html = await render(
 			<EventReminder
 				event={{
 					...event,

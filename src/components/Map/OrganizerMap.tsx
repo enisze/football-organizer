@@ -1,7 +1,7 @@
 'use client'
 
 import { Feature } from 'ol'
-import Map from 'ol/Map'
+import OlMap from 'ol/Map'
 import View from 'ol/View'
 import { Point } from 'ol/geom'
 import TileLayer from 'ol/layer/Tile'
@@ -24,7 +24,7 @@ export const OrganizerMap: FunctionComponent<OrganizerMapProps> = ({
 	const transformedCoordinates = fromLonLat(coordinates)
 
 	const mapElement = useRef<HTMLDivElement>(null)
-	const mapRef = useRef<Map>()
+	const mapRef = useRef<OlMap | null>(null)
 
 	useEffect(() => {
 		const point = new Point(transformedCoordinates)
@@ -33,7 +33,7 @@ export const OrganizerMap: FunctionComponent<OrganizerMapProps> = ({
 
 		const svg =
 			'<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256"><path fill="#FF0000" d="M128 16a88.1 88.1 0 0 0-88 88c0 75.3 80 132.17 83.41 134.55a8 8 0 0 0 9.18 0C136 236.17 216 179.3 216 104a88.1 88.1 0 0 0-88-88Zm0 56a32 32 0 1 1-32 32a32 32 0 0 1 32-32Z"/></svg>'
-		const src = 'data:image/svg+xml,' + encodeURIComponent(svg)
+		const src = `data:image/svg+xml,${encodeURIComponent(svg)}`
 
 		const style = new Style({
 			image: new Icon({
@@ -44,7 +44,7 @@ export const OrganizerMap: FunctionComponent<OrganizerMapProps> = ({
 		})
 
 		if (mapElement.current && !mapRef.current) {
-			mapRef.current = new Map({
+			mapRef.current = new OlMap({
 				target: mapElement.current ?? undefined,
 				layers: [
 					new TileLayer({

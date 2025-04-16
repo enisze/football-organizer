@@ -13,12 +13,17 @@ import { Switch } from '@/ui/switch'
 import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { type FunctionComponent, useCallback, useState } from 'react'
+import {
+	type FunctionComponent,
+	type ReactNode,
+	useCallback,
+	useState,
+} from 'react'
 import { NotificationBubble } from '../NotificationBubble'
 
 export const OrganizerMenu: FunctionComponent<{
 	balance: number | null | undefined
-	selector: JSX.Element
+	selector: ReactNode
 	isOwner: boolean
 	groupId?: string
 }> = ({ balance, selector, isOwner, groupId }) => {
