@@ -6,7 +6,7 @@ import { authedActionClient } from '@/src/lib/actionClient'
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
 import { subDays } from 'date-fns'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { z } from 'zod'
 
 export const sendPaidButCanceledMailAction = authedActionClient
@@ -90,8 +90,30 @@ export const bookEvent = authedActionClient
 	})
 
 export const revalidateGroupAction = authedActionClient
-	.schema(z.object({ groupId: z.string() }))
-	.action(async ({ parsedInput: { groupId } }) => {
-		revalidatePath(routes.groupDetails({ groupId }))
+	.schema(
+		z.object({
+			groupId: z.string(),
+			date: z.string().optional(),
+			duration: z.enum(['60min', '90min', '120min']).optional(),
+			minUsers: z.number().optional(),
+		}),
+	)
+	.action(async ({ parsedInput: { groupId, duration, date, minUsers } }) => {
+		revalidatePath(
+			routes.groupDetails({
+				groupId,
+				search: {
+					date,
+					duration,
+					minUsers,
+				},
+			}),
+		)
 		return { success: true }
+	})
+
+export const revalidateTagAction = authedActionClient
+	.schema(z.object({ tagId: z.string() }))
+	.action(async ({ parsedInput: { tagId } }) => {
+		revalidateTag(tagId)
 	})

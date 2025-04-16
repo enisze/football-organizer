@@ -15,7 +15,7 @@ export const { routes, useSafeParams, useSafeSearchParams } =
 				.object({
 					date: z.string().optional(),
 					selectedDate: z.string().optional(),
-					duration: z.enum(['60min', '90min', '120min']).default('60min'),
+					duration: z.enum(['60min', '90min', '120min']).optional(),
 					minUsers: z.coerce.number().default(0),
 					tab: z
 						.enum(['events', 'myAvailability', 'groupAvailability'])

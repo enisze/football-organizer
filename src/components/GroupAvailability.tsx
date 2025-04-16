@@ -10,7 +10,10 @@ import type { User } from '@prisma/client'
 import { Clock } from 'lucide-react'
 import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
-import { revalidateGroupAction } from '../app/group/[groupId]/actions'
+import {
+	revalidateGroupAction,
+	revalidateTagAction,
+} from '../app/group/[groupId]/actions'
 import type {
 	ProcessedTimeSlot,
 	TimeSlotDuration,
@@ -29,13 +32,18 @@ export function GroupAvailabilityView({
 	processedSlots,
 	groupId,
 }: GroupAvailabilityViewProps) {
-	const [date, setDate] = useQueryState('date')
+	const [date, setDate] = useQueryState('date', {
+		shallow: true,
+	})
 	const [duration, setDuration] = useQueryState('duration', {
 		parse: (value) => value as TimeSlotDuration,
+		shallow: true,
 	})
+
 	const [minUsers, setMinUsers] = useQueryState('minUsers', {
 		defaultValue: '0',
 		parse: (value) => value,
+		shallow: true,
 	})
 
 	const handleDateChange = useCallback(
@@ -111,7 +119,15 @@ export function GroupAvailabilityView({
 								value={duration ?? undefined}
 								onValueChange={(value) => {
 									setDuration(value as TimeSlotDuration)
-									revalidateGroupAction({ groupId })
+
+									revalidateGroupAction({
+										groupId,
+										duration: value as TimeSlotDuration,
+										date: currentDate.toISOString(),
+										minUsers: Number.parseInt(minUsers || '0'),
+									})
+
+									revalidateTagAction({ tagId: 'groupAvailability' })
 								}}
 								className="w-full"
 							>

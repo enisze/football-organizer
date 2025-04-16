@@ -22,7 +22,10 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 	const date = res?.date ? new Date(res.date) : new Date()
 
 	const selectedDate = res?.selectedDate
+		? res.selectedDate
+		: new Date().toISOString()
 	const duration = res?.duration ?? '60min'
+
 	const minUsers = res?.minUsers ?? 0
 
 	const tab = res?.tab
@@ -55,7 +58,8 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 					<Link
 						href={routes.groupDetails({
 							groupId,
-							search: { tab: 'myAvailability' },
+
+							search: { tab: 'myAvailability', selectedDate },
 						})}
 						className="w-full"
 					>
@@ -66,7 +70,12 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 					<Link
 						href={routes.groupDetails({
 							groupId,
-							search: { tab: 'groupAvailability' },
+							search: {
+								tab: 'groupAvailability',
+								duration,
+								minUsers,
+								date: date.toISOString(),
+							},
 						})}
 						className="w-full"
 					>

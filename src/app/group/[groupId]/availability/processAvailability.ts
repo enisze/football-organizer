@@ -148,14 +148,14 @@ export function processGroupAvailability({
 	daySpecificSlots,
 	regularSlots,
 	weekendSlots,
-	duration = '60min',
+	duration = '90min',
 }: {
 	date: Date
 	users: User[]
 	daySpecificSlots: (TimeSlot & { user: User })[]
 	regularSlots: (TimeSlot & { user: User })[]
 	weekendSlots: (TimeSlot & { user: User })[]
-	duration: TimeSlotDuration | null
+	duration: TimeSlotDuration | undefined
 }): ProcessedTimeSlot[] {
 	// Generate base 30-minute slots
 	const baseSlots = generateBaseTimeSlots(10, 23)

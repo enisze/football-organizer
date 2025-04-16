@@ -1,5 +1,6 @@
 import { GroupAvailabilityView } from '@/src/components/GroupAvailability'
 import { prisma } from '@/src/server/db/client'
+import { unstable_cache } from 'next/cache'
 import { Suspense } from 'react'
 import { processGroupAvailability } from './availability/processAvailability'
 
@@ -7,7 +8,7 @@ interface GroupAvailabilityPageProps {
 	groupId: string
 	date: Date
 	minUsers: number
-	duration: '60min' | '90min' | '120min'
+	duration: '60min' | '90min' | '120min' | undefined
 }
 
 async function GroupAvailabilityData({
@@ -85,14 +86,22 @@ async function GroupAvailabilityData({
 		}),
 	])
 
-	const groupAvailability = processGroupAvailability({
-		date,
-		users,
-		daySpecificSlots: daySpecificSlots ?? [],
-		regularSlots: generalSlots ?? [],
-		weekendSlots: weekendSlots ?? [],
-		duration,
-	})
+	const groupAvailability = await unstable_cache(
+		async () =>
+			processGroupAvailability({
+				date,
+				users,
+				daySpecificSlots: daySpecificSlots ?? [],
+				regularSlots: generalSlots ?? [],
+				weekendSlots: weekendSlots ?? [],
+				duration,
+			}),
+		['groupAvailability', groupId, date.toISOString()],
+		{
+			revalidate: 60,
+			tags: ['groupAvailability'],
+		},
+	)()
 
 	const filteredAvailability = groupAvailability.filter(
 		(slot) => slot.availableUsers.length >= minUsers,
