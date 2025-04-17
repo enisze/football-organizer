@@ -1,11 +1,10 @@
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
-
+import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { GroupSelector } from './GroupSelector'
 
 export const GroupSelectorServer = async () => {
-	const session = await getServerComponentAuthSession()
+	const session = await serverAuth()
 
 	const id = session?.user?.id
 

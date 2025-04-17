@@ -1,7 +1,7 @@
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { Button } from '@/ui/button'
 
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { verifyJWT } from '@/src/server/verifyJWT'
 import { routes } from '@/src/shared/navigation'
@@ -15,7 +15,7 @@ export default async function AddToGroup({ params }: PageProps) {
 	const resolvedParams = await params
 	const { JWT } = routes.addToGroup.$parseParams(resolvedParams)
 
-	const session = await getServerComponentAuthSession()
+	const session = await serverAuth()
 
 	const userId = session?.user?.id
 

@@ -1,8 +1,8 @@
 'use client'
 
+import { signOut } from '@/src/lib/auth-client'
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
-import { signOut } from 'next-auth/react'
 import { useState } from 'react'
 import { deleteUser } from './actions'
 
@@ -11,7 +11,7 @@ export const DeleteUserForm = ({ userName }: { userName: string }) => {
 
 	const deleteUserAction = async () => {
 		await deleteUser()
-		await signOut({ callbackUrl: '/' })
+		await signOut()
 	}
 
 	return (

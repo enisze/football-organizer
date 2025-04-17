@@ -1,5 +1,6 @@
 'use client'
 import { revalidateGroupAction } from '@/src/app/group/[groupId]/actions'
+import { signOut, useSession } from '@/src/lib/auth-client'
 import { Avatar, AvatarFallback } from '@/ui/avatar'
 import {
 	DropdownMenu,
@@ -10,7 +11,6 @@ import {
 import { Label } from '@/ui/label'
 import { Separator } from '@/ui/separator'
 import { Switch } from '@/ui/switch'
-import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
@@ -116,7 +116,7 @@ export const OrganizerMenu: FunctionComponent<{
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					onClick={async () => {
-						await signOut({ callbackUrl: '/' })
+						await signOut()
 					}}
 				>
 					Ausloggen

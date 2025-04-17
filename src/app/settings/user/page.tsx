@@ -2,16 +2,16 @@ import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
 import { Label } from '@/ui/label'
 
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { Separator } from '@/ui/separator'
 
+import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { DeleteUserForm } from './DeleteUserForm'
 import { NotificationSwitch } from './NotificationSwitch'
 import { updatePaypalName } from './actions'
 
 const Settings = async () => {
-	const session = await getServerComponentAuthSession()
+	const session = await serverAuth()
 	const userId = session?.user?.id ?? ''
 
 	if (!userId) return null

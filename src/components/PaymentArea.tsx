@@ -1,8 +1,8 @@
 import { Button } from '@/ui/button'
 import { isDateInCertainRange } from '../helpers/isDateInCertainRange'
-import { getServerComponentAuthSession } from '../server/auth/authOptions'
 
 import { formatter } from '../helpers/formatter'
+import { serverAuth } from '../server/auth/session'
 import { prisma } from '../server/db/client'
 
 const paypalLink =
@@ -15,7 +15,7 @@ export const PaymentArea = async ({
 	eventId: string
 	bookingDate: Date | null
 }) => {
-	const session = await getServerComponentAuthSession()
+	const session = await serverAuth()
 
 	const payment = await prisma.payment.findFirst({
 		where: { eventId, userId: session?.user?.id },
@@ -30,9 +30,7 @@ export const PaymentArea = async ({
 	if (payment)
 		return (
 			<div className="flex items-center gap-x-2 text-green-500 font-bold">
-				{formatter.format(payment?.amount) +
-					'€  am ' +
-					payment?.paymentDate.toLocaleDateString('de')}
+				{`${formatter.format(payment?.amount)}€  am ${payment?.paymentDate.toLocaleDateString('de')}`}
 				<span>bezahlt</span>
 			</div>
 		)

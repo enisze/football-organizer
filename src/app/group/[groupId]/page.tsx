@@ -1,4 +1,4 @@
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs'
@@ -14,6 +14,8 @@ interface PageProps {
 }
 
 export default async function MainPage({ params, searchParams }: PageProps) {
+	const session = await serverAuth()
+	if (!session?.user?.id) redirect(routes.signIn())
 	const resolvedParams = await params
 	const resolvedSearchParams = await searchParams
 	const { groupId } = routes.groupDetails.$parseParams(resolvedParams)
@@ -29,9 +31,6 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 	const minUsers = res?.minUsers ?? 0
 
 	const tab = res?.tab
-
-	const session = await getServerComponentAuthSession()
-	if (!session?.user?.id) redirect('/api/auth/signin')
 
 	// Just check if user belongs to group
 	const userInGroup = await prisma.userOnGroups.findFirst({

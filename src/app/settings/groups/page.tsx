@@ -1,5 +1,5 @@
 import { NewGroup } from '@/src/components/Groups/NewGroup'
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { SCOPES, oAuth2Client } from '@/src/server/gmail'
 import { routes } from '@/src/shared/navigation'
@@ -8,8 +8,12 @@ import { Container } from '@/ui/container'
 import { Separator } from '@/ui/separator'
 
 const GroupSettings = async () => {
-	const session = await getServerComponentAuthSession()
+	const session = await serverAuth()
 	const userId = session?.user?.id
+
+	if (!userId) {
+		return null
+	}
 
 	const isAdmin = session?.user?.role === 'ADMIN'
 
@@ -26,10 +30,6 @@ const GroupSettings = async () => {
 		prompt: 'consent',
 		redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/oauth2callback`,
 	})
-
-	if (!userId) {
-		return null
-	}
 
 	const showNewGroup = (groups?.length ?? 0) < 1 || isAdmin
 

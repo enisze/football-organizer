@@ -2,11 +2,12 @@ import { Button } from '@/ui/button'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { Hero } from '../components/Heading'
-import { getServerComponentAuthSession } from '../server/auth/authOptions'
+import { serverAuth } from '../server/auth/session'
 import { prisma } from '../server/db/client'
+import { routes } from '../shared/navigation'
 
 const Home = async () => {
-	const session = await getServerComponentAuthSession()
+	const session = await serverAuth()
 
 	const group = await prisma.userOnGroups.findFirst({
 		where: {
@@ -27,7 +28,7 @@ const Home = async () => {
 			<main className="flex relative h-full w-full flex-col items-center justify-center">
 				<Hero />
 				{!session && (
-					<Link href="/api/auth/signin">
+					<Link href={routes.signIn()}>
 						<Button className="shadow-md shadow-yellow-300/50">
 							Login / Registrieren
 						</Button>

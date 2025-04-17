@@ -1,5 +1,5 @@
 import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { GroupSelectorServer } from '../Groups/GroupSelectorServer'
 import { OrganizerMenu } from './OrganizerMenu'
@@ -9,7 +9,7 @@ type Props = {
 }
 
 export const OrganizerServerMenu = async ({ groupId }: Props) => {
-	const session = await getServerComponentAuthSession()
+	const session = await serverAuth()
 
 	const events = await prisma.event.findMany({
 		where: {

@@ -1,4 +1,4 @@
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { oAuth2Client } from '@/src/server/gmail'
 import { routes } from '@/src/shared/navigation'
@@ -9,10 +9,10 @@ interface PageProps {
 }
 
 const OAuthCallbackPage = async ({ searchParams }: PageProps) => {
+	const session = await serverAuth()
 	const resolvedSearchParams = await searchParams
 	const { code } =
 		routes.oauth2callback.$parseSearchParams(resolvedSearchParams)
-	const session = await getServerComponentAuthSession()
 
 	const { tokens } = await oAuth2Client.getToken(code)
 	const { expiry_date, access_token, refresh_token } = tokens

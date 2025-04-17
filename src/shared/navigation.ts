@@ -42,7 +42,7 @@ export const { routes, useSafeParams, useSafeSearchParams } =
 			}),
 		}),
 		userSettings: defineRoute('/settings/user'),
-		signIn: defineRoute('/api/auth/signin'),
+		signIn: defineRoute('/signIn'),
 		oauth2callback: defineRoute('/oauth2callback', {
 			search: z.object({
 				code: z.string(),

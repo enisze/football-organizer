@@ -1,11 +1,11 @@
 import { redirect } from 'next/navigation'
 
 import { GroupSelectorServer } from '@/src/components/Groups/GroupSelectorServer'
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '../../server/db/client'
 
 const MainPage = async () => {
-	const session = await getServerComponentAuthSession()
+	const session = await serverAuth()
 	const groups = await prisma.group.findMany({
 		where: { users: { some: { id: session?.user?.id } } },
 		select: {

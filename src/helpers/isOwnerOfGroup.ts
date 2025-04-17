@@ -1,10 +1,10 @@
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
 import { revalidatePath } from 'next/cache'
-import { getServerComponentAuthSession } from '../server/auth/authOptions'
+import { serverAuth } from '../server/auth/session'
 
 export const isOwnerOfGroup = async (groupId: string) => {
-	const session = await getServerComponentAuthSession()
+	const session = await serverAuth()
 
 	if (!groupId || !session?.user?.id) return false
 
@@ -17,7 +17,7 @@ export const isOwnerOfGroup = async (groupId: string) => {
 }
 
 export const isOwnerOfGroupOfEvent = async (eventId: string) => {
-	const session = await getServerComponentAuthSession()
+	const session = await serverAuth()
 
 	if (!eventId || !session?.user?.id) return false
 

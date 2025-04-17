@@ -1,12 +1,12 @@
 import { Button } from '@/ui/button'
 import { Separator } from '@/ui/separator'
 
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
 import { Container } from '@/ui/container'
 import type { Group } from '@prisma/client'
 import { XIcon } from 'lucide-react'
 import { DeleteGroupForm } from './DeleteGroupForm'
 
+import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
 import { sign } from 'jsonwebtoken'
@@ -25,7 +25,7 @@ const GroupSettings = async ({ params }: PageProps) => {
 	const resolvedParams = await params
 	const { groupId } = routes.groupSettingsDetails.$parseParams(resolvedParams)
 
-	const session = await getServerComponentAuthSession()
+	const session = await serverAuth()
 	const userId = session?.user?.id
 
 	const groupData = await prisma.group.findFirst({

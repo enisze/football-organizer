@@ -1,6 +1,6 @@
 import { EventCard } from '@/src/components/Events/EventCard'
 import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { addDays } from 'date-fns'
 import { Suspense } from 'react'
@@ -11,7 +11,7 @@ interface CurrentEventsPageProps {
 }
 
 async function EventsList({ groupId }: CurrentEventsPageProps) {
-	const session = await getServerComponentAuthSession()
+	const session = await serverAuth()
 	const isOwner = await isOwnerOfGroup(groupId)
 
 	const events = await prisma.event.findMany({

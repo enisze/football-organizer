@@ -1,4 +1,4 @@
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { Suspense } from 'react'
 import { MyAvailability } from './availability/components/MyAvailability'
@@ -9,7 +9,7 @@ interface MyAvailabilityPageProps {
 }
 
 async function MyAvailabilityData({ groupId, date }: MyAvailabilityPageProps) {
-	const session = await getServerComponentAuthSession()
+	const session = await serverAuth()
 	if (!session?.user?.id) return null
 
 	const [generalTimeSlots, weekendTimeSlots, daySpecificTimeSlots] =

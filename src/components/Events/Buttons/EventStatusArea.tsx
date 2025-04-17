@@ -3,12 +3,12 @@ import { Check } from 'lucide-react'
 import { QuestionMark } from '../../QuestionMark'
 
 import { setParticipatingStatus } from '@/src/app/group/[groupId]/actions'
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { DeclineEventDialog } from './DeclineEventDialog'
 
 export const EventStatusArea = async ({ id }: { id: string }) => {
-	const session = await getServerComponentAuthSession()
+	const session = await serverAuth()
 
 	const participants = await prisma.participantsOnEvents.findMany({
 		where: { eventId: id },
