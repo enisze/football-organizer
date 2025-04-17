@@ -1,8 +1,10 @@
 'use client'
 
 import { signOut } from '@/src/lib/auth-client'
+import { routes } from '@/src/shared/navigation'
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
+import { redirect } from 'next/navigation'
 import { useState } from 'react'
 import { deleteUser } from './actions'
 
@@ -11,7 +13,13 @@ export const DeleteUserForm = ({ userName }: { userName: string }) => {
 
 	const deleteUserAction = async () => {
 		await deleteUser()
-		await signOut()
+		await signOut({
+			fetchOptions: {
+				onSuccess: () => {
+					redirect(routes.signIn())
+				},
+			},
+		})
 	}
 
 	return (

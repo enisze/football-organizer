@@ -1,6 +1,7 @@
 'use client'
 import { revalidateGroupAction } from '@/src/app/group/[groupId]/actions'
 import { signOut, useSession } from '@/src/lib/auth-client'
+import { routes } from '@/src/shared/navigation'
 import { Avatar, AvatarFallback } from '@/ui/avatar'
 import {
 	DropdownMenu,
@@ -12,7 +13,12 @@ import { Label } from '@/ui/label'
 import { Separator } from '@/ui/separator'
 import { Switch } from '@/ui/switch'
 import Link from 'next/link'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import {
+	redirect,
+	usePathname,
+	useRouter,
+	useSearchParams,
+} from 'next/navigation'
 import {
 	type FunctionComponent,
 	type ReactNode,
@@ -128,7 +134,13 @@ export const OrganizerMenu: FunctionComponent<{
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					onClick={async () => {
-						await signOut()
+						await signOut({
+							fetchOptions: {
+								onSuccess: () => {
+									redirect(routes.signIn())
+								},
+							},
+						})
 					}}
 				>
 					Ausloggen

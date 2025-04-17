@@ -8,7 +8,7 @@ export const authClient = createAuthClient({
 	plugins: [inferAdditionalFields<typeof auth>()],
 	redirects: {
 		signIn: routes.signIn(),
-		signOut: routes.home(),
+		signOut: routes.signIn(),
 		error: '/error',
 	},
 })
