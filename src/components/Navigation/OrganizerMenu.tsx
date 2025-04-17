@@ -50,9 +50,21 @@ export const OrganizerMenu: FunctionComponent<{
 	const hasPaypalName = Boolean(data.user.paypalName)
 
 	const name = data.user.name
-	const res = name?.split(' ')
-	const first = res ? (res[0]?.charAt(0) ?? 'X') : 'X'
-	const second = res ? (res[1]?.charAt(0) ?? 'X') : 'X'
+	const lettersOnly = (name ?? '').replace(/[^A-Za-z\s]/g, '').trim()
+
+	let first = 'X'
+	let second = 'X'
+
+	if (lettersOnly) {
+		const words = lettersOnly.split(/\s+/)
+		if (words.length > 1) {
+			first = words[0]?.charAt(0) || 'X'
+			second = words[1]?.charAt(0) || 'X'
+		} else {
+			first = lettersOnly.charAt(0) || 'X'
+			second = lettersOnly.charAt(1) || 'X'
+		}
+	}
 
 	return (
 		<DropdownMenu open={open} onOpenChange={setOpen}>
