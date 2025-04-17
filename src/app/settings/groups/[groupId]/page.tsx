@@ -44,7 +44,7 @@ const GroupSettings = async ({ params }: PageProps) => {
 	}
 
 	return (
-		<div className="min-h-screen bg-[#0B0F1A] flex flex-col items-center p-8">
+		<div className="min-h-screen flex flex-col items-center p-8">
 			<div className="w-full max-w-3xl space-y-6">
 				<div className="flex items-center justify-between">
 					<h1 className="text-2xl font-bold text-white">
