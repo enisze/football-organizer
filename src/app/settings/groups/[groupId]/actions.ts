@@ -34,7 +34,6 @@ export const createGroup = authedActionClient
 			},
 		})
 		revalidatePath(routes.groupSettings())
-		return { success: true }
 	})
 
 export const updateGroupName = authedActionClient

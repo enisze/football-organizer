@@ -18,7 +18,7 @@ export const Navbar = async () => {
 	})
 
 	return (
-		<header className="sticky top-0 z-40 w-full border-b border-b-slate-200 bg-white dark:border-b-slate-700 dark:bg-slate-900">
+		<header className="sticky top-0 z-40 w-full border-b border-b-slate-200 dark:border-b-slate-700 ">
 			<nav className="flex items-center justify-between p-2">
 				<Heading size="sm" />
 

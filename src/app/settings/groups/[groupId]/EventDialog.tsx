@@ -9,7 +9,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/ui/dialog'
-import { Label } from '@/ui/label'
 import { toast } from '@/ui/use-toast'
 import { useState } from 'react'
 
@@ -19,9 +18,8 @@ export const EventDialog = () => {
 	return (
 		<Dialog open={open} onOpenChange={(open) => setOpen(open)}>
 			<DialogTrigger className="flex flex-col gap-y-2 justify-start">
-				<Label>Neues Event</Label>
-				<Button type="button" variant="outline" role="definition">
-					Erstellen
+				<Button type="button" variant="outline">
+					Neues Event erstellen
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
@@ -34,7 +32,7 @@ export const EventDialog = () => {
 						setOpen(false)
 						toast({
 							title: 'Event erstellt',
-							description: `Das Event wurde erfolgreich erstellt.`,
+							description: 'Das Event wurde erfolgreich erstellt.',
 						})
 					}}
 				/>
