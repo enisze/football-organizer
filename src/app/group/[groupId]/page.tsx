@@ -4,6 +4,7 @@ import { routes } from '@/src/shared/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { EventDialog } from '../../settings/groups/[groupId]/EventDialog'
 import CurrentEventsPage from './CurrentEventsPage'
 import GroupAvailabilityPage from './GroupAvailabilityPage'
 import MyAvailabilityPage from './MyAvailabilityPage'
@@ -85,6 +86,7 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 				</TabsList>
 
 				<TabsContent value="events">
+					<EventDialog />
 					<CurrentEventsPage groupId={groupId} />
 				</TabsContent>
 

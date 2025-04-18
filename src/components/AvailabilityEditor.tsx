@@ -6,6 +6,13 @@ import {
 } from '@/src/app/group/[groupId]/availability/actions'
 import { Button } from '@/ui/button'
 import { Label } from '@/ui/label'
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/ui/select'
 import type { TimeSlot, TimeSlotType } from '@prisma/client'
 import { Clock, Plus, X } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
@@ -70,148 +77,123 @@ export function AvailabilityEditor({
 		setIsAdding(false)
 	}
 
-	const renderTimeSlots = () => {
-		const slots = []
-		for (const slot of timeSlots) {
-			slots.push(
-				<div
-					key={slot.id}
-					className="flex items-center justify-between rounded-md border p-3"
-				>
-					<span>
-						{slot.startTime} - {slot.endTime}
-					</span>
-					<Button
-						variant="ghost"
-						size="icon"
-						onClick={() => deleteTimeSlot({ id: slot.id })}
-						aria-label="Delete time slot"
-					>
-						<X className="h-4 w-4" />
-					</Button>
-				</div>,
-			)
-		}
-		return slots
-	}
-
-	const renderTimeOptions = () => {
-		const options = []
-		for (const time of timeOptions) {
-			options.push(
-				<option key={time} value={time}>
-					{time}
-				</option>,
-			)
-		}
-		return options
-	}
-
-	const renderEndTimeOptions = () => {
-		const options = []
-		for (const time of timeOptions) {
-			if (time > (newSlot.startTime || '')) {
-				options.push(
-					<option key={time} value={time}>
-						{time}
-					</option>,
-				)
-			}
-		}
-		return options
-	}
-
-	const getTimeRangeLabel = () => {
+	const renderTimeRangeLabel = () => {
 		if (type === 'GENERAL') return 'Werktags-Verfügbarkeit (18:00-23:00)'
 		if (type === 'WEEKEND') return 'Wochenend-Verfügbarkeit (10:00-23:00)'
 		return 'Spezifische Verfügbarkeit (10:00-23:00)'
 	}
 
 	return (
-		<div className="select-none">
-			<div className="mb-6 flex flex-col gap-4">
-				<div className="flex items-center">
-					<Clock className="mr-2 h-5 w-5 text-primary" />
-					<h3 className="font-medium">{getTimeRangeLabel()}</h3>
-				</div>
+		<div className="select-none space-y-4">
+			<div className="flex items-center gap-2 text-white/70">
+				<Clock className="h-5 w-5" />
+				<span>{renderTimeRangeLabel()}</span>
+			</div>
 
-				<div className="flex flex-col gap-4">
-					{renderTimeSlots()}
+			<div className="space-y-3">
+				{timeSlots.map((slot) => (
+					<div
+						key={slot.id}
+						className="flex items-center justify-between p-4 bg-white/5 rounded-xl"
+					>
+						<span>
+							{slot.startTime} - {slot.endTime}
+						</span>
+						<Button
+							variant="ghost"
+							size="icon"
+							onClick={() => deleteTimeSlot({ id: slot.id })}
+							className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+							aria-label="Delete time slot"
+						>
+							<X className="h-4 w-4 text-white/70" />
+						</Button>
+					</div>
+				))}
 
-					{isAdding ? (
-						<div className="flex flex-col gap-4 rounded-md border p-3">
-							<div className="grid grid-cols-2 gap-4">
-								<div>
-									<Label htmlFor="start-time">Start</Label>
-									<select
-										id="start-time"
-										className="w-full rounded-md border p-2"
-										value={newSlot.startTime || ''}
-										onChange={(e) =>
-											setNewSlot((prev) => ({
-												...prev,
-												startTime: e.target.value,
-											}))
-										}
-									>
-										<option value="">Zeit auswählen</option>
-										{renderTimeOptions()}
-									</select>
-								</div>
-								<div>
-									<Label htmlFor="end-time">Ende</Label>
-									<select
-										id="end-time"
-										className="w-full rounded-md border p-2"
-										value={newSlot.endTime || ''}
-										onChange={(e) =>
-											setNewSlot((prev) => ({
-												...prev,
-												endTime: e.target.value,
-											}))
-										}
-										aria-label="Endzeit"
-									>
-										<option value="">Zeit auswählen</option>
-										{renderEndTimeOptions()}
-									</select>
-								</div>
+				{isAdding ? (
+					<div className="space-y-4 bg-white/5 rounded-xl p-4">
+						<div className="grid grid-cols-2 gap-4">
+							<div className="space-y-2">
+								<Label className="text-white/70">Start</Label>
+								<Select
+									value={newSlot.startTime || ''}
+									onValueChange={(value) =>
+										setNewSlot((prev) => ({
+											...prev,
+											startTime: value,
+										}))
+									}
+								>
+									<SelectTrigger className="bg-white/5 border-white/10">
+										<SelectValue placeholder="Zeit auswählen" />
+									</SelectTrigger>
+									<SelectContent>
+										{timeOptions.map((time) => (
+											<SelectItem key={time} value={time}>
+												{time}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
 							</div>
-							<div className="flex justify-end gap-2">
-								<Button
-									type="button"
-									variant="ghost"
-									onClick={() => {
-										setNewSlot({})
-										setIsAdding(false)
-									}}
-									aria-label="Zeitfenster hinzufügen abbrechen"
+							<div className="space-y-2">
+								<Label className="text-white/70">Ende</Label>
+								<Select
+									value={newSlot.endTime || ''}
+									onValueChange={(value) =>
+										setNewSlot((prev) => ({
+											...prev,
+											endTime: value,
+										}))
+									}
+									disabled={!newSlot.startTime}
 								>
-									Abbrechen
-								</Button>
-								<Button
-									type="button"
-									onClick={handleAddSlot}
-									disabled={!newSlot.startTime || !newSlot.endTime}
-									aria-label="Zeitfenster speichern"
-								>
-									Speichern
-								</Button>
+									<SelectTrigger className="bg-white/5 border-white/10">
+										<SelectValue placeholder="Zeit auswählen" />
+									</SelectTrigger>
+									<SelectContent>
+										{timeOptions
+											.filter((time) => time > (newSlot.startTime || ''))
+											.map((time) => (
+												<SelectItem key={time} value={time}>
+													{time}
+												</SelectItem>
+											))}
+									</SelectContent>
+								</Select>
 							</div>
 						</div>
-					) : (
-						<Button
-							type="button"
-							variant="outline"
-							onClick={() => setIsAdding(true)}
-							className="flex items-center"
-							aria-label="Neues Zeitfenster hinzufügen"
-						>
-							<Plus className="mr-2 h-4 w-4" />
-							Neues Zeitfenster
-						</Button>
-					)}
-				</div>
+						<div className="flex justify-end gap-2">
+							<Button
+								variant="ghost"
+								onClick={() => {
+									setNewSlot({})
+									setIsAdding(false)
+								}}
+								className="text-white/70 hover:bg-white/10"
+							>
+								Abbrechen
+							</Button>
+							<Button
+								onClick={handleAddSlot}
+								disabled={!newSlot.startTime || !newSlot.endTime}
+								className="bg-white/10 hover:bg-white/20"
+							>
+								Speichern
+							</Button>
+						</div>
+					</div>
+				) : (
+					<Button
+						variant="outline"
+						onClick={() => setIsAdding(true)}
+						className="w-full p-4 bg-white/5 hover:bg-white/10 rounded-xl transition-colors flex items-center justify-center gap-2 border-white/10"
+					>
+						<Plus className="h-5 w-5" />
+						<span>Neues Zeitfenster</span>
+					</Button>
+				)}
 			</div>
 		</div>
 	)

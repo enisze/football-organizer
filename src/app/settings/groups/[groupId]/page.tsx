@@ -10,7 +10,6 @@ import { sign } from 'jsonwebtoken'
 import { redirect } from 'next/navigation'
 import { ClipboardButton } from './ClipboardButton'
 import { ClipboardCode } from './ClipboardCode'
-import { EventDialog } from './EventDialog'
 import { NameChange } from './NameChange'
 import { deleteUserFromGroup } from './actions'
 
@@ -50,8 +49,6 @@ const GroupSettings = async ({ params }: PageProps) => {
 					<h1 className="text-2xl font-bold text-white">
 						Einstellungen für Gruppe {groupName}
 					</h1>
-
-					<EventDialog />
 				</div>
 
 				<div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 space-y-6">

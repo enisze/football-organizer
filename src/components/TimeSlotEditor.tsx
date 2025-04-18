@@ -24,11 +24,13 @@ export function TimeSlotEditor({
 	}))
 
 	return (
-		<AvailabilityEditor
-			timeSlots={formattedTimeSlots}
-			type={type}
-			groupId={groupId}
-			date={date}
-		/>
+		<div className="bg-transparent">
+			<AvailabilityEditor
+				timeSlots={formattedTimeSlots}
+				type={type}
+				groupId={groupId}
+				date={date}
+			/>
+		</div>
 	)
 }
