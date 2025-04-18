@@ -15,10 +15,7 @@ export const RemindButton = async ({ id }: { id: string }) => {
 				toast({
 					title: 'Erinnerung gesendet',
 
-					description:
-						'Für das Event mit der ID ' +
-						id +
-						' wurde eine Erinnerung gesendet.',
+					description: `Für das Event mit der ID ${id} wurde eine Erinnerung gesendet.`,
 				})
 			}}
 		>

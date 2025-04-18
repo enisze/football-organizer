@@ -10,6 +10,7 @@ import {
 	DialogTrigger,
 } from '@/ui/dialog'
 import { toast } from '@/ui/use-toast'
+import { PlusIcon } from 'lucide-react'
 import { useState } from 'react'
 
 export const EventDialog = () => {
@@ -19,7 +20,8 @@ export const EventDialog = () => {
 		<Dialog open={open} onOpenChange={(open) => setOpen(open)}>
 			<DialogTrigger className="flex flex-col gap-y-2 justify-start">
 				<Button type="button" variant="purple">
-					Neues Event erstellen
+					<PlusIcon className="h-4 w-4" />
+					Neues Event
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">

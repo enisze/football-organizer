@@ -65,6 +65,9 @@ export function GroupAvailabilityView({
 
 	return (
 		<div className="container mx-auto space-y-8">
+			<h2 className="text-3xl font-bold mb-4 text-center">
+				Verfügbare Termine
+			</h2>
 			<div className="grid gap-6 md:grid-cols-[300px_1fr]">
 				<div className="space-y-4">
 					<Card className="bg-white/5 backdrop-blur-sm border-white/10">
@@ -187,16 +190,21 @@ export function GroupAvailabilityView({
 												</Badge>
 											</div>
 
-											<div className="mt-2 flex flex-wrap gap-2">
-												{slot.availableUsers.map((user) => (
-													<div
-														key={user.id}
-														className="flex items-center gap-2 rounded-full bg-white/5 px-2 py-1 text-xs"
-													>
-														<div className="h-2 w-2 rounded-full bg-white/70" />
-														{user.name}
-													</div>
-												))}
+											<div className="mt-2">
+												<div className="text-xs font-medium text-white/70 mb-1">
+													Teilnehmer
+												</div>
+												<div className="flex flex-wrap gap-2">
+													{slot.availableUsers.map((user) => (
+														<div
+															key={user.id}
+															className="flex items-center gap-2 rounded-full bg-white/5 px-2 py-1 text-xs"
+														>
+															<div className="h-2 w-2 rounded-full bg-white/70" />
+															{user.name}
+														</div>
+													))}
+												</div>
 											</div>
 										</div>
 
