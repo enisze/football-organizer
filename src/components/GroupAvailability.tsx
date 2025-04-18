@@ -1,9 +1,15 @@
 'use client'
 
 import { cn } from '@/lib/utils/cn'
+import { Badge } from '@/ui/badge'
 import { Calendar } from '@/ui/calendar'
-import { Card, CardContent } from '@/ui/card'
-import { Label } from '@/ui/label'
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from '@/ui/card'
 import { Slider } from '@/ui/slider'
 import { Tabs, TabsList, TabsTrigger } from '@/ui/tabs'
 import type { User } from '@prisma/client'
@@ -58,12 +64,17 @@ export function GroupAvailabilityView({
 	const currentDate = date ? new Date(date) : initialDate
 
 	return (
-		<div className="container mx-auto py-6">
+		<div className="container mx-auto space-y-8">
 			<div className="grid gap-6 md:grid-cols-[300px_1fr]">
 				<div className="space-y-4">
-					<div className="rounded-lg border p-4">
-						<div className="mb-2">
-							<Label htmlFor="date-picker">Datum auswählen</Label>
+					<Card className="bg-white/5 backdrop-blur-sm border-white/10">
+						<CardHeader>
+							<CardTitle className="text-2xl">Datum</CardTitle>
+							<CardDescription className="text-white/70">
+								Wähle ein Datum aus
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
 							<Calendar
 								id="date-picker"
 								mode="single"
@@ -71,12 +82,17 @@ export function GroupAvailabilityView({
 								onSelect={handleDateChange}
 								className="mx-auto"
 							/>
-						</div>
-					</div>
+						</CardContent>
+					</Card>
 
-					<div className="rounded-lg border p-4">
-						<div className="mb-2">
-							<Label>Mindestanzahl verfügbarer Nutzer</Label>
+					<Card className="bg-white/5 backdrop-blur-sm border-white/10">
+						<CardHeader>
+							<CardTitle className="text-2xl">Filter</CardTitle>
+							<CardDescription className="text-white/70">
+								Mindestanzahl verfügbarer Nutzer
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
 							<div className="px-2 pt-4">
 								<Slider
 									defaultValue={[0]}
@@ -87,123 +103,131 @@ export function GroupAvailabilityView({
 										setMinUsers(value[0]?.toString() ?? '0')
 										revalidateGroupAction({ groupId })
 									}}
+									className="[&>[role=slider]]:bg-white [&>[role=slider]]:border-white/10"
 								/>
 							</div>
-							<div className="mt-2 text-center text-sm text-muted-foreground">
+							<div className="mt-4 text-center text-sm text-white/50">
 								Mindestens {Number.parseInt(minUsers || '0')} Nutzer
 							</div>
-						</div>
-					</div>
+						</CardContent>
+					</Card>
 				</div>
 
-				<div className="rounded-lg border p-4">
-					<h2 className="mb-4 text-xl font-semibold">
-						{currentDate.toLocaleDateString('de-DE', {
-							weekday: 'long',
-							month: 'long',
-							day: 'numeric',
-						})}
-					</h2>
-
-					<div className="space-y-6">
-						<div className="flex flex-col gap-4">
-							<div className="flex items-center">
-								<Clock className="mr-2 h-5 w-5 text-primary" />
-								<h3 className="font-medium">Gruppenverfügbarkeit</h3>
-								<span className="ml-2 text-sm text-muted-foreground">
-									(Gruppengröße: {users.length})
-								</span>
-							</div>
-
-							<Tabs
-								value={duration ?? undefined}
-								onValueChange={(value) => {
-									setDuration(value as TimeSlotDuration)
-
-									revalidateGroupAction({
-										groupId,
-										duration: value as TimeSlotDuration,
-										date: currentDate.toISOString(),
-										minUsers: Number.parseInt(minUsers || '0'),
-									})
-
-									revalidateTagAction({ tagId: 'groupAvailability' })
-								}}
-								className="w-full"
-							>
-								<TabsList className="grid w-full grid-cols-3">
-									<TabsTrigger value="60min">1 Stunde</TabsTrigger>
-									<TabsTrigger value="90min">90 Minuten</TabsTrigger>
-									<TabsTrigger value="120min">2 Stunden</TabsTrigger>
-								</TabsList>
-							</Tabs>
+				<Card className="bg-white/5 backdrop-blur-sm border-white/10">
+					<CardHeader>
+						<CardTitle className="text-2xl">
+							{currentDate.toLocaleDateString('de-DE', {
+								weekday: 'long',
+								month: 'long',
+								day: 'numeric',
+							})}
+						</CardTitle>
+						<div className="flex items-center mt-2">
+							<Clock className="mr-2 h-5 w-5 text-white/70" />
+							<CardDescription className="text-white/70">
+								Gruppenverfügbarkeit (Gruppengröße: {users.length})
+							</CardDescription>
 						</div>
+					</CardHeader>
+					<CardContent className="space-y-6">
+						<Tabs
+							value={duration ?? undefined}
+							onValueChange={(value) => {
+								setDuration(value as TimeSlotDuration)
+								revalidateGroupAction({
+									groupId,
+									duration: value as TimeSlotDuration,
+									date: currentDate.toISOString(),
+									minUsers: Number.parseInt(minUsers || '0'),
+								})
+								revalidateTagAction({ tagId: 'groupAvailability' })
+							}}
+							className="w-full"
+						>
+							<TabsList className="inline-flex rounded-xl bg-white/5 p-1 self-center">
+								<TabsTrigger
+									value="60min"
+									className="px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5"
+								>
+									1 Stunde
+								</TabsTrigger>
+								<TabsTrigger
+									value="90min"
+									className="px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5"
+								>
+									90 Minuten
+								</TabsTrigger>
+								<TabsTrigger
+									value="120min"
+									className="px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5"
+								>
+									2 Stunden
+								</TabsTrigger>
+							</TabsList>
+						</Tabs>
 
-						<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+						<div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(250px,1fr))] auto-rows-[160px]">
 							{processedSlots.map((slot, index) => {
 								const availableCount = slot.availableUsers.length
 								const percentage =
 									users.length > 0 ? (availableCount / users.length) * 100 : 0
 
 								return (
-									<Card
+									<div
 										key={index}
-										className={cn(
-											'relative overflow-hidden',
-											percentage === 100 ? 'border-green-500' : undefined,
-										)}
+										className="relative overflow-hidden bg-white/5 backdrop-blur-sm rounded-xl border border-white/10"
 									>
-										<CardContent className="p-4">
-											<div className="relative z-10">
-												<div className="text-sm font-medium">
+										<div className="p-4 relative z-10">
+											<div className="text-sm font-medium flex justify-between items-center">
+												<span>
 													{slot.startTime} - {slot.endTime}
-												</div>
-
-												<div className="mt-2 flex flex-wrap gap-2">
-													{slot.availableUsers.map((user) => (
-														<div
-															key={user.id}
-															className="flex items-center gap-2 rounded-full border px-2 py-1 text-xs"
-														>
-															<div className="h-2 w-2 rounded-full bg-primary" />
-															{user.name}
-														</div>
-													))}
-												</div>
-
-												<div className="mt-2 flex justify-between text-xs text-muted-foreground">
-													<span>{availableCount}/10</span>
-												</div>
+												</span>
+												<Badge variant="secondary" className="bg-white/10">
+													{availableCount}/10
+												</Badge>
 											</div>
 
-											<div
-												className={cn(
-													'absolute bottom-0 left-0 right-0',
-													availableCount < 5
-														? 'bg-red-500/20'
-														: availableCount < 8
-															? 'bg-yellow-500/20'
-															: 'bg-green-500/20',
-												)}
-												style={{
-													height: `${percentage}%`,
-													opacity: percentage / 100,
-												}}
-											/>
-										</CardContent>
-									</Card>
+											<div className="mt-2 flex flex-wrap gap-2">
+												{slot.availableUsers.map((user) => (
+													<div
+														key={user.id}
+														className="flex items-center gap-2 rounded-full bg-white/5 px-2 py-1 text-xs"
+													>
+														<div className="h-2 w-2 rounded-full bg-white/70" />
+														{user.name}
+													</div>
+												))}
+											</div>
+										</div>
+
+										<div
+											className={cn(
+												'absolute bottom-0 left-0 right-0 transition-all duration-200',
+												availableCount < 5
+													? 'bg-red-500/30'
+													: availableCount < 8
+														? 'bg-orange-500/30'
+														: 'bg-emerald-500/30',
+											)}
+											style={{
+												height: `${percentage}%`,
+												opacity: percentage / 100,
+											}}
+										/>
+									</div>
 								)
 							})}
 
 							{processedSlots.length === 0 && (
-								<div className="col-span-full text-center text-muted-foreground">
-									Keine verfügbaren Zeitfenster für die gewählte Dauer und
-									Mindestanzahl an Teilnehmern gefunden
+								<div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 flex items-center justify-center p-4">
+									<p className="text-white/50 text-sm">
+										Keine Zeitfenster verfügbar
+									</p>
 								</div>
 							)}
 						</div>
-					</div>
-				</div>
+					</CardContent>
+				</Card>
 			</div>
 		</div>
 	)
