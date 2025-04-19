@@ -89,31 +89,34 @@ export const bookEvent = authedActionClient
 		return { success: true }
 	})
 
-export const revalidateGroupAction = authedActionClient
-	.schema(
-		z.object({
-			groupId: z.string(),
-			date: z.string().optional(),
-			duration: z.enum(['60min', '90min', '120min']).optional(),
-			minUsers: z.number().optional(),
+export const revalidateGroupAction = async ({
+	groupId,
+	date,
+	duration,
+	minUsers,
+}: {
+	groupId: string
+	date?: string
+	duration?: '60min' | '90min' | '120min'
+	minUsers?: number
+}) => {
+	const search: Record<string, string | number> = {}
+	if (date !== undefined) search.date = date
+	if (duration !== undefined) search.duration = duration
+	if (minUsers !== undefined) search.minUsers = minUsers
+
+	revalidatePath(
+		routes.groupDetails({
+			groupId,
+			search,
 		}),
 	)
-	.action(async ({ parsedInput: { groupId, duration, date, minUsers } }) => {
-		revalidatePath(
-			routes.groupDetails({
-				groupId,
-				search: {
-					date,
-					duration,
-					minUsers,
-				},
-			}),
-		)
-		return { success: true }
-	})
+}
 
-export const revalidateTagAction = authedActionClient
-	.schema(z.object({ tagId: z.string() }))
-	.action(async ({ parsedInput: { tagId } }) => {
-		revalidateTag(tagId)
-	})
+export const revalidateTagAction = async ({
+	tagId,
+}: {
+	tagId: string
+}) => {
+	revalidateTag(tagId)
+}
