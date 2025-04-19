@@ -19,7 +19,7 @@ export const BookEventButton = ({ id }: { id: string }) => {
 	return (
 		<Dialog open={open} onOpenChange={() => setOpen(!open)}>
 			<DialogTrigger asChild>
-				<Button variant="outline" className="w-full" type="button">
+				<Button variant="dark-success" className="w-full" type="button">
 					Book
 				</Button>
 			</DialogTrigger>

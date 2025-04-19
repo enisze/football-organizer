@@ -5,8 +5,8 @@ import {
 import { prisma } from '@/src/server/db/client'
 import { Button } from '@/ui/button'
 import { BookEventButton } from './Buttons/BookEventButton'
-import { DeleteEventButton } from './Buttons/DeleteEventButton'
 import { RemindButton } from './Buttons/RemindButton'
+import { deleteEventAction } from './Buttons/actions'
 
 type EventCardAdminAreaProps = {
 	eventId: string
@@ -49,38 +49,49 @@ export const EventCardAdminArea = async ({
 	)
 
 	return (
-		<>
-			<div className="flex flex-col items-center gap-y-3">
-				<span>{`Id: ${eventId}`}</span>
-				{payments && payments.length > 0 && (
-					<>
-						<span>Bezahlt aber nicht teilgenommen</span>
-						{payments.map((payment) => {
-							if (!payment || !payment?.user) return null
-							return (
-								<div key={payment.id}>
-									<div key={payment.id} className="flex items-center gap-x-2">
-										<div>{payment?.user.name}</div>
-										<div>{`${payment?.amount} €`}</div>
-										<div>{payment?.paymentDate?.toDateString()}</div>
-										<div color="success">Bezahlt</div>
-									</div>
+		<div className="space-y-3">
+			{payments && payments.length > 0 && (
+				<div className="flex flex-col items-center gap-y-3">
+					<span className="text-slate-400">
+						Bezahlt aber nicht teilgenommen
+					</span>
+					{payments.map((payment) => {
+						if (!payment || !payment?.user) return null
+						return (
+							<div key={payment.id}>
+								<div
+									key={payment.id}
+									className="flex items-center gap-x-2 text-slate-300"
+								>
+									<div>{payment?.user.name}</div>
+									<div>{`${payment?.amount} €`}</div>
+									<div>{payment?.paymentDate?.toDateString()}</div>
+									<div className="text-emerald-400">Bezahlt</div>
 								</div>
-							)
-						})}
-					</>
-				)}
-			</div>
-			<DeleteEventButton id={eventId} />
+							</div>
+						)
+					})}
+				</div>
+			)}
 
-			<form className="w-full flex flex-col gap-y-1">
+			<form className="w-full flex flex-col gap-y-3">
+				<Button
+					variant="dark-danger"
+					formAction={async () => {
+						'use server'
+						await deleteEventAction({
+							id: eventId,
+						})
+					}}
+				>
+					Delete
+				</Button>
 				<RemindButton id={eventId} />
 				<BookEventButton id={eventId} />
 				<Button
-					variant="outline"
+					variant="dark-warning"
 					formAction={async () => {
 						'use server'
-
 						const event = await prisma.event.findUnique({
 							where: { id: eventId },
 							select: { groupId: true },
@@ -99,6 +110,6 @@ export const EventCardAdminArea = async ({
 					Cancel Event
 				</Button>
 			</form>
-		</>
+		</div>
 	)
 }

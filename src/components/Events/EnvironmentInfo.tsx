@@ -5,11 +5,15 @@ import type { FunctionComponent } from 'react'
 type EnvironmentInfoProps = { environment: EventEnvironemnt }
 
 export const EnvironmentInfo: FunctionComponent<EnvironmentInfoProps> = ({
-	environment: environemnt,
+	environment,
 }) => {
 	return (
-		<div className="flex flex-col items-center">
-			{environemnt === 'INDOOR' ? <HomeIcon /> : <TreePineIcon />}
-		</div>
+		<span className="text-sm font-medium text-slate-300">
+			{environment === 'INDOOR' ? (
+				<HomeIcon className="w-4 h-4 text-blue-400" />
+			) : (
+				<TreePineIcon className="w-4 h-4 text-emerald-400" />
+			)}
+		</span>
 	)
 }

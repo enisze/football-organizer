@@ -6,7 +6,7 @@ import { sendReminderEventAction } from './actions'
 export const RemindButton = ({ id }: { id: string }) => {
 	return (
 		<Button
-			variant="outline"
+			variant="dark-primary"
 			formAction={async () => {
 				await sendReminderEventAction({
 					id,
@@ -14,7 +14,6 @@ export const RemindButton = ({ id }: { id: string }) => {
 
 				toast({
 					title: 'Erinnerung gesendet',
-
 					description: `Für das Event mit der ID ${id} wurde eine Erinnerung gesendet.`,
 				})
 			}}

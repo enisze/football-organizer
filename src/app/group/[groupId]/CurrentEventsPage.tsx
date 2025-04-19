@@ -4,6 +4,7 @@ import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { addDays } from 'date-fns'
 import { Suspense } from 'react'
+import { EventDialog } from '../../settings/groups/[groupId]/EventDialog'
 import { getLatLong } from './getLatLong'
 
 interface CurrentEventsPageProps {
@@ -28,9 +29,17 @@ async function EventsList({ groupId }: CurrentEventsPageProps) {
 
 	return (
 		<div className="m-8 flex flex-col gap-y-3 justify-center items-center">
-			<ul className="flex flex-col gap-y-2">
-				{events?.length > 0 &&
-					events.map(async (event) => {
+			<div className="flex flex-col">
+				<h2 className="text-3xl font-bold mb-4 ">Aktuelle Events</h2>
+				<EventDialog />
+			</div>
+			{events.length === 0 ? (
+				<div className="text-gray-500 text-center">
+					<p>Momentan gibt es keine Events.</p>
+				</div>
+			) : (
+				<ul className="flex flex-col gap-y-2">
+					{events.map(async (event) => {
 						const payment = await prisma.payment.findFirst({
 							where: {
 								eventId: event.id,
@@ -46,7 +55,8 @@ async function EventsList({ groupId }: CurrentEventsPageProps) {
 							</li>
 						)
 					})}
-			</ul>
+				</ul>
+			)}
 		</div>
 	)
 }

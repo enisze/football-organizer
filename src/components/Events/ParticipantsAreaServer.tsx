@@ -27,29 +27,14 @@ export const ParticipantsAreaServer = async ({
 	const joinedUsers = participants.filter(
 		(participant) => participant.userEventStatus === 'JOINED',
 	)
-	const canceledUsers = participants.filter(
-		(participant) => participant.userEventStatus === 'CANCELED',
-	)
-
-	const maybeUsers = participants.filter(
-		(participant) => participant.userEventStatus === 'MAYBE',
-	)
 
 	const joinedUsersAmount = joinedUsers.length
-	const canceledUsersAmount = canceledUsers.length
-	const maybeUsersAmount = maybeUsers.length
-
-	const allUsersLength = participants.length
 
 	return (
 		<ParticipantsArea
 			joinedUsersAmount={joinedUsersAmount}
-			canceledUsersAmount={canceledUsersAmount}
-			maybeUsersAmount={maybeUsersAmount}
-			allUsersLength={allUsersLength}
 			maxParticipants={maxParticipants}
 			participants={participants}
-			eventId={eventId}
 		/>
 	)
 }

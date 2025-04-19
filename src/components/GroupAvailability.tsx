@@ -172,8 +172,7 @@ export function GroupAvailabilityView({
 						<div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(250px,1fr))] auto-rows-[160px]">
 							{processedSlots.map((slot, index) => {
 								const availableCount = slot.availableUsers.length
-								const percentage =
-									users.length > 0 ? (availableCount / users.length) * 100 : 0
+								const percentage = (availableCount / 10) * 100
 
 								return (
 									<div

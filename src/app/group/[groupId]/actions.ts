@@ -58,7 +58,7 @@ export const setParticipatingStatus = authedActionClient
 				where: { id_eventId: { eventId, id: userId } },
 			})
 
-			return { success: true }
+			revalidateGroupAction({ groupId: event.groupId })
 		},
 	)
 
