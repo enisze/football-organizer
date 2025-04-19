@@ -6,7 +6,7 @@ import { OrganizerLink } from '@/ui/OrganizerLink'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { getLatLong } from '../../group/[groupId]/getLatLong'
-import { StatusButton } from './StatusButton'
+import { NotificationStatusButton } from './NotificationStatusButton'
 
 interface PageProps {
 	params: Promise<unknown>
@@ -37,7 +37,7 @@ const EventPage = async ({ params }: PageProps) => {
 	return (
 		<div className="flex flex-col items-center gap-y-3">
 			<EventCard event={event} location={data?.get(event.id)} />
-			<StatusButton eventId={eventId} />
+			<NotificationStatusButton eventId={eventId} />
 
 			<Link href={routes.group()}>
 				<span>Zur Startseite</span>

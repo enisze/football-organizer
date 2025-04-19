@@ -49,7 +49,9 @@ export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
 				<DialogTrigger asChild>
 					<Button
 						aria-label="cancel-button"
-						variant="outline"
+						variant={
+							userStatus === 'CANCELED' ? 'status-canceled' : 'status-default'
+						}
 						className="w-full"
 						type="button"
 						onClick={() => {

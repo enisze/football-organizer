@@ -2,7 +2,7 @@ import { Button } from '@/ui/button'
 
 import { setParticipatingStatus } from '../../group/[groupId]/actions'
 
-export const StatusButton = ({ eventId }: { eventId: string }) => {
+export const NotificationStatusButton = ({ eventId }: { eventId: string }) => {
 	return (
 		<form>
 			<Button

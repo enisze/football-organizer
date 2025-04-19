@@ -10,6 +10,7 @@ import { DateInfo } from './DateInfo'
 import { EnvironmentInfo } from './EnvironmentInfo'
 import { EventCardAdminArea } from './EventCardAdminArea'
 import { ParticipantsAreaServer } from './ParticipantsAreaServer'
+import { StatusChip } from './StatusChip'
 
 type EventCardProps = {
 	event: Event
@@ -48,6 +49,7 @@ export const EventCard = async ({ event, location }: EventCardProps) => {
 								<DateInfo date={date} />
 							</div>
 							<div className="flex flex-col">
+								<StatusChip status={status} />
 								<div className="flex items-center gap-1.5 text-slate-300 font-medium">
 									<CalendarDays className="w-4 h-4 text-blue-400" />
 									<span>{`${startTime}-${endTime}`}</span>
