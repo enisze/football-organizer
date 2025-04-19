@@ -11,7 +11,7 @@ import {
 } from '@/ui/dialog'
 import { deleteEventAction } from './actions'
 
-export const DeleteEventButton = async ({ id }: { id: string }) => {
+export const DeleteEventButton = ({ id }: { id: string }) => {
 	return (
 		<Dialog>
 			<DialogTrigger asChild className="flex flex-col gap-y-2 justify-start">

@@ -3,7 +3,7 @@ import { Button } from '@/ui/button'
 import { toast } from '@/ui/use-toast'
 import { sendReminderEventAction } from './actions'
 
-export const RemindButton = async ({ id }: { id: string }) => {
+export const RemindButton = ({ id }: { id: string }) => {
 	return (
 		<Button
 			variant="outline"

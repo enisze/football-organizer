@@ -18,8 +18,8 @@ export const EventDialog = () => {
 
 	return (
 		<Dialog open={open} onOpenChange={(open) => setOpen(open)}>
-			<DialogTrigger className="flex flex-col gap-y-2 justify-start">
-				<Button type="button" variant="purple">
+			<DialogTrigger asChild>
+				<Button type="button" variant="purple" className="flex gap-2 w-fit">
 					<PlusIcon className="h-4 w-4" />
 					Neues Event
 				</Button>
