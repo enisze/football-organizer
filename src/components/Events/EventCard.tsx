@@ -1,4 +1,5 @@
 import { formatter } from '@/src/helpers/formatter'
+import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
 import type { Event } from '@prisma/client'
 import { differenceInCalendarDays } from 'date-fns'
 import { CalendarDays } from 'lucide-react'
@@ -21,6 +22,7 @@ type EventCardProps = {
 //TODO: Show Warteliste, if we have participants which are on the waiting list too?
 
 export const EventCard = async ({ event, location }: EventCardProps) => {
+	const isOwner = await isOwnerOfGroup(event.groupId)
 	const {
 		address,
 		startTime,
@@ -87,11 +89,13 @@ export const EventCard = async ({ event, location }: EventCardProps) => {
 					</div>
 				</div>
 
-				<div className="px-6 pb-4">
-					<div className="text-center text-xs font-mono text-slate-500 bg-slate-800/50 py-2 px-3 rounded-lg overflow-x-auto">
-						Id: {id}
+				{isOwner && (
+					<div className="px-6 pb-4">
+						<div className="text-center text-xs font-mono text-slate-500 bg-slate-800/50 py-2 px-3 rounded-lg overflow-x-auto">
+							Id: {id}
+						</div>
 					</div>
-				</div>
+				)}
 
 				<div className="px-6 pb-4">
 					<EventStatusArea id={id} />

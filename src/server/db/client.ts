@@ -59,7 +59,7 @@ const prismaMiddleware = new InngestMiddleware({
 							// Anything passed via `ctx` will be merged with the function's arguments
 							ctx: {
 								...ctx,
-								prisma: db,
+								prisma,
 							},
 						}
 					},
