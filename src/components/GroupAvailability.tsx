@@ -98,12 +98,12 @@ export function GroupAvailabilityView({
 						<CardContent>
 							<div className="px-2 pt-4">
 								<Slider
-									defaultValue={[0]}
+									defaultValue={[8]}
 									max={10}
 									step={1}
-									value={[Number.parseInt(minUsers || '0')]}
+									value={[Number.parseInt(minUsers || '8')]}
 									onValueChange={(value) => {
-										setMinUsers(value[0]?.toString() ?? '0')
+										setMinUsers(value[0]?.toString() ?? '8')
 										revalidateGroupAction({ groupId })
 									}}
 									className="[&>[role=slider]]:bg-white [&>[role=slider]]:border-white/10"
