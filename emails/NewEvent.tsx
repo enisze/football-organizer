@@ -15,7 +15,7 @@ export const NewEvent = ({
 	userName: string
 }) => {
 	const { id } = event
-	const eventLink = process.env.NEXT_PUBLIC_BASE_URL + '/events/' + id
+	const eventLink = `${process.env.NEXT_PUBLIC_BASE_URL}/events/${id}`
 
 	return (
 		<Tailwind>

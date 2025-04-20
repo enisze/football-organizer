@@ -31,7 +31,7 @@ async function EventsList({ groupId }: CurrentEventsPageProps) {
 		<div className="m-8 flex flex-col gap-y-3 justify-center items-center">
 			<div className="flex flex-col">
 				<h2 className="text-3xl font-bold mb-4 ">Aktuelle Events</h2>
-				<EventDialog />
+				{isOwner && <EventDialog />}
 			</div>
 			{events.length === 0 ? (
 				<div className="text-gray-500 text-center">

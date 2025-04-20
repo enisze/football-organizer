@@ -1,4 +1,3 @@
-import { Badge } from '@/ui/badge'
 import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover'
 import type { EventStatus } from '@prisma/client'
 import { Check, X } from 'lucide-react'
@@ -11,19 +10,22 @@ export const StatusChip: FunctionComponent<{
 	return (
 		<Popover>
 			<PopoverTrigger aria-label="event-status-button">
-				<Badge variant="secondary">
-					{status === 'BOOKED' ? (
-						<>
-							<Check className="h-4 w-4 text-green-500" />
-						</>
-					) : status === 'CANCELED' ? (
+				{status === 'BOOKED' ? (
+					<div className="flex items-center gap-1">
+						<Check className="h-4 w-4 text-green-500" />
+						Gebucht
+					</div>
+				) : status === 'CANCELED' ? (
+					<div className="flex items-center gap-1">
 						<X className="h-4 w-4 text-red-500" />
-					) : (
-						<>
-							<QuestionMark className="h-4 w-4" />
-						</>
-					)}
-				</Badge>
+						Abgesagt
+					</div>
+				) : (
+					<div className="flex items-center gap-1">
+						<QuestionMark className="h-4 w-4" />
+						Nicht gebucht
+					</div>
+				)}
 			</PopoverTrigger>
 			<PopoverContent className="w-full">
 				<div className="flex items-center">
