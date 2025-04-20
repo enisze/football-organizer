@@ -6,11 +6,11 @@ import { z } from 'zod'
 
 declare global {
 	// eslint-disable-next-line no-var
-	var prisma: PrismaClient | undefined
+	var db: PrismaClient | undefined
 }
 
 const globals = globalThis as unknown as {
-	prisma: PrismaClient | undefined
+	db: PrismaClient | undefined
 }
 
 export const Event__New = z.object({
@@ -59,7 +59,7 @@ const prismaMiddleware = new InngestMiddleware({
 							// Anything passed via `ctx` will be merged with the function's arguments
 							ctx: {
 								...ctx,
-								prisma,
+								prisma: db,
 							},
 						}
 					},
@@ -92,10 +92,10 @@ export const inngest = new Inngest({
 	middleware: [prismaMiddleware],
 })
 
-export const prisma = globals.prisma ?? new PrismaClient()
+export const prisma = globals.db ?? new PrismaClient()
 
-if (process.env.NODE_ENV !== 'production') globals.prisma = prisma
+if (process.env.NODE_ENV !== 'production') globals.db = prisma
 
 if (env.NODE_ENV !== 'production') {
-	globals.prisma = prisma
+	globals.db = prisma
 }

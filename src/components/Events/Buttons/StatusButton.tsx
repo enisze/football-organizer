@@ -1,6 +1,7 @@
 import { setParticipatingStatus } from '@/src/app/group/[groupId]/actions'
+import { serverAuth } from '@/src/server/auth/session'
+import { prisma } from '@/src/server/db/client'
 import { Button } from '@/ui/button'
-import type { Payment, UserEventStatus } from '@prisma/client'
 import type { ReactNode } from 'react'
 import { DeclineEventDialog } from './DeclineEventDialog'
 
@@ -8,12 +9,9 @@ type ValidStatus = 'JOINED' | 'CANCELED' | 'MAYBE'
 
 type StatusButtonProps = {
 	icon: ReactNode
-	active: boolean
 	eventId: string
 	status: ValidStatus
 	label: string
-	payment?: Payment | null
-	userStatus?: UserEventStatus
 }
 
 type StatusButtonVariant =
@@ -22,20 +20,43 @@ type StatusButtonVariant =
 	| 'status-maybe'
 	| 'status-canceled'
 
-export function StatusButton({
+export async function StatusButton({
 	icon,
-	active,
 	eventId,
 	status,
 	label,
-	payment,
-	userStatus,
 }: StatusButtonProps) {
+	const session = await serverAuth()
+	const participant = await prisma.participantsOnEvents.findFirst({
+		where: {
+			eventId,
+			user: {
+				id: session?.user?.id,
+			},
+		},
+		select: {
+			userEventStatus: true,
+			comment: true,
+			user: {
+				select: {
+					id: true,
+					name: true,
+				},
+			},
+		},
+	})
+
+	const payment = await prisma.payment.findFirst({
+		where: { eventId, userId: session?.user?.id },
+	})
+
+	const active = participant?.userEventStatus === status
+
 	if (status === 'CANCELED') {
 		return (
 			<DeclineEventDialog
 				id={eventId}
-				userStatus={userStatus}
+				userStatus={participant?.userEventStatus}
 				payment={payment ?? null}
 			/>
 		)
