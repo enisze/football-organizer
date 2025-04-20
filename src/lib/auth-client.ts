@@ -7,7 +7,7 @@ export const authClient = createAuthClient({
 	baseURL: process.env.NEXT_PUBLIC_BASE_URL,
 	plugins: [inferAdditionalFields<typeof auth>()],
 	redirects: {
-		signIn: routes.signIn(),
+		signIn: routes.group(),
 		signOut: routes.signIn(),
 		error: '/error',
 	},
