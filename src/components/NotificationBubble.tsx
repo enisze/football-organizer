@@ -1,6 +1,6 @@
 export const NotificationBubble = ({
 	position = 'topRight',
-	className
+	className,
 }: {
 	position?: 'topLeft' | 'bottomRight' | 'topRight' | 'bottomLeft'
 	className?: string

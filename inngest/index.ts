@@ -9,7 +9,7 @@ const functions = [
 	sendEventReminderEmail,
 	sendPaymentReminderEmail,
 	triggerNewEvent,
-	sendNewEventEmail
+	sendNewEventEmail,
 ]
 
 export default functions

@@ -3,7 +3,7 @@ import { addDays, differenceInCalendarDays } from 'date-fns'
 import { getParticipantIdsByStatus } from './triggerPaymentAndEventReminder'
 
 export const triggerNewEvent = inngest.createFunction(
-	{ name: 'Trigger New Event Email' },
+	{ id: 'trigger-new-event-email' },
 	{ event: 'event/new' },
 	async ({ step, event: inngestEvent, prisma, logger }) => {
 		const eventId = inngestEvent.data.id
@@ -13,23 +13,21 @@ export const triggerNewEvent = inngest.createFunction(
 
 			const event = await prisma.event.findUnique({
 				where: { id: eventId },
-				include: { participants: true }
+				include: { participants: true },
 			})
 			return event
 		})
 
 		if (!event) return { message: `No event found ${eventId}` }
 
-		if (!event.groupId) return { message: `No group found ${event.groupId}` }
-
 		const usersOfGroup = await step.run('get users', async () => {
 			logger.info('getting users')
 			try {
 				const usersOnGroup = await prisma.group.findUnique({
 					where: {
-						id: event.groupId ?? undefined
+						id: event.groupId,
 					},
-					select: { users: true }
+					select: { users: true },
 				})
 
 				if (!usersOnGroup) return []
@@ -37,7 +35,7 @@ export const triggerNewEvent = inngest.createFunction(
 				const usersOfGroup = await Promise.all(
 					usersOnGroup.users.map(async (user) => {
 						return await prisma.user.findUnique({ where: { id: user.id } })
-					})
+					}),
 				)
 
 				return usersOfGroup
@@ -46,38 +44,39 @@ export const triggerNewEvent = inngest.createFunction(
 			}
 		})
 
-		if (!usersOfGroup) return { message: `No users found` }
+		if (!usersOfGroup) return { message: 'No users found' }
 
 		logger.info('sending event')
 
 		const days = differenceInCalendarDays(new Date(event.date), new Date())
 
 		const filteredUsers = usersOfGroup.filter(
-			(user) => user?.notificationsEnabled
+			(user) => user?.notificationsEnabled,
 		)
 
 		logger.info('filtered users', filteredUsers)
 
-		filteredUsers.forEach(async (user) => {
+		for (const user of filteredUsers) {
 			if (!user) return
 
-			await step.sendEvent({
+			await step.sendEvent('send-event-new-email', {
 				name: 'event/newEmail',
 				data: {
 					user,
 					id: event.id,
-					days
-				}
+					days,
+				},
 			})
-		})
-		await step.sleepUntil(addDays(new Date(event.createdAt), 7))
+		}
+
+		await step.sleepUntil('sleep-event', addDays(new Date(event.createdAt), 7))
 
 		const newEvent = await step.run('get event', async () => {
 			logger.info('getting event after some days')
 
 			const event = await prisma.event.findUnique({
 				where: { id: eventId, NOT: { status: 'CANCELED' } },
-				include: { participants: true }
+				include: { participants: true },
 			})
 			return event
 		})
@@ -89,8 +88,8 @@ export const triggerNewEvent = inngest.createFunction(
 
 		const allGroupMembers = await step.run('getting members', async () => {
 			const groupMembers = await prisma.group.findUnique({
-				where: { id: newEvent.groupId ?? undefined },
-				select: { users: true }
+				where: { id: newEvent.groupId },
+				select: { users: true },
 			})
 
 			if (!groupMembers) return []
@@ -98,7 +97,7 @@ export const triggerNewEvent = inngest.createFunction(
 			const allGroupMembers = await Promise.all(
 				groupMembers.users.map(async (user) => {
 					return await prisma.user.findUnique({ where: { id: user.id } })
-				})
+				}),
 			)
 
 			return allGroupMembers
@@ -106,51 +105,55 @@ export const triggerNewEvent = inngest.createFunction(
 
 		if (!newEvent)
 			return {
-				message: 'No event'
+				message: 'No event',
 			}
 
 		if (!allGroupMembers)
 			return {
-				message: 'No group members'
+				message: 'No group members',
 			}
 
 		const { participants } = newEvent
 
 		const canceledParticipantIds = getParticipantIdsByStatus(
 			newEvent.participants,
-			'CANCELED'
+			'CANCELED',
 		)
 
 		const joinedParticipantIds = getParticipantIdsByStatus(
 			newEvent.participants,
-			'JOINED'
+			'JOINED',
 		)
 
 		const membersToRemindEvent = allGroupMembers.filter(
 			(user) =>
 				!canceledParticipantIds.includes(user?.id ?? '') &&
-				!joinedParticipantIds.includes(user?.id ?? '')
+				!joinedParticipantIds.includes(user?.id ?? ''),
 		)
 
 		if (participants.length < newEvent.maxParticipants) {
-			membersToRemindEvent
-				.filter((user) => user?.notificationsEnabled)
-				.forEach((user) => {
-					if (!user) return
-					usersEventReminder.push({ email: user.email, name: user.name })
-				})
+			const filteredUsers = membersToRemindEvent.filter(
+				(user) => user?.notificationsEnabled,
+			)
+
+			for (const user of filteredUsers) {
+				if (!user) return
+				usersEventReminder.push({ email: user.email, name: user.name })
+			}
 		}
 
-		usersEventReminder.forEach(async (user) => {
-			await step.sendEvent({
+		for (const user of membersToRemindEvent) {
+			if (!user) continue
+
+			await step.sendEvent('send-event-reminder-email', {
 				name: 'event/reminderEmail',
 				data: {
 					user,
-					id: newEvent.id
-				}
+					id: newEvent.id,
+				},
 			})
-		})
+		}
 
 		return { success: true }
-	}
+	},
 )

@@ -9,9 +9,9 @@ export const DateInfo: FunctionComponent<DateInfoProps> = ({ date }) => {
 	const dateDay = format(date, 'dd', { locale: de })
 
 	return (
-		<div className='flex flex-col items-center'>
-			<div className='font-bold'>{day}</div>
-			<div className='font-bold border rounded-full p-1 text-xs'>{dateDay}</div>
+		<div className="flex flex-col items-center">
+			<div className="text-sm font-medium text-slate-400">{day}</div>
+			<div className="text-2xl font-bold text-white">{dateDay}</div>
 		</div>
 	)
 }

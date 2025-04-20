@@ -7,10 +7,10 @@ import {
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger
+	DialogTrigger,
 } from '@/ui/dialog'
-import { Label } from '@/ui/label'
 import { toast } from '@/ui/use-toast'
+import { PlusIcon } from 'lucide-react'
 import { useState } from 'react'
 
 export const EventDialog = () => {
@@ -18,13 +18,13 @@ export const EventDialog = () => {
 
 	return (
 		<Dialog open={open} onOpenChange={(open) => setOpen(open)}>
-			<DialogTrigger className='flex flex-col gap-y-2 justify-start'>
-				<Label>Neues Event</Label>
-				<Button type='button' variant='outline' role='definition'>
-					Erstellen
+			<DialogTrigger asChild>
+				<Button type="button" variant="purple" className="flex gap-2 w-fit">
+					<PlusIcon className="h-4 w-4" />
+					Neues Event
 				</Button>
 			</DialogTrigger>
-			<DialogContent className='sm:max-w-[425px]'>
+			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
 					<DialogTitle>Add Event</DialogTitle>
 					<DialogDescription>Add a new event</DialogDescription>
@@ -34,7 +34,7 @@ export const EventDialog = () => {
 						setOpen(false)
 						toast({
 							title: 'Event erstellt',
-							description: `Das Event wurde erfolgreich erstellt.`
+							description: 'Das Event wurde erfolgreich erstellt.',
 						})
 					}}
 				/>

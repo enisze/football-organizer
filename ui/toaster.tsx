@@ -6,7 +6,7 @@ import {
 	ToastDescription,
 	ToastProvider,
 	ToastTitle,
-	ToastViewport
+	ToastViewport,
 } from '@/ui/toast'
 import { useToast } from '@/ui/use-toast'
 
@@ -17,7 +17,7 @@ export function Toaster() {
 		<ToastProvider>
 			{toasts.map(({ id, title, description, action, ...props }) => (
 				<Toast key={id} {...props}>
-					<div className='grid gap-1'>
+					<div className="grid gap-1">
 						{title && <ToastTitle>{title}</ToastTitle>}
 						{description && <ToastDescription>{description}</ToastDescription>}
 					</div>

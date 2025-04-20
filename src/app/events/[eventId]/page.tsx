@@ -1,25 +1,31 @@
 import { EventCard } from '@/src/components/Events/EventCard'
-import Link from 'next/link'
-
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
-import { notFound } from 'next/navigation'
+import { routes } from '@/src/shared/navigation'
+import { OrganizerLink } from '@/ui/OrganizerLink'
+import Link from 'next/link'
+import { notFound, redirect } from 'next/navigation'
 import { getLatLong } from '../../group/[groupId]/getLatLong'
-import { StatusButton } from './StatusButton'
+import { NotificationStatusButton } from './NotificationStatusButton'
 
-const EventPage = async ({ params }: { params: { eventId: string } }) => {
-	const id = params.eventId
+interface PageProps {
+	params: Promise<unknown>
+}
 
-	const session = await getServerComponentAuthSession()
+const EventPage = async ({ params }: PageProps) => {
+	const resolvedParams = await params
+	const { eventId } = routes.event.$parseParams(resolvedParams)
+	const session = await serverAuth()
 
 	if (!session || !session.user?.id) {
+		redirect(routes.signIn())
 		// redirect('/api/auth/signin', RedirectType.push)
 	}
 
 	const event = await prisma.event.findUnique({
 		where: {
-			id
-		}
+			id: eventId,
+		},
 	})
 
 	if (!event) {
@@ -29,16 +35,16 @@ const EventPage = async ({ params }: { params: { eventId: string } }) => {
 	const data = await getLatLong([{ address: event.address, id: event.id }])
 
 	return (
-		<div className='mx-20 flex flex-col'>
-			<div className='flex flex-col items-center'>
-				<div className='my-5 flex flex-col items-center justify-center gap-y-2 rounded p-5'>
-					<StatusButton eventId={event.id} />
-					<Link href={'/group'}>
-						<span>Zur Startseite</span>
-					</Link>
-				</div>
-				<EventCard event={event} location={data?.get(id)} />
-			</div>
+		<div className="flex flex-col items-center gap-y-3">
+			<EventCard event={event} location={data?.get(event.id)} />
+			<NotificationStatusButton eventId={eventId} />
+
+			<Link href={routes.group()}>
+				<span>Zur Startseite</span>
+			</Link>
+			<OrganizerLink href={routes.groupDetails({ groupId: event.groupId })}>
+				<div>Zurück zur Gruppe</div>
+			</OrganizerLink>
 		</div>
 	)
 }

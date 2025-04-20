@@ -9,7 +9,7 @@ import { ContainerBox } from './components/ContainerBox'
 export const PaidButCanceled = ({
 	event = { id: '1', bookingDate: new Date(), maxParticipants: 10 },
 	userName,
-	participantName
+	participantName,
 }: {
 	event: Partial<Event>
 	userName: string
@@ -19,7 +19,7 @@ export const PaidButCanceled = ({
 		<Tailwind>
 			<Head />
 			<Preview>{`${participantName} hat abgesagt und bezahlt.`}</Preview>
-			<Body className='bg-white text-black font-sans'>
+			<Body className="bg-white text-black font-sans">
 				<ContainerBox>
 					<Text>Hi {userName},</Text>
 

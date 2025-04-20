@@ -214,7 +214,7 @@ const Page = () => {
 				anderen natürlichen oder juristischen Person oder aus Gründen eines
 				wichtigen öffentlichen Interesses der Europäischen Union oder eines
 				Mitgliedstaats verarbeitet werden. Quelle:{' '}
-				<a>https://www.e-recht24.de</a>
+				<a href="https://www.e-recht24.de">https://www.e-recht24.de</a>
 			</p>
 		</div>
 	)

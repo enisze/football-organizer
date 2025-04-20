@@ -16,5 +16,5 @@ export const defaultValues: Omit<
 	endTime: '21:30',
 	cost: 45,
 	maxParticipants: 10,
-	environment: 'OUTDOOR'
+	environment: 'OUTDOOR',
 }

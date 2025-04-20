@@ -2,7 +2,7 @@ import { inngest } from '@/src/server/db/client'
 import type { ParticipantsOnEvents, UserEventStatus } from '@prisma/client'
 
 export const triggerPaymentAndEventReminder = inngest.createFunction(
-	{ name: 'Trigger Payment and Event Reminder' },
+	{ id: 'trigger-payment-and-event-reminder' },
 	{ event: 'event/reminder' },
 	async ({ event: inngestEvent, prisma, step, logger }) => {
 		const id = inngestEvent.data.id
@@ -12,8 +12,8 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 			async () =>
 				await prisma.event.findUnique({
 					where: { id },
-					include: { participants: true }
-				})
+					include: { participants: true },
+				}),
 		)
 
 		if (!event?.groupId) return { message: 'No group id' }
@@ -24,11 +24,11 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 					notificationsEnabled: true,
 					groups: {
 						some: {
-							groupId: event.groupId ?? undefined
-						}
+							groupId: event.groupId,
+						},
 					},
-					events: { none: { id: event.id, userEventStatus: 'CANCELED' } }
-				}
+					events: { none: { id: event.id, userEventStatus: 'CANCELED' } },
+				},
 			})
 
 			return groupMembersToRemind
@@ -36,48 +36,50 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 
 		if (!event)
 			return {
-				message: 'No event'
+				message: 'No event',
 			}
 
 		if (!membersToRemind)
 			return {
-				message: 'No group members'
+				message: 'No group members',
 			}
 
 		const { participants } = event
 
 		const joinedParticipantIds = getParticipantIdsByStatus(
 			participants,
-			'JOINED'
+			'JOINED',
 		)
 
 		const membersToRemindPayment = membersToRemind.filter((user) =>
-			joinedParticipantIds.find((id) => id === user.id)
+			joinedParticipantIds.find((id) => id === user.id),
 		)
 
 		const usersEventReminder: { name: string; email: string }[] = []
 		const usersPaymentReminder: { name: string; email: string }[] = []
 
 		if (joinedParticipantIds.length < event.maxParticipants) {
-			membersToRemind
-				.filter((user) => !membersToRemindPayment.find((u) => u.id === user.id))
-				.forEach((user) => {
-					if (!user) return
-					usersEventReminder.push({ email: user.email, name: user.name })
-				})
+			const filteredUsers = membersToRemind.filter(
+				(user) => user?.notificationsEnabled,
+			)
+
+			for (const user of filteredUsers) {
+				if (!user) return
+				usersEventReminder.push({ email: user.email, name: user.name })
+			}
 		}
 
 		if (event.bookingDate) {
-			membersToRemindPayment.forEach(async (user) => {
+			for (const user of membersToRemindPayment) {
 				if (!user) return
 				const payment = await prisma.participantsOnEvents.findUnique({
-					where: { id_eventId: { eventId: event.id, id: user.id } }
+					where: { id_eventId: { eventId: event.id, id: user.id } },
 				})
 
 				if (!payment?.paymentId) {
 					usersPaymentReminder.push({ email: user.email, name: user.name })
 				}
-			})
+			}
 		}
 
 		await step.run('logging', async () => {
@@ -86,43 +88,44 @@ export const triggerPaymentAndEventReminder = inngest.createFunction(
 			logger.info('usersPaymentReminder', usersPaymentReminder)
 		})
 
-		usersEventReminder.forEach(async (user) => {
-			await step.sendEvent({
+		for (const user of usersEventReminder) {
+			await step.sendEvent('send-event-reminder-email', {
 				name: 'event/reminderEmail',
 				data: {
 					user,
-					id: event.id
-				}
+					id: event.id,
+				},
 			})
-		})
+		}
 
 		if (usersPaymentReminder.length > 0) {
-			usersPaymentReminder.forEach(async (user) => {
-				await step.sendEvent({
+			for (const user of usersPaymentReminder) {
+				await step.sendEvent('send-event-payment-reminder-email', {
 					name: 'event/paymentReminderEmail',
 					data: {
 						user,
-						id: event.id
-					}
+						id: event.id,
+					},
 				})
-			})
+			}
 		}
 
 		return {
 			success: true,
 			usersEventReminder,
-			usersPaymentReminder
+			usersPaymentReminder,
 		}
-	}
+	},
 )
 
 export const getParticipantIdsByStatus = (
 	participants: Array<Omit<ParticipantsOnEvents, 'date'>>,
-	eventStatus: UserEventStatus
+	eventStatus: UserEventStatus,
 ) => {
 	return participants.reduce((acc: string[], participant) => {
 		if (participant.userEventStatus === eventStatus) {
-			return [...acc, participant.id]
+			acc.push(participant.id)
+			return acc
 		}
 		return acc
 	}, [])

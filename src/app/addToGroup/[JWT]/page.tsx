@@ -1,19 +1,21 @@
-import { Button } from '@/ui/button'
 import { OrganizerLink } from '@/ui/OrganizerLink'
+import { Button } from '@/ui/button'
 
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { verifyJWT } from '@/src/server/verifyJWT'
+import { routes } from '@/src/shared/navigation'
 import { decode } from 'jsonwebtoken'
 
-export default async function AddToGroup({
-	params
-}: {
-	params: { JWT: string }
-}) {
-	const JWT = params?.JWT
+interface PageProps {
+	params: Promise<unknown>
+}
 
-	const session = await getServerComponentAuthSession()
+export default async function AddToGroup({ params }: PageProps) {
+	const resolvedParams = await params
+	const { JWT } = routes.addToGroup.$parseParams(resolvedParams)
+
+	const session = await serverAuth()
 
 	const userId = session?.user?.id
 
@@ -21,7 +23,7 @@ export default async function AddToGroup({
 
 	const isParticipating = await isParticipatingUser({
 		groupId: data.id,
-		userId: session?.user?.id
+		userId: session?.user?.id,
 	})
 
 	if (isParticipating) {
@@ -30,19 +32,21 @@ export default async function AddToGroup({
 
 	return (
 		<>
-			<div className='flex flex-col justify-center items-center w-full'>
+			<div className="flex flex-col justify-center items-center w-full">
 				<div>{`${data?.ownerName} hat dich eingeladen seiner Gruppe ${data?.groupName} beizutreten.`}</div>
 				<form>
 					<Button
 						formAction={async () => {
 							'use server'
+							if (!JWT) return
 							addUser({ userId, JWT })
 						}}
+						disabled={status === 'executing'}
 					>
 						Beitreten
 					</Button>
 				</form>
-				<OrganizerLink href={'/'} className='justify-center'>
+				<OrganizerLink href={routes.home()} className="justify-center">
 					Zurück zu den Events
 				</OrganizerLink>
 			</div>
@@ -66,7 +70,7 @@ const getDataFromJWT = async ({ JWT }: { JWT: string }) => {
 
 const addUser = async ({
 	userId,
-	JWT
+	JWT,
 }: {
 	userId: string | undefined
 	JWT: string
@@ -84,23 +88,23 @@ const addUser = async ({
 
 	await prisma.group.update({
 		data: {
-			users: { create: { id: userId } }
+			users: { create: { id: userId } },
 		},
-		where: { id: res.id }
+		where: { id: res.id },
 	})
 }
 
 const isParticipatingUser = async ({
 	userId,
-	groupId
+	groupId,
 }: {
 	userId: string | undefined
 	groupId: string
 }) => {
 	if (!userId) return false
 	const res = await prisma.group.findUnique({
-		where: { id: groupId, users: { some: { id: userId } } }
+		where: { id: groupId, users: { some: { id: userId } } },
 	})
 
-	return res ? true : false
+	return Boolean(res)
 }

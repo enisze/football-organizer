@@ -6,13 +6,13 @@ import { sendEmail } from './createSendEmail'
 import { getParticipantIdsByStatus } from './triggerPaymentAndEventReminder'
 
 export const sendEventReminderEmail = inngest.createFunction(
-	{ name: 'Send Event Reminder Email' },
+	{ id: 'send-event-reminder-email' },
 	{ event: 'event/reminderEmail' },
 
 	async ({ event: inngestEvent, prisma, step, logger }) => {
-		const id = inngestEvent.data.id
+		const id = inngestEvent.data?.id
 
-		const user = inngestEvent.data.user as {
+		const user = inngestEvent.data?.user as {
 			name: string
 			email: string
 		}
@@ -22,27 +22,27 @@ export const sendEventReminderEmail = inngest.createFunction(
 			async () =>
 				await prisma.event.findUnique({
 					where: { id },
-					include: { participants: true }
-				})
+					include: { participants: true },
+				}),
 		)
 
 		if (!event) return
 
 		const participantsAmount = getParticipantIdsByStatus(
 			event.participants,
-			'JOINED'
+			'JOINED',
 		).length
 
-		const html = render(
+		const html = await render(
 			<EventReminder
 				event={{
 					...event,
 					date: new Date(event.date),
-					bookingDate: event.bookingDate ? new Date(event.bookingDate) : null
+					bookingDate: event.bookingDate ? new Date(event.bookingDate) : null,
 				}}
 				userName={user.name}
 				participantsAmount={participantsAmount}
-			/>
+			/>,
 		)
 
 		const days = differenceInCalendarDays(new Date(event.date), new Date())
@@ -52,7 +52,7 @@ export const sendEventReminderEmail = inngest.createFunction(
 				const response = await sendEmail(
 					user.email,
 					html,
-					`Erinnerung: Fussball in ${days} Tagen, ${participantsAmount}/${event.maxParticipants} Teilnehmer!`
+					`Erinnerung: Fussball in ${days} Tagen, ${participantsAmount}/${event.maxParticipants} Teilnehmer!`,
 				)
 
 				return response
@@ -65,8 +65,8 @@ export const sendEventReminderEmail = inngest.createFunction(
 
 		logger.info(
 			`Message sent to: ${JSON.stringify(
-				user.email
-			)}, Code : ${response?.statusCode}`
+				user.email,
+			)}, Code : ${response?.statusCode}`,
 		)
-	}
+	},
 )

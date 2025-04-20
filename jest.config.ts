@@ -8,13 +8,13 @@ const config: Config = {
 		'^.+\\.(js|jsx|ts|tsx|mjs)$': [
 			'ts-jest',
 			{
-				babelConfig: true
-			}
-		]
+				babelConfig: true,
+			},
+		],
 	},
 	moduleNameMapper: {
-		'^@/(.*)': '<rootDir>/$1'
-	}
+		'^@/(.*)': '<rootDir>/$1',
+	},
 }
 
 export default config

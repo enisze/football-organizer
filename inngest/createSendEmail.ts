@@ -4,7 +4,7 @@ import { SendSmtpEmail } from '@sendinblue/client'
 export const sendEmail = async (
 	email: string,
 	html: string,
-	subject: string
+	subject: string,
 ) => {
 	const sendSmptMail = new SendSmtpEmail()
 
@@ -12,7 +12,7 @@ export const sendEmail = async (
 	sendSmptMail.htmlContent = html
 	sendSmptMail.sender = {
 		email: 'eniszej@gmail.com',
-		name: 'Event Wizard'
+		name: 'Event Wizard',
 	}
 	sendSmptMail.subject = subject
 

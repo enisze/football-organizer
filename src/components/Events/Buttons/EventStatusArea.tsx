@@ -1,78 +1,40 @@
-import { Button } from '@/ui/button'
-import { Check } from 'lucide-react'
+import { Check, X } from 'lucide-react'
+import { Suspense } from 'react'
 import { QuestionMark } from '../../QuestionMark'
-
-import { setParticipatingStatus } from '@/src/app/group/[groupId]/actions'
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
-import { prisma } from '@/src/server/db/client'
-import { DeclineEventDialog } from './DeclineEventDialog'
+import { StatusButton } from './StatusButton'
 
 export const EventStatusArea = async ({ id }: { id: string }) => {
-	const session = await getServerComponentAuthSession()
-
-	const participants = await prisma.participantsOnEvents.findMany({
-		where: { eventId: id },
-		select: {
-			userEventStatus: true,
-			comment: true,
-			user: {
-				select: {
-					id: true,
-					name: true
-				}
-			}
-		}
-	})
-
-	const userStatus = participants.find(
-		(participant) => participant.user.id === session?.user?.id
-	)?.userEventStatus
-
-	const checkMarkColor = userStatus === 'JOINED' ? 'text-green-500' : ''
-	const maybeMarkColor = userStatus === 'MAYBE' ? '!fill-yellow-500' : ''
-
-	const payment = await prisma.payment.findFirst({
-		where: { eventId: id, userId: session?.user?.id }
-	})
-
 	return (
-		<form>
-			<span>Mein Status:</span>
-			<div className='flex gap-x-1 w-full'>
-				<Button
-					aria-label='join-button'
-					variant='outline'
-					type='submit'
-					formAction={async () => {
-						'use server'
-						try {
-							await setParticipatingStatus({ eventId: id, status: 'JOINED' })
-						} catch (error) {
-							console.log('error', error)
-						}
-					}}
-					className='w-full'
-				>
-					<Check className={checkMarkColor} />
-				</Button>
-
-				<Button
-					aria-label='maybe-button'
-					variant='outline'
-					type='submit'
-					formAction={async () => {
-						'use server'
-						await setParticipatingStatus({ eventId: id, status: 'MAYBE' })
-					}}
-					className='w-full'
-				>
-					<QuestionMark
-						className={`fill-black dark:fill-white ${maybeMarkColor}`}
-					/>
-				</Button>
-
-				<DeclineEventDialog id={id} userStatus={userStatus} payment={payment} />
+		<div className="px-2">
+			<div className="text-sm font-medium text-slate-400 mb-2">
+				Mein Status:
 			</div>
-		</form>
+			<div className="grid grid-cols-3 gap-3">
+				<Suspense fallback={<div className="h-5" />}>
+					<StatusButton
+						icon={<Check className="w-5 h-5" />}
+						eventId={id}
+						status="JOINED"
+						label="Attending"
+					/>
+				</Suspense>
+				<Suspense fallback={<div className="h-5" />}>
+					<StatusButton
+						icon={<QuestionMark className="w-5 h-5" />}
+						eventId={id}
+						status="MAYBE"
+						label="Maybe"
+					/>
+				</Suspense>
+				<Suspense fallback={<div className="h-5" />}>
+					<StatusButton
+						icon={<X className="w-5 h-5" />}
+						eventId={id}
+						status="CANCELED"
+						label="Declined"
+					/>
+				</Suspense>
+			</div>
+		</div>
 	)
 }

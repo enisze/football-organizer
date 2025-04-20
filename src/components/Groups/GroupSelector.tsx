@@ -5,7 +5,7 @@ import {
 	SelectItem,
 	SelectLabel,
 	SelectTrigger,
-	SelectValue
+	SelectValue,
 } from '@/ui/select'
 import type { UserOnGroups } from '@prisma/client'
 import { SelectGroup } from '@radix-ui/react-select'
@@ -33,8 +33,8 @@ export const GroupSelector: FunctionComponent<{
 			<SelectGroup>
 				<SelectLabel>Gruppe auswählen</SelectLabel>
 			</SelectGroup>
-			<SelectTrigger className='w-[180px]' aria-label='group-selector'>
-				<SelectValue placeholder='Gruppe auswählen' />
+			<SelectTrigger className="w-[180px]" aria-label="group-selector">
+				<SelectValue placeholder="Gruppe auswählen" />
 			</SelectTrigger>
 			<SelectContent>
 				{groups?.map((group) => (

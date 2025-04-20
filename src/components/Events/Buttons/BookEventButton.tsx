@@ -7,47 +7,61 @@ import {
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger
+	DialogTrigger,
 } from '@/ui/dialog'
+import { useAction } from 'next-safe-action/hooks'
 import { useState } from 'react'
 
 export const BookEventButton = ({ id }: { id: string }) => {
 	const [open, setOpen] = useState(false)
+
+	const { execute } = useAction(bookEvent)
 	return (
 		<Dialog open={open} onOpenChange={() => setOpen(!open)}>
 			<DialogTrigger asChild>
-				<Button variant='outline' className='w-full' type='button'>
+				<Button variant="dark-success" className="w-full" type="button">
 					Book
 				</Button>
 			</DialogTrigger>
 
-			<DialogContent className='w-50'>
+			<DialogContent className="w-50">
 				<DialogHeader>
 					<DialogTitle>
-						<h2 id='modal-title'>Event buchen</h2>
+						<h2 id="modal-title">Event buchen</h2>
 					</DialogTitle>
 				</DialogHeader>
 
-				<div className='flex flex-col justify-center'>
-					<form>
+				<div className="flex flex-col justify-center">
+					<form
+						onSubmit={(e) => {
+							e.preventDefault()
+							const formData = new FormData(e.currentTarget)
+							const bookingDate = formData.get('bookingdate')?.toString()
+							if (!bookingDate) {
+								throw new Error('Booking date is required')
+							}
+							execute({
+								eventId: id,
+								bookingDate,
+							})
+							setOpen(false)
+						}}
+					>
 						<TextField
-							label='Datum'
-							type='date'
-							name='bookingdate'
+							label="Datum"
+							type="date"
+							name="bookingdate"
 							text={''}
-							className='w-36'
+							className="w-36"
 						/>
 						<Button
-							variant='outline'
-							color='info'
-							formAction={async (formData: FormData) => {
-								await bookEvent({
-									eventId: id,
-									formData
-								})
+							variant="outline"
+							color="info"
+							type="submit"
+							onClick={() => {
 								setOpen(false)
 							}}
-							className='w-36'
+							className="w-36"
 						>
 							Buchen
 						</Button>

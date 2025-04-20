@@ -40,10 +40,41 @@ model Event {
   status          EventStatus            @default(CREATED)
   maxParticipants Int                    @default(10)
   participants    ParticipantsOnEvents[]
-  Group           Group?                 @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  groupId         String?
+  Group           Group                  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId         String
 
   @@index([groupId])
+}
+
+enum AvailabilityStatus {
+  AVAILABLE
+  UNAVAILABLE
+  MAYBE
+}
+
+enum TimeSlotType {
+  GENERAL
+  WEEKEND
+  DAY_SPECIFIC
+}
+
+model TimeSlot {
+  id        String       @id @default(cuid())
+  startTime String
+  endTime   String
+  userId    String
+  groupId   String
+  type      TimeSlotType
+  date      DateTime?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group     Group        @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([groupId])
+  @@index([type])
+  @@index([date])
 }
 
 model ParticipantsOnEvents {
@@ -80,32 +111,42 @@ model Payment {
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken  String?   @db.Text
+  refreshToken String?   @db.Text
+  idToken      String?   @db.Text
+  expiresAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  scope        String?
 
-  @@unique([provider, providerAccountId])
+  accountId             String
+  providerId            String
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  password              String?
+
   @@index([userId])
+  @@map("account")
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+
+  @@unique([token])
   @@index([userId])
+  @@map("session")
 }
 
 model Group {
@@ -115,10 +156,11 @@ model Group {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   events       Event[]
-  code         String?         @unique
+  code         String?        @unique
   users        UserOnGroups[]
   pricingModel PricingModel   @default(FREE)
   owner        User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  timeSlots    TimeSlot[]
 
   @@index([ownerId])
 }
@@ -127,7 +169,7 @@ model User {
   id                   String                 @id @default(cuid())
   name                 String
   email                String                 @unique
-  emailVerified        DateTime?
+  emailVerified        Boolean?
   image                String?
   role                 String                 @default("user")
   createdAt            DateTime               @default(now())
@@ -140,6 +182,10 @@ model User {
   groups               UserOnGroups[]
   ownedGroups          Group[]
   Tokens               Tokens[]
+  timeSlots            TimeSlot[]
+  updatedAt            DateTime
+
+  @@map("user")
 }
 
 model UserOnGroups {
@@ -185,4 +231,15 @@ enum PricingModel {
   FREE
   SUPPORTER
   PREMIUM
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
 }

@@ -1,13 +1,13 @@
 import {
 	TransactionalEmailsApi,
-	TransactionalEmailsApiApiKeys
+	TransactionalEmailsApiApiKeys,
 } from '@sendinblue/client'
 
 const apiInstance = new TransactionalEmailsApi()
 
 apiInstance.setApiKey(
 	TransactionalEmailsApiApiKeys.apiKey,
-	process.env.SENDINBLUE_API_KEY ?? ''
+	process.env.SENDINBLUE_API_KEY ?? '',
 )
 
 export default apiInstance

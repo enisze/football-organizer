@@ -1,43 +1,38 @@
 'use server'
 
+import { authedActionClient } from '@/src/lib/actionClient'
 import { prisma } from '@/src/server/db/client'
+import { z } from 'zod'
 
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+export const addToGroupAction = authedActionClient
+	.schema(z.object({ code: z.string() }))
+	.action(async ({ parsedInput: { code }, ctx: { userId } }) => {
+		const group = await prisma.group.findFirst({
+			where: { code },
+		})
 
-export const addToGroup = async (code: string) => {
-	const session = await getServerComponentAuthSession()
+		if (!group) throw new Error('Group not found')
 
-	const group = await prisma.group.findFirst({
-		where: {
-			code
-		}
+		const isOnGroup = await prisma.userOnGroups.findFirst({
+			where: {
+				groupId: group?.id,
+				id: userId,
+			},
+			select: {
+				group: { select: { name: true, id: true } },
+			},
+		})
+
+		if (isOnGroup) return isOnGroup
+
+		return await prisma.userOnGroups.create({
+			data: {
+				groupId: group?.id,
+				id: userId,
+			},
+			select: {
+				id: true,
+				group: { select: { name: true, id: true } },
+			},
+		})
 	})
-	if (!session?.user?.id) throw new Error('No user id')
-
-	if (!group) throw new Error('Group not found')
-
-	const isOnGrouo = await prisma.userOnGroups.findFirst({
-		where: {
-			groupId: group?.id,
-			id: session?.user?.id
-		},
-		select: {
-			group: { select: { name: true, id: true } }
-		}
-	})
-
-	if (isOnGrouo) return isOnGrouo
-
-	const result = await prisma.userOnGroups.create({
-		data: {
-			groupId: group?.id,
-			id: session?.user?.id
-		},
-		select: {
-			id: true,
-			group: { select: { name: true, id: true } }
-		}
-	})
-
-	return result
-}

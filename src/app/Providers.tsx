@@ -1,17 +1,21 @@
 'use client'
+
 import { Toaster } from '@/ui/toaster'
-import { SessionProvider } from 'next-auth/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from 'next-themes'
-import type { ReactNode } from 'react'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import { type ReactNode, useState } from 'react'
 
 const Providers = ({ children }: { children: ReactNode }) => {
+	const [queryClient] = useState(() => new QueryClient())
+
 	return (
-		<SessionProvider>
-			<ThemeProvider attribute='class'>
+		<ThemeProvider attribute="class">
+			<QueryClientProvider client={queryClient}>
 				<Toaster />
-				{children}
-			</ThemeProvider>
-		</SessionProvider>
+				<NuqsAdapter>{children}</NuqsAdapter>
+			</QueryClientProvider>
+		</ThemeProvider>
 	)
 }
 

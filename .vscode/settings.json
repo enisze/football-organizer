@@ -4,5 +4,21 @@
 	"jest.runMode": {
 		"type": "on-demand",
 		"coverage": false
-	}
+	},
+	"[typescript][typescriptreact][json][html][javascript]": {
+		"editor.defaultFormatter": "biomejs.biome",
+		"editor.codeActionsOnSave": {
+			"quickfix.biome": "explicit"
+		}
+	},
+	"files.autoSave": "onFocusChange",
+	"editor.formatOnSave": true,
+	"editor.formatOnType": true,
+	"editor.formatOnPaste": true,
+	"editor.codeActionsOnSave": {
+		"source.fixAll.biome": "explicit",
+		"source.organizeImports.biome": "explicit"
+	},
+	"biome.requireConfiguration": false,
+	"biome.lspBin": "./biome-test/node_modules/@biomejs/biome/bin/biome"
 }

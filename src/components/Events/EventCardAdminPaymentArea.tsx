@@ -1,5 +1,4 @@
-import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
-
+import { isOwnerOfGroupOfEvent } from '@/src/helpers/isOwnerOfGroup'
 import { prisma } from '@/src/server/db/client'
 
 type EventCardAdminPaymentAreaProps = {
@@ -9,21 +8,21 @@ type EventCardAdminPaymentAreaProps = {
 
 export const EventCardAdminPaymentArea = async ({
 	eventId,
-	userId
+	userId,
 }: EventCardAdminPaymentAreaProps) => {
-	const isOwner = await isOwnerOfGroup()
+	const isOwner = await isOwnerOfGroupOfEvent(eventId)
 
 	if (!isOwner) return null
 
 	const payment = await prisma.payment.findFirst({
-		where: { eventId, userId }
+		where: { eventId, userId },
 	})
 
 	return (
 		<>
 			{payment && (
 				<>
-					<div>{payment?.amount + ' €'}</div>
+					<div>{`${payment?.amount} €`}</div>
 					<div>{payment?.paymentDate.toDateString()}</div>
 					<span>Bezahlt</span>
 				</>

@@ -7,28 +7,30 @@ import {
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger
+	DialogTrigger,
 } from '@/ui/dialog'
-import { deleteEvent } from './actions'
+import { deleteEventAction } from './actions'
 
-export const DeleteEventButton = async ({ id }: { id: string }) => {
+export const DeleteEventButton = ({ id }: { id: string }) => {
 	return (
 		<Dialog>
-			<DialogTrigger asChild className='flex flex-col gap-y-2 justify-start'>
-				<Button variant='outline'>Delete</Button>
+			<DialogTrigger asChild className="flex flex-col gap-y-2 justify-start">
+				<Button variant="outline">Delete</Button>
 			</DialogTrigger>
-			<DialogContent className='sm:max-w-[425px]'>
+			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
 					<DialogTitle>Delete Event</DialogTitle>
 					<DialogDescription>Are you sure?</DialogDescription>
 				</DialogHeader>
-				<form className='w-full'>
+				<form className="w-full">
 					<Button
-						variant='outline'
+						variant="outline"
 						formAction={async () => {
-							await deleteEvent(id)
+							await deleteEventAction({
+								id,
+							})
 						}}
-						className='w-full'
+						className="w-full"
 					>
 						Delete
 					</Button>

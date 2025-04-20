@@ -1,8 +1,8 @@
 import { Button } from '@/ui/button'
 import { isDateInCertainRange } from '../helpers/isDateInCertainRange'
-import { getServerComponentAuthSession } from '../server/auth/authOptions'
 
 import { formatter } from '../helpers/formatter'
+import { serverAuth } from '../server/auth/session'
 import { prisma } from '../server/db/client'
 
 const paypalLink =
@@ -10,15 +10,15 @@ const paypalLink =
 
 export const PaymentArea = async ({
 	eventId,
-	bookingDate
+	bookingDate,
 }: {
 	eventId: string
 	bookingDate: Date | null
 }) => {
-	const session = await getServerComponentAuthSession()
+	const session = await serverAuth()
 
 	const payment = await prisma.payment.findFirst({
-		where: { eventId, userId: session?.user?.id }
+		where: { eventId, userId: session?.user?.id },
 	})
 
 	const isInCertainRange = bookingDate
@@ -29,18 +29,16 @@ export const PaymentArea = async ({
 
 	if (payment)
 		return (
-			<div className='flex items-center gap-x-2 text-green-500 font-bold'>
-				{formatter.format(payment?.amount) +
-					'€  am ' +
-					payment?.paymentDate.toLocaleDateString('de')}
+			<div className="flex items-center gap-x-2 text-emerald-400 font-bold">
+				{`${formatter.format(payment?.amount)}€ am ${payment?.paymentDate.toLocaleDateString('de')}`}
 				<span>bezahlt</span>
 			</div>
 		)
 
 	return (
-		<div className='flex w-full flex-col items-center justify-center gap-y-2'>
-			<a href={paypalLink} className='w-full'>
-				<Button variant='outline' aria-label='paypal' className='w-full'>
+		<div className="flex w-full flex-col items-center justify-center gap-y-2">
+			<a href={paypalLink} className="w-full">
+				<Button variant="dark" aria-label="paypal" className="w-full">
 					Bezahlen per Paypal
 				</Button>
 			</a>

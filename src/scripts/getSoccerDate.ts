@@ -6,7 +6,7 @@ export const getSoccerDate = () => {
 
 	const dateForSoccer = startOfWeek(addWeeks(date, 1), {
 		weekStartsOn: 1,
-		locale: de
+		locale: de,
 	})
 
 	dateForSoccer.setHours(20)

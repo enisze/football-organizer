@@ -1,11 +1,11 @@
 import { redirect } from 'next/navigation'
 
 import { GroupSelectorServer } from '@/src/components/Groups/GroupSelectorServer'
-import { getServerComponentAuthSession } from '@/src/server/auth/authOptions'
+import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '../../server/db/client'
 
 const MainPage = async () => {
-	const session = await getServerComponentAuthSession()
+	const session = await serverAuth()
 	const groups = await prisma.group.findMany({
 		where: { users: { some: { id: session?.user?.id } } },
 		select: {
@@ -14,15 +14,15 @@ const MainPage = async () => {
 			createdAt: true,
 			events: true,
 			pricingModel: true,
-			users: true
-		}
+			users: true,
+		},
 	})
 
 	if (groups && groups?.length > 0) {
 		redirect(`/group/${groups.at(0)?.id}`)
 	}
 	return (
-		<div className='flex flex-col pb-2 pt-7'>
+		<div className="flex flex-col pb-2 pt-7">
 			<GroupSelectorServer />
 		</div>
 	)

@@ -9,7 +9,7 @@ export const FAQArea = () => {
 		'2. Grundsätzlich erhält jeder, Erinnerungs-Emails zu einem Event, falls noch Plätze frei sind. Diese werden von mir getriggert. Falls du explizit auf Absagen geklickt hast, erhältst du keine mehr.',
 		'3. Du kannst alle E-Mail Benachrichtigungen oben Rechts im Dropdown Menü ausschalten. Wenn du dies tust erhältst du gar keine E-Mails mehr.',
 		'4. Du kannst in der Applikation zu jedem Event Ort, Datum, Uhrzeit, die Teilnehmer und die Absagen sehen.',
-		'5. Du kannst in der Applikation deinen aktuellen Kontostand sehen, wenn du oben rechts auf deinen Namen klickst. Dieser wird anhand deiner Aktionen in der Webapp entsprechend berechnet.'
+		'5. Du kannst in der Applikation deinen aktuellen Kontostand sehen, wenn du oben rechts auf deinen Namen klickst. Dieser wird anhand deiner Aktionen in der Webapp entsprechend berechnet.',
 	]
 	return (
 		<Section>

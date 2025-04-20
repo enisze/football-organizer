@@ -4,7 +4,7 @@ import { Button } from '@/ui/button'
 import { Input } from '@/ui/input'
 import { CheckCircleIcon } from 'lucide-react'
 import { useState } from 'react'
-import { addToGroup } from './action'
+import { addToGroupAction } from './action'
 
 export const SuccessComp = () => {
 	const [groupName, setGroupName] = useState<string | null>(null)
@@ -15,20 +15,24 @@ export const SuccessComp = () => {
 		<form
 			action={async (formData) => {
 				const code = formData.get('code') as string
-				const res = await addToGroup(code)
+				const res = await addToGroupAction({
+					code,
+				}).then((res) => {
+					return res?.data
+				})
 
 				if (res?.group.name) {
 					setGroupName(res.group.name)
 					setGroupId(res.group.id)
 				}
 			}}
-			className='flex flex-col gap-2'
+			className="flex flex-col gap-2"
 		>
-			<Input name='code' placeholder='Group Code' type='text' />
-			<Button type='submit'>Beitreten</Button>
+			<Input name="code" placeholder="Group Code" type="text" />
+			<Button type="submit">Beitreten</Button>
 
 			{groupName && (
-				<div className='flex gap-2 justify-center'>
+				<div className="flex gap-2 justify-center">
 					<CheckCircleIcon />
 					<span>Du bist Gruppe {groupName} beigetreten</span>
 

@@ -39,14 +39,14 @@ describe('Booking reminder', () => {
 				const cssSelector = `td[class="${day}"][datetime="${soccerDate.toISOString()}"]`
 
 				const tdElement = await page.waitForSelector(cssSelector, {
-					timeout: 5000
+					timeout: 5000,
 				})
 
 				if (!tdElement) {
 					soccerboxesError.push({
 						soccerbox,
 						error: 'Fehler, kein tdElement gefunden',
-						day
+						day,
 					})
 
 					continue
@@ -59,13 +59,13 @@ describe('Booking reminder', () => {
 					soccerboxesError.push({
 						soccerbox,
 						error: 'Noch nicht buchbar, kein Link',
-						day
+						day,
 					})
 					continue
 				}
 
 				const hrefValue = await linkElement.evaluate((el) =>
-					el.getAttribute('href')
+					el.getAttribute('href'),
 				)
 
 				const className = '.uzk15__kreis'
@@ -78,13 +78,13 @@ describe('Booking reminder', () => {
 					soccerboxesError.push({
 						soccerbox,
 						error: 'Fehler, keine Color gefunden',
-						day
+						day,
 					})
 					continue
 				}
 
 				colorValue = await color.evaluate(
-					(el) => getComputedStyle(el).backgroundColor
+					(el) => getComputedStyle(el).backgroundColor,
 				)
 
 				const targetField = await tdElement.evaluate((el) => el.textContent)
@@ -96,7 +96,7 @@ describe('Booking reminder', () => {
 					soccerboxesError.push({
 						soccerbox,
 						error: `Falsche Uhrzeit ${targetField} ${time}`,
-						day
+						day,
 					})
 
 					continue
@@ -106,7 +106,7 @@ describe('Booking reminder', () => {
 					soccerboxesError.push({
 						soccerbox,
 						error: 'Gebucht',
-						day
+						day,
 					})
 
 					continue
@@ -116,7 +116,7 @@ describe('Booking reminder', () => {
 					soccerboxesBookable.push({
 						soccerbox,
 						hrefValue,
-						day
+						day,
 					})
 				}
 			}
@@ -134,15 +134,15 @@ describe('Booking reminder', () => {
 					(soccerbox) =>
 						`<li> <a href="${soccerbox.hrefValue}">
             Soccerbox ${soccerbox.soccerbox} hier buchen
-            hier buchen</a></li>`
+            hier buchen</a></li>`,
 				)}
         ${soccerboxesError.map(
 					(soccerbox) =>
-						`<li> Soccerbox ${soccerbox.soccerbox}, Fehler: ${soccerbox.error}</li>`
+						`<li> Soccerbox ${soccerbox.soccerbox}, Fehler: ${soccerbox.error}</li>`,
 				)}
         </ul>
         `,
-					'Es gibt buchbare Soccerboxen'
+					'Es gibt buchbare Soccerboxen',
 				)
 			} catch (error) {
 				console.log('Sending email failed')

@@ -6,7 +6,7 @@ import {
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger
+	DialogTrigger,
 } from '@/ui/dialog'
 import type { CalendarOptions } from 'datebook'
 import { GoogleCalendar, ICalendar, OutlookCalendar } from 'datebook'
@@ -40,7 +40,7 @@ export const AddToCalendarButton: FunctionComponent<
 		description:
 			'Das (hoffentlich) wöchentliche Cl-Finale! Spiel und Spass vorprogrammiert. Lets go.',
 		start: start,
-		end: end
+		end: end,
 	}
 	const icalendar = new ICalendar(options)
 	const googleCalendar = new GoogleCalendar(options)
@@ -50,54 +50,48 @@ export const AddToCalendarButton: FunctionComponent<
 	const outlookLink = outlookCalendar.render()
 
 	return (
-		<Dialog aria-labelledby='modal-title' aria-describedby='modal-desc'>
+		<Dialog>
 			<DialogTrigger asChild>
-				<Button
-					variant='ghost'
-					aria-label='add-to-calender'
-					className='p-0 h-fit'
+				<button
+					className="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition-colors border border-slate-700/50"
+					type="button"
 				>
-					<CalendarPlus />
-				</Button>
+					<CalendarPlus className="w-4 h-4 text-slate-300" />
+				</button>
 			</DialogTrigger>
-			<DialogContent
-				aria-labelledby='size-modal-title'
-				aria-describedby='size-modal-description'
-			>
+			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Zum Kalender hinzufügen</DialogTitle>
 					<DialogDescription>
-						Füge das Event einem Kalender deiner Wahl hinyu
+						Füge das Event einem Kalender deiner Wahl hinzu
 					</DialogDescription>
 				</DialogHeader>
 
-				<div className='flex flex-col gap-y-2'>
+				<div className="flex flex-col gap-y-2">
 					<Button
-						variant='outline'
+						variant="dark"
 						onClick={() => {
 							const blob = new Blob([icalendar.render()], {
-								type: 'text/calendar'
+								type: 'text/calendar',
 							})
-
 							saveAs(blob, 'my-calendar-event.ics')
 						}}
-						aria-label='icalendar'
+						aria-label="icalendar"
 					>
 						ICal Kalendar
 					</Button>
 					<Button
-						variant='outline'
-						aria-label='google-calendar'
+						variant="dark"
+						aria-label="google-calendar"
 						onClick={() => {
 							window.open(googleLink)
 						}}
 					>
 						Google Kalendar
 					</Button>
-
 					<Button
-						variant='outline'
-						aria-label='outlook-calendar'
+						variant="dark"
+						aria-label="outlook-calendar"
 						onClick={() => {
 							window.open(outlookLink)
 						}}

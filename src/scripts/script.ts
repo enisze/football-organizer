@@ -31,7 +31,7 @@ const runScript = async () => {
 	//---FOR LOCAL---
 	const browser = await puppeteer.launch({
 		args: ['--no-sandbox', '--disable-setuid-sandbox'],
-		headless: false
+		headless: false,
 	})
 
 	try {
@@ -54,13 +54,13 @@ const runScript = async () => {
 			const cssSelector = `td[class="${classValue}"][datetime="${soccerDate.toISOString()}"]`
 
 			const tdElement = await page.waitForSelector(cssSelector, {
-				timeout: 5000
+				timeout: 5000,
 			})
 
 			if (!tdElement) {
 				soccerboxesError.push({
 					soccerbox,
-					errror: 'Fehler, kein tdElement gefunden'
+					errror: 'Fehler, kein tdElement gefunden',
 				})
 
 				continue
@@ -72,13 +72,13 @@ const runScript = async () => {
 			if (!linkElement) {
 				soccerboxesError.push({
 					soccerbox,
-					errror: 'Noch nicht buchbar, kein Link'
+					errror: 'Noch nicht buchbar, kein Link',
 				})
 				continue
 			}
 
 			const hrefValue = await linkElement.evaluate((el) =>
-				el.getAttribute('href')
+				el.getAttribute('href'),
 			)
 
 			const className = '.uzk15__kreis'
@@ -90,13 +90,13 @@ const runScript = async () => {
 			if (!color) {
 				soccerboxesError.push({
 					soccerbox,
-					error: 'Fehler, keine Color gefunden'
+					error: 'Fehler, keine Color gefunden',
 				})
 				continue
 			}
 
 			colorValue = await color.evaluate(
-				(el) => getComputedStyle(el).backgroundColor
+				(el) => getComputedStyle(el).backgroundColor,
 			)
 
 			const targetField = await tdElement.evaluate((el) => el.textContent)
@@ -107,7 +107,7 @@ const runScript = async () => {
 			) {
 				soccerboxesError.push({
 					soccerbox,
-					error: `Falsche Uhrzeit ${targetField} ${time}`
+					error: `Falsche Uhrzeit ${targetField} ${time}`,
 				})
 
 				continue
@@ -116,7 +116,7 @@ const runScript = async () => {
 			if (colorValue === redColor) {
 				soccerboxesError.push({
 					soccerbox,
-					error: 'Gebucht'
+					error: 'Gebucht',
 				})
 
 				continue
@@ -125,7 +125,7 @@ const runScript = async () => {
 			if (colorValue === greenColor) {
 				soccerboxesBookable.push({
 					soccerbox,
-					hrefValue
+					hrefValue,
 				})
 			}
 		}
@@ -149,15 +149,15 @@ const runScript = async () => {
 					(soccerbox) =>
 						`<li> <a href="${soccerbox.hrefValue}">
             Soccerbox ${soccerbox.soccerbox} hier buchen
-            hier buchen</a></li>`
+            hier buchen</a></li>`,
 				)}
         ${soccerboxesError.map(
 					(soccerbox) =>
-						`<li> Soccerbox ${soccerbox.soccerbox}, Fehler: ${soccerbox.error}</li>`
+						`<li> Soccerbox ${soccerbox.soccerbox}, Fehler: ${soccerbox.error}</li>`,
 				)}
         </ul>
         `,
-			'Es gibt buchbare Soccerboxen'
+			'Es gibt buchbare Soccerboxen',
 		)
 	}
 }
@@ -167,7 +167,7 @@ const getSoccerDate = () => {
 
 	const dateForSoccer = startOfWeek(addWeeks(date, 2), {
 		weekStartsOn: 2,
-		locale: de
+		locale: de,
 	})
 
 	dateForSoccer.setHours(20)

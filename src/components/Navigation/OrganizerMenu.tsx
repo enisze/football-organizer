@@ -1,33 +1,43 @@
 'use client'
 import { revalidateGroupAction } from '@/src/app/group/[groupId]/actions'
+import { signOut, useSession } from '@/src/lib/auth-client'
+import { routes } from '@/src/shared/navigation'
 import { Avatar, AvatarFallback } from '@/ui/avatar'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuTrigger
+	DropdownMenuTrigger,
 } from '@/ui/dropdown-menu'
 import { Label } from '@/ui/label'
 import { Separator } from '@/ui/separator'
 import { Switch } from '@/ui/switch'
-import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useCallback, useState, type FunctionComponent } from 'react'
+import {
+	redirect,
+	usePathname,
+	useRouter,
+	useSearchParams,
+} from 'next/navigation'
+import {
+	type FunctionComponent,
+	type ReactNode,
+	useCallback,
+	useState,
+} from 'react'
 import { NotificationBubble } from '../NotificationBubble'
 
 export const OrganizerMenu: FunctionComponent<{
 	balance: number | null | undefined
-	selector: JSX.Element
+	selector: ReactNode
 	isOwner: boolean
-}> = ({ balance, selector, isOwner }) => {
+	groupId?: string
+}> = ({ balance, selector, isOwner, groupId }) => {
 	const [open, setOpen] = useState(false)
 	const { data } = useSession()
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
 	const router = useRouter()
-
-	const groupId = pathname?.split('/').at(-1)
 
 	const isOnDashboard = pathname?.includes('/group/')
 
@@ -38,7 +48,7 @@ export const OrganizerMenu: FunctionComponent<{
 
 			return params.toString()
 		},
-		[searchParams]
+		[searchParams],
 	)
 
 	if (!data?.user) return null
@@ -46,23 +56,35 @@ export const OrganizerMenu: FunctionComponent<{
 	const hasPaypalName = Boolean(data.user.paypalName)
 
 	const name = data.user.name
-	const res = name?.split(' ')
-	const first = res ? (res[0]?.charAt(0) ?? 'X') : 'X'
-	const second = res ? (res[1]?.charAt(0) ?? 'X') : 'X'
+	const lettersOnly = (name ?? '').replace(/[^A-Za-z\s]/g, '').trim()
+
+	let first = 'X'
+	let second = 'X'
+
+	if (lettersOnly) {
+		const words = lettersOnly.split(/\s+/)
+		if (words.length > 1) {
+			first = words[0]?.charAt(0) || 'X'
+			second = words[1]?.charAt(0) || 'X'
+		} else {
+			first = lettersOnly.charAt(0) || 'X'
+			second = lettersOnly.charAt(1) || 'X'
+		}
+	}
 
 	return (
 		<DropdownMenu open={open} onOpenChange={setOpen}>
-			<DropdownMenuTrigger className='flex items-center justify-between gap-x-2'>
-				<div className='relative flex'>
-					<Avatar className='flex items-center justify-center border-[1px]'>
-						<AvatarFallback className='bg-white dark:bg-slate-900'>
+			<DropdownMenuTrigger className="flex items-center justify-between gap-x-2">
+				<div className="relative flex">
+					<Avatar className="flex items-center justify-center border-[1px]">
+						<AvatarFallback className="bg-white dark:bg-slate-900">
 							{first + second}
 						</AvatarFallback>
 					</Avatar>
 					{!hasPaypalName && <NotificationBubble />}
 				</div>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align='end'>
+			<DropdownMenuContent align="end">
 				<DropdownMenuItem onClick={() => setOpen(!open)}>
 					{name}
 				</DropdownMenuItem>
@@ -71,19 +93,22 @@ export const OrganizerMenu: FunctionComponent<{
 				<Separator />
 
 				<DropdownMenuItem hidden={!isOwner}>
-					<div className='relative flex w-full items-center gap-x-1'>
+					<div className="relative flex w-full items-center gap-x-1">
 						<Label>Admin View</Label>
 						<Switch
-							id='admin-view'
+							id="admin-view"
 							checked={isOwner}
 							onClick={async () => {
 								router.push(
-									//@ts-expect-error next issue
-									pathname + '?' + createQueryString('isOwner', !isOwner)
+									`${pathname}?${createQueryString('isOwner', isOwner ? 'false' : 'true')}`,
 								)
 
 								await new Promise((resolve) => setTimeout(resolve, 500))
-								await revalidateGroupAction()
+								if (groupId) {
+									await revalidateGroupAction({
+										groupId,
+									})
+								}
 							}}
 						/>
 					</div>
@@ -91,7 +116,7 @@ export const OrganizerMenu: FunctionComponent<{
 
 				{isOnDashboard && (
 					<DropdownMenuItem onClick={() => setOpen(!open)}>
-						<div className='relative flex w-full'>
+						<div className="relative flex w-full">
 							<Link href={`/settings/groups/${groupId}`}>
 								Gruppeneinstellungen
 							</Link>
@@ -102,14 +127,20 @@ export const OrganizerMenu: FunctionComponent<{
 				<Separator />
 
 				<DropdownMenuItem onClick={() => setOpen(!open)}>
-					<div className='relative flex w-full'>
+					<div className="relative flex w-full">
 						<Link href={'/settings/user'}>Accounteinstellungen</Link>
 						{!hasPaypalName && <NotificationBubble />}
 					</div>
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					onClick={async () => {
-						await signOut({ callbackUrl: '/' })
+						await signOut({
+							fetchOptions: {
+								onSuccess: () => {
+									redirect(routes.signIn())
+								},
+							},
+						})
 					}}
 				>
 					Ausloggen
