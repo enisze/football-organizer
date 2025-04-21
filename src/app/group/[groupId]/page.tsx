@@ -71,7 +71,7 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 	]
 
 	return (
-		<div className="flex min-h-screen flex-col pb-2">
+		<div className="flex flex-col pb-2">
 			<div className="flex-1">
 				{tab === 'events' && <CurrentEventsPage groupId={groupId} />}
 

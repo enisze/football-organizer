@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/utils/cn'
 import { Badge } from '@/ui/badge'
+import { Button } from '@/ui/button'
 import { Calendar } from '@/ui/calendar'
 import {
 	Card,
@@ -10,10 +11,13 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/ui/card'
+import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover'
 import { Slider } from '@/ui/slider'
 import { Tabs, TabsList, TabsTrigger } from '@/ui/tabs'
 import type { User } from '@prisma/client'
-import { Clock } from 'lucide-react'
+import { format } from 'date-fns'
+import { de } from 'date-fns/locale'
+import { CalendarIcon, Clock } from 'lucide-react'
 import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
 import {
@@ -65,35 +69,60 @@ export function GroupAvailabilityView({
 
 	return (
 		<div className="container mx-auto space-y-8 pt-2">
-			<div className="grid gap-6 md:grid-cols-[300px_1fr]">
-				<div className="space-y-4">
-					<Card className="bg-white/5 backdrop-blur-sm border-white/10">
-						<CardHeader>
-							<CardTitle className="text-2xl">Datum</CardTitle>
-							<CardDescription className="text-white/70">
-								Wähle ein Datum aus
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<Calendar
-								id="date-picker"
-								mode="single"
-								selected={currentDate}
-								onSelect={handleDateChange}
-								className="mx-auto"
-							/>
-						</CardContent>
-					</Card>
+			<Card className="bg-white/5 backdrop-blur-sm border-white/10">
+				<CardHeader>
+					<CardTitle className="text-2xl">
+						{currentDate.toLocaleDateString('de-DE', {
+							weekday: 'long',
+							month: 'long',
+							day: 'numeric',
+						})}
+					</CardTitle>
+					<div className="flex items-center mt-2">
+						<Clock className="mr-2 h-5 w-5 text-white/70" />
+						<CardDescription className="text-white/70">
+							Gruppenverfügbarkeit (Gruppengröße: {users.length})
+						</CardDescription>
+					</div>
+				</CardHeader>
+				<CardContent className="space-y-6">
+					<div className="grid gap-6 md:grid-cols-2">
+						<div>
+							<h3 className="text-lg font-semibold mb-2">Datum</h3>
+							<Popover>
+								<PopoverTrigger asChild>
+									<Button
+										variant="outline"
+										className={cn(
+											'w-full justify-start text-left font-normal hover:bg-slate-700',
+											!date && 'text-muted-foreground',
+										)}
+									>
+										<CalendarIcon className="mr-2" />
+										{date ? (
+											format(date, 'PPP', { locale: de })
+										) : (
+											<span>Datum auswählen</span>
+										)}
+									</Button>
+								</PopoverTrigger>
+								<PopoverContent className="w-auto p-0">
+									<Calendar
+										id="date-picker"
+										mode="single"
+										selected={currentDate}
+										onSelect={handleDateChange}
+										className="mx-auto"
+									/>
+								</PopoverContent>
+							</Popover>
+						</div>
 
-					<Card className="bg-white/5 backdrop-blur-sm border-white/10">
-						<CardHeader>
-							<CardTitle className="text-2xl">Filter</CardTitle>
-							<CardDescription className="text-white/70">
+						<div>
+							<h3 className="text-lg font-semibold mb-2">
 								Mindestanzahl verfügbarer Nutzer
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<div className="px-2 pt-4">
+							</h3>
+							<div className="px-2">
 								<Slider
 									defaultValue={[8]}
 									max={10}
@@ -113,30 +142,13 @@ export function GroupAvailabilityView({
 									className="[&>[role=slider]]:bg-white [&>[role=slider]]:border-white/10"
 								/>
 							</div>
-							<div className="mt-4 text-center text-sm text-white/50">
+							<div className="mt-2 text-center text-sm text-white/50">
 								Mindestens {Number.parseInt(minUsers || '0')} Nutzer
 							</div>
-						</CardContent>
-					</Card>
-				</div>
-
-				<Card className="bg-white/5 backdrop-blur-sm border-white/10">
-					<CardHeader>
-						<CardTitle className="text-2xl">
-							{currentDate.toLocaleDateString('de-DE', {
-								weekday: 'long',
-								month: 'long',
-								day: 'numeric',
-							})}
-						</CardTitle>
-						<div className="flex items-center mt-2">
-							<Clock className="mr-2 h-5 w-5 text-white/70" />
-							<CardDescription className="text-white/70">
-								Gruppenverfügbarkeit (Gruppengröße: {users.length})
-							</CardDescription>
 						</div>
-					</CardHeader>
-					<CardContent className="space-y-6">
+					</div>
+
+					<div className="border-t border-white/10 pt-6">
 						<Tabs
 							value={duration ?? undefined}
 							onValueChange={(value) => {
@@ -173,7 +185,7 @@ export function GroupAvailabilityView({
 							</TabsList>
 						</Tabs>
 
-						<div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(250px,1fr))] auto-rows-[160px]">
+						<div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(250px,1fr))] auto-rows-[160px] mt-6">
 							{processedSlots.map((slot, index) => {
 								const availableCount = slot.availableUsers.length
 								const percentage = (availableCount / 10) * 100
@@ -237,9 +249,9 @@ export function GroupAvailabilityView({
 								</div>
 							)}
 						</div>
-					</CardContent>
-				</Card>
-			</div>
+					</div>
+				</CardContent>
+			</Card>
 		</div>
 	)
 }
