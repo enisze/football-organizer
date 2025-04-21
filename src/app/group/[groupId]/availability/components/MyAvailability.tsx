@@ -43,10 +43,7 @@ export function MyAvailability({
 	}
 
 	return (
-		<div className="container mx-auto space-y-8">
-			<h2 className="text-3xl font-bold mb-4 text-center">
-				Meine Verfügbarkeit
-			</h2>
+		<div className="container mx-auto space-y-8 pt-2">
 			<Tabs defaultValue="general" className="w-full flex flex-col">
 				<TabsList className="inline-flex rounded-xl bg-white/5 p-1 self-center">
 					<TabsTrigger
@@ -67,7 +64,7 @@ export function MyAvailability({
 					<div className="grid gap-6 md:grid-cols-2">
 						<Card className="bg-white/5 backdrop-blur-sm border-white/10">
 							<CardHeader>
-								<CardTitle className="text-2xl flex items-center gap-2">
+								<CardTitle className="text-lg flex items-center gap-2">
 									<Clock className="h-4 w-4 " />
 									Werktags-Verfügbarkeit
 								</CardTitle>
@@ -86,8 +83,8 @@ export function MyAvailability({
 
 						<Card className="bg-white/5 backdrop-blur-sm border-white/10">
 							<CardHeader>
-								<CardTitle className="text-2xl flex items-center gap-2">
-									<Clock className="h-4 w-4 " />
+								<CardTitle className="text-lg flex items-center gap-2">
+									<Clock className="h-4 w-4 flex-none" />
 									Wochenend-Verfügbarkeit
 								</CardTitle>
 								<CardDescription className="text-white/70">
@@ -108,7 +105,8 @@ export function MyAvailability({
 				<TabsContent value="specific" className="space-y-4">
 					<Card className="bg-white/5 backdrop-blur-sm border-white/10">
 						<CardHeader>
-							<CardTitle className="text-2xl">
+							<CardTitle className="text-lg flex items-center gap-2">
+								<Clock className="h-4 w-4 flex-none" />
 								Tagesspezifische Verfügbarkeit
 							</CardTitle>
 							<CardDescription className="text-white/70">

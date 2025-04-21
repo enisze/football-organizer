@@ -64,10 +64,7 @@ export function GroupAvailabilityView({
 	const currentDate = date ? new Date(date) : initialDate
 
 	return (
-		<div className="container mx-auto space-y-8">
-			<h2 className="text-3xl font-bold mb-4 text-center">
-				Verfügbare Termine
-			</h2>
+		<div className="container mx-auto space-y-8 pt-2">
 			<div className="grid gap-6 md:grid-cols-[300px_1fr]">
 				<div className="space-y-4">
 					<Card className="bg-white/5 backdrop-blur-sm border-white/10">
@@ -100,11 +97,18 @@ export function GroupAvailabilityView({
 								<Slider
 									defaultValue={[8]}
 									max={10}
+									min={1}
 									step={1}
 									value={[Number.parseInt(minUsers || '8')]}
 									onValueChange={(value) => {
+										const val = Number.parseInt(value[0]?.toString() ?? '8')
 										setMinUsers(value[0]?.toString() ?? '8')
-										revalidateGroupAction({ groupId })
+										revalidateGroupAction({
+											groupId,
+											duration: duration ?? '60min',
+											date: currentDate.toISOString(),
+											minUsers: val,
+										})
 									}}
 									className="[&>[role=slider]]:bg-white [&>[role=slider]]:border-white/10"
 								/>
