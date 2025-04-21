@@ -19,7 +19,6 @@ const EventPage = async ({ params }: PageProps) => {
 
 	if (!session || !session.user?.id) {
 		redirect(routes.signIn())
-		// redirect('/api/auth/signin', RedirectType.push)
 	}
 
 	const event = await prisma.event.findUnique({

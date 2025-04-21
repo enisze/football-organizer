@@ -1,7 +1,9 @@
+import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
 import type { Event } from '@prisma/client'
 import { MapAccordion } from '../Map/MapAccordion'
 import { PaymentArea } from '../PaymentArea'
 import { EventStatusArea } from './Buttons/EventStatusArea'
+import { EventCardAdminArea } from './EventCardAdminArea'
 import { EventCardContent } from './EventCardContent'
 import { ParticipantsAreaServer } from './ParticipantsAreaServer'
 
@@ -10,7 +12,8 @@ interface EventDetailsProps {
 	location?: number[]
 }
 
-export function EventDetailsCard({ event, location }: EventDetailsProps) {
+export async function EventDetailsCard({ event, location }: EventDetailsProps) {
+	const isOwner = await isOwnerOfGroup(event.groupId)
 	return (
 		<div className="p-4">
 			<EventCardContent event={event} className="mb-6" hideParticipants />
@@ -35,6 +38,12 @@ export function EventDetailsCard({ event, location }: EventDetailsProps) {
 
 				{event.bookingDate && (
 					<PaymentArea eventId={event.id} bookingDate={event.bookingDate} />
+				)}
+
+				{isOwner && (
+					<div className="p-6 pt-4 bg-slate-900/50">
+						<EventCardAdminArea eventId={event.id} />
+					</div>
 				)}
 			</div>
 		</div>

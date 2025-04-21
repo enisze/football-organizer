@@ -14,7 +14,6 @@ export const NotificationStatusButton = ({ eventId }: { eventId: string }) => {
 					})
 				}}
 				variant="outline"
-				disabled={status === 'executing'}
 			>
 				Keine Emails mehr erhalten
 			</Button>
