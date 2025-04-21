@@ -5,7 +5,7 @@ import { StatusButton } from './StatusButton'
 
 export const EventStatusArea = async ({ id }: { id: string }) => {
 	return (
-		<div className="px-2">
+		<div className="">
 			<div className="text-sm font-medium text-slate-400 mb-2">
 				Mein Status:
 			</div>
