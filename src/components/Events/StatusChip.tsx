@@ -1,8 +1,28 @@
 import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover'
 import type { EventStatus } from '@prisma/client'
-import { Check, X } from 'lucide-react'
 import type { FunctionComponent } from 'react'
-import { QuestionMark } from '../QuestionMark'
+
+const StatusDot: FunctionComponent<{
+	status: EventStatus
+	size?: 'sm' | 'md'
+}> = ({ status, size = 'sm' }) => {
+	const colors = {
+		BOOKED: 'bg-green-500',
+		CANCELED: 'bg-red-500',
+		CREATED: 'bg-gray-400',
+	}
+
+	const sizes = {
+		sm: 'size-[6px]',
+		md: 'size-2',
+	}
+
+	return (
+		<div
+			className={`${sizes[size]} rounded-full ${colors[status]} ${size === 'md' ? 'opacity-70' : ''}`}
+		/>
+	)
+}
 
 export const StatusChip: FunctionComponent<{
 	status: EventStatus
@@ -10,35 +30,26 @@ export const StatusChip: FunctionComponent<{
 	return (
 		<Popover>
 			<PopoverTrigger aria-label="event-status-button">
-				{status === 'BOOKED' ? (
-					<div className="flex items-center gap-1">
-						<Check className="h-4 w-4 text-green-500" />
-						Gebucht
-					</div>
-				) : status === 'CANCELED' ? (
-					<div className="flex items-center gap-1">
-						<X className="h-4 w-4 text-red-500" />
-						Abgesagt
-					</div>
-				) : (
-					<div className="flex items-center gap-1">
-						<QuestionMark className="h-4 w-4" />
-						Nicht gebucht
-					</div>
-				)}
+				<div className="flex items-center gap-2 border rounded-full px-2 font-semibold border-blue-500 text-xs">
+					<StatusDot status={status} />
+					{status === 'BOOKED'
+						? 'Gebucht'
+						: status === 'CANCELED'
+							? 'Abgesagt'
+							: 'Unklar'}
+				</div>
 			</PopoverTrigger>
 			<PopoverContent className="w-full">
-				<div className="flex items-center">
-					<Check className="mr-2 h-4 w-4 text-green-500 opacity-70" />
-					<span>Gebucht, und findet statt. </span>
+				<div className="flex items-center gap-2">
+					<StatusDot status="BOOKED" size="md" />
+					<span>Gebucht, und findet statt.</span>
 				</div>
-				<div className="flex items-center">
-					<X className="mr-2 h-4 w-4 text-red-500 opacity-70" />
-
+				<div className="flex items-center gap-2">
+					<StatusDot status="CANCELED" size="md" />
 					<span>Abgesagt, findet sicher nicht statt.</span>
 				</div>
-				<div className="flex items-center">
-					<QuestionMark className="mr-2 h-4 w-4 opacity-70" />
+				<div className="flex items-center gap-2">
+					<StatusDot status="CREATED" size="md" />
 					<span>Nicht gebucht, brauchen noch Teilnehmer.</span>
 				</div>
 			</PopoverContent>

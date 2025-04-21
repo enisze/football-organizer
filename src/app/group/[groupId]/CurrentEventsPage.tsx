@@ -1,4 +1,4 @@
-import { EventCard } from '@/src/components/Events/EventCard'
+import { MobileEventCard } from '@/src/components/Events/MobileEventCard'
 import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
@@ -29,8 +29,8 @@ async function EventsList({ groupId }: CurrentEventsPageProps) {
 
 	return (
 		<div className="m-8 flex flex-col gap-y-3 justify-center items-center">
-			<div className="flex flex-col">
-				<h2 className="text-3xl font-bold mb-4 ">Aktuelle Events</h2>
+			<div className="flex justify-between w-full">
+				<h2 className="text-2xl font-bold">Events</h2>
 				{isOwner && <EventDialog />}
 			</div>
 			{events.length === 0 ? (
@@ -51,7 +51,8 @@ async function EventsList({ groupId }: CurrentEventsPageProps) {
 
 						return (
 							<li key={event.id}>
-								<EventCard event={event} location={data?.get(event.id)} />
+								{/* <EventCard event={event} location={data?.get(event.id)} /> */}
+								<MobileEventCard event={event} location={data?.get(event.id)} />
 							</li>
 						)
 					})}

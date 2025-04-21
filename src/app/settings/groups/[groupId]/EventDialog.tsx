@@ -19,9 +19,12 @@ export const EventDialog = () => {
 	return (
 		<Dialog open={open} onOpenChange={(open) => setOpen(open)}>
 			<DialogTrigger asChild>
-				<Button type="button" variant="purple" className="flex gap-2 w-fit">
-					<PlusIcon className="h-4 w-4" />
-					Neues Event
+				<Button
+					type="button"
+					variant="purple"
+					className="flex rounded-full w-10"
+				>
+					<PlusIcon className="h-2 w-2" />
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">

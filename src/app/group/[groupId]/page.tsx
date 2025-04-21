@@ -43,12 +43,12 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 
 	const navigationItems = [
 		{
-			title: 'Aktuelle Events',
+			title: 'Events',
 			icon: <IconCalendar className="h-full w-full" />,
 			href: routes.groupDetails({ groupId, search: { tab: 'events' } }),
 		},
 		{
-			title: 'Meine Verfügbarkeit',
+			title: 'Zeiten',
 			icon: <IconUserCircle className="h-full w-full" />,
 			href: routes.groupDetails({
 				groupId,
@@ -56,7 +56,7 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 			}),
 		},
 		{
-			title: 'Gruppenverfügbarkeit',
+			title: 'Gruppenzeiten',
 			icon: <IconUsers className="h-full w-full" />,
 			href: routes.groupDetails({
 				groupId,
@@ -89,13 +89,7 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 				)}
 			</div>
 
-			<div className="fixed bottom-4 left-1/2 -translate-x-1/2">
-				<FloatingDock
-					items={navigationItems}
-					desktopClassName="shadow-lg"
-					mobileClassName="shadow-lg"
-				/>
-			</div>
+			<FloatingDock items={navigationItems} />
 		</div>
 	)
 }
