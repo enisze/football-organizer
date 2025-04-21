@@ -1,4 +1,4 @@
-import { EventCard } from '@/src/components/Events/EventCard'
+import { EventDetailsCard } from '@/src/components/Events/EventDetailsCard'
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
@@ -34,7 +34,7 @@ const EventPage = async ({ params }: PageProps) => {
 
 	return (
 		<div className="flex flex-col items-center gap-y-3 pt-4 container mx-auto">
-			<EventCard event={event} location={data?.get(event.id)} />
+			<EventDetailsCard event={event} location={data?.get(event.id)} />
 
 			<NotificationStatusButton eventId={eventId} />
 			<div className="flex gap-1 mt-8 text-center space-y-2">
