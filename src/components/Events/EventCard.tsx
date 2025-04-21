@@ -89,22 +89,15 @@ export const EventCard = async ({ event, location }: EventCardProps) => {
 					</div>
 				</div>
 
-				{isOwner && (
-					<div className="px-6 pb-4">
-						<div className="text-center text-xs font-mono text-slate-500 bg-slate-800/50 py-2 px-3 rounded-lg overflow-x-auto">
-							Id: {id}
-						</div>
-					</div>
-				)}
-
 				<div className="px-6 pb-4">
 					<EventStatusArea id={id} />
 				</div>
 
+				<PaymentArea eventId={id} bookingDate={bookingDate} />
+
 				{isOwner && (
-					<div className="p-6 pt-4 space-y-3 bg-slate-900/50">
+					<div className="p-6 pt-4 bg-slate-900/50">
 						<EventCardAdminArea eventId={id} />
-						<PaymentArea eventId={id} bookingDate={bookingDate} />
 					</div>
 				)}
 			</div>
