@@ -167,18 +167,14 @@ export function AvailabilityEditor({
 							<Button
 								onClick={handleAddSlot}
 								disabled={!newSlot.startTime || !newSlot.endTime}
-								className="bg-white/10 hover:bg-white/20"
+								variant="purple"
 							>
 								Speichern
 							</Button>
 						</div>
 					</div>
 				) : (
-					<Button
-						variant="outline"
-						onClick={() => setIsAdding(true)}
-						className="w-full p-4 bg-white/5 hover:bg-white/10 rounded-xl transition-colors flex items-center justify-center gap-2 border-white/10"
-					>
+					<Button variant="purple" onClick={() => setIsAdding(true)}>
 						<Plus className="h-5 w-5" />
 						<span>Neues Zeitfenster</span>
 					</Button>
