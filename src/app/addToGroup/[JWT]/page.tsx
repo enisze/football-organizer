@@ -41,7 +41,6 @@ export default async function AddToGroup({ params }: PageProps) {
 							if (!JWT) return
 							addUser({ userId, JWT })
 						}}
-						disabled={status === 'executing'}
 					>
 						Beitreten
 					</Button>
