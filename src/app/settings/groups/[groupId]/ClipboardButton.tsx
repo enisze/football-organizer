@@ -8,7 +8,7 @@ export const ClipboardButton = ({ token }: { token: string }) => {
 		<Button
 			onClick={() => {
 				navigator.clipboard.writeText(
-					process.env.NEXT_PUBLIC_BASE_URL + '/addToGroup/' + token,
+					`${process.env.NEXT_PUBLIC_BASE_URL}/addToGroup/${token}`,
 				)
 			}}
 			className="w-fit"

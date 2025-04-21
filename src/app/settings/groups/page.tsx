@@ -3,9 +3,17 @@ import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { SCOPES, oAuth2Client } from '@/src/server/gmail'
 import { routes } from '@/src/shared/navigation'
-import { OrganizerLink } from '@/ui/OrganizerLink'
-import { Container } from '@/ui/container'
-import { Separator } from '@/ui/separator'
+import { Badge } from '@/ui/badge'
+import { Button } from '@/ui/button'
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from '@/ui/card'
+import { Calendar, Settings, Users } from 'lucide-react'
+import Link from 'next/link'
 
 const GroupSettings = async () => {
 	const session = await serverAuth()
@@ -34,45 +42,104 @@ const GroupSettings = async () => {
 	const showNewGroup = (groups?.length ?? 0) < 1 || isAdmin
 
 	return (
-		<>
-			<Separator orientation="vertical" />
-			<div className="flex flex-col p-2">
-				{(groups?.length ?? 0) > 0 && (
-					<div className="flex flex-1 gap-x-3">
-						{groups?.map((group) => (
-							<Container key={group.id} className="flex flex-col">
-								<span>{`Name: ${group.name}`}</span>
-								<span>{`Erstellungsdatum: ${group.createdAt}`}</span>
-								<span>{`Users: ${group.users.length}`}</span>
-								<span>{`Events: ${group.events.length}`}</span>
-								<span>{`Pricing: ${group.pricingModel}`}</span>
+		<div className="min-h-screen flex flex-col items-center p-8">
+			<div className="w-full max-w-3xl space-y-6">
+				<div className="flex items-center justify-between">
+					<h1 className="text-2xl font-bold text-white">Meine Gruppen</h1>
+				</div>
 
-								<OrganizerLink
-									href={routes.groupSettingsDetails({ groupId: group.id })}
-									className="flex w-full rounded-md border border-slate-300 bg-transparent mt-3 text-sm dark:border-slate-700 dark:text-slate-50"
-								>
-									Bearbeiten
-								</OrganizerLink>
-							</Container>
-						))}
+				<div className="grid gap-4">
+					{(groups?.length ?? 0) > 0 ? (
+						groups?.map((group) => (
+							<Card
+								key={group.id}
+								className="bg-white/5 backdrop-blur-sm border-white/10"
+							>
+								<CardHeader>
+									<div className="flex items-center justify-between">
+										<div className="space-y-1">
+											<CardTitle className="text-lg text-white">
+												{group.name}
+											</CardTitle>
+											<CardDescription className="text-white/70">
+												Erstellt am {group.createdAt.toLocaleDateString('de')}
+											</CardDescription>
+										</div>
+										<Badge
+											variant="secondary"
+											className="bg-white/10 text-white hover:bg-white/20"
+										>
+											{group.pricingModel}
+										</Badge>
+									</div>
+								</CardHeader>
+								<CardContent>
+									<div className="grid gap-4">
+										<div className="grid grid-cols-2 gap-4">
+											<div className="flex items-center gap-2 bg-white/5 rounded-lg p-3">
+												<Users className="h-4 w-4 text-blue-400" />
+												<div className="text-sm flex gap-2">
+													<p className="text-white/70">Mitglieder</p>
+													<p className="text-white font-medium">
+														{group.users.length}
+													</p>
+												</div>
+											</div>
+											<div className="flex items-center gap-2 bg-white/5 rounded-lg p-3">
+												<Calendar className="h-4 w-4 text-emerald-400" />
+												<div className="text-sm flex gap-2">
+													<p className="text-white/70">Events</p>
+													<p className="text-white font-medium">
+														{group.events.length}
+													</p>
+												</div>
+											</div>
+										</div>
+										<div className="flex w-full">
+											<Link
+												href={routes.groupSettingsDetails({
+													groupId: group.id,
+												})}
+												className="w-full"
+											>
+												<Button
+													variant="ghost"
+													className="gap-2 text-white w-full hover:bg-white/10"
+												>
+													<Settings className="h-4 w-4" />
+													Bearbeiten
+												</Button>
+											</Link>
+										</div>
+									</div>
+								</CardContent>
+							</Card>
+						))
+					) : (
+						<Card className="bg-white/5 backdrop-blur-sm border-white/10">
+							<CardContent className="flex items-center justify-center p-8">
+								<p className="text-white/70">Du hast keine Gruppen</p>
+							</CardContent>
+						</Card>
+					)}
+				</div>
+
+				{showNewGroup && (
+					<div className="pt-4 border-t border-white/10">
+						<NewGroup />
 					</div>
 				)}
 
-				<div className="p-4">
-					<a href={link}>Neues gmail token</a>
+				<div className="pt-4 border-t border-white/10">
+					<a
+						href={link}
+						className="text-white/70 hover:text-white transition-colors"
+					>
+						Gmail Token erneuern
+					</a>
 				</div>
-				{showNewGroup ? (
-					<>
-						<Separator />
-						<NewGroup />
-					</>
-				) : (
-					groups?.length === 0 && (
-						<div className="justify-center flex">Du hast keine Gruppen</div>
-					)
-				)}
 			</div>
-		</>
+		</div>
 	)
 }
 
