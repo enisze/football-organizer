@@ -1,15 +1,32 @@
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from '@/ui/card'
 import { SuccessComp } from './_components/SuccessComp'
 
 const Page = async () => {
 	return (
-		<div className="flex flex-col items-center justify-center p-8">
-			<h1 className="text-2xl font-bold mb-4">Gruppe beitreten</h1>
+		<div className="min-h-screen flex flex-col items-center p-8">
+			<div className="w-full max-w-3xl space-y-6">
+				<div className="flex items-center justify-between">
+					<h1 className="text-2xl font-bold text-white">Gruppe beitreten</h1>
+				</div>
 
-			<div className="text-center mb-8">
-				Gib den 6-stelligen Einladungscode ein, um der Gruppe beizutreten
+				<Card className="bg-white/5 backdrop-blur-sm border-white/10">
+					<CardHeader>
+						<CardTitle className="text-lg text-white">Einladungscode</CardTitle>
+						<CardDescription className="text-white/70">
+							Gib den 6-stelligen Einladungscode ein, um der Gruppe beizutreten
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<SuccessComp />
+					</CardContent>
+				</Card>
 			</div>
-
-			<SuccessComp />
 		</div>
 	)
 }
