@@ -13,12 +13,12 @@ export default function SignInPage() {
 		<Container className="min-h-screen flex items-center justify-center">
 			<Card className="w-full max-w-md p-6 space-y-6">
 				<div className="text-center">
-					<h1 className="text-2xl font-bold">Welcome Back</h1>
+					<h1 className="text-2xl font-bold">Welcome</h1>
 					<p className="text-muted-foreground mt-2">Sign in to your account</p>
 				</div>
 
-				<div className="space-y-4">
-					<form>
+				<div className="flex flex-col gap-y-4">
+					<form className="flex flex-col gap-y-2">
 						<Button
 							variant="outline"
 							className="w-full flex items-center justify-center gap-2"
