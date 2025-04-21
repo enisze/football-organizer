@@ -3,7 +3,6 @@ import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
 import { OrganizerLink } from '@/ui/OrganizerLink'
-import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { getLatLong } from '../../group/[groupId]/getLatLong'
 import { NotificationStatusButton } from './NotificationStatusButton'
@@ -34,16 +33,18 @@ const EventPage = async ({ params }: PageProps) => {
 	const data = await getLatLong([{ address: event.address, id: event.id }])
 
 	return (
-		<div className="flex flex-col items-center gap-y-3">
+		<div className="flex flex-col items-center gap-y-3 pt-4 container mx-auto">
 			<EventCard event={event} location={data?.get(event.id)} />
-			<NotificationStatusButton eventId={eventId} />
 
-			<Link href={routes.group()}>
-				<span>Zur Startseite</span>
-			</Link>
-			<OrganizerLink href={routes.groupDetails({ groupId: event.groupId })}>
-				<div>Zurück zur Gruppe</div>
-			</OrganizerLink>
+			<NotificationStatusButton eventId={eventId} />
+			<div className="flex gap-1 mt-8 text-center space-y-2">
+				<div className="text-sm text-gray-500">
+					<OrganizerLink href={routes.group()}>Zur Startseite</OrganizerLink>
+					<OrganizerLink href={routes.groupDetails({ groupId: event.groupId })}>
+						Zurück zur Gruppe
+					</OrganizerLink>
+				</div>
+			</div>
 		</div>
 	)
 }
