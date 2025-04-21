@@ -11,6 +11,7 @@ import {
 } from '@/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs'
 import type { TimeSlot } from '@prisma/client'
+import { Clock } from 'lucide-react'
 import { useQueryState } from 'nuqs'
 import { revalidateGroupAction } from '../../actions'
 
@@ -66,7 +67,8 @@ export function MyAvailability({
 					<div className="grid gap-6 md:grid-cols-2">
 						<Card className="bg-white/5 backdrop-blur-sm border-white/10">
 							<CardHeader>
-								<CardTitle className="text-2xl">
+								<CardTitle className="text-2xl flex items-center gap-2">
+									<Clock className="h-4 w-4 " />
 									Werktags-Verfügbarkeit
 								</CardTitle>
 								<CardDescription className="text-white/70">
@@ -84,7 +86,8 @@ export function MyAvailability({
 
 						<Card className="bg-white/5 backdrop-blur-sm border-white/10">
 							<CardHeader>
-								<CardTitle className="text-2xl">
+								<CardTitle className="text-2xl flex items-center gap-2">
+									<Clock className="h-4 w-4 " />
 									Wochenend-Verfügbarkeit
 								</CardTitle>
 								<CardDescription className="text-white/70">

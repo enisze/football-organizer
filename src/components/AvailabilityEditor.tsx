@@ -14,7 +14,7 @@ import {
 	SelectValue,
 } from '@/ui/select'
 import type { TimeSlot, TimeSlotType } from '@prisma/client'
-import { Clock, Plus, X } from 'lucide-react'
+import { Plus, X } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
 import { useMemo, useState } from 'react'
 
@@ -77,19 +77,8 @@ export function AvailabilityEditor({
 		setIsAdding(false)
 	}
 
-	const renderTimeRangeLabel = () => {
-		if (type === 'GENERAL') return 'Werktags-Verfügbarkeit (18:00-23:00)'
-		if (type === 'WEEKEND') return 'Wochenend-Verfügbarkeit (10:00-23:00)'
-		return 'Spezifische Verfügbarkeit (10:00-23:00)'
-	}
-
 	return (
 		<div className="select-none space-y-4">
-			<div className="flex items-center gap-2 text-white/70">
-				<Clock className="h-5 w-5" />
-				<span>{renderTimeRangeLabel()}</span>
-			</div>
-
 			<div className="space-y-3">
 				{timeSlots.map((slot) => (
 					<div
