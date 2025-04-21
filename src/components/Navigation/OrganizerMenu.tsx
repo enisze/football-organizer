@@ -128,6 +128,12 @@ export const OrganizerMenu: FunctionComponent<{
 
 				<DropdownMenuItem onClick={() => setOpen(!open)}>
 					<div className="relative flex w-full">
+						<Link href={routes.groupSettings()}>Meine Gruppen</Link>
+					</div>
+				</DropdownMenuItem>
+
+				<DropdownMenuItem onClick={() => setOpen(!open)}>
+					<div className="relative flex w-full">
 						<Link href={'/settings/user'}>Accounteinstellungen</Link>
 						{!hasPaypalName && <NotificationBubble />}
 					</div>
