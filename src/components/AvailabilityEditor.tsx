@@ -117,7 +117,7 @@ export function AvailabilityEditor({
 									<SelectTrigger className="bg-white/5 border-white/10">
 										<SelectValue placeholder="Zeit auswählen" />
 									</SelectTrigger>
-									<SelectContent>
+									<SelectContent className="overflow-y-auto max-h-[10rem]">
 										{timeOptions.map((time) => (
 											<SelectItem key={time} value={time}>
 												{time}
@@ -141,7 +141,7 @@ export function AvailabilityEditor({
 									<SelectTrigger className="bg-white/5 border-white/10">
 										<SelectValue placeholder="Zeit auswählen" />
 									</SelectTrigger>
-									<SelectContent>
+									<SelectContent className="overflow-y-auto max-h-[10rem]">
 										{timeOptions
 											.filter((time) => time > (newSlot.startTime || ''))
 											.map((time) => (
