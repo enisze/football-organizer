@@ -67,7 +67,7 @@ export function GroupAvailabilityView({
 	const currentDate = date ? new Date(date) : initialDate
 
 	return (
-		<div className="container mx-auto space-y-8 pt-2">
+		<div className="container mx-auto space-y-8 pt-2 pb-24">
 			<Card className="bg-white/5 backdrop-blur-sm border-white/10">
 				<CardHeader>
 					<CardTitle className="text-2xl">
