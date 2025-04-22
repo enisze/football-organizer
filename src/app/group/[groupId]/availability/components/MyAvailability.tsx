@@ -43,7 +43,7 @@ export function MyAvailability({
 	}
 
 	return (
-		<div className="container mx-auto space-y-8 pt-2">
+		<div className="container px-4 mx-auto space-y-8 pt-2 pb-20">
 			<Tabs defaultValue="general" className="w-full flex flex-col">
 				<TabsList className="inline-flex rounded-xl bg-white/5 p-1 self-center">
 					<TabsTrigger
