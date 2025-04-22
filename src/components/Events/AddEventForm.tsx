@@ -12,21 +12,25 @@ export const AddEventForm = ({ onSubmit }: { onSubmit: () => void }) => {
 	const groupId = params?.groupId as string
 
 	return (
-		<form className="flex flex-col justify-center gap-2">
-			<TextField
-				label="Address"
-				defaultValue={defaultValues.address}
-				name="address"
-				text=""
-			/>
-
-			<TextField
-				label="Datum"
-				defaultValue={defaultValues.date.toISOString()}
-				type="date"
-				name="date"
-				text=""
-			/>
+		<form className="grid grid-cols-2 justify-center gap-2">
+			<div className="col-span-2">
+				<TextField
+					label="Datum"
+					defaultValue={defaultValues.date.toISOString().split('T')[0]}
+					type="date"
+					name="date"
+					text=""
+					className="w-fit"
+				/>
+			</div>
+			<div className="col-span-2">
+				<TextField
+					label="Addresse"
+					defaultValue={defaultValues.address}
+					name="address"
+					text=""
+				/>
+			</div>
 
 			<TextField
 				label="Startzeit"
@@ -43,7 +47,7 @@ export const AddEventForm = ({ onSubmit }: { onSubmit: () => void }) => {
 				text=""
 			/>
 
-			<div className="flex gap-x-2 items-center">
+			<div className="flex gap-x-2 col-span-2 items-center justify-between">
 				<Label htmlFor="environment">Indoor</Label>
 				<Switch name="environment" defaultValue={defaultValues.environment} />
 			</div>
@@ -64,9 +68,8 @@ export const AddEventForm = ({ onSubmit }: { onSubmit: () => void }) => {
 				text=""
 			/>
 			<Button
-				variant="outline"
+				variant="purple"
 				type="submit"
-				className="bg-[#73C8A9]"
 				formAction={async (formData: FormData) => {
 					formData.append('groupId', groupId)
 					await createEvent(formData)

@@ -1,4 +1,5 @@
 'use client'
+import { cn } from '@/lib/utils/cn'
 import { NotificationBubble } from '@/src/components/NotificationBubble'
 import { Label } from '@radix-ui/react-label'
 import { InfoIcon } from 'lucide-react'
@@ -21,7 +22,10 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
 
 		return (
 			<div
-				className={`grid w-full max-w-sm items-center gap-1.5 ${props.className}`}
+				className={cn(
+					'grid w-full max-w-sm items-center gap-1.5',
+					props.className,
+				)}
 			>
 				<div className="flex items-center gap-x-1">
 					<Label>{label}</Label>

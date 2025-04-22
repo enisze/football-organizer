@@ -30,7 +30,9 @@ export const EventDialog = () => {
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
 					<DialogTitle>Add Event</DialogTitle>
-					<DialogDescription>Add a new event</DialogDescription>
+					<DialogDescription>
+						Create a new event for your group
+					</DialogDescription>
 				</DialogHeader>
 				<AddEventForm
 					onSubmit={() => {
