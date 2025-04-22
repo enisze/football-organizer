@@ -20,7 +20,10 @@ import { CalendarIcon, Clock } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
-import { revalidateTagAction } from '../app/group/[groupId]/actions'
+import {
+	revalidateGroupAction,
+	revalidateTagAction,
+} from '../app/group/[groupId]/actions'
 import type {
 	ProcessedTimeSlot,
 	TimeSlotDuration,
@@ -30,12 +33,14 @@ interface GroupAvailabilityViewProps {
 	users: User[]
 	date: Date
 	processedSlots: ProcessedTimeSlot[]
+	groupId: string
 }
 
 export function GroupAvailabilityView({
 	date: initialDate,
 	users,
 	processedSlots,
+	groupId,
 }: GroupAvailabilityViewProps) {
 	const [date, setDate] = useQueryState('date', {
 		shallow: true,
@@ -53,15 +58,24 @@ export function GroupAvailabilityView({
 		shallow: true,
 	})
 
+	const refresh = useCallback(() => {
+		revalidateTagAction({ tagId: 'groupAvailability' })
+		revalidateGroupAction({
+			groupId,
+			date: date,
+			duration,
+			minUsers: Number.parseInt(minUsers),
+		})
+	}, [groupId, date, duration, minUsers])
+
 	const handleDateChange = useCallback(
 		async (newDate: Date | undefined) => {
 			if (!newDate) return
 			setDate(newDate.toISOString())
 
-			await revalidateTagAction({ tagId: 'groupAvailability' })
-			router.refresh()
+			refresh()
 		},
-		[setDate, router],
+		[setDate, refresh],
 	)
 
 	const currentDate = date ? new Date(date) : initialDate
@@ -130,9 +144,7 @@ export function GroupAvailabilityView({
 											Number.parseInt(minUsers || '8') - 1,
 										)
 										setMinUsers(newValue.toString())
-
-										await revalidateTagAction({ tagId: 'groupAvailability' })
-										router.refresh()
+										refresh()
 									}}
 								>
 									-
@@ -151,9 +163,7 @@ export function GroupAvailabilityView({
 											Math.max(1, Number.parseInt(value)),
 										)
 										setMinUsers(val.toString())
-										await revalidateTagAction({ tagId: 'groupAvailability' })
-
-										router.refresh()
+										refresh()
 									}}
 									className="h-8 w-16 rounded-md border border-white/10 bg-white/5 px-2 text-center focus:outline-none focus:ring-2 focus:ring-white/20"
 								/>
@@ -167,9 +177,7 @@ export function GroupAvailabilityView({
 											Number.parseInt(minUsers || '8') + 1,
 										)
 										setMinUsers(newValue.toString())
-										await revalidateTagAction({ tagId: 'groupAvailability' })
-
-										router.refresh()
+										refresh()
 									}}
 								>
 									+
@@ -186,8 +194,7 @@ export function GroupAvailabilityView({
 							value={duration ?? undefined}
 							onValueChange={async (value) => {
 								setDuration(value as TimeSlotDuration)
-								await revalidateTagAction({ tagId: 'groupAvailability' })
-								router.refresh()
+								refresh()
 							}}
 							className="w-full"
 						>

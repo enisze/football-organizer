@@ -66,6 +66,7 @@ export async function GroupAvailabilityPage({
 			users={uniqueUsers}
 			date={date}
 			processedSlots={filteredAvailability}
+			groupId={groupId}
 		/>
 	)
 }

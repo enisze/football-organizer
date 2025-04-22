@@ -7,6 +7,7 @@ import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
 import { subDays } from 'date-fns'
 import { revalidatePath, revalidateTag } from 'next/cache'
+import { isNullish } from 'remeda'
 import { z } from 'zod'
 
 export const sendPaidButCanceledMailAction = authedActionClient
@@ -96,14 +97,14 @@ export const revalidateGroupAction = async ({
 	minUsers,
 }: {
 	groupId: string
-	date?: string
-	duration?: '60min' | '90min' | '120min'
+	date?: string | null
+	duration?: '60min' | '90min' | '120min' | null
 	minUsers?: number
 }) => {
 	const search: Record<string, string | number> = {}
-	if (date !== undefined) search.date = date
-	if (duration !== undefined) search.duration = duration
-	if (minUsers !== undefined) search.minUsers = minUsers
+	if (!isNullish(date)) search.date = date
+	if (!isNullish(duration)) search.duration = duration
+	if (!isNullish(minUsers)) search.minUsers = minUsers
 
 	revalidatePath(
 		routes.groupDetails({
