@@ -1,5 +1,4 @@
 'use client'
-import { revalidateGroupAction } from '@/src/app/group/[groupId]/actions'
 import { signOut, useSession } from '@/src/lib/auth-client'
 import { routes } from '@/src/shared/navigation'
 import { Avatar, AvatarFallback } from '@/ui/avatar'
@@ -9,9 +8,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/ui/dropdown-menu'
-import { Label } from '@/ui/label'
 import { Separator } from '@/ui/separator'
-import { Switch } from '@/ui/switch'
 import Link from 'next/link'
 import {
 	redirect,
@@ -90,29 +87,6 @@ export const OrganizerMenu: FunctionComponent<{
 				</DropdownMenuItem>
 				{selector}
 				<DropdownMenuItem>Kontostand: {balance ?? 0}€</DropdownMenuItem>
-				<Separator />
-
-				<DropdownMenuItem hidden={!isOwner}>
-					<div className="relative flex w-full items-center gap-x-1">
-						<Label>Admin View</Label>
-						<Switch
-							id="admin-view"
-							checked={isOwner}
-							onClick={async () => {
-								router.push(
-									`${pathname}?${createQueryString('isOwner', isOwner ? 'false' : 'true')}`,
-								)
-
-								await new Promise((resolve) => setTimeout(resolve, 500))
-								if (groupId) {
-									await revalidateGroupAction({
-										groupId,
-									})
-								}
-							}}
-						/>
-					</div>
-				</DropdownMenuItem>
 
 				{isOnDashboard && (
 					<DropdownMenuItem onClick={() => setOpen(!open)}>

@@ -6,7 +6,11 @@ import { CheckCircleIcon } from 'lucide-react'
 import { useState } from 'react'
 import { addToGroupAction } from './action'
 
-export const SuccessComp = () => {
+export const SuccessComp = ({
+	code,
+}: {
+	code: string | undefined | null
+}) => {
 	const [groupName, setGroupName] = useState<string | null>(null)
 	const [groupId, setGroupId] = useState<string | null>(null)
 
@@ -34,6 +38,7 @@ export const SuccessComp = () => {
 					type="text"
 					className="bg-white/5 border-white/10 text-white placeholder:text-white/50"
 					maxLength={6}
+					defaultValue={code ?? undefined}
 				/>
 				<Button type="submit" className="w-full">
 					Beitreten

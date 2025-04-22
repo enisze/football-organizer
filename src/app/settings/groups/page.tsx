@@ -3,6 +3,7 @@ import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { SCOPES, oAuth2Client } from '@/src/server/gmail'
 import { routes } from '@/src/shared/navigation'
+import { OrganizerLink } from '@/ui/OrganizerLink'
 import { Badge } from '@/ui/badge'
 import { Button } from '@/ui/button'
 import {
@@ -12,7 +13,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/ui/card'
-import { Calendar, Settings, Users } from 'lucide-react'
+import { Calendar, Settings, UserPlus, Users } from 'lucide-react'
 import Link from 'next/link'
 
 const GroupSettings = async () => {
@@ -75,9 +76,9 @@ const GroupSettings = async () => {
 								</CardHeader>
 								<CardContent>
 									<div className="grid gap-4">
-										<div className="grid grid-cols-2 gap-4">
+										<div className="grid grid-cols-1 gap-4">
 											<div className="flex items-center gap-2 bg-white/5 rounded-lg p-3">
-												<Users className="h-4 w-4 text-blue-400" />
+												<Users className="h-4 w-4 text-blue-400 flex-none" />
 												<div className="text-sm flex gap-2">
 													<p className="text-white/70">Mitglieder</p>
 													<p className="text-white font-medium">
@@ -86,7 +87,7 @@ const GroupSettings = async () => {
 												</div>
 											</div>
 											<div className="flex items-center gap-2 bg-white/5 rounded-lg p-3">
-												<Calendar className="h-4 w-4 text-emerald-400" />
+												<Calendar className="h-4 w-4 text-emerald-400 flex-none" />
 												<div className="text-sm flex gap-2">
 													<p className="text-white/70">Events</p>
 													<p className="text-white font-medium">
@@ -129,6 +130,20 @@ const GroupSettings = async () => {
 						<NewGroup />
 					</div>
 				)}
+
+				<OrganizerLink
+					href="/group/enter"
+					className="w-full max-w-md px-8 py-6 bg-white/5 hover:bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10 transition-all duration-300 group"
+				>
+					<div className="flex items-center gap-4">
+						<div className="p-3 bg-white/5 rounded-xl group-hover:bg-white/10 transition-colors">
+							<UserPlus className="w-6 h-6 text-white" />
+						</div>
+						<span className="text-2xl font-medium text-white">
+							Gruppe beitreten
+						</span>
+					</div>
+				</OrganizerLink>
 
 				<div className="pt-4 border-t border-white/10">
 					<a

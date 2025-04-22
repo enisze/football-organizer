@@ -7,7 +7,16 @@ import {
 } from '@/ui/card'
 import { SuccessComp } from './_components/SuccessComp'
 
-const Page = async () => {
+const Page = async ({
+	searchParams,
+}: {
+	searchParams: Promise<{
+		code?: string
+	}>
+}) => {
+	const resolvedParams = await searchParams
+	const { code } = resolvedParams
+
 	return (
 		<div className="min-h-screen flex flex-col items-center p-8">
 			<div className="w-full max-w-3xl space-y-6">
@@ -23,7 +32,7 @@ const Page = async () => {
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
-						<SuccessComp />
+						<SuccessComp code={code} />
 					</CardContent>
 				</Card>
 			</div>
