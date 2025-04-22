@@ -1,6 +1,6 @@
 import { GroupAvailabilityView } from '@/src/components/GroupAvailability'
 import { prisma } from '@/src/server/db/client'
-import { unstable_cache } from 'next/cache'
+import { cacheTag } from 'next/dist/server/use-cache/cache-tag'
 import { Suspense } from 'react'
 import { processGroupAvailability } from './availability/processAvailability'
 
@@ -17,6 +17,9 @@ async function GroupAvailabilityData({
 	minUsers,
 	duration,
 }: GroupAvailabilityPageProps) {
+	'use cache'
+
+	cacheTag('groupAvailability')
 	const group = await prisma.group.findUnique({
 		where: { id: groupId },
 		include: {
@@ -86,22 +89,14 @@ async function GroupAvailabilityData({
 		}),
 	])
 
-	const groupAvailability = await unstable_cache(
-		async () =>
-			processGroupAvailability({
-				date,
-				users,
-				daySpecificSlots: daySpecificSlots ?? [],
-				regularSlots: generalSlots ?? [],
-				weekendSlots: weekendSlots ?? [],
-				duration,
-			}),
-		['groupAvailability', groupId, date.toISOString()],
-		{
-			revalidate: 60,
-			tags: ['groupAvailability'],
-		},
-	)()
+	const groupAvailability = processGroupAvailability({
+		date,
+		users,
+		daySpecificSlots: daySpecificSlots ?? [],
+		regularSlots: generalSlots ?? [],
+		weekendSlots: weekendSlots ?? [],
+		duration,
+	})
 
 	const filteredAvailability = groupAvailability.filter(
 		(slot) => slot.availableUsers.length >= minUsers,

@@ -12,6 +12,10 @@ plugins.push(
 const config = {
 	reactStrictMode: true,
 	transpilePackages: ['@trpc/next-layout'],
+	experimental: {
+		useCache: true,
+		dynamicIO: true,
+	},
 }
 
 export default plugins.reduce((config, plugin) => plugin(config), config)

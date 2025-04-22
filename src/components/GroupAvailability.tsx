@@ -19,10 +19,7 @@ import { de } from 'date-fns/locale'
 import { CalendarIcon, Clock } from 'lucide-react'
 import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
-import {
-	revalidateGroupAction,
-	revalidateTagAction,
-} from '../app/group/[groupId]/actions'
+import { revalidateTagAction } from '../app/group/[groupId]/actions'
 import type {
 	ProcessedTimeSlot,
 	TimeSlotDuration,
@@ -59,9 +56,8 @@ export function GroupAvailabilityView({
 		async (newDate: Date | undefined) => {
 			if (!newDate) return
 			setDate(newDate.toISOString())
-			revalidateGroupAction({ groupId })
 		},
-		[setDate, groupId],
+		[setDate],
 	)
 
 	const currentDate = date ? new Date(date) : initialDate
@@ -130,12 +126,8 @@ export function GroupAvailabilityView({
 											Number.parseInt(minUsers || '8') - 1,
 										)
 										setMinUsers(newValue.toString())
-										revalidateGroupAction({
-											groupId,
-											duration: duration ?? '60min',
-											date: currentDate.toISOString(),
-											minUsers: newValue,
-										})
+
+										revalidateTagAction({ tagId: 'groupAvailability' })
 									}}
 								>
 									-
@@ -154,12 +146,7 @@ export function GroupAvailabilityView({
 											Math.max(1, Number.parseInt(value)),
 										)
 										setMinUsers(val.toString())
-										revalidateGroupAction({
-											groupId,
-											duration: duration ?? '60min',
-											date: currentDate.toISOString(),
-											minUsers: val,
-										})
+										revalidateTagAction({ tagId: 'groupAvailability' })
 									}}
 									className="h-8 w-16 rounded-md border border-white/10 bg-white/5 px-2 text-center focus:outline-none focus:ring-2 focus:ring-white/20"
 								/>
@@ -173,12 +160,8 @@ export function GroupAvailabilityView({
 											Number.parseInt(minUsers || '8') + 1,
 										)
 										setMinUsers(newValue.toString())
-										revalidateGroupAction({
-											groupId,
-											duration: duration ?? '60min',
-											date: currentDate.toISOString(),
-											minUsers: newValue,
-										})
+
+										revalidateTagAction({ tagId: 'groupAvailability' })
 									}}
 								>
 									+
@@ -195,12 +178,6 @@ export function GroupAvailabilityView({
 							value={duration ?? undefined}
 							onValueChange={(value) => {
 								setDuration(value as TimeSlotDuration)
-								revalidateGroupAction({
-									groupId,
-									duration: value as TimeSlotDuration,
-									date: currentDate.toISOString(),
-									minUsers: Number.parseInt(minUsers || '0'),
-								})
 								revalidateTagAction({ tagId: 'groupAvailability' })
 							}}
 							className="w-full"
