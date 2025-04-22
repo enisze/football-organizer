@@ -6,11 +6,11 @@ import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
 import type { Group } from '@prisma/client'
-import { sign } from 'jsonwebtoken'
 import { redirect } from 'next/navigation'
 import { ClipboardButton } from './ClipboardButton'
 import { ClipboardCode } from './ClipboardCode'
 import { NameChange } from './NameChange'
+import { UpdateInvitationCodeButton } from './UpdateInvitationCodeButton'
 import { deleteUserFromGroup } from './actions'
 
 interface PageProps {
@@ -31,13 +31,6 @@ const GroupSettings = async ({ params }: PageProps) => {
 
 	const groupName = groupData?.name
 
-	const userName = session?.user?.name
-
-	const token = sign(
-		{ id: groupId, groupName, ownerName: userName },
-		process.env.JWT_SECRET as string,
-	)
-
 	if (!userId || !groupId) {
 		redirect('/')
 	}
@@ -57,16 +50,23 @@ const GroupSettings = async ({ params }: PageProps) => {
 					</div>
 
 					<div className="space-y-4">
-						<div className="flex items-center justify-between">
-							<p className="text-white/70">
-								Mitglieder {groupData?.users.length}/
-								{getPricingInfos(groupData)?.maximalMembers}
-							</p>
-							<div className="flex gap-2">
-								<ClipboardButton token={token} />
-								<ClipboardCode code={groupData?.code ?? ''} />
-							</div>
+						<h2 className="">Neue Mitglieder hinzufügen</h2>
+						<div className="flex flex-col gap-4">
+							{groupData?.code && (
+								<>
+									<ClipboardButton code={groupData?.code} />
+									<div className="flex items-center gap-4">
+										<ClipboardCode code={groupData.code} />
+										<UpdateInvitationCodeButton groupId={groupId} />
+									</div>
+								</>
+							)}
 						</div>
+
+						<p className="text-white/70">
+							Mitglieder {groupData?.users.length}/
+							{getPricingInfos(groupData)?.maximalMembers}
+						</p>
 
 						<div className="space-y-2">
 							{groupData?.users?.map(async (userInGroup, idx) => {

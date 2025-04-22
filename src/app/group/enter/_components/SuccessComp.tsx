@@ -4,7 +4,7 @@ import { Button } from '@/ui/button'
 import { Input } from '@/ui/input'
 import { CheckCircleIcon } from 'lucide-react'
 import { useState } from 'react'
-import { addToGroupAction } from './action'
+import { addToGroupAction } from '../action'
 
 export const SuccessComp = ({
 	code,

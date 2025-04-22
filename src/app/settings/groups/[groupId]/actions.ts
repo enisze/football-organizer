@@ -115,3 +115,27 @@ export const createEvent = authedActionClient
 		revalidatePath(routes.groupDetails({ groupId }))
 		return { success: true }
 	})
+
+export const updateInvitationCode = authedActionClient
+	.schema(z.object({ groupId: z.string() }))
+	.action(async ({ parsedInput: { groupId }, ctx: { userId } }) => {
+		let newCode = nanoid(6)
+		let codeExists = true
+
+		while (codeExists) {
+			newCode = nanoid(6)
+			const existingGroup = await prisma.group.findFirst({
+				where: { code: newCode },
+				select: { code: true },
+			})
+			codeExists = !!existingGroup
+		}
+
+		const updatedGroup = await prisma.group.update({
+			where: { id: groupId, ownerId: userId },
+			data: { code: newCode },
+			select: { code: true },
+		})
+		revalidatePath(routes.groupSettingsDetails({ groupId }))
+		return { success: true, code: updatedGroup.code }
+	})
