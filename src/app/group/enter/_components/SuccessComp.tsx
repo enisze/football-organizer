@@ -3,6 +3,7 @@ import { routes } from '@/src/shared/navigation'
 import { Button, buttonVariants } from '@/ui/button'
 import { Input } from '@/ui/input'
 import { CheckCircleIcon } from 'lucide-react'
+import { useAction } from 'next-safe-action/hooks'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { addToGroupAction } from '../action'
@@ -12,26 +13,47 @@ export const SuccessComp = ({
 }: {
 	code: string | undefined | null
 }) => {
-	const [groupName, setGroupName] = useState<string | null>(null)
-	const [groupId, setGroupId] = useState<string | null>(null)
 	const formRef = useRef<HTMLFormElement>(null)
 	const [codeValues, setCodeValues] = useState<string[]>(Array(6).fill(''))
 	const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
+	const [error, setError] = useState<string | null>(null)
+
+	const { execute: addToGroup, result } = useAction(addToGroupAction, {
+		onError: () => {
+			setError('Der Einladungscode ist ungültig oder abgelaufen')
+		},
+	})
+
+	const groupName = result.data?.group.name
+	const groupId = result.data?.group.id
+
+	const submitForm = async () => {
+		const joinCode = codeValues.join('')
+		addToGroup({
+			code: joinCode,
+		})
+	}
+
 	// Auto-submit when code is provided via props
 	useEffect(() => {
-		if (code && formRef.current) {
+		const submitWithPropCode = async () => {
+			addToGroup({
+				code: code || '',
+			})
+		}
+
+		if (code) {
 			const codeArray = code.split('')
 			setCodeValues(codeArray.concat(Array(6 - codeArray.length).fill('')))
+
 			const timer = setTimeout(() => {
-				formRef.current?.dispatchEvent(
-					new SubmitEvent('submit', { cancelable: true }),
-				)
+				submitWithPropCode()
 			}, 2000)
 
 			return () => clearTimeout(timer)
 		}
-	}, [code])
+	}, [code, addToGroup])
 
 	const handleInputChange = (index: number, value: string) => {
 		const newValue = value.slice(-1) // Only take the last character if multiple are pasted
@@ -40,16 +62,18 @@ export const SuccessComp = ({
 
 		setCodeValues(newCodeValues)
 
+		if (!newCodeValues.every((val) => val !== '')) {
+			setError(null)
+		}
+
 		// Auto-focus next field
 		if (newValue && index < 5) {
 			inputRefs.current[index + 1]?.focus()
 		}
 
 		// Auto-submit when all fields are filled
-		if (newCodeValues.every((val) => val !== '') && formRef.current) {
-			formRef.current.dispatchEvent(
-				new SubmitEvent('submit', { cancelable: true }),
-			)
+		if (newCodeValues.every((val) => val !== '')) {
+			submitForm()
 		}
 	}
 
@@ -67,57 +91,63 @@ export const SuccessComp = ({
 		<div className="space-y-4">
 			<form
 				ref={formRef}
-				action={async () => {
-					const code = codeValues.join('')
-					const res = await addToGroupAction({
-						code,
-					}).then((res) => {
-						return res?.data
-					})
-
-					if (res?.group.name) {
-						setGroupName(res.group.name)
-						setGroupId(res.group.id)
-					}
+				onSubmit={(e) => {
+					e.preventDefault()
+					submitForm()
 				}}
 				className="space-y-4"
 			>
-				<div className="flex gap-2 justify-center">
-					{Array(6)
-						.fill(null)
-						.map((_, index) => (
-							<Input
-								key={index}
-								ref={(el) => {
-									inputRefs.current[index] = el
-								}}
-								type="text"
-								maxLength={1}
-								className="w-12 h-12 text-center bg-white/5 border-white/10 text-white placeholder:text-white/50"
-								value={codeValues[index]}
-								onChange={(e) => handleInputChange(index, e.target.value)}
-								onKeyDown={(e) => handleKeyDown(index, e)}
-								onPaste={(e) => {
-									e.preventDefault()
-									const paste = e.clipboardData.getData('text')
-									const pasteArray = paste.slice(0, 6).split('')
-									const newCodeValues = [...codeValues]
-									pasteArray.forEach((char, i) => {
-										if (index + i < 6) {
-											newCodeValues[index + i] = char
+				<div className="flex flex-col gap-4">
+					<div className="flex gap-2 justify-center">
+						{Array(6)
+							.fill(null)
+							.map((_, index) => (
+								<Input
+									key={index}
+									ref={(el) => {
+										inputRefs.current[index] = el
+									}}
+									type="text"
+									inputMode="numeric"
+									pattern="[0-9]*"
+									maxLength={1}
+									className={`w-12 h-12 text-center bg-white/5 border-white/10 text-white placeholder:text-white/50 ${
+										error ? 'border-red-500' : ''
+									}`}
+									value={codeValues[index]}
+									onChange={(e) => handleInputChange(index, e.target.value)}
+									onKeyDown={(e) => handleKeyDown(index, e)}
+									onPaste={(e) => {
+										e.preventDefault()
+										const paste = e.clipboardData.getData('text')
+										const pasteArray = paste.slice(0, 6).split('')
+										const newCodeValues = [...codeValues]
+										pasteArray.forEach((char, i) => {
+											if (index + i < 6) {
+												newCodeValues[index + i] = char
+											}
+										})
+										setCodeValues(newCodeValues)
+										// Focus the next empty field or the last field
+										const nextEmptyIndex = newCodeValues.findIndex(
+											(val) => !val,
+										)
+										if (nextEmptyIndex !== -1) {
+											inputRefs.current[nextEmptyIndex]?.focus()
+										} else {
+											inputRefs.current[5]?.focus()
 										}
-									})
-									setCodeValues(newCodeValues)
-									// Focus the next empty field or the last field
-									const nextEmptyIndex = newCodeValues.findIndex((val) => !val)
-									if (nextEmptyIndex !== -1) {
-										inputRefs.current[nextEmptyIndex]?.focus()
-									} else {
-										inputRefs.current[5]?.focus()
-									}
-								}}
-							/>
-						))}
+										// Auto-submit if all fields are filled
+										if (newCodeValues.every((val) => val !== '')) {
+											submitForm()
+										}
+									}}
+								/>
+							))}
+					</div>
+					{error && (
+						<div className="text-red-500 text-sm text-center">{error}</div>
+					)}
 				</div>
 				<Button type="submit" className="w-full">
 					Beitreten
