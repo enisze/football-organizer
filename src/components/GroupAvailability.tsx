@@ -17,9 +17,9 @@ import type { User } from '@prisma/client'
 import { format } from 'date-fns'
 import { de } from 'date-fns/locale'
 import { CalendarIcon, Clock } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { useQueryState } from 'nuqs'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
+import { useDebouncedCallback } from 'use-debounce'
 import {
 	revalidateGroupAction,
 	revalidateTagAction,
@@ -49,16 +49,14 @@ export function GroupAvailabilityView({
 		parse: (value) => value as TimeSlotDuration,
 		shallow: true,
 	})
-
-	const router = useRouter()
-
 	const [minUsers, setMinUsers] = useQueryState('minUsers', {
 		defaultValue: '0',
 		parse: (value) => value,
 		shallow: true,
 	})
+	const [calendarOpen, setCalendarOpen] = useState(false)
 
-	const refresh = useCallback(() => {
+	const refresh = useDebouncedCallback(() => {
 		revalidateTagAction({ tagId: 'groupAvailability' })
 		revalidateGroupAction({
 			groupId,
@@ -66,13 +64,13 @@ export function GroupAvailabilityView({
 			duration,
 			minUsers: Number.parseInt(minUsers),
 		})
-	}, [groupId, date, duration, minUsers])
+	}, 300)
 
 	const handleDateChange = useCallback(
 		async (newDate: Date | undefined) => {
 			if (!newDate) return
 			setDate(newDate.toISOString())
-
+			setCalendarOpen(false)
 			refresh()
 		},
 		[setDate, refresh],
@@ -102,7 +100,7 @@ export function GroupAvailabilityView({
 					<div className="grid gap-6 md:grid-cols-2">
 						<div>
 							<h3 className="text-lg font-semibold mb-2">Datum</h3>
-							<Popover>
+							<Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
 								<PopoverTrigger asChild>
 									<Button
 										variant="outline"
