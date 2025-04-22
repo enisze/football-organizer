@@ -52,40 +52,30 @@ const isUserAvailable = (
 	user: User,
 	timeSlot: TimeRange,
 	date: Date,
-	{
-		daySpecificSlots,
-		regularSlots,
-		weekendSlots,
-	}: {
-		daySpecificSlots: (TimeSlot & { user: User })[]
-		regularSlots: (TimeSlot & { user: User })[]
-		weekendSlots: (TimeSlot & { user: User })[]
-	},
+	relevantSlots: (TimeSlot & { user: User })[],
 ): boolean => {
-	const isWeekend = date.getDay() === 0 || date.getDay() === 6
-	const dateString = date.toISOString().split('T')[0]
+	const userSlots = relevantSlots.filter((slot) => slot.user.id === user.id)
 
-	// Check day-specific slots first
-	const userDaySpecificSlots = daySpecificSlots.filter(
-		(slot) =>
-			slot.user.id === user.id &&
-			slot.date &&
-			new Date(slot.date).toISOString().split('T')[0] === dateString,
+	// First check for day-specific slots
+	const daySpecificSlots = userSlots.filter(
+		(slot) => slot.type === 'DAY_SPECIFIC',
 	)
-
-	if (userDaySpecificSlots.length > 0) {
-		return userDaySpecificSlots.some(
+	if (daySpecificSlots.length > 0) {
+		return daySpecificSlots.some(
 			(slot) =>
 				timeToMinutes(slot.startTime) <= timeToMinutes(timeSlot.startTime) &&
 				timeToMinutes(slot.endTime) >= timeToMinutes(timeSlot.endTime),
 		)
 	}
 
-	// Fall back to regular/weekend slots
-	const slots = isWeekend ? weekendSlots : regularSlots
-	return slots.some(
+	// If no day-specific slots, check for weekend/weekday slots
+	const isWeekend = date.getDay() === 0 || date.getDay() === 6
+	const relevantTypeSlots = userSlots.filter(
+		(slot) => slot.type === (isWeekend ? 'WEEKEND' : 'GENERAL'),
+	)
+
+	return relevantTypeSlots.some(
 		(slot) =>
-			slot.user.id === user.id &&
 			timeToMinutes(slot.startTime) <= timeToMinutes(timeSlot.startTime) &&
 			timeToMinutes(slot.endTime) >= timeToMinutes(timeSlot.endTime),
 	)
@@ -145,30 +135,23 @@ const combineConsecutiveSlots = (
 export function processGroupAvailability({
 	date,
 	users,
-	daySpecificSlots,
-	regularSlots,
-	weekendSlots,
+	timeslots,
 	duration = '90min',
 }: {
 	date: Date
 	users: User[]
-	daySpecificSlots: (TimeSlot & { user: User })[]
-	regularSlots: (TimeSlot & { user: User })[]
-	weekendSlots: (TimeSlot & { user: User })[]
+	timeslots: (TimeSlot & { user: User })[]
 	duration: TimeSlotDuration | undefined
 }): ProcessedTimeSlot[] {
-	// Generate base 30-minute slots
+	if (timeslots.length === 0) return []
+
 	const baseSlots = generateBaseTimeSlots(10, 23)
 
 	// Check availability for each base slot
 	const availabilitySlots = baseSlots
 		.map((slot) => {
 			const availableUsers = users.filter((user) =>
-				isUserAvailable(user, slot, date, {
-					daySpecificSlots,
-					regularSlots,
-					weekendSlots,
-				}),
+				isUserAvailable(user, slot, date, timeslots),
 			)
 
 			return {

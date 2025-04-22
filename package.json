@@ -51,7 +51,6 @@
 		"@tabler/icons-react": "^3.31.0",
 		"@tanstack/react-query": "^5.74.3",
 		"@tanstack/react-query-devtools": "^5.74.3",
-		"@types/lodash": "^4.17.16",
 		"@types/nodemailer": "^6.4.17",
 		"axios": "^1.8.4",
 		"better-auth": "^1.2.7",

@@ -2,6 +2,7 @@ import { GroupAvailabilityView } from '@/src/components/GroupAvailability'
 import { prisma } from '@/src/server/db/client'
 import { cacheTag } from 'next/dist/server/use-cache/cache-tag'
 import { Suspense } from 'react'
+import { uniqueBy } from 'remeda'
 import { processGroupAvailability } from './availability/processAvailability'
 
 interface GroupAvailabilityPageProps {
@@ -20,81 +21,40 @@ async function GroupAvailabilityData({
 	'use cache'
 
 	cacheTag('groupAvailability')
-	const group = await prisma.group.findUnique({
-		where: { id: groupId },
-		include: {
-			users: {
-				include: {
-					user: true,
+
+	const timeslots = await prisma.timeSlot.findMany({
+		where: {
+			OR: [
+				{ type: 'DAY_SPECIFIC', date },
+				{ type: 'GENERAL' },
+				{ type: 'WEEKEND' },
+			],
+			groupId,
+			user: {
+				groups: {
+					some: {
+						groupId,
+					},
 				},
 			},
 		},
+		include: {
+			user: true,
+		},
 	})
 
-	if (!group) return null
+	if (!timeslots.length) return null
 
-	const users = group.users.map((u) => u.user)
-	const [daySpecificSlots, generalSlots, weekendSlots] = await Promise.all([
-		// Get day-specific slots for this date
-		prisma.timeSlot.findMany({
-			where: {
-				type: 'DAY_SPECIFIC',
-				date,
-				groupId,
-				user: {
-					groups: {
-						some: {
-							groupId,
-						},
-					},
-				},
-			},
-			include: {
-				user: true,
-			},
-		}),
-		// Get general slots
-		prisma.timeSlot.findMany({
-			where: {
-				type: 'GENERAL',
-				groupId,
-				user: {
-					groups: {
-						some: {
-							groupId,
-						},
-					},
-				},
-			},
-			include: {
-				user: true,
-			},
-		}),
-		// Get weekend slots
-		prisma.timeSlot.findMany({
-			where: {
-				type: 'WEEKEND',
-				groupId,
-				user: {
-					groups: {
-						some: {
-							groupId,
-						},
-					},
-				},
-			},
-			include: {
-				user: true,
-			},
-		}),
-	])
+	// Deduplicate users by ID and keep the first occurrence of each user
+	const uniqueUsers = uniqueBy(
+		timeslots.map((slot) => slot.user),
+		(user) => user.id,
+	)
 
 	const groupAvailability = processGroupAvailability({
 		date,
-		users,
-		daySpecificSlots: daySpecificSlots ?? [],
-		regularSlots: generalSlots ?? [],
-		weekendSlots: weekendSlots ?? [],
+		users: uniqueUsers,
+		timeslots,
 		duration,
 	})
 
@@ -104,7 +64,7 @@ async function GroupAvailabilityData({
 
 	return (
 		<GroupAvailabilityView
-			users={users}
+			users={uniqueUsers}
 			date={date}
 			processedSlots={filteredAvailability}
 			groupId={groupId}
