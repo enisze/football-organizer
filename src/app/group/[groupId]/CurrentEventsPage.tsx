@@ -1,20 +1,20 @@
 import { MobileEventCard } from '@/src/components/Events/MobileEventCard'
-import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
-import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { addDays } from 'date-fns'
-import { Suspense } from 'react'
 import { EventDialog } from '../../settings/groups/[groupId]/EventDialog'
 import { getLatLong } from './getLatLong'
 
 interface CurrentEventsPageProps {
 	groupId: string
+	userId: string
+	isOwner: boolean
 }
 
-async function EventsList({ groupId }: CurrentEventsPageProps) {
-	const session = await serverAuth()
-	const isOwner = await isOwnerOfGroup(groupId)
-
+export async function CurrentEventsPage({
+	groupId,
+	userId,
+	isOwner,
+}: CurrentEventsPageProps) {
 	const events = await prisma.event.findMany({
 		where: { groupId },
 		orderBy: { date: 'asc' },
@@ -43,7 +43,7 @@ async function EventsList({ groupId }: CurrentEventsPageProps) {
 						const payment = await prisma.payment.findFirst({
 							where: {
 								eventId: event.id,
-								userId: session?.user?.id ?? '',
+								userId,
 							},
 						})
 						if (addDays(event.date, 3) < new Date() && !isOwner && payment)
@@ -51,21 +51,16 @@ async function EventsList({ groupId }: CurrentEventsPageProps) {
 
 						return (
 							<li key={event.id}>
-								{/* <EventCard event={event} location={data?.get(event.id)} /> */}
-								<MobileEventCard event={event} location={data?.get(event.id)} />
+								<MobileEventCard
+									event={event}
+									location={data?.get(event.id)}
+									userId={userId}
+								/>
 							</li>
 						)
 					})}
 				</ul>
 			)}
 		</div>
-	)
-}
-
-export default function CurrentEventsPage({ groupId }: CurrentEventsPageProps) {
-	return (
-		<Suspense fallback={<div>Loading events...</div>}>
-			<EventsList groupId={groupId} />
-		</Suspense>
 	)
 }

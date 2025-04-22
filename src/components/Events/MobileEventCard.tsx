@@ -1,4 +1,3 @@
-import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { Drawer, DrawerContent, DrawerTrigger } from '@/ui/drawer'
 import type { Event } from '@prisma/client'
@@ -8,9 +7,14 @@ import { EventDetailsCard } from './EventDetailsCard'
 interface EventCardProps {
 	event: Event
 	location?: number[]
+	userId: string
 }
 
-export async function MobileEventCard({ event, location }: EventCardProps) {
+export async function MobileEventCard({
+	event,
+	location,
+	userId,
+}: EventCardProps) {
 	const participants = await prisma.participantsOnEvents.findMany({
 		where: {
 			eventId: event.id,
@@ -19,8 +23,6 @@ export async function MobileEventCard({ event, location }: EventCardProps) {
 	})
 
 	const joinedUsersAmount = participants.length
-	const session = await serverAuth()
-	const userId = session?.user.id
 
 	const currentStatus = await prisma.participantsOnEvents.findFirst({
 		where: {

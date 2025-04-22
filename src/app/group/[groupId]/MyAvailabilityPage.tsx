@@ -1,22 +1,24 @@
-import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
-import { Suspense } from 'react'
 import { MyAvailability } from './availability/components/MyAvailability'
 
 interface MyAvailabilityPageProps {
 	groupId: string
 	date: string | undefined
+	userId: string
 }
 
-async function MyAvailabilityData({ groupId, date }: MyAvailabilityPageProps) {
-	const session = await serverAuth()
-	if (!session?.user?.id) return null
+export async function MyAvailabilityPage({
+	groupId,
+	date,
+	userId,
+}: MyAvailabilityPageProps) {
+	'use cache'
 
 	const [generalTimeSlots, weekendTimeSlots, daySpecificTimeSlots] =
 		await Promise.all([
 			prisma.timeSlot.findMany({
 				where: {
-					user: { id: session.user.id },
+					user: { id: userId },
 					groupId,
 					type: 'GENERAL',
 				},
@@ -24,7 +26,7 @@ async function MyAvailabilityData({ groupId, date }: MyAvailabilityPageProps) {
 			}),
 			prisma.timeSlot.findMany({
 				where: {
-					user: { id: session.user.id },
+					user: { id: userId },
 					groupId,
 					type: 'WEEKEND',
 				},
@@ -32,7 +34,7 @@ async function MyAvailabilityData({ groupId, date }: MyAvailabilityPageProps) {
 			}),
 			prisma.timeSlot.findMany({
 				where: {
-					user: { id: session.user.id },
+					user: { id: userId },
 					date: date ? new Date(date) : new Date(),
 					groupId,
 					type: 'DAY_SPECIFIC',
@@ -48,16 +50,5 @@ async function MyAvailabilityData({ groupId, date }: MyAvailabilityPageProps) {
 			initialWeekendSlots={weekendTimeSlots}
 			initialDaySpecificSlots={daySpecificTimeSlots}
 		/>
-	)
-}
-
-export default function MyAvailabilityPage({
-	groupId,
-	date,
-}: MyAvailabilityPageProps) {
-	return (
-		<Suspense fallback={<div>Loading your availability...</div>}>
-			<MyAvailabilityData groupId={groupId} date={date} />
-		</Suspense>
 	)
 }

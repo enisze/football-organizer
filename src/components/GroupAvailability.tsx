@@ -17,6 +17,7 @@ import type { User } from '@prisma/client'
 import { format } from 'date-fns'
 import { de } from 'date-fns/locale'
 import { CalendarIcon, Clock } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
 import { revalidateTagAction } from '../app/group/[groupId]/actions'
@@ -29,14 +30,12 @@ interface GroupAvailabilityViewProps {
 	users: User[]
 	date: Date
 	processedSlots: ProcessedTimeSlot[]
-	groupId: string
 }
 
 export function GroupAvailabilityView({
 	date: initialDate,
 	users,
 	processedSlots,
-	groupId,
 }: GroupAvailabilityViewProps) {
 	const [date, setDate] = useQueryState('date', {
 		shallow: true,
@@ -45,6 +44,8 @@ export function GroupAvailabilityView({
 		parse: (value) => value as TimeSlotDuration,
 		shallow: true,
 	})
+
+	const router = useRouter()
 
 	const [minUsers, setMinUsers] = useQueryState('minUsers', {
 		defaultValue: '0',
@@ -56,8 +57,11 @@ export function GroupAvailabilityView({
 		async (newDate: Date | undefined) => {
 			if (!newDate) return
 			setDate(newDate.toISOString())
+
+			await revalidateTagAction({ tagId: 'groupAvailability' })
+			router.refresh()
 		},
-		[setDate],
+		[setDate, router],
 	)
 
 	const currentDate = date ? new Date(date) : initialDate
@@ -120,14 +124,15 @@ export function GroupAvailabilityView({
 									variant="outline"
 									size="icon"
 									className="h-8 w-8 shrink-0 rounded-full"
-									onClick={() => {
+									onClick={async () => {
 										const newValue = Math.max(
 											1,
 											Number.parseInt(minUsers || '8') - 1,
 										)
 										setMinUsers(newValue.toString())
 
-										revalidateTagAction({ tagId: 'groupAvailability' })
+										await revalidateTagAction({ tagId: 'groupAvailability' })
+										router.refresh()
 									}}
 								>
 									-
@@ -135,7 +140,7 @@ export function GroupAvailabilityView({
 								<input
 									type="text"
 									value={minUsers}
-									onChange={(e) => {
+									onChange={async (e) => {
 										const value = e.target.value.replace(/[^0-9]/g, '')
 										if (value === '') {
 											setMinUsers('1')
@@ -146,7 +151,9 @@ export function GroupAvailabilityView({
 											Math.max(1, Number.parseInt(value)),
 										)
 										setMinUsers(val.toString())
-										revalidateTagAction({ tagId: 'groupAvailability' })
+										await revalidateTagAction({ tagId: 'groupAvailability' })
+
+										router.refresh()
 									}}
 									className="h-8 w-16 rounded-md border border-white/10 bg-white/5 px-2 text-center focus:outline-none focus:ring-2 focus:ring-white/20"
 								/>
@@ -154,14 +161,15 @@ export function GroupAvailabilityView({
 									variant="outline"
 									size="icon"
 									className="h-8 w-8 shrink-0 rounded-full"
-									onClick={() => {
+									onClick={async () => {
 										const newValue = Math.min(
 											10,
 											Number.parseInt(minUsers || '8') + 1,
 										)
 										setMinUsers(newValue.toString())
+										await revalidateTagAction({ tagId: 'groupAvailability' })
 
-										revalidateTagAction({ tagId: 'groupAvailability' })
+										router.refresh()
 									}}
 								>
 									+
@@ -176,9 +184,10 @@ export function GroupAvailabilityView({
 					<div className="border-t border-white/10 pt-6">
 						<Tabs
 							value={duration ?? undefined}
-							onValueChange={(value) => {
+							onValueChange={async (value) => {
 								setDuration(value as TimeSlotDuration)
-								revalidateTagAction({ tagId: 'groupAvailability' })
+								await revalidateTagAction({ tagId: 'groupAvailability' })
+								router.refresh()
 							}}
 							className="w-full"
 						>

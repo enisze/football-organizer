@@ -1,7 +1,6 @@
 import { GroupAvailabilityView } from '@/src/components/GroupAvailability'
 import { prisma } from '@/src/server/db/client'
 import { cacheTag } from 'next/dist/server/use-cache/cache-tag'
-import { Suspense } from 'react'
 import { uniqueBy } from 'remeda'
 import { processGroupAvailability } from './availability/processAvailability'
 
@@ -12,7 +11,7 @@ interface GroupAvailabilityPageProps {
 	duration: '60min' | '90min' | '120min' | undefined
 }
 
-async function GroupAvailabilityData({
+export async function GroupAvailabilityPage({
 	groupId,
 	date,
 	minUsers,
@@ -67,17 +66,6 @@ async function GroupAvailabilityData({
 			users={uniqueUsers}
 			date={date}
 			processedSlots={filteredAvailability}
-			groupId={groupId}
 		/>
-	)
-}
-
-export default function GroupAvailabilityPage(
-	props: GroupAvailabilityPageProps,
-) {
-	return (
-		<Suspense fallback={<div>Loading availability...</div>}>
-			<GroupAvailabilityData {...props} />
-		</Suspense>
 	)
 }
