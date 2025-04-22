@@ -12,7 +12,6 @@ import {
 	CardTitle,
 } from '@/ui/card'
 import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover'
-import { Slider } from '@/ui/slider'
 import { Tabs, TabsList, TabsTrigger } from '@/ui/tabs'
 import type { User } from '@prisma/client'
 import { format } from 'date-fns'
@@ -118,20 +117,43 @@ export function GroupAvailabilityView({
 							</Popover>
 						</div>
 
-						<div>
-							<h3 className="text-lg font-semibold mb-2">
-								Mindestanzahl verfügbarer Nutzer
-							</h3>
-							<div className="px-2">
-								<Slider
-									defaultValue={[8]}
-									max={10}
-									min={1}
-									step={1}
-									value={[Number.parseInt(minUsers || '8')]}
-									onValueChange={(value) => {
-										const val = Number.parseInt(value[0]?.toString() ?? '8')
-										setMinUsers(value[0]?.toString() ?? '8')
+						<div className="">
+							<h3 className="text-lg font-semibold mb-2">Nutzeranzahl</h3>
+							<div className="flex items-center justify-center gap-x-2 px-2">
+								<Button
+									variant="outline"
+									size="icon"
+									className="h-8 w-8 shrink-0 rounded-full"
+									onClick={() => {
+										const newValue = Math.max(
+											1,
+											Number.parseInt(minUsers || '8') - 1,
+										)
+										setMinUsers(newValue.toString())
+										revalidateGroupAction({
+											groupId,
+											duration: duration ?? '60min',
+											date: currentDate.toISOString(),
+											minUsers: newValue,
+										})
+									}}
+								>
+									-
+								</Button>
+								<input
+									type="text"
+									value={minUsers}
+									onChange={(e) => {
+										const value = e.target.value.replace(/[^0-9]/g, '')
+										if (value === '') {
+											setMinUsers('1')
+											return
+										}
+										const val = Math.min(
+											10,
+											Math.max(1, Number.parseInt(value)),
+										)
+										setMinUsers(val.toString())
 										revalidateGroupAction({
 											groupId,
 											duration: duration ?? '60min',
@@ -139,8 +161,28 @@ export function GroupAvailabilityView({
 											minUsers: val,
 										})
 									}}
-									className="[&>[role=slider]]:bg-white [&>[role=slider]]:border-white/10"
+									className="h-8 w-16 rounded-md border border-white/10 bg-white/5 px-2 text-center focus:outline-none focus:ring-2 focus:ring-white/20"
 								/>
+								<Button
+									variant="outline"
+									size="icon"
+									className="h-8 w-8 shrink-0 rounded-full"
+									onClick={() => {
+										const newValue = Math.min(
+											10,
+											Number.parseInt(minUsers || '8') + 1,
+										)
+										setMinUsers(newValue.toString())
+										revalidateGroupAction({
+											groupId,
+											duration: duration ?? '60min',
+											date: currentDate.toISOString(),
+											minUsers: newValue,
+										})
+									}}
+								>
+									+
+								</Button>
 							</div>
 							<div className="mt-2 text-center text-sm text-white/50">
 								Mindestens {Number.parseInt(minUsers || '0')} Nutzer
