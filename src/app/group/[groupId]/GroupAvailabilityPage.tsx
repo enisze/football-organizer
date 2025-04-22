@@ -62,11 +62,13 @@ export async function GroupAvailabilityPage({
 	)
 
 	return (
-		<GroupAvailabilityView
-			users={uniqueUsers}
-			date={date}
-			processedSlots={filteredAvailability}
-			groupId={groupId}
-		/>
+		<div className="mb-3 animate-in fade-in duration-500">
+			<GroupAvailabilityView
+				users={uniqueUsers}
+				date={date}
+				processedSlots={filteredAvailability}
+				groupId={groupId}
+			/>
+		</div>
 	)
 }

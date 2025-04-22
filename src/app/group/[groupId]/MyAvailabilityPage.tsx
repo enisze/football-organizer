@@ -44,11 +44,13 @@ export async function MyAvailabilityPage({
 		])
 
 	return (
-		<MyAvailability
-			groupId={groupId}
-			initialWeekdaySlots={generalTimeSlots}
-			initialWeekendSlots={weekendTimeSlots}
-			initialDaySpecificSlots={daySpecificTimeSlots}
-		/>
+		<div className="mb-3 animate-in fade-in duration-500">
+			<MyAvailability
+				groupId={groupId}
+				initialWeekdaySlots={generalTimeSlots}
+				initialWeekendSlots={weekendTimeSlots}
+				initialDaySpecificSlots={daySpecificTimeSlots}
+			/>
+		</div>
 	)
 }
