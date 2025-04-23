@@ -17,4 +17,5 @@ export const defaultValues: Omit<
 	cost: 45,
 	maxParticipants: 10,
 	environment: 'OUTDOOR',
+	isTemplate: false,
 }

@@ -13,14 +13,17 @@ import { Button } from '@/ui/button'
 import { Settings } from 'lucide-react'
 import { BookEventButton } from './Buttons/BookEventButton'
 import { RemindButton } from './Buttons/RemindButton'
+import { RemoveTemplateButton } from './Buttons/RemoveTemplateButton'
 import { deleteEventAction } from './Buttons/actions'
 
 type EventCardAdminAreaProps = {
 	eventId: string
+	isTemplate?: boolean
 }
 
 export const EventCardAdminArea = async ({
 	eventId,
+	isTemplate,
 }: EventCardAdminAreaProps) => {
 	const isOwner = await isOwnerOfGroupOfEvent(eventId)
 
@@ -111,6 +114,7 @@ export const EventCardAdminArea = async ({
 							<div className="flex flex-col gap-2">
 								<RemindButton id={eventId} />
 								<BookEventButton id={eventId} />
+								{isTemplate && <RemoveTemplateButton id={eventId} />}
 								<Button
 									variant="dark-warning"
 									size="sm"

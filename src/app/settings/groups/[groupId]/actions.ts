@@ -1,6 +1,5 @@
 'use server'
 
-import { defaultValues } from '@/src/helpers/constants'
 import { authedActionClient } from '@/src/lib/actionClient'
 import { inngest, prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
@@ -75,14 +74,15 @@ export const deleteUserFromGroup = authedActionClient
 	)
 
 const schema = zfd.formData({
-	address: zfd.text().default(defaultValues.address),
-	date: zfd.text().default(defaultValues.date.toISOString()),
-	startTime: zfd.text().default(defaultValues.startTime),
-	endTime: zfd.text().default(defaultValues.endTime),
-	cost: zfd.numeric().default(defaultValues.cost),
-	maxParticipants: zfd.numeric().default(defaultValues.maxParticipants),
-	environment: zfd.text().default(defaultValues.environment),
+	address: zfd.text(),
+	date: zfd.text(),
+	startTime: zfd.text(),
+	endTime: zfd.text(),
+	cost: zfd.numeric(),
+	maxParticipants: zfd.numeric(),
 	groupId: zfd.text(),
+	environment: zfd.text().optional(),
+	isTemplate: zfd.checkbox(),
 })
 
 export const createEvent = authedActionClient
@@ -101,6 +101,7 @@ export const createEvent = authedActionClient
 				maxParticipants: parsedInput.maxParticipants,
 				groupId,
 				environment: parsedInput.environment === 'on' ? 'INDOOR' : 'OUTDOOR',
+				isTemplate: parsedInput.isTemplate,
 			},
 			select: { id: true },
 		})

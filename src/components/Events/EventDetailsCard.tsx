@@ -42,7 +42,10 @@ export async function EventDetailsCard({ event, location }: EventDetailsProps) {
 
 				{isOwner && (
 					<div className="p-6 pt-4 bg-slate-900/50">
-						<EventCardAdminArea eventId={event.id} />
+						<EventCardAdminArea
+							eventId={event.id}
+							isTemplate={event.isTemplate}
+						/>
 					</div>
 				)}
 			</div>

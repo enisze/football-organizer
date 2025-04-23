@@ -27,11 +27,27 @@ export async function CurrentEventsPage({
 
 	const data = eventInfo.length > 0 ? await getLatLong(eventInfo) : new Map()
 
+	const templates = await prisma.event.findMany({
+		where: {
+			groupId,
+			isTemplate: true,
+		},
+		select: {
+			id: true,
+			address: true,
+			cost: true,
+			environment: true,
+			maxParticipants: true,
+			startTime: true,
+			endTime: true,
+		},
+	})
+
 	return (
 		<div className="m-8 flex flex-col gap-y-3 justify-center items-center">
 			<div className="flex justify-between w-full">
 				<h2 className="text-2xl font-bold">Events</h2>
-				{isOwner && <EventDialog />}
+				{isOwner && <EventDialog templates={templates} />}
 			</div>
 			{events.length === 0 ? (
 				<div className="text-gray-500 text-center">

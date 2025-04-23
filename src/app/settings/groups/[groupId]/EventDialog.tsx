@@ -10,10 +10,15 @@ import {
 	DialogTrigger,
 } from '@/ui/dialog'
 import { toast } from '@/ui/use-toast'
+import type { Event } from '@prisma/client'
 import { PlusIcon } from 'lucide-react'
 import { useState } from 'react'
 
-export const EventDialog = () => {
+interface EventDialogProps {
+	templates: Partial<Event>[]
+}
+
+export const EventDialog = ({ templates }: EventDialogProps) => {
 	const [open, setOpen] = useState(false)
 
 	return (
@@ -42,6 +47,7 @@ export const EventDialog = () => {
 							description: 'Das Event wurde erfolgreich erstellt.',
 						})
 					}}
+					templates={templates}
 				/>
 			</DialogContent>
 		</Dialog>

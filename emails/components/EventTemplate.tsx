@@ -28,8 +28,8 @@ export const EventTemplate = ({ event }: { event: Partial<Event> }) => {
 				{startTime} - {endTime} Uhr
 			</div>
 			<div className="text-start p-1">
-				<strong className="pr-2">Preis:</strong>
-				{cost && formatter.format(cost / (maxParticipants ?? 10)) + '€'}
+				<strong className="pr-2">Kosten:</strong>
+				{cost && `${formatter.format(cost / (maxParticipants ?? 10))}€`}
 			</div>
 		</Section>
 	)

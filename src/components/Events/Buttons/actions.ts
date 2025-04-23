@@ -41,3 +41,27 @@ export const deleteEventAction = authedActionClient
 		}
 		return { success: true }
 	})
+
+export const removeTemplateAction = authedActionClient
+	.schema(z.object({ id: z.string() }))
+	.action(async ({ parsedInput: { id }, ctx: { userId } }) => {
+		const event = await prisma.event.update({
+			where: {
+				id,
+				Group: {
+					users: {
+						some: {
+							id: userId,
+						},
+					},
+				},
+			},
+			data: { isTemplate: false },
+			select: { groupId: true },
+		})
+
+		if (event?.groupId) {
+			revalidateGroup(event.groupId)
+		}
+		return { success: true }
+	})
