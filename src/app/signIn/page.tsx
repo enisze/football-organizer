@@ -1,4 +1,5 @@
 import { authClient } from '@/src/lib/auth-client'
+import { serverAuth } from '@/src/server/auth/session'
 import { Button } from '@/ui/button'
 import { Card } from '@/ui/card'
 import { Container } from '@/ui/container'
@@ -12,6 +13,12 @@ export default async function SignInPage({
 	searchParams: Promise<{ callbackUrl?: string }>
 }) {
 	const resolvedParams = await searchParams
+
+	const session = await serverAuth()
+
+	if (session) {
+		redirect('/')
+	}
 
 	const { callbackUrl } = resolvedParams
 
