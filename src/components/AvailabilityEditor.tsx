@@ -14,9 +14,10 @@ import {
 	SelectValue,
 } from '@/ui/select'
 import type { TimeSlot, TimeSlotType } from '@prisma/client'
+import { useTour } from '@reactour/tour'
 import { Plus, X } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 interface AvailabilityEditorProps {
 	date?: Date
@@ -68,7 +69,9 @@ export function AvailabilityEditor({
 		[isWeekend, type],
 	)
 
-	const handleAddSlot = () => {
+	const { setCurrentStep } = useTour()
+
+	const handleAddSlot = useCallback(() => {
 		if (!newSlot.startTime || !newSlot.endTime) return
 
 		updateTimeSlot({
@@ -80,9 +83,11 @@ export function AvailabilityEditor({
 			groupId,
 		})
 
+		setCurrentStep((prev) => prev + 1)
+
 		setNewSlot({})
 		setIsAdding(false)
-	}
+	}, [newSlot, type, date, day, groupId, updateTimeSlot, setCurrentStep])
 
 	return (
 		<div className='select-none space-y-3'>
@@ -110,21 +115,39 @@ export function AvailabilityEditor({
 				{isAdding ? (
 					<div className='space-y-3 sm:space-y-4 bg-white/5 rounded-xl p-3 sm:p-4'>
 						<div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
-							<div className='space-y-1.5 sm:space-y-2' data-tour='start-time'>
+							<div
+								className='space-y-1.5 sm:space-y-2'
+								data-tour='start-time'
+								onClick={() => {
+									setCurrentStep((prev) => prev + 1)
+								}}
+								onKeyDown={(e) => {
+									if (e.key === 'Enter') {
+										setCurrentStep((prev) => prev + 1)
+									}
+								}}
+							>
 								<Label className='text-sm text-white/70'>Start</Label>
 								<Select
 									value={newSlot.startTime || ''}
-									onValueChange={(value) =>
+									onValueChange={(value) => {
 										setNewSlot((prev) => ({
 											...prev,
 											startTime: value,
 										}))
-									}
+										setCurrentStep((prev) => prev + 1)
+									}}
+									onOpenChange={() => {
+										setCurrentStep((prev) => prev + 1)
+									}}
 								>
 									<SelectTrigger className='bg-white/5 border-white/10 text-sm h-9 sm:h-10'>
 										<SelectValue placeholder='Zeit auswählen' />
 									</SelectTrigger>
-									<SelectContent className='overflow-y-auto max-h-[40vh]'>
+									<SelectContent
+										className='overflow-y-auto max-h-[40vh]'
+										data-tour='start-time-content'
+									>
 										{timeOptions.map((time) => (
 											<SelectItem key={time} value={time} className='text-sm'>
 												{time}
@@ -133,22 +156,37 @@ export function AvailabilityEditor({
 									</SelectContent>
 								</Select>
 							</div>
-							<div className='space-y-1.5 sm:space-y-2' data-tour='end-time'>
+							<div
+								className='space-y-1.5 sm:space-y-2'
+								data-tour='end-time'
+								onClick={() => {
+									setCurrentStep((prev) => prev + 1)
+								}}
+								onKeyDown={(e) => {
+									if (e.key === 'Enter') {
+										setCurrentStep((prev) => prev + 1)
+									}
+								}}
+							>
 								<Label className='text-sm text-white/70'>Ende</Label>
 								<Select
 									value={newSlot.endTime || ''}
-									onValueChange={(value) =>
+									onValueChange={(value) => {
 										setNewSlot((prev) => ({
 											...prev,
 											endTime: value,
 										}))
-									}
+										setCurrentStep((prev) => prev + 1)
+									}}
 									disabled={!newSlot.startTime}
 								>
 									<SelectTrigger className='bg-white/5 border-white/10 text-sm h-9 sm:h-10'>
 										<SelectValue placeholder='Zeit auswählen' />
 									</SelectTrigger>
-									<SelectContent className='overflow-y-auto max-h-[40vh]'>
+									<SelectContent
+										className='overflow-y-auto max-h-[40vh]'
+										data-tour='end-time-content'
+									>
 										{timeOptions
 											.filter((time) => time > (newSlot.startTime || ''))
 											.map((time) => (
@@ -185,7 +223,10 @@ export function AvailabilityEditor({
 				) : (
 					<Button
 						variant='purple'
-						onClick={() => setIsAdding(true)}
+						onClick={() => {
+							setIsAdding(true)
+							setCurrentStep((prev) => prev + 1)
+						}}
 						className='w-full sm:w-auto text-sm h-9 sm:h-10'
 						data-tour='add-time-slot'
 					>

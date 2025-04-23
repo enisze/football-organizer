@@ -12,6 +12,7 @@ import {
 } from '@/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs'
 import type { TimeSlot } from '@prisma/client'
+import { useTour } from '@reactour/tour'
 import { Clock } from 'lucide-react'
 import { useQueryState } from 'nuqs'
 import { groupBy } from 'remeda'
@@ -50,6 +51,8 @@ export function MyAvailability({
 		(slot) => slot.day,
 	)
 
+	const { setCurrentStep } = useTour()
+
 	return (
 		<div className='container px-4 mx-auto space-y-8 pt-2 pb-20'>
 			<h2 className='text-2xl font-bold -mb-4'>Meine Zeiten</h2>
@@ -66,6 +69,9 @@ export function MyAvailability({
 						value='weekly'
 						className='px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5'
 						data-tour='weekly'
+						onClick={() => {
+							setCurrentStep((prev) => prev + 1)
+						}}
 					>
 						Wöchentlich
 					</TabsTrigger>

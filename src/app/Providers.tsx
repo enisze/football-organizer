@@ -33,10 +33,18 @@ const tourSteps = [
 	},
 	{
 		selector: '[data-tour="start-time"]',
+		content: 'Klicke hier um die Startzeit für dein Zeitfenster auszuwählen.',
+	},
+	{
+		selector: '[data-tour="start-time-content"]',
 		content: 'Wähle hier die Startzeit für dein Zeitfenster aus.',
 	},
 	{
 		selector: '[data-tour="end-time"]',
+		content: 'Klicke hier um die Endzeit für dein Zeitfenster auszuwählen.',
+	},
+	{
+		selector: '[data-tour="end-time-content"]',
 		content: 'Wähle hier die Endzeit für dein Zeitfenster aus.',
 	},
 	{
@@ -52,6 +60,8 @@ const tourSteps = [
 const Providers = ({ children }: { children: ReactNode }) => {
 	const [queryClient] = useState(() => new QueryClient())
 
+	const [step, setStep] = useState(0)
+
 	return (
 		<ThemeProvider attribute='class'>
 			<Suspense>
@@ -60,6 +70,10 @@ const Providers = ({ children }: { children: ReactNode }) => {
 					<TourProvider
 						steps={tourSteps}
 						scrollSmooth
+						currentStep={step}
+						setCurrentStep={() => {
+							setStep((prev) => prev + 1)
+						}}
 						styles={{
 							badge: (base) => ({
 								...base,
@@ -79,8 +93,8 @@ const Providers = ({ children }: { children: ReactNode }) => {
 							{ currentStep, setCurrentStep, steps },
 						) => {
 							if (
+								currentStep === 1 ||
 								currentStep === 2 ||
-								currentStep === 3 ||
 								currentStep === (steps?.length ?? 0) - 1
 							)
 								return
