@@ -18,13 +18,18 @@ const Page = async ({
 	}>
 }) => {
 	const session = await serverAuth()
-
-	if (!session?.user) {
-		redirect(routes.signIn())
-	}
-
 	const resolvedParams = await searchParams
 	const { code } = resolvedParams
+
+	if (!session?.user) {
+		redirect(
+			routes.signIn({
+				search: {
+					callbackUrl: routes.enterGroup({ search: { code } }),
+				},
+			}),
+		)
+	}
 
 	return (
 		<div className='w-full max-w-3xl space-y-6 px-4 pt-4'>

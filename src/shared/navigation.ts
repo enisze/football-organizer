@@ -48,7 +48,13 @@ export const { routes, useSafeParams, useSafeSearchParams } =
 			}),
 		}),
 		userSettings: defineRoute('/settings/user'),
-		signIn: defineRoute('/signIn'),
+		signIn: defineRoute('/signIn', {
+			search: z
+				.object({
+					callbackUrl: z.string().optional(),
+				})
+				.optional(),
+		}),
 		oauth2callback: defineRoute('/oauth2callback', {
 			search: z.object({
 				code: z.string(),

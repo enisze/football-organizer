@@ -6,7 +6,15 @@ import { Chrome, MessageSquare } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import CredentialsForm from './CredentialsForm'
 
-export default function SignInPage() {
+export default async function SignInPage({
+	searchParams,
+}: {
+	searchParams: Promise<{ callbackUrl?: string }>
+}) {
+	const resolvedParams = await searchParams
+
+	const { callbackUrl } = resolvedParams
+
 	const isDev = process.env.NODE_ENV === 'development'
 
 	return (
@@ -26,6 +34,7 @@ export default function SignInPage() {
 								'use server'
 								const res = await authClient.signIn.social({
 									provider: 'google',
+									callbackURL: callbackUrl,
 								})
 
 								if (res.data?.url) {
@@ -44,6 +53,7 @@ export default function SignInPage() {
 								'use server'
 								const res = await authClient.signIn.social({
 									provider: 'discord',
+									callbackURL: callbackUrl,
 								})
 
 								if (res.data?.url) {
