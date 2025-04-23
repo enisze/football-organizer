@@ -40,7 +40,7 @@ export const NewGroup = async ({
 						className='w-fit'
 						formAction={async (formData) => {
 							'use server'
-							createGroup(formData)
+							await createGroup(formData)
 						}}
 					>
 						<Plus className='w-5 h-5' />
