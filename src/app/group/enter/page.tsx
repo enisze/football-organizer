@@ -1,3 +1,5 @@
+import { serverAuth } from '@/src/server/auth/session'
+import { routes } from '@/src/shared/navigation'
 import {
 	Card,
 	CardContent,
@@ -5,6 +7,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/ui/card'
+import { redirect } from 'next/navigation'
 import { SuccessComp } from './_components/SuccessComp'
 
 const Page = async ({
@@ -14,6 +17,21 @@ const Page = async ({
 		code?: string
 	}>
 }) => {
+	const session = await serverAuth()
+
+	if (!session?.user) {
+		const resolvedParams = await searchParams
+		redirect(
+			`/signIn?callbackUrl=${encodeURIComponent(
+				routes.enterGroup({
+					search: {
+						code: resolvedParams.code,
+					},
+				}),
+			)}`,
+		)
+	}
+
 	const resolvedParams = await searchParams
 	const { code } = resolvedParams
 

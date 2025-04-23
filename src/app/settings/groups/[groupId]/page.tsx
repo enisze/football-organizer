@@ -116,7 +116,7 @@ const GroupSettings = async ({ params }: PageProps) => {
 															userId: userInGroup.id,
 														})
 														if (res?.data?.groupDeleted) {
-															redirect('/settings/groups')
+															redirect(routes.groupSettings())
 														}
 													}}
 												>

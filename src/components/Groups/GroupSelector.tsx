@@ -1,4 +1,5 @@
 'use client'
+import { routes } from '@/src/shared/navigation'
 import {
 	Select,
 	SelectContent,
@@ -22,11 +23,14 @@ export const GroupSelector: FunctionComponent<{
 	const params = useParams()
 	const groupId = params?.groupId as string
 
-	//TODO: add name here
 	return (
 		<Select
 			onValueChange={(val) => {
-				router.push(`/group/${val}`)
+				router.push(
+					routes.groupDetails({
+						groupId: val,
+					}),
+				)
 			}}
 			value={groupId}
 		>

@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 
 import { GroupSelectorServer } from '@/src/components/Groups/GroupSelectorServer'
 import { serverAuth } from '@/src/server/auth/session'
+import { routes } from '@/src/shared/navigation'
 import { prisma } from '../../server/db/client'
 
 const MainPage = async () => {
@@ -19,7 +20,11 @@ const MainPage = async () => {
 	})
 
 	if (groups && groups?.length > 0) {
-		redirect(`/group/${groups.at(0)?.id}`)
+		redirect(
+			routes.groupDetails({
+				groupId: groups.at(0)?.id ?? '',
+			}),
+		)
 	}
 	return (
 		<div className='flex flex-col pb-2 pt-7'>
