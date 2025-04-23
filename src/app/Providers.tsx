@@ -10,7 +10,8 @@ import { type ReactNode, Suspense, useState } from 'react'
 const tourSteps = [
 	{
 		selector: '[data-tour="myAvailability"]',
-		content: 'Klicke hier, um deine Verfügbarkeiten anzupassen.',
+		content:
+			'Klicke hier, um deine Verfügbarkeiten anzupassen. Drücke dann auf den Pfeil um weiterzumachen.',
 	},
 	{
 		selector: '[data-tour="general"]',
@@ -52,7 +53,7 @@ const tourSteps = [
 		content: 'Klicke hier, um das neue Zeitfenster zu speichern.',
 	},
 	{
-		selector: '[data-tour="save-time-slot"]',
+		selector: '[data-tour="time-slots"]',
 		content: 'Super! Du hast dein erstes Zeitfenster erstellt.',
 	},
 ]

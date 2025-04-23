@@ -91,7 +91,7 @@ export function AvailabilityEditor({
 
 	return (
 		<div className='select-none space-y-3'>
-			<div className='space-y-2'>
+			<div className='space-y-2' data-tour='time-slots'>
 				{timeSlots.map((slot) => (
 					<div
 						key={slot.id}
@@ -135,7 +135,6 @@ export function AvailabilityEditor({
 											...prev,
 											startTime: value,
 										}))
-										setCurrentStep((prev) => prev + 1)
 									}}
 									onOpenChange={() => {
 										setCurrentStep((prev) => prev + 1)
@@ -176,6 +175,8 @@ export function AvailabilityEditor({
 											...prev,
 											endTime: value,
 										}))
+									}}
+									onOpenChange={() => {
 										setCurrentStep((prev) => prev + 1)
 									}}
 									disabled={!newSlot.startTime}
