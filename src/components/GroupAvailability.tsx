@@ -28,6 +28,7 @@ import type {
 	ProcessedTimeSlot,
 	TimeSlotDuration,
 } from '../app/group/[groupId]/availability/processAvailability'
+import { UserCountInput } from './ui/UserCountInput'
 
 interface GroupAvailabilityViewProps {
 	users: User[]
@@ -50,6 +51,12 @@ export function GroupAvailabilityView({
 		shallow: true,
 	})
 	const [minUsers, setMinUsers] = useQueryState('minUsers', {
+		defaultValue: '0',
+		parse: (value) => value,
+		shallow: true,
+	})
+
+	const [maxUsers, setMaxUsers] = useQueryState('minUsers', {
 		defaultValue: '0',
 		parse: (value) => value,
 		shallow: true,
@@ -98,7 +105,7 @@ export function GroupAvailabilityView({
 				</CardHeader>
 				<CardContent className="space-y-6">
 					<div className="grid gap-6 md:grid-cols-2">
-						<div>
+						<div className="col-span-2">
 							<h3 className="text-lg font-semibold mb-2">Datum</h3>
 							<Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
 								<PopoverTrigger asChild>
@@ -129,62 +136,27 @@ export function GroupAvailabilityView({
 							</Popover>
 						</div>
 
-						<div className="">
-							<h3 className="text-lg font-semibold mb-2">Nutzeranzahl</h3>
-							<div className="flex items-center justify-center gap-x-2 px-2">
-								<Button
-									variant="outline"
-									size="icon"
-									className="h-8 w-8 shrink-0 rounded-full"
-									onClick={async () => {
-										const newValue = Math.max(
-											1,
-											Number.parseInt(minUsers || '8') - 1,
-										)
-										setMinUsers(newValue.toString())
-										refresh()
-									}}
-								>
-									-
-								</Button>
-								<input
-									type="text"
-									value={minUsers}
-									onChange={async (e) => {
-										const value = e.target.value.replace(/[^0-9]/g, '')
-										if (value === '') {
-											setMinUsers('1')
-											return
-										}
-										const val = Math.min(
-											10,
-											Math.max(1, Number.parseInt(value)),
-										)
-										setMinUsers(val.toString())
-										refresh()
-									}}
-									className="h-8 w-16 rounded-md border border-white/10 bg-white/5 px-2 text-center focus:outline-none focus:ring-2 focus:ring-white/20"
-								/>
-								<Button
-									variant="outline"
-									size="icon"
-									className="h-8 w-8 shrink-0 rounded-full"
-									onClick={async () => {
-										const newValue = Math.min(
-											10,
-											Number.parseInt(minUsers || '8') + 1,
-										)
-										setMinUsers(newValue.toString())
-										refresh()
-									}}
-								>
-									+
-								</Button>
-							</div>
-							<div className="mt-2 text-center text-sm text-white/50">
-								Mindestens {Number.parseInt(minUsers || '0')} Nutzer
-							</div>
-						</div>
+						<h3 className="font-bold text-xl col-span-2">Nutzer</h3>
+						<UserCountInput
+							label="Mindestanzahl"
+							value={minUsers}
+							onChange={(value: string) => {
+								setMinUsers(value)
+								refresh()
+							}}
+							min={1}
+							max={10}
+						/>
+						<UserCountInput
+							label="Maximalanzahl"
+							value={maxUsers}
+							onChange={(value: string) => {
+								setMaxUsers(value)
+								refresh()
+							}}
+							min={1}
+							max={10}
+						/>
 					</div>
 
 					<div className="border-t border-white/10 pt-6">
