@@ -16,11 +16,16 @@ export default function RootLayout({
 	children: React.ReactNode
 }) {
 	return (
-		<html lang="en">
-			<body className="h-full dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-800 dark:text-slate-50 min-h-screen bg-white font-sans text-slate-900 antialiased">
+		<html lang='en'>
+			<body className='h-full dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-800 dark:text-slate-50 min-h-screen bg-white font-sans text-slate-900 antialiased'>
 				<meta
-					name="google-site-verification"
-					content="LMJ7nv6Hz3ij0v5y7cxbJfTE8PAIxT9HFRQ54JMPgN4"
+					name='google-site-verification'
+					content='LMJ7nv6Hz3ij0v5y7cxbJfTE8PAIxT9HFRQ54JMPgN4'
+				/>
+				<script
+					defer
+					src='https://cloud.umami.is/script.js'
+					data-website-id='94a78e6e-3c15-4526-9d9d-111cc97b7d73'
 				/>
 				<Providers>
 					<Navbar />

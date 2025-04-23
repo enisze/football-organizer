@@ -53,10 +53,10 @@ export const AddToCalendarButton: FunctionComponent<
 		<Dialog>
 			<DialogTrigger asChild>
 				<button
-					className="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition-colors border border-slate-700/50"
-					type="button"
+					className='w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition-colors border border-slate-700/50'
+					type='button'
 				>
-					<CalendarPlus className="w-4 h-4 text-slate-300" />
+					<CalendarPlus className='w-4 h-4 text-slate-300' />
 				</button>
 			</DialogTrigger>
 			<DialogContent>
@@ -67,22 +67,22 @@ export const AddToCalendarButton: FunctionComponent<
 					</DialogDescription>
 				</DialogHeader>
 
-				<div className="flex flex-col gap-y-2">
+				<div className='flex flex-col gap-y-2'>
 					<Button
-						variant="dark"
+						variant='dark'
 						onClick={() => {
 							const blob = new Blob([icalendar.render()], {
 								type: 'text/calendar',
 							})
 							saveAs(blob, 'my-calendar-event.ics')
 						}}
-						aria-label="icalendar"
+						aria-label='icalendar'
 					>
 						ICal Kalendar
 					</Button>
 					<Button
-						variant="dark"
-						aria-label="google-calendar"
+						variant='dark'
+						aria-label='google-calendar'
 						onClick={() => {
 							window.open(googleLink)
 						}}
@@ -90,8 +90,8 @@ export const AddToCalendarButton: FunctionComponent<
 						Google Kalendar
 					</Button>
 					<Button
-						variant="dark"
-						aria-label="outlook-calendar"
+						variant='dark'
+						aria-label='outlook-calendar'
 						onClick={() => {
 							window.open(outlookLink)
 						}}

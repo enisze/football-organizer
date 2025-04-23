@@ -37,11 +37,11 @@ export async function MobileEventCard({
 	})
 
 	return (
-		<div className="mb-3 animate-in fade-in duration-500">
+		<div className='mb-3 animate-in fade-in duration-500'>
 			<Drawer>
 				<DrawerTrigger asChild>
-					<button className="w-full group" type="button">
-						<div className="w-[320px] transition-all group-hover:opacity-90 group-hover:scale-[0.98] group-active:scale-[0.96]">
+					<button className='w-full group' type='button'>
+						<div className='w-[320px] transition-all group-hover:opacity-90 group-hover:scale-[0.98] group-active:scale-[0.96]'>
 							<EventCardContent
 								event={event}
 								joinedUsersAmount={joinedUsersAmount}

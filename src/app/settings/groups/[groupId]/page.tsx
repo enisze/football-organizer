@@ -36,26 +36,26 @@ const GroupSettings = async ({ params }: PageProps) => {
 	}
 
 	return (
-		<div className="min-h-screen flex flex-col items-center p-8">
-			<div className="w-full max-w-3xl space-y-6">
-				<div className="flex items-center justify-between">
-					<h1 className="text-2xl font-bold text-white">
+		<div className='min-h-screen flex flex-col items-center p-8'>
+			<div className='w-full max-w-3xl space-y-6'>
+				<div className='flex items-center justify-between'>
+					<h1 className='text-2xl font-bold text-white'>
 						Einstellungen für Gruppe {groupName}
 					</h1>
 				</div>
 
-				<div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 space-y-6">
-					<div className="space-y-2">
+				<div className='bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 space-y-6'>
+					<div className='space-y-2'>
 						<NameChange groupName={groupName ?? ''} />
 					</div>
 
-					<div className="space-y-4">
-						<h2 className="">Neue Mitglieder hinzufügen</h2>
-						<div className="flex flex-col gap-4">
+					<div className='space-y-4'>
+						<h2 className=''>Neue Mitglieder hinzufügen</h2>
+						<div className='flex flex-col gap-4'>
 							{groupData?.code && (
 								<>
 									<ClipboardButton code={groupData?.code} />
-									<div className="flex items-center gap-4">
+									<div className='flex items-center gap-4'>
 										<ClipboardCode code={groupData.code} />
 										<UpdateInvitationCodeButton groupId={groupId} />
 									</div>
@@ -63,12 +63,12 @@ const GroupSettings = async ({ params }: PageProps) => {
 							)}
 						</div>
 
-						<p className="text-white/70">
+						<p className='text-white/70'>
 							Mitglieder {groupData?.users.length}/
 							{getPricingInfos(groupData)?.maximalMembers}
 						</p>
 
-						<div className="space-y-2">
+						<div className='space-y-2'>
 							{groupData?.users?.map(async (userInGroup, idx) => {
 								const user = await prisma.user.findUnique({
 									where: { id: userInGroup?.id },
@@ -78,14 +78,14 @@ const GroupSettings = async ({ params }: PageProps) => {
 								return (
 									<div
 										key={idx}
-										className="flex items-center justify-between p-3 bg-white/5 rounded-xl"
+										className='flex items-center justify-between p-3 bg-white/5 rounded-xl'
 									>
-										<div className="flex items-center gap-3">
-											<Users className="w-5 h-5 text-white/70" />
-											<span className="text-white">{user?.name}</span>
+										<div className='flex items-center gap-3'>
+											<Users className='w-5 h-5 text-white/70' />
+											<span className='text-white'>{user?.name}</span>
 										</div>
-										<div className="flex items-center gap-4">
-											<span className="text-sm text-white/50">
+										<div className='flex items-center gap-4'>
+											<span className='text-sm text-white/50'>
 												{
 													groupData.users.find(
 														(groupUser) => groupUser.id === userInGroup?.id,
@@ -94,9 +94,9 @@ const GroupSettings = async ({ params }: PageProps) => {
 											</span>
 											{userInGroup?.id === groupData.ownerId && (
 												<Button
-													variant="ghost"
-													type="submit"
-													className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+													variant='ghost'
+													type='submit'
+													className='p-1.5 hover:bg-white/10 rounded-lg transition-colors'
 													formAction={async () => {
 														'use server'
 														const res = await deleteUserFromGroup({
@@ -108,7 +108,7 @@ const GroupSettings = async ({ params }: PageProps) => {
 														}
 													}}
 												>
-													<X className="w-4 h-4 text-white/70" />
+													<X className='w-4 h-4 text-white/70' />
 												</Button>
 											)}
 										</div>

@@ -78,33 +78,33 @@ export function AvailabilityEditor({
 	}
 
 	return (
-		<div className="select-none space-y-4">
-			<div className="space-y-3">
+		<div className='select-none space-y-4'>
+			<div className='space-y-3'>
 				{timeSlots.map((slot) => (
 					<div
 						key={slot.id}
-						className="flex items-center justify-between p-4 bg-white/5 rounded-xl"
+						className='flex items-center justify-between p-4 bg-white/5 rounded-xl'
 					>
 						<span>
 							{slot.startTime} - {slot.endTime}
 						</span>
 						<Button
-							variant="ghost"
-							size="icon"
+							variant='ghost'
+							size='icon'
 							onClick={() => deleteTimeSlot({ id: slot.id })}
-							className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
-							aria-label="Delete time slot"
+							className='p-1.5 hover:bg-white/10 rounded-lg transition-colors'
+							aria-label='Delete time slot'
 						>
-							<X className="h-4 w-4 text-white/70" />
+							<X className='h-4 w-4 text-white/70' />
 						</Button>
 					</div>
 				))}
 
 				{isAdding ? (
-					<div className="space-y-4 bg-white/5 rounded-xl p-4">
-						<div className="grid grid-cols-2 gap-4">
-							<div className="space-y-2">
-								<Label className="text-white/70">Start</Label>
+					<div className='space-y-4 bg-white/5 rounded-xl p-4'>
+						<div className='grid grid-cols-2 gap-4'>
+							<div className='space-y-2'>
+								<Label className='text-white/70'>Start</Label>
 								<Select
 									value={newSlot.startTime || ''}
 									onValueChange={(value) =>
@@ -114,10 +114,10 @@ export function AvailabilityEditor({
 										}))
 									}
 								>
-									<SelectTrigger className="bg-white/5 border-white/10">
-										<SelectValue placeholder="Zeit auswählen" />
+									<SelectTrigger className='bg-white/5 border-white/10'>
+										<SelectValue placeholder='Zeit auswählen' />
 									</SelectTrigger>
-									<SelectContent className="overflow-y-auto max-h-[10rem]">
+									<SelectContent className='overflow-y-auto max-h-[10rem]'>
 										{timeOptions.map((time) => (
 											<SelectItem key={time} value={time}>
 												{time}
@@ -126,8 +126,8 @@ export function AvailabilityEditor({
 									</SelectContent>
 								</Select>
 							</div>
-							<div className="space-y-2">
-								<Label className="text-white/70">Ende</Label>
+							<div className='space-y-2'>
+								<Label className='text-white/70'>Ende</Label>
 								<Select
 									value={newSlot.endTime || ''}
 									onValueChange={(value) =>
@@ -138,10 +138,10 @@ export function AvailabilityEditor({
 									}
 									disabled={!newSlot.startTime}
 								>
-									<SelectTrigger className="bg-white/5 border-white/10">
-										<SelectValue placeholder="Zeit auswählen" />
+									<SelectTrigger className='bg-white/5 border-white/10'>
+										<SelectValue placeholder='Zeit auswählen' />
 									</SelectTrigger>
-									<SelectContent className="overflow-y-auto max-h-[10rem]">
+									<SelectContent className='overflow-y-auto max-h-[10rem]'>
 										{timeOptions
 											.filter((time) => time > (newSlot.startTime || ''))
 											.map((time) => (
@@ -153,29 +153,29 @@ export function AvailabilityEditor({
 								</Select>
 							</div>
 						</div>
-						<div className="flex justify-end gap-2">
+						<div className='flex justify-end gap-2'>
 							<Button
-								variant="ghost"
+								variant='ghost'
 								onClick={() => {
 									setNewSlot({})
 									setIsAdding(false)
 								}}
-								className="text-white/70 hover:bg-white/10"
+								className='text-white/70 hover:bg-white/10'
 							>
 								Abbrechen
 							</Button>
 							<Button
 								onClick={handleAddSlot}
 								disabled={!newSlot.startTime || !newSlot.endTime}
-								variant="purple"
+								variant='purple'
 							>
 								Speichern
 							</Button>
 						</div>
 					</div>
 				) : (
-					<Button variant="purple" onClick={() => setIsAdding(true)}>
-						<Plus className="h-5 w-5" />
+					<Button variant='purple' onClick={() => setIsAdding(true)}>
+						<Plus className='h-5 w-5' />
 						<span>Neues Zeitfenster</span>
 					</Button>
 				)}

@@ -71,17 +71,17 @@ export const OrganizerMenu: FunctionComponent<{
 
 	return (
 		<DropdownMenu open={open} onOpenChange={setOpen}>
-			<DropdownMenuTrigger className="flex items-center justify-between gap-x-2">
-				<div className="relative flex">
-					<Avatar className="flex items-center justify-center border-[1px]">
-						<AvatarFallback className="bg-white dark:bg-slate-900">
+			<DropdownMenuTrigger className='flex items-center justify-between gap-x-2'>
+				<div className='relative flex'>
+					<Avatar className='flex items-center justify-center border-[1px]'>
+						<AvatarFallback className='bg-white dark:bg-slate-900'>
 							{first + second}
 						</AvatarFallback>
 					</Avatar>
 					{!hasPaypalName && <NotificationBubble />}
 				</div>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end">
+			<DropdownMenuContent align='end'>
 				<DropdownMenuItem onClick={() => setOpen(!open)}>
 					{name}
 				</DropdownMenuItem>
@@ -90,7 +90,7 @@ export const OrganizerMenu: FunctionComponent<{
 
 				{isOnDashboard && (
 					<DropdownMenuItem onClick={() => setOpen(!open)}>
-						<div className="relative flex w-full">
+						<div className='relative flex w-full'>
 							<Link href={`/settings/groups/${groupId}`}>
 								Gruppeneinstellungen
 							</Link>
@@ -101,13 +101,13 @@ export const OrganizerMenu: FunctionComponent<{
 				<Separator />
 
 				<DropdownMenuItem onClick={() => setOpen(!open)}>
-					<div className="relative flex w-full">
+					<div className='relative flex w-full'>
 						<Link href={routes.groupSettings()}>Meine Gruppen</Link>
 					</div>
 				</DropdownMenuItem>
 
 				<DropdownMenuItem onClick={() => setOpen(!open)}>
-					<div className="relative flex w-full">
+					<div className='relative flex w-full'>
 						<Link href={'/settings/user'}>Accounteinstellungen</Link>
 						{!hasPaypalName && <NotificationBubble />}
 					</div>

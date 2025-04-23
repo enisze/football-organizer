@@ -22,7 +22,7 @@ const MainPage = async () => {
 		redirect(`/group/${groups.at(0)?.id}`)
 	}
 	return (
-		<div className="flex flex-col pb-2 pt-7">
+		<div className='flex flex-col pb-2 pt-7'>
 			<GroupSelectorServer />
 		</div>
 	)

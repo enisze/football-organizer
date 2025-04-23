@@ -8,14 +8,14 @@ const Home = async () => {
 	const session = await serverAuth()
 
 	return (
-		<div className="h-full">
+		<div className='h-full'>
 			<title>Event Wizard</title>
 
-			<main className="flex relative h-full w-full flex-col items-center justify-center">
+			<main className='flex relative h-full w-full flex-col items-center justify-center'>
 				<Hero />
 				{!session && (
 					<Link href={routes.signIn()}>
-						<Button className="shadow-md shadow-yellow-300/50">
+						<Button className='shadow-md shadow-yellow-300/50'>
 							Login / Registrieren
 						</Button>
 					</Link>

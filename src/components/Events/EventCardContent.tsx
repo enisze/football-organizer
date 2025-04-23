@@ -27,7 +27,7 @@ export function EventCardContent({
 				className,
 			)}
 		>
-			<div className="w-[72px] bg-slate-700 flex flex-col items-center justify-center py-4 relative">
+			<div className='w-[72px] bg-slate-700 flex flex-col items-center justify-center py-4 relative'>
 				<DateInfo date={event.date} />
 				<div
 					className={cn(
@@ -40,28 +40,28 @@ export function EventCardContent({
 				/>
 			</div>
 
-			<div className="flex-1 p-4 flex flex-col gap-1 justify-between bg-slate-800">
-				<div className="flex justify-between items-center">
-					<div className="flex items-center">
-						<Clock className="w-4 h-4 text-slate-400" />
-						<span className="ml-2 text-white font-semibold">
+			<div className='flex-1 p-4 flex flex-col gap-1 justify-between bg-slate-800'>
+				<div className='flex justify-between items-center'>
+					<div className='flex items-center'>
+						<Clock className='w-4 h-4 text-slate-400' />
+						<span className='ml-2 text-white font-semibold'>
 							{`${event.startTime}-${event.endTime}`}
 						</span>
 					</div>
 					<StatusChip status={event.status} />
 				</div>
 
-				<div className="flex items-center">
-					<MapPin className="w-4 h-4 text-slate-400" />
-					<span className="ml-2 text-white truncate">{event.address}</span>
+				<div className='flex items-center'>
+					<MapPin className='w-4 h-4 text-slate-400' />
+					<span className='ml-2 text-white truncate'>{event.address}</span>
 				</div>
 
-				<div className="flex justify-between items-center">
-					<div className="flex items-center">
+				<div className='flex justify-between items-center'>
+					<div className='flex items-center'>
 						{!hideParticipants && (
 							<>
-								<Users className="w-4 h-4 text-slate-400" />
-								<span className="ml-2 text-white">
+								<Users className='w-4 h-4 text-slate-400' />
+								<span className='ml-2 text-white'>
 									{joinedUsersAmount !== undefined
 										? `${joinedUsersAmount}/${event.maxParticipants}`
 										: event.maxParticipants}
@@ -69,7 +69,7 @@ export function EventCardContent({
 							</>
 						)}
 					</div>
-					<span className="text-emerald-400 font-semibold">
+					<span className='text-emerald-400 font-semibold'>
 						{formatter.format(event.cost / event.maxParticipants)}€
 					</span>
 				</div>

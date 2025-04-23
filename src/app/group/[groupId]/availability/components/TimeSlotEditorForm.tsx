@@ -91,13 +91,13 @@ export function TimeSlotEditorForm({
 	}
 
 	return (
-		<form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
+		<form onSubmit={handleSubmit(handleFormSubmit)} className='space-y-4'>
 			{fields.map((field, index) => (
 				<div
 					key={field.id}
-					className="flex flex-col space-y-2 md:flex-row md:space-x-4 md:space-y-0"
+					className='flex flex-col space-y-2 md:flex-row md:space-x-4 md:space-y-0'
 				>
-					<div className="flex-1 space-y-1">
+					<div className='flex-1 space-y-1'>
 						<Label htmlFor={`timeSlots.${index}.startTime`}>Start Time</Label>
 						<Select
 							{...register(`timeSlots.${index}.startTime` as const)}
@@ -108,13 +108,13 @@ export function TimeSlotEditorForm({
 							}}
 						>
 							<SelectTrigger id={`timeSlots.${index}.startTime`}>
-								<SelectValue placeholder="Select start time" />
+								<SelectValue placeholder='Select start time' />
 							</SelectTrigger>
 							<SelectContent>{renderSelectOptions(timeOptions)}</SelectContent>
 						</Select>
 					</div>
 
-					<div className="flex-1 space-y-1">
+					<div className='flex-1 space-y-1'>
 						<Label htmlFor={`timeSlots.${index}.endTime`}>End Time</Label>
 						<Select
 							{...register(`timeSlots.${index}.endTime` as const)}
@@ -125,7 +125,7 @@ export function TimeSlotEditorForm({
 							}}
 						>
 							<SelectTrigger id={`timeSlots.${index}.endTime`}>
-								<SelectValue placeholder="Select end time" />
+								<SelectValue placeholder='Select end time' />
 							</SelectTrigger>
 							<SelectContent>
 								{renderSelectOptions(
@@ -137,14 +137,14 @@ export function TimeSlotEditorForm({
 
 					{fields.length > 1 && (
 						<Button
-							type="button"
-							variant="ghost"
-							size="icon"
+							type='button'
+							variant='ghost'
+							size='icon'
 							onClick={() => remove(index)}
-							className="self-end"
-							aria-label="Remove time slot"
+							className='self-end'
+							aria-label='Remove time slot'
 						>
-							<X className="h-4 w-4" />
+							<X className='h-4 w-4' />
 						</Button>
 					)}
 				</div>
@@ -152,23 +152,23 @@ export function TimeSlotEditorForm({
 
 			{fields.length < maxSlots && (
 				<Button
-					type="button"
-					variant="outline"
-					size="sm"
+					type='button'
+					variant='outline'
+					size='sm'
 					onClick={() => append({ startTime: '', endTime: '' })}
-					className="w-full"
-					aria-label="Add time slot"
+					className='w-full'
+					aria-label='Add time slot'
 				>
-					<PlusCircle className="mr-2 h-4 w-4" />
+					<PlusCircle className='mr-2 h-4 w-4' />
 					Add Time Slot
 				</Button>
 			)}
 
 			<Button
-				type="submit"
-				className="w-full"
+				type='submit'
+				className='w-full'
 				disabled={!formState.isDirty}
-				aria-label="Save changes"
+				aria-label='Save changes'
 			>
 				Save Changes
 			</Button>

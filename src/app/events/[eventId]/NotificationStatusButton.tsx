@@ -13,7 +13,7 @@ export const NotificationStatusButton = ({ eventId }: { eventId: string }) => {
 						status: 'CANCELED',
 					})
 				}}
-				variant="link"
+				variant='link'
 			>
 				Keine Emails mehr erhalten
 			</Button>

@@ -29,11 +29,11 @@ export const GroupRequestEmail = ({ email, token }: GroupRequestEmail) => {
 			<Head />
 			<Preview>{previewText}</Preview>
 			<Tailwind>
-				<Body className="bg-white text-black my-auto mx-auto font-sans">
+				<Body className='bg-white text-black my-auto mx-auto font-sans'>
 					<ContainerBox>
-						<Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0"></Heading>
+						<Heading className='text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0'></Heading>
 
-						<Section className="text-center">
+						<Section className='text-center'>
 							<CustomButton href={createGroupLink}>
 								Nutzer hinzufügen
 							</CustomButton>

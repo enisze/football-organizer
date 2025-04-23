@@ -48,12 +48,12 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 	const navigationItems = [
 		{
 			title: 'Events',
-			icon: <IconCalendar className="h-full w-full" />,
+			icon: <IconCalendar className='h-full w-full' />,
 			href: routes.groupDetails({ groupId, search: { tab: 'events' } }),
 		},
 		{
 			title: 'Zeiten',
-			icon: <IconUserCircle className="h-full w-full" />,
+			icon: <IconUserCircle className='h-full w-full' />,
 			href: routes.groupDetails({
 				groupId,
 				search: { tab: 'myAvailability', selectedDate },
@@ -61,7 +61,7 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 		},
 		{
 			title: 'Gruppenzeiten',
-			icon: <IconUsers className="h-full w-full" />,
+			icon: <IconUsers className='h-full w-full' />,
 			href: routes.groupDetails({
 				groupId,
 				search: {
@@ -75,8 +75,8 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 	]
 
 	return (
-		<div className="flex flex-col pb-2">
-			<div className="flex-1">
+		<div className='flex flex-col pb-2'>
+			<div className='flex-1'>
 				{tab === 'events' && (
 					<Suspense fallback={<div>Loading events...</div>}>
 						<CurrentEventsPage

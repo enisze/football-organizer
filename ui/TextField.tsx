@@ -27,13 +27,13 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
 					props.className,
 				)}
 			>
-				<div className="flex items-center gap-x-1">
+				<div className='flex items-center gap-x-1'>
 					<Label>{label}</Label>
 					{infoContent && (
 						<HoverCard>
 							<HoverCardTrigger>
 								<InfoIcon
-									className="h-4 w-4 flex-none"
+									className='h-4 w-4 flex-none'
 									onClick={() => {
 										if (window.innerHeight < 768) {
 											setShowInfo(!showInfo)
@@ -46,11 +46,11 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
 						</HoverCard>
 					)}
 				</div>
-				<div className="relative">
+				<div className='relative'>
 					<Input ref={ref} {...props} />
-					{withBubble && <NotificationBubble className="right-2 top-3" />}
+					{withBubble && <NotificationBubble className='right-2 top-3' />}
 				</div>
-				<p className="text-sm text-red-500/90">{text}</p>
+				<p className='text-sm text-red-500/90'>{text}</p>
 			</div>
 		)
 	},

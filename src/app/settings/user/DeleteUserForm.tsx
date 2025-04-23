@@ -25,19 +25,19 @@ export const DeleteUserForm = ({ userName }: { userName: string }) => {
 	return (
 		<>
 			<TextField
-				id="user-name-input"
-				type="text"
+				id='user-name-input'
+				type='text'
 				label={`Benutzername ${userName} eingeben um zu löschen`}
-				text=""
+				text=''
 				value={userNameForDeletion}
 				onChange={(e) => setUserNameForDeletion(e.target.value)}
 				placeholder={userName}
 			/>
 			<Button
 				disabled={userNameForDeletion !== userName}
-				className="w-fit"
-				variant="destructive"
-				type="submit"
+				className='w-fit'
+				variant='destructive'
+				type='submit'
 				formAction={deleteUserAction}
 			>
 				Löschen

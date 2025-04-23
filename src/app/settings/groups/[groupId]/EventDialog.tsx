@@ -25,14 +25,14 @@ export const EventDialog = ({ templates }: EventDialogProps) => {
 		<Dialog open={open} onOpenChange={(open) => setOpen(open)}>
 			<DialogTrigger asChild>
 				<Button
-					type="button"
-					variant="purple"
-					className="flex rounded-full w-10"
+					type='button'
+					variant='purple'
+					className='flex rounded-full w-10'
 				>
-					<PlusIcon className="h-2 w-2" />
+					<PlusIcon className='h-2 w-2' />
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="sm:max-w-[425px]">
+			<DialogContent className='sm:max-w-[425px]'>
 				<DialogHeader>
 					<DialogTitle>Add Event</DialogTitle>
 					<DialogDescription>

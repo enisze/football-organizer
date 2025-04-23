@@ -29,8 +29,8 @@ export const StatusChip: FunctionComponent<{
 }> = ({ status }) => {
 	return (
 		<Popover>
-			<PopoverTrigger aria-label="event-status-button">
-				<div className="flex items-center gap-2 border rounded-full px-2 font-semibold border-blue-500 text-xs">
+			<PopoverTrigger aria-label='event-status-button'>
+				<div className='flex items-center gap-2 border rounded-full px-2 font-semibold border-blue-500 text-xs'>
 					<StatusDot status={status} />
 					{status === 'BOOKED'
 						? 'Gebucht'
@@ -39,17 +39,17 @@ export const StatusChip: FunctionComponent<{
 							: 'Unklar'}
 				</div>
 			</PopoverTrigger>
-			<PopoverContent className="w-full">
-				<div className="flex items-center gap-2">
-					<StatusDot status="BOOKED" size="md" />
+			<PopoverContent className='w-full'>
+				<div className='flex items-center gap-2'>
+					<StatusDot status='BOOKED' size='md' />
 					<span>Gebucht, und findet statt.</span>
 				</div>
-				<div className="flex items-center gap-2">
-					<StatusDot status="CANCELED" size="md" />
+				<div className='flex items-center gap-2'>
+					<StatusDot status='CANCELED' size='md' />
 					<span>Abgesagt, findet sicher nicht statt.</span>
 				</div>
-				<div className="flex items-center gap-2">
-					<StatusDot status="CREATED" size="md" />
+				<div className='flex items-center gap-2'>
+					<StatusDot status='CREATED' size='md' />
 					<span>Nicht gebucht, brauchen noch Teilnehmer.</span>
 				</div>
 			</PopoverContent>

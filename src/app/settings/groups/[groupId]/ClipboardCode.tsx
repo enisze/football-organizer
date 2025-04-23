@@ -6,11 +6,11 @@ import { Copy } from 'lucide-react'
 export const ClipboardCode = ({ code }: { code: string }) => {
 	return (
 		<Button
-			variant="outline"
+			variant='outline'
 			onClick={() => {
 				navigator.clipboard.writeText(code)
 			}}
-			className="flex gap-2"
+			className='flex gap-2'
 		>
 			Code {code}
 			<Copy />

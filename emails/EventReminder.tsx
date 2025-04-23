@@ -29,8 +29,8 @@ export const EventReminder = ({
 				} freie Plätze am ${date?.toLocaleDateString()}
           `}
 			</Preview>
-			<Body className="bg-white text-black font-sans">
-				<ContainerBox className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] w-[465px]">
+			<Body className='bg-white text-black font-sans'>
+				<ContainerBox className='border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] w-[465px]'>
 					<Text>Hi {userName},</Text>
 					<Text>
 						Ein Event zu dem du weder zu- noch abgesagt hast steht noch an.
@@ -41,7 +41,7 @@ export const EventReminder = ({
 					</Text>
 					<EventTemplate event={event} />
 
-					<Row className="pt-4 text-center">
+					<Row className='pt-4 text-center'>
 						<Column>
 							<CustomButton href={paypalLink}>Bei Paypal bezahlen</CustomButton>
 						</Column>

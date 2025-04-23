@@ -13,9 +13,9 @@ export const NotificationSwitch = ({
 
 	return (
 		<Switch
-			id="notifications-enabled"
+			id='notifications-enabled'
 			checked={enabled}
-			type="submit"
+			type='submit'
 			onClick={() => {
 				setEnabled(!enabled)
 			}}

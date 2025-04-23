@@ -33,8 +33,8 @@ export const GroupSelector: FunctionComponent<{
 			<SelectGroup>
 				<SelectLabel>Gruppe auswählen</SelectLabel>
 			</SelectGroup>
-			<SelectTrigger className="w-[180px]" aria-label="group-selector">
-				<SelectValue placeholder="Gruppe auswählen" />
+			<SelectTrigger className='w-[180px]' aria-label='group-selector'>
+				<SelectValue placeholder='Gruppe auswählen' />
 			</SelectTrigger>
 			<SelectContent>
 				{groups?.map((group) => (

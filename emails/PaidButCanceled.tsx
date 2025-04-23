@@ -19,7 +19,7 @@ export const PaidButCanceled = ({
 		<Tailwind>
 			<Head />
 			<Preview>{`${participantName} hat abgesagt und bezahlt.`}</Preview>
-			<Body className="bg-white text-black font-sans">
+			<Body className='bg-white text-black font-sans'>
 				<ContainerBox>
 					<Text>Hi {userName},</Text>
 

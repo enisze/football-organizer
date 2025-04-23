@@ -18,16 +18,16 @@ export const NameChange = ({ groupName }: { groupName: string }) => {
 	return (
 		<>
 			<TextField
-				id="group-name-input"
-				label="Gruppenname bearbeiten"
-				name="groupName"
+				id='group-name-input'
+				label='Gruppenname bearbeiten'
+				name='groupName'
 				placeholder={groupName}
-				text=""
+				text=''
 			/>
 			<Button
-				variant="outline"
-				className="w-fit"
-				type="submit"
+				variant='outline'
+				className='w-fit'
+				type='submit'
 				formAction={async (formData: FormData) => {
 					await updateName(formData)
 				}}

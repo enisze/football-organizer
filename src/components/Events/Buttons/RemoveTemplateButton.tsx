@@ -12,8 +12,8 @@ export const RemoveTemplateButton = async ({
 }: RemoveTemplateButtonProps) => {
 	return (
 		<Button
-			variant="outline"
-			size="sm"
+			variant='outline'
+			size='sm'
 			onClick={async () => {
 				'use server'
 				await removeTemplateAction({ id })

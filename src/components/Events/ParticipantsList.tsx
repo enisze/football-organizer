@@ -26,16 +26,16 @@ export const ParticipantsList = ({
 
 	return (
 		<div>
-			<div className="text-sm font-medium text-slate-400 mb-1.5">{label}</div>
-			<div className="space-y-1.5">
+			<div className='text-sm font-medium text-slate-400 mb-1.5'>{label}</div>
+			<div className='space-y-1.5'>
 				{filteredParticipants.map((participant) => (
 					<div
 						key={participant.user.id}
-						className="flex items-center justify-between bg-slate-800/50 rounded-lg px-3 py-2 border border-slate-700/30"
+						className='flex items-center justify-between bg-slate-800/50 rounded-lg px-3 py-2 border border-slate-700/30'
 					>
-						<div className="text-slate-300">{participant.user.name}</div>
+						<div className='text-slate-300'>{participant.user.name}</div>
 						{participant.comment && (
-							<div className="text-sm text-slate-400">
+							<div className='text-sm text-slate-400'>
 								{participant.comment}
 							</div>
 						)}

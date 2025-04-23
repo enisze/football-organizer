@@ -69,17 +69,17 @@ export async function StatusButton({
 	return (
 		<Button
 			variant={statusVariant}
-			size="status"
+			size='status'
 			onClick={async () => {
 				'use server'
 				await setParticipatingStatus({ eventId, status })
 			}}
 			aria-label={label}
-			type="button"
+			type='button'
 		>
 			{icon}
 			{active && (
-				<span className="absolute inset-0 border-2 border-current rounded-xl opacity-50" />
+				<span className='absolute inset-0 border-2 border-current rounded-xl opacity-50' />
 			)}
 		</Button>
 	)

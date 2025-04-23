@@ -86,37 +86,37 @@ export function GroupAvailabilityView({
 	const currentDate = date ? new Date(date) : initialDate
 
 	return (
-		<div className="container p-0 mx-auto space-y-8 pt-2 pb-24">
-			<Card className="bg-white/5 backdrop-blur-sm border-white/10">
+		<div className='container p-0 mx-auto space-y-8 pt-2 pb-24'>
+			<Card className='bg-white/5 backdrop-blur-sm border-white/10'>
 				<CardHeader>
-					<CardTitle className="text-2xl">
+					<CardTitle className='text-2xl'>
 						{currentDate.toLocaleDateString('de-DE', {
 							weekday: 'long',
 							month: 'long',
 							day: 'numeric',
 						})}
 					</CardTitle>
-					<div className="flex items-center mt-2">
-						<Clock className="mr-2 h-5 w-5 text-white/70" />
-						<CardDescription className="text-white/70">
+					<div className='flex items-center mt-2'>
+						<Clock className='mr-2 h-5 w-5 text-white/70' />
+						<CardDescription className='text-white/70'>
 							Gruppenverfügbarkeit (Gruppengröße: {users.length})
 						</CardDescription>
 					</div>
 				</CardHeader>
-				<CardContent className="space-y-6">
-					<div className="grid gap-6 md:grid-cols-2">
-						<div className="col-span-2">
-							<h3 className="text-lg font-semibold mb-2">Datum</h3>
+				<CardContent className='space-y-6'>
+					<div className='grid gap-6 md:grid-cols-2'>
+						<div className='col-span-2'>
+							<h3 className='text-lg font-semibold mb-2'>Datum</h3>
 							<Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
 								<PopoverTrigger asChild>
 									<Button
-										variant="outline"
+										variant='outline'
 										className={cn(
 											'w-full justify-start text-left font-normal hover:bg-slate-700',
 											!date && 'text-muted-foreground',
 										)}
 									>
-										<CalendarIcon className="mr-2" />
+										<CalendarIcon className='mr-2' />
 										{date ? (
 											format(date, 'PPP', { locale: de })
 										) : (
@@ -124,21 +124,21 @@ export function GroupAvailabilityView({
 										)}
 									</Button>
 								</PopoverTrigger>
-								<PopoverContent className="w-auto p-0">
+								<PopoverContent className='w-auto p-0'>
 									<Calendar
-										id="date-picker"
-										mode="single"
+										id='date-picker'
+										mode='single'
 										selected={currentDate}
 										onSelect={handleDateChange}
-										className="mx-auto"
+										className='mx-auto'
 									/>
 								</PopoverContent>
 							</Popover>
 						</div>
 
-						<h3 className="font-bold text-xl col-span-2">Nutzer</h3>
+						<h3 className='font-bold text-xl col-span-2'>Nutzer</h3>
 						<UserCountInput
-							label="Mindestanzahl"
+							label='Mindestanzahl'
 							value={minUsers}
 							onChange={(value: string) => {
 								setMinUsers(value)
@@ -148,7 +148,7 @@ export function GroupAvailabilityView({
 							max={10}
 						/>
 						<UserCountInput
-							label="Maximalanzahl"
+							label='Maximalanzahl'
 							value={maxUsers}
 							onChange={(value: string) => {
 								setMaxUsers(value)
@@ -159,38 +159,38 @@ export function GroupAvailabilityView({
 						/>
 					</div>
 
-					<div className="border-t border-white/10 pt-6">
+					<div className='border-t border-white/10 pt-6'>
 						<Tabs
 							value={duration ?? undefined}
 							onValueChange={async (value) => {
 								setDuration(value as TimeSlotDuration)
 								refresh()
 							}}
-							className="w-full"
+							className='w-full'
 						>
-							<TabsList className="inline-flex rounded-xl bg-white/5 p-1 self-center">
+							<TabsList className='inline-flex rounded-xl bg-white/5 p-1 self-center'>
 								<TabsTrigger
-									value="60min"
-									className="px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5"
+									value='60min'
+									className='px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5'
 								>
 									1 Stunde
 								</TabsTrigger>
 								<TabsTrigger
-									value="90min"
-									className="px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5"
+									value='90min'
+									className='px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5'
 								>
 									90 Minuten
 								</TabsTrigger>
 								<TabsTrigger
-									value="120min"
-									className="px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5"
+									value='120min'
+									className='px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5'
 								>
 									2 Stunden
 								</TabsTrigger>
 							</TabsList>
 						</Tabs>
 
-						<div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(250px,1fr))] auto-rows-[160px] mt-6">
+						<div className='grid gap-4 grid-cols-[repeat(auto-fit,minmax(250px,1fr))] auto-rows-[160px] mt-6'>
 							{processedSlots.map((slot, index) => {
 								const availableCount = slot.availableUsers.length
 								const percentage = (availableCount / 10) * 100
@@ -198,29 +198,29 @@ export function GroupAvailabilityView({
 								return (
 									<div
 										key={index}
-										className="relative overflow-hidden bg-white/5 backdrop-blur-sm rounded-xl border border-white/10"
+										className='relative overflow-hidden bg-white/5 backdrop-blur-sm rounded-xl border border-white/10'
 									>
-										<div className="p-4 relative z-10">
-											<div className="text-sm font-medium flex justify-between items-center">
+										<div className='p-4 relative z-10'>
+											<div className='text-sm font-medium flex justify-between items-center'>
 												<span>
 													{slot.startTime} - {slot.endTime}
 												</span>
-												<Badge variant="secondary" className="bg-white/10">
+												<Badge variant='secondary' className='bg-white/10'>
 													{availableCount}/10
 												</Badge>
 											</div>
 
-											<div className="mt-2">
-												<div className="text-xs font-medium text-white/70 mb-1">
+											<div className='mt-2'>
+												<div className='text-xs font-medium text-white/70 mb-1'>
 													Teilnehmer
 												</div>
-												<div className="flex flex-wrap gap-2">
+												<div className='flex flex-wrap gap-2'>
 													{slot.availableUsers.map((user) => (
 														<div
 															key={user.id}
-															className="flex items-center gap-2 rounded-full bg-white/5 px-2 py-1 text-xs"
+															className='flex items-center gap-2 rounded-full bg-white/5 px-2 py-1 text-xs'
 														>
-															<div className="h-2 w-2 rounded-full bg-white/70" />
+															<div className='h-2 w-2 rounded-full bg-white/70' />
 															{user.name}
 														</div>
 													))}
@@ -247,8 +247,8 @@ export function GroupAvailabilityView({
 							})}
 
 							{processedSlots.length === 0 && (
-								<div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 flex items-center justify-center p-4">
-									<p className="text-white/50 text-sm">
+								<div className='bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 flex items-center justify-center p-4'>
+									<p className='text-white/50 text-sm'>
 										Keine Zeitfenster verfügbar
 									</p>
 								</div>

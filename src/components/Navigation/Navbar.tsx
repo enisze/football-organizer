@@ -18,16 +18,16 @@ export const Navbar = async () => {
 	})
 
 	return (
-		<header className="sticky dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-800 dark:text-slate-50 top-0 z-40 w-full border-b border-b-slate-200 dark:border-b-slate-700 ">
-			<nav className="flex items-center justify-between p-2">
-				<Heading size="sm" />
+		<header className='sticky dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-800 dark:text-slate-50 top-0 z-40 w-full border-b border-b-slate-200 dark:border-b-slate-700 '>
+			<nav className='flex items-center justify-between p-2'>
+				<Heading size='sm' />
 
-				<div className="flex gap-x-1 items-center cursor-pointer">
+				<div className='flex gap-x-1 items-center cursor-pointer'>
 					<OrganizerServerMenu groupId={group?.id} />
 
 					{!session?.user && (
 						<Link href={routes.signIn()}>
-							<Button variant="outline">Login / Registrieren</Button>
+							<Button variant='outline'>Login / Registrieren</Button>
 						</Link>
 					)}
 					<DashboardLink groupId={group?.id} />

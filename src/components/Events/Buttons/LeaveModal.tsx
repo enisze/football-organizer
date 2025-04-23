@@ -34,31 +34,31 @@ export const LeaveModal = ({
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>
-						<h2 id="modal-title">Event absagen</h2>
+						<h2 id='modal-title'>Event absagen</h2>
 					</DialogTitle>
 					<DialogDescription>
-						<h2 id="modal-title" className="pr-10">
+						<h2 id='modal-title' className='pr-10'>
 							Du hast bereits bezahlt, bist du dir sicher, dass du absagen
 							willst?
 						</h2>
 					</DialogDescription>
 				</DialogHeader>
-				<div className="flex w-full gap-x-2">
+				<div className='flex w-full gap-x-2'>
 					<Button
-						variant="outline"
-						color="info"
-						type="submit"
+						variant='outline'
+						color='info'
+						type='submit'
 						formAction={test}
-						className="w-full"
+						className='w-full'
 					>
 						Ja
 					</Button>
 					<Button
-						variant="outline"
+						variant='outline'
 						onClick={() => {
 							setShowLeaveModal(false)
 						}}
-						className="w-full"
+						className='w-full'
 					>
 						Nein
 					</Button>

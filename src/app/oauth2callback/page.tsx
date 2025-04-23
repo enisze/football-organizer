@@ -32,11 +32,11 @@ const OAuthCallbackPage = async ({ searchParams }: PageProps) => {
 	})
 
 	return (
-		<div className="flex flex-col items-center justify-center h-screen">
-			<h1 className="text-2xl font-bold">
+		<div className='flex flex-col items-center justify-center h-screen'>
+			<h1 className='text-2xl font-bold'>
 				Das Token wurde erfolgreich gesetzt!
 			</h1>
-			<OrganizerLink href={routes.home()} className="justify-center">
+			<OrganizerLink href={routes.home()} className='justify-center'>
 				Zurück zur Startseite
 			</OrganizerLink>
 		</div>

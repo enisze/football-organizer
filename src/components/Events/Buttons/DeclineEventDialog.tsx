@@ -48,12 +48,12 @@ export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
 			>
 				<DialogTrigger asChild>
 					<Button
-						aria-label="cancel-button"
+						aria-label='cancel-button'
 						variant={
 							userStatus === 'CANCELED' ? 'status-canceled' : 'status-default'
 						}
-						className="w-full"
-						type="button"
+						className='w-full'
+						type='button'
 						onClick={() => {
 							setShowCommentModal(false)
 						}}
@@ -65,12 +65,12 @@ export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>
-							<h2 id="modal-title">Bitte gib einen Grund an (optional)</h2>
+							<h2 id='modal-title'>Bitte gib einen Grund an (optional)</h2>
 						</DialogTitle>
 					</DialogHeader>
-					<div className="flex flex-col w-full gap-y-2">
+					<div className='flex flex-col w-full gap-y-2'>
 						<TextField
-							label="Warum kannst du nicht teilnehmen?"
+							label='Warum kannst du nicht teilnehmen?'
 							text={''}
 							onChange={(e) => setComment(e.target.value)}
 							maxLength={35}
@@ -78,14 +78,14 @@ export const DeclineEventDialog: FunctionComponent<DeclineEventDialogProps> = ({
 
 						<form>
 							<Button
-								variant="outline"
-								color="info"
-								type="submit"
+								variant='outline'
+								color='info'
+								type='submit'
 								formAction={async () => {
 									await leave({ comment })
 									setShowCommentModal(false)
 								}}
-								className="w-full"
+								className='w-full'
 							>
 								Speichern
 							</Button>

@@ -10,7 +10,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
 	const [queryClient] = useState(() => new QueryClient())
 
 	return (
-		<ThemeProvider attribute="class">
+		<ThemeProvider attribute='class'>
 			<Suspense>
 				<QueryClientProvider client={queryClient}>
 					<Toaster />

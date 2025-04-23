@@ -15,21 +15,21 @@ interface EventDetailsProps {
 export async function EventDetailsCard({ event, location }: EventDetailsProps) {
 	const isOwner = await isOwnerOfGroup(event.groupId)
 	return (
-		<div className="p-4">
-			<EventCardContent event={event} className="mb-6" hideParticipants />
+		<div className='p-4'>
+			<EventCardContent event={event} className='mb-6' hideParticipants />
 
-			<div className="pb-4">
+			<div className='pb-4'>
 				<EventStatusArea id={event.id} />
 			</div>
 
 			{location && (
-				<div className="mb-4 bg-slate-800/50 rounded-xl p-3 border border-slate-700/30">
+				<div className='mb-4 bg-slate-800/50 rounded-xl p-3 border border-slate-700/30'>
 					<MapAccordion address={event.address} coordinates={location} />
 				</div>
 			)}
 
-			<div className="space-y-2">
-				<div className="bg-slate-800/50 rounded-xl p-3 border border-slate-700/30">
+			<div className='space-y-2'>
+				<div className='bg-slate-800/50 rounded-xl p-3 border border-slate-700/30'>
 					<ParticipantsAreaServer
 						eventId={event.id}
 						maxParticipants={event.maxParticipants}
@@ -41,7 +41,7 @@ export async function EventDetailsCard({ event, location }: EventDetailsProps) {
 				)}
 
 				{isOwner && (
-					<div className="p-6 pt-4 bg-slate-900/50">
+					<div className='p-6 pt-4 bg-slate-900/50'>
 						<EventCardAdminArea
 							eventId={event.id}
 							isTemplate={event.isTemplate}

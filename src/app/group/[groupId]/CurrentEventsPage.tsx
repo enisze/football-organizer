@@ -44,17 +44,17 @@ export async function CurrentEventsPage({
 	})
 
 	return (
-		<div className="m-8 flex flex-col gap-y-3 justify-center items-center">
-			<div className="flex justify-between w-full">
-				<h2 className="text-2xl font-bold">Events</h2>
+		<div className='m-8 flex flex-col gap-y-3 justify-center items-center'>
+			<div className='flex justify-between w-full'>
+				<h2 className='text-2xl font-bold'>Events</h2>
 				{isOwner && <EventDialog templates={templates} />}
 			</div>
 			{events.length === 0 ? (
-				<div className="text-gray-500 text-center">
+				<div className='text-gray-500 text-center'>
 					<p>Momentan gibt es keine Events.</p>
 				</div>
 			) : (
-				<ul className="flex flex-col gap-y-2">
+				<ul className='flex flex-col gap-y-2'>
 					{events.map(async (event) => {
 						const payment = await prisma.payment.findFirst({
 							where: {

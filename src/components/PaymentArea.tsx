@@ -29,16 +29,16 @@ export const PaymentArea = async ({
 
 	if (payment)
 		return (
-			<div className="flex items-center gap-x-2 text-emerald-400 font-bold">
+			<div className='flex items-center gap-x-2 text-emerald-400 font-bold'>
 				{`${formatter.format(payment?.amount)}€ am ${payment?.paymentDate.toLocaleDateString('de')}`}
 				<span>bezahlt</span>
 			</div>
 		)
 
 	return (
-		<div className="flex w-full flex-col items-center justify-center gap-y-2">
-			<a href={paypalLink} className="w-full">
-				<Button variant="dark" aria-label="paypal" className="w-full">
+		<div className='flex w-full flex-col items-center justify-center gap-y-2'>
+			<a href={paypalLink} className='w-full'>
+				<Button variant='dark' aria-label='paypal' className='w-full'>
 					Bezahlen per Paypal
 				</Button>
 			</a>

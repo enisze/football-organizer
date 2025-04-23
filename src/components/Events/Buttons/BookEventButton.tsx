@@ -19,19 +19,19 @@ export const BookEventButton = ({ id }: { id: string }) => {
 	return (
 		<Dialog open={open} onOpenChange={() => setOpen(!open)}>
 			<DialogTrigger asChild>
-				<Button variant="dark-success" className="w-full" type="button">
+				<Button variant='dark-success' className='w-full' type='button'>
 					Book
 				</Button>
 			</DialogTrigger>
 
-			<DialogContent className="w-50">
+			<DialogContent className='w-50'>
 				<DialogHeader>
 					<DialogTitle>
-						<h2 id="modal-title">Event buchen</h2>
+						<h2 id='modal-title'>Event buchen</h2>
 					</DialogTitle>
 				</DialogHeader>
 
-				<div className="flex flex-col justify-center">
+				<div className='flex flex-col justify-center'>
 					<form
 						onSubmit={(e) => {
 							e.preventDefault()
@@ -48,20 +48,20 @@ export const BookEventButton = ({ id }: { id: string }) => {
 						}}
 					>
 						<TextField
-							label="Datum"
-							type="date"
-							name="bookingdate"
+							label='Datum'
+							type='date'
+							name='bookingdate'
 							text={''}
-							className="w-36"
+							className='w-36'
 						/>
 						<Button
-							variant="outline"
-							color="info"
-							type="submit"
+							variant='outline'
+							color='info'
+							type='submit'
 							onClick={() => {
 								setOpen(false)
 							}}
-							className="w-36"
+							className='w-36'
 						>
 							Buchen
 						</Button>

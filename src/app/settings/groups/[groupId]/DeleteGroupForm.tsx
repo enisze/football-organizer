@@ -25,19 +25,19 @@ export const DeleteGroupForm = ({
 	return (
 		<>
 			<TextField
-				id="group-name-input"
-				type="text"
+				id='group-name-input'
+				type='text'
 				label={`Gruppenname ${groupName} eingeben um zu löschen`}
-				text=""
+				text=''
 				value={groupNameForDeletion}
 				onChange={(e) => setGroupNameForDeletion(e.target.value)}
 				placeholder={groupName}
 			/>
 			<Button
 				disabled={groupNameForDeletion !== groupName}
-				className="w-fit"
-				variant="destructive"
-				type="submit"
+				className='w-fit'
+				variant='destructive'
+				type='submit'
 				formAction={deleteGroupAction}
 			>
 				Löschen

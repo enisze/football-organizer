@@ -18,16 +18,16 @@ const Page = async ({
 	const { code } = resolvedParams
 
 	return (
-		<div className="min-h-screen flex flex-col items-center p-8">
-			<div className="w-full max-w-3xl space-y-6">
-				<div className="flex items-center justify-between">
-					<h1 className="text-2xl font-bold text-white">Gruppe beitreten</h1>
+		<div className='min-h-screen flex flex-col items-center p-8'>
+			<div className='w-full max-w-3xl space-y-6'>
+				<div className='flex items-center justify-between'>
+					<h1 className='text-2xl font-bold text-white'>Gruppe beitreten</h1>
 				</div>
 
-				<Card className="bg-white/5 backdrop-blur-sm border-white/10">
+				<Card className='bg-white/5 backdrop-blur-sm border-white/10'>
 					<CardHeader>
-						<CardTitle className="text-lg text-white">Einladungscode</CardTitle>
-						<CardDescription className="text-white/70">
+						<CardTitle className='text-lg text-white'>Einladungscode</CardTitle>
+						<CardDescription className='text-white/70'>
 							Gib den 6-stelligen Einladungscode ein, um der Gruppe beizutreten
 						</CardDescription>
 					</CardHeader>

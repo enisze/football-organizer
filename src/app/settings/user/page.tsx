@@ -32,24 +32,24 @@ const Settings = async () => {
 	const paypalNameDb = userInfo?.paypalName
 
 	return (
-		<div className="min-h-screen flex flex-col items-center p-8">
-			<div className="w-full max-w-3xl space-y-6">
-				<div className="flex items-center justify-between">
-					<h1 className="text-2xl font-bold text-white">Nutzereinstellungen</h1>
+		<div className='min-h-screen flex flex-col items-center p-8'>
+			<div className='w-full max-w-3xl space-y-6'>
+				<div className='flex items-center justify-between'>
+					<h1 className='text-2xl font-bold text-white'>Nutzereinstellungen</h1>
 				</div>
 
-				<Card className="bg-white/5 backdrop-blur-sm border-white/10">
+				<Card className='bg-white/5 backdrop-blur-sm border-white/10'>
 					<CardHeader>
-						<CardTitle className="text-lg text-white">
+						<CardTitle className='text-lg text-white'>
 							Benachrichtigungen
 						</CardTitle>
-						<CardDescription className="text-white/70">
+						<CardDescription className='text-white/70'>
 							Verwalte deine Email-Benachrichtigungen
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
-						<div className="flex items-center gap-4">
-							<Label className="text-white/70">Alle Benachrichtigungen</Label>
+						<div className='flex items-center gap-4'>
+							<Label className='text-white/70'>Alle Benachrichtigungen</Label>
 							<NotificationSwitch
 								notificationsEnabled={Boolean(notificationsEnabled)}
 							/>
@@ -57,37 +57,37 @@ const Settings = async () => {
 					</CardContent>
 				</Card>
 
-				<Card className="bg-white/5 backdrop-blur-sm border-white/10">
+				<Card className='bg-white/5 backdrop-blur-sm border-white/10'>
 					<CardHeader>
-						<CardTitle className="text-lg text-white">
+						<CardTitle className='text-lg text-white'>
 							Paypal Einstellungen
 						</CardTitle>
-						<CardDescription className="text-white/70">
+						<CardDescription className='text-white/70'>
 							Verwalte deine Paypal-Informationen
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
-						<form className="space-y-4">
+						<form className='space-y-4'>
 							<TextField
-								id="user-name-input"
-								type="text"
-								label="Paypal Name"
-								text=""
-								name="paypalName"
+								id='user-name-input'
+								type='text'
+								label='Paypal Name'
+								text=''
+								name='paypalName'
 								infoContent={
 									<div>
 										Du solltest deinen Paypal namen spezifizieren, damit dein
 										Bezahlstatus korrekt angezeigt wird.
 									</div>
 								}
-								placeholder="Paypal Name"
+								placeholder='Paypal Name'
 								defaultValue={paypalNameDb ?? undefined}
 								withBubble={!paypalName}
 							/>
 
 							<Button
-								type="submit"
-								className="w-fit"
+								type='submit'
+								className='w-fit'
 								formAction={async (formData) => {
 									'use server'
 									updatePaypalName(formData)
@@ -99,10 +99,10 @@ const Settings = async () => {
 					</CardContent>
 				</Card>
 
-				<Card className="bg-white/5 backdrop-blur-sm border-white/10">
+				<Card className='bg-white/5 backdrop-blur-sm border-white/10'>
 					<CardHeader>
-						<CardTitle className="text-lg text-white">Konto löschen</CardTitle>
-						<CardDescription className="text-white/70">
+						<CardTitle className='text-lg text-white'>Konto löschen</CardTitle>
+						<CardDescription className='text-white/70'>
 							Lösche dein Konto und alle zugehörigen Daten
 						</CardDescription>
 					</CardHeader>

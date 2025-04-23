@@ -48,16 +48,16 @@ export const GroupAdminEmail = ({
 			<Head />
 			<Preview>{previewText}</Preview>
 			<Tailwind>
-				<Body className="bg-white text-black my-auto mx-auto font-sans">
+				<Body className='bg-white text-black my-auto mx-auto font-sans'>
 					<ContainerBox>
-						<Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
+						<Heading className='text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0'>
 							Du wurdest zugelassen, deine eigene Gruppe im&nbsp;
 							<strong>Event Wizard</strong> zu erstellen
 						</Heading>
-						<Text className="text-[14px] leading-[24px]">Hi {username},</Text>
+						<Text className='text-[14px] leading-[24px]'>Hi {username},</Text>
 
-						<Section className="text-center">
-							<CustomButton href="">Erstelle deine Gruppe</CustomButton>
+						<Section className='text-center'>
+							<CustomButton href=''>Erstelle deine Gruppe</CustomButton>
 						</Section>
 						<Footer />
 					</ContainerBox>

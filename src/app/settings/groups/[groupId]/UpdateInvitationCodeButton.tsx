@@ -7,8 +7,8 @@ export const UpdateInvitationCodeButton = ({
 	return (
 		<form>
 			<Button
-				variant="outline"
-				type="submit"
+				variant='outline'
+				type='submit'
 				formAction={async () => {
 					'use server'
 					await updateInvitationCode({ groupId })

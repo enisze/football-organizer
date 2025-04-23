@@ -6,7 +6,7 @@ import { sendReminderEventAction } from './actions'
 export const RemindButton = ({ id }: { id: string }) => {
 	return (
 		<Button
-			variant="dark-primary"
+			variant='dark-primary'
 			formAction={async () => {
 				await sendReminderEventAction({
 					id,

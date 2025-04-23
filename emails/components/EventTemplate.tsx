@@ -14,21 +14,21 @@ export const EventTemplate = ({ event }: { event: Partial<Event> }) => {
 	} = event
 
 	return (
-		<Section className="bg-gray-200 p-4 rounded">
-			<div className="text-start p-1">
-				<strong className="pr-2">Ort:</strong>
+		<Section className='bg-gray-200 p-4 rounded'>
+			<div className='text-start p-1'>
+				<strong className='pr-2'>Ort:</strong>
 				{address}
 			</div>
-			<div className="text-start p-1">
-				<strong className="pr-2">Datum:</strong>
+			<div className='text-start p-1'>
+				<strong className='pr-2'>Datum:</strong>
 				{date ? transformDate(date) : 'Unbekannt'}
 			</div>
-			<div className="text-start p-1">
-				<strong className="pr-2">Uhrzeit:</strong>
+			<div className='text-start p-1'>
+				<strong className='pr-2'>Uhrzeit:</strong>
 				{startTime} - {endTime} Uhr
 			</div>
-			<div className="text-start p-1">
-				<strong className="pr-2">Kosten:</strong>
+			<div className='text-start p-1'>
+				<strong className='pr-2'>Kosten:</strong>
 				{cost && `${formatter.format(cost / (maxParticipants ?? 10))}€`}
 			</div>
 		</Section>

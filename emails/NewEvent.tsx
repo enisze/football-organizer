@@ -21,15 +21,15 @@ export const NewEvent = ({
 		<Tailwind>
 			<Head />
 			<Preview>Neues Event, dein Status wird benötigt.</Preview>
-			<Body className="bg-white text-black font-sans">
+			<Body className='bg-white text-black font-sans'>
 				<ContainerBox>
 					<Text>Hi {userName},</Text>
 					<Text>Ein neues Event wurde erstellt.</Text>
 					<Text>Es findet voraussichtlich zu den Daten statt:</Text>
 					<EventTemplate event={event} />
 
-					<Section className="text-center pt-4">
-						<CustomButton href={eventLink} className="justify-center">
+					<Section className='text-center pt-4'>
+						<CustomButton href={eventLink} className='justify-center'>
 							Zusagen / Absagen
 						</CustomButton>
 					</Section>

@@ -88,17 +88,17 @@ export const SuccessComp = ({
 	}
 
 	return (
-		<div className="space-y-4">
+		<div className='space-y-4'>
 			<form
 				ref={formRef}
 				onSubmit={(e) => {
 					e.preventDefault()
 					submitForm()
 				}}
-				className="space-y-4"
+				className='space-y-4'
 			>
-				<div className="flex flex-col gap-4">
-					<div className="flex gap-2 justify-center">
+				<div className='flex flex-col gap-4'>
+					<div className='flex gap-2 justify-center'>
 						{Array(6)
 							.fill(null)
 							.map((_, index) => (
@@ -107,9 +107,9 @@ export const SuccessComp = ({
 									ref={(el) => {
 										inputRefs.current[index] = el
 									}}
-									type="text"
-									inputMode="numeric"
-									pattern="[0-9]*"
+									type='text'
+									inputMode='numeric'
+									pattern='[0-9]*'
 									maxLength={1}
 									className={`w-12 h-12 text-center bg-white/5 border-white/10 text-white placeholder:text-white/50 ${
 										error ? 'border-red-500' : ''
@@ -146,18 +146,18 @@ export const SuccessComp = ({
 							))}
 					</div>
 					{error && (
-						<div className="text-red-500 text-sm text-center">{error}</div>
+						<div className='text-red-500 text-sm text-center'>{error}</div>
 					)}
 				</div>
-				<Button type="submit" className="w-full">
+				<Button type='submit' className='w-full'>
 					Beitreten
 				</Button>
 			</form>
 
 			{groupName && (
-				<div className="flex flex-col items-center gap-4 p-4 bg-white/5 rounded-lg border border-white/10">
-					<div className="flex items-center gap-2 text-emerald-400">
-						<CheckCircleIcon className="h-5 w-5" />
+				<div className='flex flex-col items-center gap-4 p-4 bg-white/5 rounded-lg border border-white/10'>
+					<div className='flex items-center gap-2 text-emerald-400'>
+						<CheckCircleIcon className='h-5 w-5' />
 						<span>Du bist Gruppe {groupName} beigetreten</span>
 					</div>
 

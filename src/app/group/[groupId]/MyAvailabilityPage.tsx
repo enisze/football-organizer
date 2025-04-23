@@ -44,7 +44,7 @@ export async function MyAvailabilityPage({
 		])
 
 	return (
-		<div className="mb-3 animate-in fade-in duration-500">
+		<div className='mb-3 animate-in fade-in duration-500'>
 			<MyAvailability
 				groupId={groupId}
 				initialWeekdaySlots={generalTimeSlots}

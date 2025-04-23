@@ -11,7 +11,7 @@ export const ClipboardButton = ({ code }: { code: string }) => {
 					`${process.env.NEXT_PUBLIC_BASE_URL}/group/enter?code=${code}`,
 				)
 			}}
-			className="w-fit"
+			className='w-fit'
 		>
 			Einladungslink&nbsp;
 			<Copy />

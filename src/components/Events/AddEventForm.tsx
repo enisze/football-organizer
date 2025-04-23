@@ -43,13 +43,13 @@ export const AddEventForm = ({ onSubmit, templates }: AddEventFormProps) => {
 	}
 
 	return (
-		<form className="grid grid-cols-2 justify-center gap-2">
+		<form className='grid grid-cols-2 justify-center gap-2'>
 			{templates.length > 0 && (
-				<div className="col-span-2 mb-4">
+				<div className='col-span-2 mb-4'>
 					<Label>Use Template</Label>
 					<Select onValueChange={handleTemplateSelect} value={selectedTemplate}>
 						<SelectTrigger>
-							<SelectValue placeholder="Select a template" />
+							<SelectValue placeholder='Select a template' />
 						</SelectTrigger>
 						<SelectContent>
 							{templates.map((template) => (
@@ -61,44 +61,44 @@ export const AddEventForm = ({ onSubmit, templates }: AddEventFormProps) => {
 					</Select>
 				</div>
 			)}
-			<div className="col-span-2">
+			<div className='col-span-2'>
 				<TextField
-					label="Datum"
-					type="date"
-					name="date"
-					text=""
-					className="w-fit"
+					label='Datum'
+					type='date'
+					name='date'
+					text=''
+					className='w-fit'
 				/>
 			</div>
 
-			<div className="flex gap-x-2 col-span-2 items-center justify-between mb-4">
-				<Label htmlFor="isTemplate">Template</Label>
-				<Switch name="isTemplate" />
+			<div className='flex gap-x-2 col-span-2 items-center justify-between mb-4'>
+				<Label htmlFor='isTemplate'>Template</Label>
+				<Switch name='isTemplate' />
 			</div>
 
-			<div className="col-span-2">
-				<TextField label="Addresse" name="address" text="" />
+			<div className='col-span-2'>
+				<TextField label='Addresse' name='address' text='' />
 			</div>
 
-			<TextField label="Startzeit" type="time" name="startTime" text="" />
-			<TextField label="Endzeit" type="time" name="endTime" text="" />
+			<TextField label='Startzeit' type='time' name='startTime' text='' />
+			<TextField label='Endzeit' type='time' name='endTime' text='' />
 
-			<div className="flex gap-x-2 col-span-2 items-center justify-between">
-				<Label htmlFor="environment">Indoor</Label>
-				<Switch name="environment" />
+			<div className='flex gap-x-2 col-span-2 items-center justify-between'>
+				<Label htmlFor='environment'>Indoor</Label>
+				<Switch name='environment' />
 			</div>
 
-			<TextField label="Kosten" name="cost" type="number" text="" />
+			<TextField label='Kosten' name='cost' type='number' text='' />
 
 			<TextField
-				label="Teilnehmerzahl"
-				name="maxParticipants"
-				type="number"
-				text=""
+				label='Teilnehmerzahl'
+				name='maxParticipants'
+				type='number'
+				text=''
 			/>
 			<Button
-				variant="purple"
-				type="submit"
+				variant='purple'
+				type='submit'
 				formAction={async (formData: FormData) => {
 					formData.append('groupId', groupId)
 					await createEvent(formData)

@@ -28,6 +28,7 @@
 	"javascript": {
 		"formatter": {
 			"enabled": true,
+			"jsxQuoteStyle": "single",
 			"indentStyle": "tab",
 			"indentWidth": 2,
 			"quoteStyle": "single",

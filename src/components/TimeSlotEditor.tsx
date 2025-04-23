@@ -24,7 +24,7 @@ export function TimeSlotEditor({
 	}))
 
 	return (
-		<div className="bg-transparent">
+		<div className='bg-transparent'>
 			<AvailabilityEditor
 				timeSlots={formattedTimeSlots}
 				type={type}

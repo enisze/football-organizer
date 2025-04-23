@@ -17,7 +17,7 @@ export const DashboardLink = ({ groupId }: { groupId: string | undefined }) => {
 			{!onDashboard && data?.user?.id && (
 				<form>
 					<Link href={groupId ? `/group/${groupId}` : '/group'}>
-						<Button variant="outline">Dashboard</Button>
+						<Button variant='outline'>Dashboard</Button>
 					</Link>
 				</form>
 			)}
