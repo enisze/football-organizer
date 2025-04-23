@@ -1,6 +1,5 @@
 'use client'
 
-import { Button } from '@/ui/button'
 import { Toaster } from '@/ui/toaster'
 import { TourProvider } from '@reactour/tour'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -11,7 +10,7 @@ import { type ReactNode, Suspense, useState } from 'react'
 const tourSteps = [
 	{
 		selector: '[data-tour="myAvailability"]',
-		content: 'Hier kannst du deine Verfügbarkeiten anpassen.',
+		content: 'Klicke hier, um deine Verfügbarkeiten anzupassen.',
 	},
 	{
 		selector: '[data-tour="general"]',
@@ -19,14 +18,14 @@ const tourSteps = [
 			'Lege deine allgemeine Verfügbarkeit für Werktage und Wochenenden fest.',
 	},
 	{
-		selector: '[data-tour="weekly"]',
-		content:
-			'Hier kannst du für jeden Wochentag individuelle Zeiten festlegen.',
-	},
-	{
 		selector: '[data-tour="date"]',
 		content:
 			'Wähle spezifische Tage aus und lege deine Verfügbarkeit fest. Das kannst du bspw. machen, wenn du an bestimmten Tagen weniger verfügbar bist als normalerweise.',
+	},
+	{
+		selector: '[data-tour="weekly"]',
+		content:
+			'Hier kannst du für jeden Wochentag individuelle Zeiten festlegen. Klicke auf den Tab, um weiterzumachen.',
 	},
 	{
 		selector: '[data-tour="add-time-slot"]',
@@ -44,6 +43,10 @@ const tourSteps = [
 		selector: '[data-tour="save-time-slot"]',
 		content: 'Klicke hier, um das neue Zeitfenster zu speichern.',
 	},
+	{
+		selector: '[data-tour="save-time-slot"]',
+		content: 'Super! Du hast dein erstes Zeitfenster erstellt.',
+	},
 ]
 
 const Providers = ({ children }: { children: ReactNode }) => {
@@ -58,43 +61,31 @@ const Providers = ({ children }: { children: ReactNode }) => {
 						steps={tourSteps}
 						scrollSmooth
 						styles={{
+							badge: (base) => ({
+								...base,
+								background: '#4f46e5',
+							}),
+							dot: (base) => ({
+								...base,
+								background: '#4f46e5',
+							}),
 							popover: (base) => ({
 								...base,
 								background: '#18181b',
-								borderRadius: '8px',
-								overflow: 'hidden',
-								borderColor: 'white',
 							}),
 						}}
-						ContentComponent={({ currentStep, steps, setCurrentStep }) => {
-							const content = steps[currentStep]?.content
-							if (!content) return null
-
-							return (
-								<div className=''>
-									<div className='mb-4 text-foreground'>
-										{typeof content === 'function' ? null : content}
-									</div>
-									<div className='flex justify-between items-center'>
-										<span className='text-sm text-muted-foreground'>
-											Schritt {currentStep + 1} von {steps.length}
-										</span>
-										<Button
-											variant='default'
-											type='button'
-											onClick={() => {
-												if (currentStep === steps.length - 1) {
-													setCurrentStep(0)
-												} else {
-													setCurrentStep((s) => s + 1)
-												}
-											}}
-										>
-											Weiter
-										</Button>
-									</div>
-								</div>
+						onClickHighlighted={(
+							event,
+							{ currentStep, setCurrentStep, steps },
+						) => {
+							if (
+								currentStep === 2 ||
+								currentStep === 3 ||
+								currentStep === (steps?.length ?? 0) - 1
 							)
+								return
+
+							setCurrentStep(currentStep + 1)
 						}}
 					>
 						<NuqsAdapter>{children}</NuqsAdapter>
