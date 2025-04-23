@@ -14,7 +14,7 @@ export const deleteGroup = authedActionClient
 		await prisma.group.delete({
 			where: { id: groupId, ownerId: userId },
 		})
-		return { success: true }
+		revalidatePath(routes.groupSettings())
 	})
 
 export const createGroup = authedActionClient

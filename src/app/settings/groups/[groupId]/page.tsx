@@ -1,11 +1,13 @@
-import { Button } from '@/ui/button'
-import { Users, X } from 'lucide-react'
+import { Button, buttonVariants } from '@/ui/button'
+import { ArrowLeft, Users, X } from 'lucide-react'
 import { DeleteGroupForm } from './DeleteGroupForm'
 
+import { cn } from '@/lib/utils/cn'
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
 import type { Group } from '@prisma/client'
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { ClipboardButton } from './ClipboardButton'
 import { ClipboardCode } from './ClipboardCode'
@@ -36,8 +38,18 @@ const GroupSettings = async ({ params }: PageProps) => {
 	}
 
 	return (
-		<div className='min-h-screen flex flex-col items-center p-8'>
+		<div className='min-h-screen flex flex-col items-center px-8'>
 			<div className='w-full max-w-3xl space-y-6'>
+				<Link
+					className={cn(
+						buttonVariants({ variant: 'ghost' }),
+						'self-start mt-4',
+					)}
+					href={routes.groupSettings()}
+				>
+					<ArrowLeft className='w-4 h-4 mr-2 flex-none' />
+					Gruppenübersicht
+				</Link>
 				<div className='flex items-center justify-between'>
 					<h1 className='text-2xl font-bold text-white'>
 						Einstellungen für Gruppe {groupName}

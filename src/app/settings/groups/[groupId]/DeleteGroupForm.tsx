@@ -1,5 +1,6 @@
 'use client'
 
+import { routes } from '@/src/shared/navigation'
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
 import { useRouter } from 'next/navigation'
@@ -16,14 +17,9 @@ export const DeleteGroupForm = ({
 	const [groupNameForDeletion, setGroupNameForDeletion] = useState('')
 
 	const router = useRouter()
-	const deleteGroupAction = async () => {
-		await deleteGroup({ groupId })
-
-		router.push('/settings/groups')
-	}
 
 	return (
-		<>
+		<form>
 			<TextField
 				id='group-name-input'
 				type='text'
@@ -38,10 +34,13 @@ export const DeleteGroupForm = ({
 				className='w-fit'
 				variant='destructive'
 				type='submit'
-				formAction={deleteGroupAction}
+				formAction={async () => {
+					await deleteGroup({ groupId })
+					router.push(routes.groupSettings())
+				}}
 			>
 				Löschen
 			</Button>
-		</>
+		</form>
 	)
 }
