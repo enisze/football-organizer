@@ -1,3 +1,4 @@
+import Script from 'next/script'
 import '../../styles/globals.css'
 import { Navbar } from '../components/Navigation/Navbar'
 import Providers from './Providers'
@@ -22,7 +23,7 @@ export default function RootLayout({
 					name='google-site-verification'
 					content='LMJ7nv6Hz3ij0v5y7cxbJfTE8PAIxT9HFRQ54JMPgN4'
 				/>
-				<script
+				<Script
 					defer
 					src='https://cloud.umami.is/script.js'
 					data-website-id='94a78e6e-3c15-4526-9d9d-111cc97b7d73'
