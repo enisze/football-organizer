@@ -10,7 +10,7 @@ import {
 } from './dropdown-menu'
 
 export function ThemeToggle() {
-	const { setTheme } = useTheme()
+	const { theme, setTheme } = useTheme()
 
 	return (
 		<DropdownMenu>
@@ -22,19 +22,55 @@ export function ThemeToggle() {
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align='end' forceMount>
-				<DropdownMenuItem onClick={() => setTheme('light')}>
+				<DropdownMenuItem
+					onClick={() => setTheme('light')}
+					className={theme === 'light' ? 'bg-accent' : ''}
+				>
 					<SunMedium className='mr-2 h-4 w-4' />
 					<span>Light</span>
 				</DropdownMenuItem>
-				<DropdownMenuItem onClick={() => setTheme('dark')}>
+				<DropdownMenuItem
+					onClick={() => setTheme('dark')}
+					className={theme === 'dark' ? 'bg-accent' : ''}
+				>
 					<Moon className='mr-2 h-4 w-4' />
 					<span>Dark</span>
 				</DropdownMenuItem>
-				<DropdownMenuItem onClick={() => setTheme('system')}>
+				<DropdownMenuItem
+					onClick={() => setTheme('system')}
+					className={theme === 'system' ? 'bg-accent' : ''}
+				>
 					<Laptop className='mr-2 h-4 w-4' />
 					<span>System</span>
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
+	)
+}
+
+export const ThemeToggleArea = () => {
+	const { theme, setTheme } = useTheme()
+
+	return (
+		<div className='flex flex-wrap items-center gap-2'>
+			<Button
+				variant={theme === 'light' ? 'default' : 'outline'}
+				onClick={() => setTheme('light')}
+			>
+				<SunMedium className='h-4 w-4' />
+			</Button>
+			<Button
+				variant={theme === 'dark' ? 'default' : 'outline'}
+				onClick={() => setTheme('dark')}
+			>
+				<Moon className='h-4 w-4' />
+			</Button>
+			<Button
+				variant={theme === 'system' ? 'default' : 'outline'}
+				onClick={() => setTheme('system')}
+			>
+				<Laptop className='h-4 w-4' />
+			</Button>
+		</div>
 	)
 }

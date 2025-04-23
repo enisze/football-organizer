@@ -4,6 +4,7 @@ import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
 import { IconCalendar, IconUserCircle, IconUsers } from '@tabler/icons-react'
+import { Settings } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import { CurrentEventsPage } from './CurrentEventsPage'
@@ -60,7 +61,7 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 			}),
 		},
 		{
-			title: 'Gruppenzeiten',
+			title: 'Gruppe',
 			icon: <IconUsers className='h-full w-full' />,
 			href: routes.groupDetails({
 				groupId,
@@ -69,6 +70,15 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 					duration,
 					minUsers,
 					date: date.toISOString(),
+				},
+			}),
+		},
+		{
+			title: 'Einstellungen',
+			icon: <Settings className='h-full w-full' />,
+			href: routes.settings({
+				search: {
+					groupId,
 				},
 			}),
 		},

@@ -52,31 +52,38 @@ export function MyAvailability({
 
 	return (
 		<div className='container px-4 mx-auto space-y-8 pt-2 pb-20'>
+			<h2 className='text-2xl font-bold -mb-4'>Meine Zeiten</h2>
 			<Tabs defaultValue='general' className='w-full flex flex-col'>
 				<TabsList className='inline-flex rounded-xl bg-white/5 p-1 self-center'>
 					<TabsTrigger
 						value='general'
 						className='px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5'
+						data-tab='general'
 					>
-						Allgemeine Verfügbarkeit
+						Allgemein
 					</TabsTrigger>
 					<TabsTrigger
 						value='weekly'
 						className='px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5'
+						data-tab='weekly'
 					>
-						Wöchentliche Verfügbarkeit
+						Wöchentlich
 					</TabsTrigger>
 					<TabsTrigger
 						value='date'
 						className='px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5'
+						data-tab='date'
 					>
-						Datumsspezifisch
+						Täglich
 					</TabsTrigger>
 				</TabsList>
 
 				<TabsContent value='general' className='space-y-4'>
 					<div className='grid gap-6 md:grid-cols-2'>
-						<Card className='bg-white/5 backdrop-blur-sm border-white/10'>
+						<Card
+							className='bg-white/5 backdrop-blur-sm border-white/10'
+							data-section='weekday-availability'
+						>
 							<CardHeader>
 								<CardTitle className='text-lg flex items-center gap-2'>
 									<Clock className='h-4 w-4 ' />

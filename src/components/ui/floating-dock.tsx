@@ -6,7 +6,7 @@ export const FloatingDock = ({
 	items,
 	desktopClassName,
 }: {
-	items: { title: string; icon: React.ReactNode; href: string }[]
+	items: { title: string; icon: React.ReactNode; href: string; id: string }[]
 	desktopClassName?: string
 }) => {
 	return (
@@ -17,12 +17,13 @@ export const FloatingDock = ({
 			)}
 		>
 			<div className='max-w-screen-xl mx-auto'>
-				<div className='grid grid-cols-3 gap-1'>
+				<div className='grid grid-cols-4 gap-1'>
 					{items.map((item) => (
 						<Link
 							key={item.title}
 							href={item.href}
 							className='flex flex-col items-center text-center justify-center py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors'
+							data-tour={item.id}
 						>
 							<div className='w-6 h-6 mb-1'>{item.icon}</div>
 							<span className='text-xs text-gray-600 dark:text-gray-400'>

@@ -1,10 +1,38 @@
 'use client'
 
+import { Button } from '@/ui/button'
 import { Toaster } from '@/ui/toaster'
+import { TourProvider } from '@reactour/tour'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from 'next-themes'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { type ReactNode, Suspense, useState } from 'react'
+
+const tourSteps = [
+	{
+		selector: '[data-tour="myAvailability"]',
+		content: 'Hier kannst du deine Verfügbarkeiten anpassen.',
+	},
+	{
+		selector: '[data-tour="general"]',
+		content:
+			'Lege deine allgemeine Verfügbarkeit für Werktage und Wochenenden fest.',
+	},
+	// {
+	// 	selector: '[data-tab="weekly"]',
+	// 	content:
+	// 		'Hier kannst du für jeden Wochentag individuelle Zeiten festlegen.',
+	// },
+	// {
+	// 	selector: '[data-tab="date"]',
+	// 	content: 'Wähle spezifische Tage aus und lege deine Verfügbarkeit fest.',
+	// },
+	// {
+	// 	selector: '.monday-availability',
+	// 	content:
+	// 		'Füge neue Zeitfenster hinzu, indem du Start- und Endzeit auswählst.',
+	// },
+]
 
 const Providers = ({ children }: { children: ReactNode }) => {
 	const [queryClient] = useState(() => new QueryClient())
@@ -14,7 +42,42 @@ const Providers = ({ children }: { children: ReactNode }) => {
 			<Suspense>
 				<QueryClientProvider client={queryClient}>
 					<Toaster />
-					<NuqsAdapter>{children}</NuqsAdapter>
+					<TourProvider
+						steps={tourSteps}
+						scrollSmooth
+						ContentComponent={({ currentStep, steps, setCurrentStep }) => {
+							const content = steps[currentStep]?.content
+							if (!content) return null
+
+							return (
+								<div className='p-4 max-w-md bg-background border rounded-lg shadow-lg'>
+									<div className='mb-4 text-foreground'>
+										{typeof content === 'function' ? null : content}
+									</div>
+									<div className='flex justify-between items-center'>
+										<span className='text-sm text-muted-foreground'>
+											Schritt {currentStep + 1} von {steps.length}
+										</span>
+										<Button
+											variant='default'
+											type='button'
+											onClick={() => {
+												if (currentStep === steps.length - 1) {
+													setCurrentStep(0)
+												} else {
+													setCurrentStep((s) => s + 1)
+												}
+											}}
+										>
+											Weiter
+										</Button>
+									</div>
+								</div>
+							)
+						}}
+					>
+						<NuqsAdapter>{children}</NuqsAdapter>
+					</TourProvider>
 				</QueryClientProvider>
 			</Suspense>
 		</ThemeProvider>

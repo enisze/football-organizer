@@ -44,7 +44,7 @@ export async function CurrentEventsPage({
 	})
 
 	return (
-		<div className='m-8 flex flex-col gap-y-3 justify-center items-center'>
+		<div className='m-4 flex flex-col gap-y-3 justify-center items-center'>
 			<div className='flex justify-between w-full'>
 				<h2 className='text-2xl font-bold'>Events</h2>
 				{isOwner && <EventDialog templates={templates} />}

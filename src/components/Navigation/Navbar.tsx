@@ -1,13 +1,11 @@
 import { Button } from '@/ui/button'
-import { ThemeToggle } from '@/ui/theme-toggle'
 import Link from 'next/link'
 import { Heading } from '../Heading'
-import { DashboardLink } from './DashboardLink'
-import { OrganizerServerMenu } from './OrganizerServerMenu'
 
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
+import { UserAvatar } from '../UserAvatar'
 
 export const Navbar = async () => {
 	const session = await serverAuth()
@@ -23,17 +21,13 @@ export const Navbar = async () => {
 				<Heading size='sm' />
 
 				<div className='flex gap-x-1 items-center cursor-pointer'>
-					{session?.user && <OrganizerServerMenu groupId={group?.id} />}
-
 					{!session?.user && (
 						<Link href={routes.signIn()}>
 							<Button variant='outline'>Login / Registrieren</Button>
 						</Link>
 					)}
-					{session?.user && <DashboardLink groupId={group?.id} />}
-
-					<ThemeToggle />
 				</div>
+				<UserAvatar name={session?.user?.name ?? ''} />
 			</nav>
 		</header>
 	)

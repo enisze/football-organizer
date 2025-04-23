@@ -87,6 +87,7 @@ export function GroupAvailabilityView({
 
 	return (
 		<div className='container p-0 mx-auto space-y-4 pt-2 pb-16 px-4 sm:px-6 md:space-y-8 md:pb-24'>
+			<h2 className='text-2xl font-bold'>Gruppenslots</h2>
 			<Card className='bg-white/5 backdrop-blur-sm border-white/10'>
 				<CardHeader className='p-4 pb-0 md:p-6 md:pb-0'>
 					<CardTitle className='text-xl md:text-2xl'>
