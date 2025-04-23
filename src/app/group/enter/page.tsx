@@ -20,16 +20,7 @@ const Page = async ({
 	const session = await serverAuth()
 
 	if (!session?.user) {
-		const resolvedParams = await searchParams
-		redirect(
-			`/signIn?callbackUrl=${encodeURIComponent(
-				routes.enterGroup({
-					search: {
-						code: resolvedParams.code,
-					},
-				}),
-			)}`,
-		)
+		redirect(routes.signIn())
 	}
 
 	const resolvedParams = await searchParams
