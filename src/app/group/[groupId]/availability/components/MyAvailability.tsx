@@ -1,6 +1,7 @@
 'use client'
 
 import { TimeSlotEditor } from '@/src/components/TimeSlotEditor'
+import { WeeklyAvailabilityEditor } from '@/src/components/WeeklyAvailabilityEditor'
 import { Calendar } from '@/ui/calendar'
 import {
 	Card,
@@ -13,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs'
 import type { TimeSlot } from '@prisma/client'
 import { Clock } from 'lucide-react'
 import { useQueryState } from 'nuqs'
+import { groupBy } from 'remeda'
 import { revalidateGroupAction } from '../../actions'
 
 interface MyAvailabilityProps {
@@ -20,6 +22,7 @@ interface MyAvailabilityProps {
 	initialWeekdaySlots: Array<TimeSlot>
 	initialWeekendSlots: Array<TimeSlot>
 	initialDaySpecificSlots: Array<TimeSlot>
+	initialWeeklySlots: Array<TimeSlot>
 }
 
 export function MyAvailability({
@@ -27,6 +30,7 @@ export function MyAvailability({
 	initialWeekdaySlots,
 	initialWeekendSlots,
 	initialDaySpecificSlots,
+	initialWeeklySlots,
 }: MyAvailabilityProps) {
 	const [date, setDate] = useQueryState('selectedDate', {
 		defaultValue: new Date().toISOString(),
@@ -35,12 +39,16 @@ export function MyAvailability({
 	const handleDateSelect = async (newDate: Date | undefined) => {
 		if (newDate) {
 			await setDate(newDate.toISOString())
-
-			await revalidateGroupAction({
-				groupId,
-			})
+			await revalidateGroupAction({ groupId })
 		}
 	}
+
+	const weeklySlotsByDay = groupBy(
+		initialWeeklySlots.filter(
+			(slot): slot is TimeSlot & { day: number } => slot.day !== null,
+		),
+		(slot) => slot.day,
+	)
 
 	return (
 		<div className='container px-4 mx-auto space-y-8 pt-2 pb-20'>
@@ -53,10 +61,16 @@ export function MyAvailability({
 						Allgemeine Verfügbarkeit
 					</TabsTrigger>
 					<TabsTrigger
-						value='specific'
+						value='weekly'
 						className='px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5'
 					>
-						Tagspezifisch
+						Wöchentliche Verfügbarkeit
+					</TabsTrigger>
+					<TabsTrigger
+						value='date'
+						className='px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5'
+					>
+						Datumsspezifisch
 					</TabsTrigger>
 				</TabsList>
 
@@ -102,12 +116,19 @@ export function MyAvailability({
 					</div>
 				</TabsContent>
 
-				<TabsContent value='specific' className='space-y-4'>
+				<TabsContent value='weekly' className='space-y-4'>
+					<WeeklyAvailabilityEditor
+						timeSlots={weeklySlotsByDay}
+						groupId={groupId}
+					/>
+				</TabsContent>
+
+				<TabsContent value='date' className='space-y-4'>
 					<Card className='bg-white/5 backdrop-blur-sm border-white/10'>
 						<CardHeader>
 							<CardTitle className='text-lg flex items-center gap-2'>
 								<Clock className='h-4 w-4 flex-none' />
-								Tagesspezifische Verfügbarkeit
+								Datumsspezifische Verfügbarkeit
 							</CardTitle>
 							<CardDescription className='text-white/70'>
 								Lege deine Verfügbarkeit für bestimmte Tage fest
@@ -136,7 +157,7 @@ export function MyAvailability({
 										timeSlots={initialDaySpecificSlots ?? []}
 										groupId={groupId}
 										date={new Date(date)}
-										type='DAY_SPECIFIC'
+										type='DATE_SPECIFIC'
 									/>
 								</div>
 							) : (

@@ -14,34 +14,46 @@ export async function MyAvailabilityPage({
 }: MyAvailabilityPageProps) {
 	'use cache'
 
-	const [generalTimeSlots, weekendTimeSlots, daySpecificTimeSlots] =
-		await Promise.all([
-			prisma.timeSlot.findMany({
-				where: {
-					user: { id: userId },
-					groupId,
-					type: 'GENERAL',
-				},
-				orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
-			}),
-			prisma.timeSlot.findMany({
-				where: {
-					user: { id: userId },
-					groupId,
-					type: 'WEEKEND',
-				},
-				orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
-			}),
-			prisma.timeSlot.findMany({
-				where: {
-					user: { id: userId },
-					date: date ? new Date(date) : new Date(),
-					groupId,
-					type: 'DAY_SPECIFIC',
-				},
-				orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
-			}),
-		])
+	const [
+		generalTimeSlots,
+		weekendTimeSlots,
+		daySpecificTimeSlots,
+		weeklyTimeSlots,
+	] = await Promise.all([
+		prisma.timeSlot.findMany({
+			where: {
+				user: { id: userId },
+				groupId,
+				type: 'GENERAL',
+			},
+			orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
+		}),
+		prisma.timeSlot.findMany({
+			where: {
+				user: { id: userId },
+				groupId,
+				type: 'WEEKEND',
+			},
+			orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
+		}),
+		prisma.timeSlot.findMany({
+			where: {
+				user: { id: userId },
+				date: date ? new Date(date) : new Date(),
+				groupId,
+				type: 'DATE_SPECIFIC',
+			},
+			orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
+		}),
+		prisma.timeSlot.findMany({
+			where: {
+				user: { id: userId },
+				groupId,
+				type: 'DAY_SPECIFIC',
+			},
+			orderBy: [{ day: 'asc' }, { startTime: 'asc' }],
+		}),
+	])
 
 	return (
 		<div className='mb-3 animate-in fade-in duration-500'>
@@ -50,6 +62,7 @@ export async function MyAvailabilityPage({
 				initialWeekdaySlots={generalTimeSlots}
 				initialWeekendSlots={weekendTimeSlots}
 				initialDaySpecificSlots={daySpecificTimeSlots}
+				initialWeeklySlots={weeklyTimeSlots}
 			/>
 		</div>
 	)

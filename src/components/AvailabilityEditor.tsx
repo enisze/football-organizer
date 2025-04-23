@@ -20,9 +20,10 @@ import { useMemo, useState } from 'react'
 
 interface AvailabilityEditorProps {
 	date?: Date
-	type: TimeSlotType
+	day?: number
 	timeSlots: TimeSlot[]
 	groupId: string
+	type: TimeSlotType
 }
 
 interface TimeRange {
@@ -47,6 +48,7 @@ const generateTimeOptions = (isWeekend: boolean) => {
 
 export function AvailabilityEditor({
 	date,
+	day,
 	type,
 	timeSlots,
 	groupId,
@@ -56,9 +58,13 @@ export function AvailabilityEditor({
 	const [isAdding, setIsAdding] = useState(false)
 	const [newSlot, setNewSlot] = useState<Partial<TimeRange>>({})
 
-	const isWeekend = type === 'WEEKEND'
+	const isWeekend =
+		type === 'WEEKEND' || (type === 'DAY_SPECIFIC' && (day === 6 || day === 0))
 	const timeOptions = useMemo(
-		() => generateTimeOptions(isWeekend || type === 'DAY_SPECIFIC'),
+		() =>
+			generateTimeOptions(
+				isWeekend || type === 'DAY_SPECIFIC' || type === 'DATE_SPECIFIC',
+			),
 		[isWeekend, type],
 	)
 
@@ -69,7 +75,8 @@ export function AvailabilityEditor({
 			startTime: newSlot.startTime,
 			endTime: newSlot.endTime,
 			type,
-			date: type === 'DAY_SPECIFIC' ? date : undefined,
+			date: type === 'DATE_SPECIFIC' ? date : undefined,
+			day: type === 'DAY_SPECIFIC' ? day : undefined,
 			groupId,
 		})
 
@@ -78,33 +85,33 @@ export function AvailabilityEditor({
 	}
 
 	return (
-		<div className='select-none space-y-4'>
-			<div className='space-y-3'>
+		<div className='select-none space-y-3'>
+			<div className='space-y-2'>
 				{timeSlots.map((slot) => (
 					<div
 						key={slot.id}
-						className='flex items-center justify-between p-4 bg-white/5 rounded-xl'
+						className='flex items-center justify-between p-3 sm:p-4 bg-white/5 rounded-xl'
 					>
-						<span>
+						<span className='text-sm sm:text-base'>
 							{slot.startTime} - {slot.endTime}
 						</span>
 						<Button
 							variant='ghost'
 							size='icon'
 							onClick={() => deleteTimeSlot({ id: slot.id })}
-							className='p-1.5 hover:bg-white/10 rounded-lg transition-colors'
+							className='p-1 sm:p-1.5 hover:bg-white/10 rounded-lg transition-colors'
 							aria-label='Delete time slot'
 						>
-							<X className='h-4 w-4 text-white/70' />
+							<X className='h-3.5 w-3.5 sm:h-4 sm:w-4 text-white/70' />
 						</Button>
 					</div>
 				))}
 
 				{isAdding ? (
-					<div className='space-y-4 bg-white/5 rounded-xl p-4'>
-						<div className='grid grid-cols-2 gap-4'>
-							<div className='space-y-2'>
-								<Label className='text-white/70'>Start</Label>
+					<div className='space-y-3 sm:space-y-4 bg-white/5 rounded-xl p-3 sm:p-4'>
+						<div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
+							<div className='space-y-1.5 sm:space-y-2'>
+								<Label className='text-sm text-white/70'>Start</Label>
 								<Select
 									value={newSlot.startTime || ''}
 									onValueChange={(value) =>
@@ -114,20 +121,20 @@ export function AvailabilityEditor({
 										}))
 									}
 								>
-									<SelectTrigger className='bg-white/5 border-white/10'>
+									<SelectTrigger className='bg-white/5 border-white/10 text-sm h-9 sm:h-10'>
 										<SelectValue placeholder='Zeit auswählen' />
 									</SelectTrigger>
-									<SelectContent className='overflow-y-auto max-h-[10rem]'>
+									<SelectContent className='overflow-y-auto max-h-[40vh]'>
 										{timeOptions.map((time) => (
-											<SelectItem key={time} value={time}>
+											<SelectItem key={time} value={time} className='text-sm'>
 												{time}
 											</SelectItem>
 										))}
 									</SelectContent>
 								</Select>
 							</div>
-							<div className='space-y-2'>
-								<Label className='text-white/70'>Ende</Label>
+							<div className='space-y-1.5 sm:space-y-2'>
+								<Label className='text-sm text-white/70'>Ende</Label>
 								<Select
 									value={newSlot.endTime || ''}
 									onValueChange={(value) =>
@@ -138,14 +145,14 @@ export function AvailabilityEditor({
 									}
 									disabled={!newSlot.startTime}
 								>
-									<SelectTrigger className='bg-white/5 border-white/10'>
+									<SelectTrigger className='bg-white/5 border-white/10 text-sm h-9 sm:h-10'>
 										<SelectValue placeholder='Zeit auswählen' />
 									</SelectTrigger>
-									<SelectContent className='overflow-y-auto max-h-[10rem]'>
+									<SelectContent className='overflow-y-auto max-h-[40vh]'>
 										{timeOptions
 											.filter((time) => time > (newSlot.startTime || ''))
 											.map((time) => (
-												<SelectItem key={time} value={time}>
+												<SelectItem key={time} value={time} className='text-sm'>
 													{time}
 												</SelectItem>
 											))}
@@ -160,7 +167,7 @@ export function AvailabilityEditor({
 									setNewSlot({})
 									setIsAdding(false)
 								}}
-								className='text-white/70 hover:bg-white/10'
+								className='text-sm text-white/70 hover:bg-white/10 px-3 h-9'
 							>
 								Abbrechen
 							</Button>
@@ -168,14 +175,19 @@ export function AvailabilityEditor({
 								onClick={handleAddSlot}
 								disabled={!newSlot.startTime || !newSlot.endTime}
 								variant='purple'
+								className='text-sm px-3 h-9'
 							>
 								Speichern
 							</Button>
 						</div>
 					</div>
 				) : (
-					<Button variant='purple' onClick={() => setIsAdding(true)}>
-						<Plus className='h-5 w-5' />
+					<Button
+						variant='purple'
+						onClick={() => setIsAdding(true)}
+						className='w-full sm:w-auto text-sm h-9 sm:h-10'
+					>
+						<Plus className='h-4 w-4 mr-1.5' />
 						<span>Neues Zeitfenster</span>
 					</Button>
 				)}

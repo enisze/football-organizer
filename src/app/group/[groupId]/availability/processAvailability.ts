@@ -56,19 +56,32 @@ const isUserAvailable = (
 ): boolean => {
 	const userSlots = relevantSlots.filter((slot) => slot.user.id === user.id)
 
-	// First check for day-specific slots
-	const daySpecificSlots = userSlots.filter(
-		(slot) => slot.type === 'DAY_SPECIFIC',
+	// First check for date-specific slots
+	const dateSpecificSlots = userSlots.filter(
+		(slot) =>
+			slot.type === 'DATE_SPECIFIC' && slot.date?.getTime() === date.getTime(),
 	)
-	if (daySpecificSlots.length > 0) {
-		return daySpecificSlots.some(
+	if (dateSpecificSlots.length > 0) {
+		return dateSpecificSlots.some(
 			(slot) =>
 				timeToMinutes(slot.startTime) <= timeToMinutes(timeSlot.startTime) &&
 				timeToMinutes(slot.endTime) >= timeToMinutes(timeSlot.endTime),
 		)
 	}
 
-	// If no day-specific slots, check for weekend/weekday slots
+	// Then check for day-of-week slots
+	const dayOfWeekSlots = userSlots.filter(
+		(slot) => slot.type === 'DAY_SPECIFIC' && slot.day === date.getDay(),
+	)
+	if (dayOfWeekSlots.length > 0) {
+		return dayOfWeekSlots.some(
+			(slot) =>
+				timeToMinutes(slot.startTime) <= timeToMinutes(timeSlot.startTime) &&
+				timeToMinutes(slot.endTime) >= timeToMinutes(timeSlot.endTime),
+		)
+	}
+
+	// Finally check for general/weekend slots
 	const isWeekend = date.getDay() === 0 || date.getDay() === 6
 	const relevantTypeSlots = userSlots.filter(
 		(slot) => slot.type === (isWeekend ? 'WEEKEND' : 'GENERAL'),

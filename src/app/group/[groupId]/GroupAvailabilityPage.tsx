@@ -24,7 +24,8 @@ export async function GroupAvailabilityPage({
 	const timeslots = await prisma.timeSlot.findMany({
 		where: {
 			OR: [
-				{ type: 'DAY_SPECIFIC', date },
+				{ type: 'DATE_SPECIFIC', date },
+				{ type: 'DAY_SPECIFIC', day: date.getDay() },
 				{ type: 'GENERAL' },
 				{ type: 'WEEKEND' },
 			],

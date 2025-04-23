@@ -1,24 +1,26 @@
-import type { TimeSlot } from '@prisma/client'
+import type { TimeSlot, TimeSlotType } from '@prisma/client'
 import { AvailabilityEditor } from './AvailabilityEditor'
 
 interface TimeSlotEditorProps {
 	timeSlots: TimeSlot[]
-	isWeekend?: boolean
 	groupId: string
 	date?: Date
-	type: 'GENERAL' | 'WEEKEND' | 'DAY_SPECIFIC'
+	day?: number
+	type: TimeSlotType
 }
 
 export function TimeSlotEditor({
 	timeSlots,
 	groupId,
 	date,
+	day,
 	type,
 }: TimeSlotEditorProps) {
 	const formattedTimeSlots: TimeSlot[] = timeSlots.map((slot) => ({
 		...slot,
 		type: type,
 		date: date ?? null,
+		day: type === 'DAY_OF_WEEK' ? (day ?? null) : null,
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	}))
@@ -30,6 +32,7 @@ export function TimeSlotEditor({
 				type={type}
 				groupId={groupId}
 				date={date}
+				day={day}
 			/>
 		</div>
 	)

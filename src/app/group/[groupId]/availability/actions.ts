@@ -55,16 +55,21 @@ export const updateTimeSlotAction = authedActionClient
 		z.object({
 			startTime: z.string(),
 			endTime: z.string(),
-			type: z.enum(['GENERAL', 'WEEKEND', 'DAY_SPECIFIC']),
+			type: z.enum(['GENERAL', 'WEEKEND', 'DAY_SPECIFIC', 'DATE_SPECIFIC']),
 			date: z.date().optional(),
+			day: z.number().min(0).max(6).optional(),
 			groupId: z.string(),
 		}),
 	)
 	.action(async ({ parsedInput, ctx: { userId } }) => {
-		const { startTime, endTime, type, date, groupId } = parsedInput
+		const { startTime, endTime, type, date, day, groupId } = parsedInput
 
-		if (type === 'DAY_SPECIFIC' && !date) {
-			throw new Error('Date is required for day-specific time slots')
+		if (type === 'DATE_SPECIFIC' && !date) {
+			throw new Error('Date is required for date-specific time slots')
+		}
+
+		if (type === 'DAY_SPECIFIC' && day === undefined) {
+			throw new Error('Day is required for day-of-week time slots')
 		}
 
 		const timeSlot = await prisma.timeSlot.create({
@@ -72,7 +77,8 @@ export const updateTimeSlotAction = authedActionClient
 				startTime,
 				endTime,
 				type,
-				date: type === 'DAY_SPECIFIC' ? date : null,
+				date: type === 'DATE_SPECIFIC' ? date : null,
+				day: type === 'DAY_SPECIFIC' ? day : null,
 				userId,
 				groupId,
 			},
