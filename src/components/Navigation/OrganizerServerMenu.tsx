@@ -1,4 +1,3 @@
-import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { GroupSelectorServer } from '../Groups/GroupSelectorServer'
@@ -42,13 +41,10 @@ export const OrganizerServerMenu = async ({ groupId }: Props) => {
 		return acc
 	}, Promise.resolve(0))
 
-	const isOwner = groupId ? await isOwnerOfGroup(groupId) : false
-
 	return (
 		<OrganizerMenu
 			balance={balance}
 			selector={<GroupSelectorServer />}
-			isOwner={isOwner}
 			groupId={groupId}
 		/>
 	)

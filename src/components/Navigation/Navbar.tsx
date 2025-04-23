@@ -23,14 +23,14 @@ export const Navbar = async () => {
 				<Heading size='sm' />
 
 				<div className='flex gap-x-1 items-center cursor-pointer'>
-					<OrganizerServerMenu groupId={group?.id} />
+					{session?.user && <OrganizerServerMenu groupId={group?.id} />}
 
 					{!session?.user && (
 						<Link href={routes.signIn()}>
 							<Button variant='outline'>Login / Registrieren</Button>
 						</Link>
 					)}
-					<DashboardLink groupId={group?.id} />
+					{session?.user && <DashboardLink groupId={group?.id} />}
 
 					<ThemeToggle />
 				</div>

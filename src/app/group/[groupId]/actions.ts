@@ -121,3 +121,11 @@ export const revalidateTagAction = async ({
 }) => {
 	revalidateTag(tagId)
 }
+
+export const revalidatePathAction = async ({
+	path,
+}: {
+	path: string
+}) => {
+	revalidatePath(path)
+}

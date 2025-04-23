@@ -1,4 +1,5 @@
 'use client'
+import { revalidatePathAction } from '@/src/app/group/[groupId]/actions'
 import { signOut, useSession } from '@/src/lib/auth-client'
 import { routes } from '@/src/shared/navigation'
 import { Avatar, AvatarFallback } from '@/ui/avatar'
@@ -10,43 +11,20 @@ import {
 } from '@/ui/dropdown-menu'
 import { Separator } from '@/ui/separator'
 import Link from 'next/link'
-import {
-	redirect,
-	usePathname,
-	useRouter,
-	useSearchParams,
-} from 'next/navigation'
-import {
-	type FunctionComponent,
-	type ReactNode,
-	useCallback,
-	useState,
-} from 'react'
+import { redirect, usePathname } from 'next/navigation'
+import { type FunctionComponent, type ReactNode, useState } from 'react'
 import { NotificationBubble } from '../NotificationBubble'
 
 export const OrganizerMenu: FunctionComponent<{
 	balance: number | null | undefined
 	selector: ReactNode
-	isOwner: boolean
 	groupId?: string
-}> = ({ balance, selector, isOwner, groupId }) => {
+}> = ({ balance, selector, groupId }) => {
 	const [open, setOpen] = useState(false)
 	const { data } = useSession()
 	const pathname = usePathname()
-	const searchParams = useSearchParams()
-	const router = useRouter()
 
 	const isOnDashboard = pathname?.includes('/group/')
-
-	const createQueryString = useCallback(
-		(name: string, value: string) => {
-			const params = new URLSearchParams(searchParams)
-			params.set(name, value)
-
-			return params.toString()
-		},
-		[searchParams],
-	)
 
 	if (!data?.user) return null
 
@@ -117,6 +95,9 @@ export const OrganizerMenu: FunctionComponent<{
 						await signOut({
 							fetchOptions: {
 								onSuccess: () => {
+									revalidatePathAction({
+										path: routes.home(),
+									})
 									redirect(routes.signIn())
 								},
 							},
