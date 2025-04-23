@@ -34,7 +34,7 @@ export function WeeklyAvailabilityEditor({
 				<AccordionItem
 					key={day}
 					value={index.toString()}
-					className={`bg-white/5 backdrop-blur-sm border-white/10 rounded-lg border overflow-hidden ${index === 0 ? 'monday-availability' : ''}`}
+					className='bg-white/5 backdrop-blur-sm border-white/10 rounded-lg border overflow-hidden'
 				>
 					<AccordionTrigger className='px-4 py-3 hover:no-underline hover:bg-white/5'>
 						<div className='flex items-center gap-2'>

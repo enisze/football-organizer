@@ -110,7 +110,7 @@ export function AvailabilityEditor({
 				{isAdding ? (
 					<div className='space-y-3 sm:space-y-4 bg-white/5 rounded-xl p-3 sm:p-4'>
 						<div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
-							<div className='space-y-1.5 sm:space-y-2'>
+							<div className='space-y-1.5 sm:space-y-2' data-tour='start-time'>
 								<Label className='text-sm text-white/70'>Start</Label>
 								<Select
 									value={newSlot.startTime || ''}
@@ -133,7 +133,7 @@ export function AvailabilityEditor({
 									</SelectContent>
 								</Select>
 							</div>
-							<div className='space-y-1.5 sm:space-y-2'>
+							<div className='space-y-1.5 sm:space-y-2' data-tour='end-time'>
 								<Label className='text-sm text-white/70'>Ende</Label>
 								<Select
 									value={newSlot.endTime || ''}
@@ -176,6 +176,7 @@ export function AvailabilityEditor({
 								disabled={!newSlot.startTime || !newSlot.endTime}
 								variant='purple'
 								className='text-sm px-3 h-9'
+								data-tour='save-time-slot'
 							>
 								Speichern
 							</Button>
@@ -186,6 +187,7 @@ export function AvailabilityEditor({
 						variant='purple'
 						onClick={() => setIsAdding(true)}
 						className='w-full sm:w-auto text-sm h-9 sm:h-10'
+						data-tour='add-time-slot'
 					>
 						<Plus className='h-4 w-4 mr-1.5' />
 						<span>Neues Zeitfenster</span>

@@ -58,21 +58,21 @@ export function MyAvailability({
 					<TabsTrigger
 						value='general'
 						className='px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5'
-						data-tab='general'
+						data-tour='general'
 					>
 						Allgemein
 					</TabsTrigger>
 					<TabsTrigger
 						value='weekly'
 						className='px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5'
-						data-tab='weekly'
+						data-tour='weekly'
 					>
 						Wöchentlich
 					</TabsTrigger>
 					<TabsTrigger
 						value='date'
 						className='px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5'
-						data-tab='date'
+						data-tour='date'
 					>
 						Täglich
 					</TabsTrigger>

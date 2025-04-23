@@ -18,20 +18,32 @@ const tourSteps = [
 		content:
 			'Lege deine allgemeine Verfügbarkeit für Werktage und Wochenenden fest.',
 	},
-	// {
-	// 	selector: '[data-tab="weekly"]',
-	// 	content:
-	// 		'Hier kannst du für jeden Wochentag individuelle Zeiten festlegen.',
-	// },
-	// {
-	// 	selector: '[data-tab="date"]',
-	// 	content: 'Wähle spezifische Tage aus und lege deine Verfügbarkeit fest.',
-	// },
-	// {
-	// 	selector: '.monday-availability',
-	// 	content:
-	// 		'Füge neue Zeitfenster hinzu, indem du Start- und Endzeit auswählst.',
-	// },
+	{
+		selector: '[data-tour="weekly"]',
+		content:
+			'Hier kannst du für jeden Wochentag individuelle Zeiten festlegen.',
+	},
+	{
+		selector: '[data-tour="date"]',
+		content:
+			'Wähle spezifische Tage aus und lege deine Verfügbarkeit fest. Das kannst du bspw. machen, wenn du an bestimmten Tagen weniger verfügbar bist als normalerweise.',
+	},
+	{
+		selector: '[data-tour="add-time-slot"]',
+		content: 'Klicke hier, um ein neues Zeitfenster hinzuzufügen.',
+	},
+	{
+		selector: '[data-tour="start-time"]',
+		content: 'Wähle hier die Startzeit für dein Zeitfenster aus.',
+	},
+	{
+		selector: '[data-tour="end-time"]',
+		content: 'Wähle hier die Endzeit für dein Zeitfenster aus.',
+	},
+	{
+		selector: '[data-tour="save-time-slot"]',
+		content: 'Klicke hier, um das neue Zeitfenster zu speichern.',
+	},
 ]
 
 const Providers = ({ children }: { children: ReactNode }) => {
@@ -45,12 +57,21 @@ const Providers = ({ children }: { children: ReactNode }) => {
 					<TourProvider
 						steps={tourSteps}
 						scrollSmooth
+						styles={{
+							popover: (base) => ({
+								...base,
+								background: '#18181b',
+								borderRadius: '8px',
+								overflow: 'hidden',
+								borderColor: 'white',
+							}),
+						}}
 						ContentComponent={({ currentStep, steps, setCurrentStep }) => {
 							const content = steps[currentStep]?.content
 							if (!content) return null
 
 							return (
-								<div className='p-4 max-w-md bg-background border rounded-lg shadow-lg'>
+								<div className=''>
 									<div className='mb-4 text-foreground'>
 										{typeof content === 'function' ? null : content}
 									</div>

@@ -20,7 +20,7 @@ export function TimeSlotEditor({
 		...slot,
 		type: type,
 		date: date ?? null,
-		day: type === 'DAY_OF_WEEK' ? (day ?? null) : null,
+		day: type === 'DAY_SPECIFIC' ? (day ?? null) : null,
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	}))
