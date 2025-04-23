@@ -30,7 +30,6 @@ export const { routes, useSafeParams, useSafeSearchParams } =
 				groupId: z.string(),
 			}),
 		}),
-		newGroup: defineRoute('/newGroup'),
 		enterGroup: defineRoute('/group/enter'),
 		addToGroup: defineRoute('/addToGroup/[JWT]', {
 			params: z.object({

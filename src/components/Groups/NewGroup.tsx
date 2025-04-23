@@ -1,24 +1,26 @@
 import { TextField } from '@/ui/TextField'
 import { Button } from '@/ui/button'
 
+import { cn } from '@/lib/utils/cn'
 import { createGroup } from '@/src/app/settings/groups/[groupId]/actions'
 import { Plus, Users } from 'lucide-react'
 
-// const newGroupSchema = z.object({
-//   name: z
-//     .string()
-//     .min(5, { message: 'Der Gruppenname ist zu kurz. Mindestlaenge 5.' }),
-// })
-
-export const NewGroup = async () => {
+export const NewGroup = async ({
+	disableStyling = false,
+}: { disableStyling?: boolean }) => {
 	return (
-		<div className='min-h-[calc(100vh-140px)]  flex items-center justify-center p-4'>
-			<div className='w-full max-w-md bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl p-8 border border-white/20'>
+		<div
+			className={cn(
+				'min-h-[calc(100vh-140px)] flex items-center justify-center p-4',
+				disableStyling && 'min-h-0 items-baseline justify-normal p-0 w-full',
+			)}
+		>
+			<div className='w-full max-w-md px-8 py-6 bg-white/5 hover:bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10 transition-all duration-300 group'>
 				<div className='flex items-center gap-3 mb-8'>
 					<div className='p-3 bg-indigo-600 rounded-xl'>
 						<Users className='w-6 h-6 text-white' />
 					</div>
-					<h2 className='text-2xl font-bold text-white'>
+					<h2 className='text-lg font-bold text-white'>
 						Neue Gruppe erstellen
 					</h2>
 				</div>
