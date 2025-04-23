@@ -3,8 +3,7 @@ import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
-import { IconCalendar, IconUserCircle, IconUsers } from '@tabler/icons-react'
-import { Settings } from 'lucide-react'
+import { getNavigationItems } from '@/src/shared/navigationItems'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import { CurrentEventsPage } from './CurrentEventsPage'
@@ -46,43 +45,13 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 		return <div>Du gehörst nicht zu dieser Gruppe</div>
 	}
 
-	const navigationItems = [
-		{
-			title: 'Events',
-			icon: <IconCalendar className='h-full w-full' />,
-			href: routes.groupDetails({ groupId, search: { tab: 'events' } }),
-		},
-		{
-			title: 'Zeiten',
-			icon: <IconUserCircle className='h-full w-full' />,
-			href: routes.groupDetails({
-				groupId,
-				search: { tab: 'myAvailability', selectedDate },
-			}),
-		},
-		{
-			title: 'Gruppe',
-			icon: <IconUsers className='h-full w-full' />,
-			href: routes.groupDetails({
-				groupId,
-				search: {
-					tab: 'groupAvailability',
-					duration,
-					minUsers,
-					date: date.toISOString(),
-				},
-			}),
-		},
-		{
-			title: 'Einstellungen',
-			icon: <Settings className='h-full w-full' />,
-			href: routes.settings({
-				search: {
-					groupId,
-				},
-			}),
-		},
-	]
+	const navigationItems = getNavigationItems({
+		groupId,
+		selectedDate,
+		duration,
+		minUsers,
+		date,
+	})
 
 	return (
 		<div className='flex flex-col pb-2'>

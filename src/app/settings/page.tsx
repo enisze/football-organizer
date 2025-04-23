@@ -2,6 +2,7 @@ import { FloatingDock } from '@/src/components/ui/floating-dock'
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
+import { getNavigationItems } from '@/src/shared/navigationItems'
 import {
 	Card,
 	CardContent,
@@ -10,8 +11,7 @@ import {
 	CardTitle,
 } from '@/ui/card'
 import { ThemeToggleArea } from '@/ui/theme-toggle'
-import { IconCalendar, IconUserCircle, IconUsers } from '@tabler/icons-react'
-import { Settings, User } from 'lucide-react'
+import { User } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { HelpButton } from './HelpButton'
@@ -39,44 +39,7 @@ export default async function MainPage({ searchParams }: PageProps) {
 		where: { id: userId },
 	})
 
-	const navigationItems = [
-		{
-			title: 'Events',
-			icon: <IconCalendar className='h-full w-full' />,
-			href: routes.groupDetails({ groupId, search: { tab: 'events' } }),
-			id: 'events',
-		},
-		{
-			title: 'Zeiten',
-			icon: <IconUserCircle className='h-full w-full' />,
-			href: routes.groupDetails({
-				groupId,
-				search: { tab: 'myAvailability' },
-			}),
-			id: 'myAvailability',
-		},
-		{
-			title: 'Gruppe',
-			icon: <IconUsers className='h-full w-full' />,
-			href: routes.groupDetails({
-				groupId,
-				search: {
-					tab: 'groupAvailability',
-				},
-			}),
-			id: 'groupAvailability',
-		},
-		{
-			title: 'Einstellungen',
-			icon: <Settings className='h-full w-full' />,
-			href: routes.settings({
-				search: {
-					groupId,
-				},
-			}),
-			id: 'settings',
-		},
-	]
+	const navigationItems = getNavigationItems({ groupId })
 
 	return (
 		<div className='min-h-screen flex flex-col items-center p-4'>
