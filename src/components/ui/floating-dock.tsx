@@ -1,6 +1,7 @@
 'use client'
 import { cn } from '@/lib/utils/cn'
 import Link from 'next/link'
+import { usePathname, useSearchParams } from 'next/navigation'
 
 export const FloatingDock = ({
 	items,
@@ -9,6 +10,10 @@ export const FloatingDock = ({
 	items: { title: string; icon: React.ReactNode; href: string; id: string }[]
 	desktopClassName?: string
 }) => {
+	const searchParams = useSearchParams()
+	const pathname = usePathname()
+	const currentTabId = searchParams.get('tab')
+
 	return (
 		<nav
 			className={cn(
@@ -22,7 +27,12 @@ export const FloatingDock = ({
 						<Link
 							key={item.title}
 							href={item.href}
-							className='flex flex-col items-center text-center justify-center py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors'
+							className={cn(
+								'flex flex-col items-center text-center justify-center py-2 px-3 rounded-lg transition-colors',
+								currentTabId === item.id || pathname.includes(item.id)
+									? 'bg-gray-100 dark:bg-slate-800'
+									: 'hover:bg-gray-100 dark:hover:bg-slate-800',
+							)}
 							data-tour={item.id}
 						>
 							<div className='w-6 h-6 mb-1'>{item.icon}</div>

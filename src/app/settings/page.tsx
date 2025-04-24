@@ -15,6 +15,7 @@ import { ThemeToggleArea } from '@/ui/theme-toggle'
 import { User } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { ClearLocalStorageButton } from './ClearLocalStorageButton'
 import { HelpButton } from './HelpButton'
 import { SignOutButton } from './SignOutButton'
 
@@ -31,6 +32,7 @@ export default async function MainPage({ searchParams }: PageProps) {
 	const groupId = res?.groupId
 
 	const userId = session?.user?.id
+	const isAdmin = session.user.role === 'ADMIN'
 
 	if (!userId || !groupId) {
 		return null
@@ -43,11 +45,14 @@ export default async function MainPage({ searchParams }: PageProps) {
 	const navigationItems = getNavigationItems({ groupId })
 
 	return (
-		<div className='min-h-screen flex flex-col items-center p-4'>
+		<div className='min-h-screen flex flex-col items-center p-4 pb-12'>
 			<div className='w-full space-y-4'>
 				<div className='flex items-center justify-between'>
 					<h1 className='text-2xl font-bold text-white'>Einstellungen</h1>
-					<HelpButton />
+					<div className='flex items-center gap-2'>
+						<ClearLocalStorageButton />
+						<HelpButton />
+					</div>
 				</div>
 
 				<div className='grid gap-4'>
