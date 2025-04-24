@@ -50,7 +50,7 @@ export default async function MainPage({ searchParams }: PageProps) {
 	})
 
 	return (
-		<div className='min-h-screen flex flex-col items-center p-4 pb-12'>
+		<div className='min-h-screen flex flex-col items-center p-4 pb-24'>
 			<div className='w-full space-y-4'>
 				<div className='flex items-center justify-between'>
 					<h1 className='text-2xl font-bold text-white'>Einstellungen</h1>
