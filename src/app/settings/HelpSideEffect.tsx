@@ -40,7 +40,7 @@ export function HelpSideEffect() {
 						Kleine Onboarding Tour um zu verstehen, wie alles funktioniert.
 					</DialogDescription>
 				</DialogHeader>
-				<DialogFooter className='flex justify-start sm:justify-center'>
+				<DialogFooter className='flex gap-2 flex-col justify-start sm:justify-center'>
 					<Button
 						onClick={() => {
 							setHasCompletedOnboarding(true)

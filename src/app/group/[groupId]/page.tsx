@@ -6,6 +6,7 @@ import { routes } from '@/src/shared/navigation'
 import { getNavigationItems } from '@/src/shared/navigationItems'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
+import { HelpSideEffect } from '../../settings/HelpSideEffect'
 import { CurrentEventsPage } from './CurrentEventsPage'
 import { GroupAvailabilityPage } from './GroupAvailabilityPage'
 import { MyAvailabilityPage } from './MyAvailabilityPage'
@@ -56,6 +57,7 @@ export default async function MainPage({ params, searchParams }: PageProps) {
 	return (
 		<div className='flex flex-col pb-2'>
 			<div className='flex-1'>
+				<HelpSideEffect />
 				{tab === 'events' && (
 					<Suspense fallback={<div>Loading events...</div>}>
 						<CurrentEventsPage

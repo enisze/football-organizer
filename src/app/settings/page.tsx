@@ -1,3 +1,4 @@
+import { GroupSelectorServer } from '@/src/components/Groups/GroupSelectorServer'
 import { FloatingDock } from '@/src/components/ui/floating-dock'
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
@@ -43,7 +44,7 @@ export default async function MainPage({ searchParams }: PageProps) {
 
 	return (
 		<div className='min-h-screen flex flex-col items-center p-4'>
-			<div className='w-full space-y-6'>
+			<div className='w-full space-y-4'>
 				<div className='flex items-center justify-between'>
 					<h1 className='text-2xl font-bold text-white'>Einstellungen</h1>
 					<HelpButton />
@@ -93,9 +94,7 @@ export default async function MainPage({ searchParams }: PageProps) {
 							</div>
 						</CardContent>
 					</Card>
-				</div>
 
-				<Link href={routes.groupSettings()} className='block w-full'>
 					<Card className='bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-colors'>
 						<CardHeader>
 							<div className='flex items-center justify-between'>
@@ -105,12 +104,22 @@ export default async function MainPage({ searchParams }: PageProps) {
 									</CardTitle>
 									<CardDescription className='text-white/70'>
 										Verwalte deine Gruppen und Mitgliedschaften
+										<Link
+											href={routes.groupSettings()}
+											className='flex my-4 items-center gap-2 bg-white/5 rounded-lg p-3 hover:bg-white/10 transition-colors'
+										>
+											<User className='h-4 w-4 text-blue-400 flex-none' />
+											<div className='text-sm'>
+												<p className='text-white'>Gruppen verwalten</p>
+											</div>
+										</Link>
+										<GroupSelectorServer />
 									</CardDescription>
 								</div>
 							</div>
 						</CardHeader>
 					</Card>
-				</Link>
+				</div>
 
 				<SignOutButton />
 			</div>

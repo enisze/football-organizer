@@ -35,7 +35,9 @@ export const GroupSelector: FunctionComponent<{
 			value={groupId}
 		>
 			<SelectGroup>
-				<SelectLabel>Gruppe auswählen</SelectLabel>
+				<SelectLabel className='p-0 pb-4'>
+					Passe deine aktuelle Gruppe an
+				</SelectLabel>
 			</SelectGroup>
 			<SelectTrigger className='w-[180px]' aria-label='group-selector'>
 				<SelectValue placeholder='Gruppe auswählen' />

@@ -105,19 +105,6 @@ const Providers = ({ children }: { children: ReactNode }) => {
 								background: '#18181b',
 							}),
 						}}
-						onClickHighlighted={(
-							event,
-							{ currentStep, setCurrentStep, steps },
-						) => {
-							if (
-								currentStep === 1 ||
-								currentStep === 2 ||
-								currentStep === (steps?.length ?? 0) - 1
-							)
-								return
-
-							setCurrentStep(currentStep + 1)
-						}}
 					>
 						<NuqsAdapter>{children}</NuqsAdapter>
 					</TourProvider>

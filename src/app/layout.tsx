@@ -2,7 +2,6 @@ import Script from 'next/script'
 import '../../styles/globals.css'
 import { Navbar } from '../components/Navigation/Navbar'
 import Providers from './Providers'
-import { HelpSideEffect } from './settings/HelpSideEffect'
 
 export const metadata = {
 	title: {
@@ -31,7 +30,6 @@ export default function RootLayout({
 				/>
 				<Providers>
 					<Navbar />
-					<HelpSideEffect />
 					{children}
 				</Providers>
 			</body>
