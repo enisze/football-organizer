@@ -42,7 +42,12 @@ export default async function MainPage({ searchParams }: PageProps) {
 		where: { id: userId },
 	})
 
-	const navigationItems = getNavigationItems({ groupId })
+	const navigationItems = getNavigationItems({
+		groupId,
+		duration: '90min',
+		date: new Date(),
+		minUsers: 8,
+	})
 
 	return (
 		<div className='min-h-screen flex flex-col items-center p-4 pb-12'>
@@ -50,7 +55,7 @@ export default async function MainPage({ searchParams }: PageProps) {
 				<div className='flex items-center justify-between'>
 					<h1 className='text-2xl font-bold text-white'>Einstellungen</h1>
 					<div className='flex items-center gap-2'>
-						<ClearLocalStorageButton />
+						{isAdmin && <ClearLocalStorageButton />}
 						<HelpButton />
 					</div>
 				</div>
