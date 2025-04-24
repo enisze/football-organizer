@@ -33,7 +33,12 @@ export function HelpSideEffect() {
 
 	return (
 		<Dialog open={!hasCompletedOnboarding}>
-			<DialogContent>
+			<DialogContent
+				onClickClose={() => {
+					setHasCompletedOnboarding(true)
+					setIsOpen(false)
+				}}
+			>
 				<DialogHeader>
 					<DialogTitle className='text-center'>Onboarding</DialogTitle>
 					<DialogDescription className='text-center'>

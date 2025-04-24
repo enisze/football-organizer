@@ -119,6 +119,7 @@ export function AvailabilityEditor({
 								className='space-y-1.5 sm:space-y-2'
 								data-tour='start-time'
 								onClick={() => {
+									console.log('setting')
 									setCurrentStep((prev) => prev + 1)
 								}}
 								onKeyDown={(e) => {
@@ -135,9 +136,6 @@ export function AvailabilityEditor({
 											...prev,
 											startTime: value,
 										}))
-									}}
-									onOpenChange={() => {
-										setCurrentStep((prev) => prev + 1)
 									}}
 								>
 									<SelectTrigger className='bg-white/5 border-white/10 text-sm h-9 sm:h-10'>
@@ -175,9 +173,6 @@ export function AvailabilityEditor({
 											...prev,
 											endTime: value,
 										}))
-									}}
-									onOpenChange={() => {
-										setCurrentStep((prev) => prev + 1)
 									}}
 									disabled={!newSlot.startTime}
 								>
