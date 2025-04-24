@@ -9,19 +9,28 @@ import { type ReactNode, Suspense, useState } from 'react'
 
 const tourSteps = [
 	{
+		selector: '[data-tour="groupAvailability"]',
+		content:
+			'Hier siehst du die Verfügbarkeiten deiner Gruppe. Dort siehst du an welchem Tag wieviele Leute Zeit haben.',
+	},
+	{
+		selector: '[data-tour="events"]',
+		content:
+			'Hier findest du aktuelle Events für die Gruppe und kannst dort deine Verfügbarkeit anpassen. D.h. ob du an einem Event teilnehmen kannst oder nicht.',
+	},
+	{
 		selector: '[data-tour="myAvailability"]',
 		content:
-			'Klicke hier, um deine Verfügbarkeiten anzupassen. Drücke dann auf den Pfeil um weiterzumachen.',
+			'Bitte klicke hier, um deine Zeiten anzupassen. Drücke dann auf den Pfeil um weiterzumachen.',
 	},
 	{
 		selector: '[data-tour="general"]',
-		content:
-			'Lege deine allgemeine Verfügbarkeit für Werktage und Wochenenden fest.',
+		content: 'Lege deine allgemeine Zeiten für Werktage und Wochenenden fest.',
 	},
 	{
 		selector: '[data-tour="date"]',
 		content:
-			'Wähle spezifische Tage aus und lege deine Verfügbarkeit fest. Das kannst du bspw. machen, wenn du an bestimmten Tagen weniger verfügbar bist als normalerweise.',
+			'Wähle spezifische Tage aus und lege deine Zeiten fest. Das kannst du bspw. machen, wenn du an bestimmten Tagen weniger verfügbar bist als normalerweise.',
 	},
 	{
 		selector: '[data-tour="weekly"]',
@@ -61,8 +70,6 @@ const tourSteps = [
 const Providers = ({ children }: { children: ReactNode }) => {
 	const [queryClient] = useState(() => new QueryClient())
 
-	const [step, setStep] = useState(0)
-
 	return (
 		<ThemeProvider attribute='class'>
 			<Suspense>
@@ -71,10 +78,6 @@ const Providers = ({ children }: { children: ReactNode }) => {
 					<TourProvider
 						steps={tourSteps}
 						scrollSmooth
-						currentStep={step}
-						setCurrentStep={() => {
-							setStep((prev) => prev + 1)
-						}}
 						styles={{
 							badge: (base) => ({
 								...base,
