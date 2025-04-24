@@ -1,8 +1,10 @@
 'use client'
 
+import { cn } from '@/lib/utils/cn'
 import { Toaster } from '@/ui/toaster'
 import { TourProvider } from '@reactour/tour'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ArrowRight } from 'lucide-react'
 import { ThemeProvider } from 'next-themes'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { type ReactNode, Suspense, useState } from 'react'
@@ -78,6 +80,17 @@ const Providers = ({ children }: { children: ReactNode }) => {
 					<TourProvider
 						steps={tourSteps}
 						scrollSmooth
+						components={{
+							Arrow: ({ disabled, inverted }) => (
+								<ArrowRight
+									className={cn(
+										'text-white',
+										disabled && 'text-gray-500',
+										!inverted && 'transform rotate-180',
+									)}
+								/>
+							),
+						}}
 						styles={{
 							badge: (base) => ({
 								...base,
