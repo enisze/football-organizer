@@ -12,7 +12,7 @@ import {
 import { useTour } from '@reactour/tour'
 import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 const hasCompletedOnboardingAtom = atomWithStorage(
 	'hasCompletedOnboarding',
@@ -20,16 +20,19 @@ const hasCompletedOnboardingAtom = atomWithStorage(
 )
 
 export function HelpSideEffect() {
+	const [isLoaded, setIsLoaded] = useState(false)
 	const [hasCompletedOnboarding, setHasCompletedOnboarding] = useAtom(
 		hasCompletedOnboardingAtom,
 	)
 	const { setIsOpen } = useTour()
 
 	useEffect(() => {
-		if (!hasCompletedOnboarding) {
-			// Show the dialog if user hasn't completed onboarding
-		}
-	}, [hasCompletedOnboarding])
+		setIsLoaded(true)
+	}, [])
+
+	if (!isLoaded) {
+		return null
+	}
 
 	return (
 		<Dialog open={!hasCompletedOnboarding}>
