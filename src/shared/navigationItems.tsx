@@ -16,13 +16,7 @@ export const getNavigationItems = ({
 	duration,
 	minUsers,
 	date,
-}: {
-	groupId: string
-	selectedDate?: string
-	duration?: '60min' | '90min' | '120min'
-	minUsers?: number
-	date?: string
-}) => {
+}: SearchParams & { groupId: string }) => {
 	// Helper function to remove undefined values from an object
 	const removeUndefined = <T extends Record<string, unknown>>(
 		obj: T,
