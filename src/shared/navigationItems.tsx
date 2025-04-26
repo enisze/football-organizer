@@ -3,7 +3,6 @@ import { Settings } from 'lucide-react'
 import { routes } from './navigation'
 
 type SearchParams = {
-	tab?: 'events' | 'myAvailability' | 'groupAvailability'
 	selectedDate?: string
 	duration?: '60min' | '90min' | '120min'
 	minUsers?: number
@@ -22,7 +21,7 @@ export const getNavigationItems = ({
 	selectedDate?: string
 	duration?: '60min' | '90min' | '120min'
 	minUsers?: number
-	date?: Date
+	date?: string
 }) => {
 	// Helper function to remove undefined values from an object
 	const removeUndefined = <T extends Record<string, unknown>>(
@@ -41,16 +40,15 @@ export const getNavigationItems = ({
 		{
 			title: 'Events',
 			icon: <IconCalendar className='h-full w-full' />,
-			href: routes.groupDetails({ groupId, search: { tab: 'events' } }),
+			href: routes.groupEvents({ groupId }),
 			id: 'events',
 		},
 		{
 			title: 'Zeiten',
 			icon: <IconUserCircle className='h-full w-full' />,
-			href: routes.groupDetails({
+			href: routes.groupMyAvailability({
 				groupId,
 				search: removeUndefined<SearchParams>({
-					tab: 'myAvailability',
 					selectedDate,
 				}),
 			}),
@@ -59,13 +57,12 @@ export const getNavigationItems = ({
 		{
 			title: 'Gruppe',
 			icon: <IconUsers className='h-full w-full' />,
-			href: routes.groupDetails({
+			href: routes.groupAvailability({
 				groupId,
 				search: removeUndefined<SearchParams>({
-					tab: 'groupAvailability',
 					duration,
 					minUsers,
-					date: date?.toISOString(),
+					date: date ? new Date(date).toISOString() : undefined,
 				}),
 			}),
 			id: 'groupAvailability',

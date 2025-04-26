@@ -1,7 +1,8 @@
 'use client'
+
 import { cn } from '@/lib/utils/cn'
 import Link from 'next/link'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 
 export const FloatingDock = ({
 	items,
@@ -10,9 +11,7 @@ export const FloatingDock = ({
 	items: { title: string; icon: React.ReactNode; href: string; id: string }[]
 	desktopClassName?: string
 }) => {
-	const searchParams = useSearchParams()
 	const pathname = usePathname()
-	const currentTabId = searchParams.get('tab')
 
 	return (
 		<nav
@@ -29,7 +28,7 @@ export const FloatingDock = ({
 							href={item.href}
 							className={cn(
 								'flex flex-col items-center text-center justify-center py-2 px-3 rounded-lg transition-colors',
-								currentTabId === item.id || pathname.includes(item.id)
+								pathname?.includes(item.id)
 									? 'bg-gray-100 dark:bg-slate-800'
 									: 'hover:bg-gray-100 dark:hover:bg-slate-800',
 							)}

@@ -19,7 +19,7 @@ const Home = async () => {
 
 	if (group) {
 		redirect(
-			routes.groupDetails({
+			routes.groupEvents({
 				groupId: group.groupId,
 			}),
 		)

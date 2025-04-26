@@ -26,6 +26,7 @@ interface PageProps {
 export default async function MainPage({ searchParams }: PageProps) {
 	const session = await serverAuth()
 	if (!session?.user?.id) redirect(routes.signIn())
+
 	const resolvedSearchParams = await searchParams
 	const res = routes.settings.$parseSearchParams(resolvedSearchParams ?? {})
 
@@ -45,7 +46,7 @@ export default async function MainPage({ searchParams }: PageProps) {
 	const navigationItems = getNavigationItems({
 		groupId,
 		duration: '90min',
-		date: new Date(),
+		date: new Date().toISOString(),
 		minUsers: 8,
 	})
 

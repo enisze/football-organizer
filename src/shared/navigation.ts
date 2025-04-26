@@ -25,9 +25,34 @@ export const { routes, useSafeParams, useSafeSearchParams } =
 					duration: z.enum(['60min', '90min', '120min']).optional(),
 					minUsers: z.coerce.number().default(8),
 					maxUsers: z.coerce.number().default(10),
-					tab: z
-						.enum(['events', 'myAvailability', 'groupAvailability'])
-						.default('events'),
+				})
+				.optional(),
+		}),
+		groupEvents: defineRoute('/group/[groupId]/events', {
+			params: z.object({
+				groupId: z.string(),
+			}),
+		}),
+		groupMyAvailability: defineRoute('/group/[groupId]/myAvailability', {
+			params: z.object({
+				groupId: z.string(),
+			}),
+			search: z
+				.object({
+					selectedDate: z.string().optional(),
+				})
+				.optional(),
+		}),
+		groupAvailability: defineRoute('/group/[groupId]/groupAvailability', {
+			params: z.object({
+				groupId: z.string(),
+			}),
+			search: z
+				.object({
+					duration: z.enum(['60min', '90min', '120min']).optional(),
+					minUsers: z.coerce.number().default(8),
+					maxUsers: z.coerce.number().default(10),
+					date: z.string().optional(),
 				})
 				.optional(),
 		}),
@@ -43,11 +68,6 @@ export const { routes, useSafeParams, useSafeSearchParams } =
 					code: z.string().optional(),
 				})
 				.optional(),
-		}),
-		addToGroup: defineRoute('/addToGroup/[JWT]', {
-			params: z.object({
-				JWT: z.string(),
-			}),
 		}),
 		event: defineRoute('/events/[eventId]', {
 			params: z.object({

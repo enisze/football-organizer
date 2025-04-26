@@ -1,8 +1,8 @@
 import { MobileEventCard } from '@/src/components/Events/MobileEventCard'
 import { prisma } from '@/src/server/db/client'
 import { addDays } from 'date-fns'
-import { EventDialog } from '../../settings/groups/[groupId]/EventDialog'
-import { getLatLong } from './getLatLong'
+import { EventDialog } from '../../../settings/groups/[groupId]/EventDialog'
+import { getLatLong } from '../getLatLong'
 
 interface CurrentEventsPageProps {
 	groupId: string

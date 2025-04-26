@@ -2,7 +2,7 @@ import { GroupAvailabilityView } from '@/src/components/GroupAvailability'
 import { prisma } from '@/src/server/db/client'
 import { cacheTag } from 'next/dist/server/use-cache/cache-tag'
 import { uniqueBy } from 'remeda'
-import { processGroupAvailability } from './availability/processAvailability'
+import { processGroupAvailability } from '../availability/processAvailability'
 
 interface GroupAvailabilityPageProps {
 	groupId: string

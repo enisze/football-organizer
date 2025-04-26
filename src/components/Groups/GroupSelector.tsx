@@ -1,5 +1,5 @@
 'use client'
-import { routes } from '@/src/shared/navigation'
+import { routes, useSafeSearchParams } from '@/src/shared/navigation'
 import {
 	Select,
 	SelectContent,
@@ -11,7 +11,7 @@ import {
 import type { UserOnGroups } from '@prisma/client'
 import { SelectGroup } from '@radix-ui/react-select'
 import { atom } from 'jotai'
-import { useParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import type { FunctionComponent } from 'react'
 
 export const selectedGroupAtom = atom<string | undefined>(undefined)
@@ -20,8 +20,8 @@ export const GroupSelector: FunctionComponent<{
 	groups?: (UserOnGroups & { group: { name: string } })[]
 }> = ({ groups }) => {
 	const router = useRouter()
-	const params = useParams()
-	const groupId = params?.groupId as string
+	const searchParams = useSafeSearchParams('settings')
+	const groupId = searchParams?.groupId
 
 	return (
 		<Select

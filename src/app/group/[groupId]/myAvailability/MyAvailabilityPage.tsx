@@ -1,5 +1,5 @@
 import { prisma } from '@/src/server/db/client'
-import { MyAvailability } from './availability/components/MyAvailability'
+import { MyAvailability } from '../availability/components/MyAvailability'
 
 interface MyAvailabilityPageProps {
 	groupId: string
