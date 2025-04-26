@@ -1,4 +1,3 @@
-import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover'
 import type { EventStatus } from '@prisma/client'
 import type { FunctionComponent } from 'react'
 
@@ -28,31 +27,13 @@ export const StatusChip: FunctionComponent<{
 	status: EventStatus
 }> = ({ status }) => {
 	return (
-		<Popover>
-			<PopoverTrigger aria-label='event-status-button'>
-				<div className='flex items-center gap-2 border rounded-full px-2 font-semibold border-blue-500 text-xs'>
-					<StatusDot status={status} />
-					{status === 'BOOKED'
-						? 'Gebucht'
-						: status === 'CANCELED'
-							? 'Abgesagt'
-							: 'Unklar'}
-				</div>
-			</PopoverTrigger>
-			<PopoverContent className='w-full'>
-				<div className='flex items-center gap-2'>
-					<StatusDot status='BOOKED' size='md' />
-					<span>Gebucht, und findet statt.</span>
-				</div>
-				<div className='flex items-center gap-2'>
-					<StatusDot status='CANCELED' size='md' />
-					<span>Abgesagt, findet sicher nicht statt.</span>
-				</div>
-				<div className='flex items-center gap-2'>
-					<StatusDot status='CREATED' size='md' />
-					<span>Nicht gebucht, brauchen noch Teilnehmer.</span>
-				</div>
-			</PopoverContent>
-		</Popover>
+		<div className='flex items-center gap-2 border rounded-full px-2 font-semibold border-blue-500 text-xs'>
+			<StatusDot status={status} />
+			{status === 'BOOKED'
+				? 'Gebucht'
+				: status === 'CANCELED'
+					? 'Abgesagt'
+					: 'Unklar'}
+		</div>
 	)
 }
