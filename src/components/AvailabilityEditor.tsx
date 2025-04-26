@@ -18,6 +18,7 @@ import { useTour } from '@reactour/tour'
 import { Plus, X } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
 import { useCallback, useMemo, useState } from 'react'
+import { revalidateTagAction } from '../app/group/[groupId]/actions'
 
 interface AvailabilityEditorProps {
 	date?: Date
@@ -71,7 +72,7 @@ export function AvailabilityEditor({
 
 	const { setCurrentStep } = useTour()
 
-	const handleAddSlot = useCallback(() => {
+	const handleAddSlot = useCallback(async () => {
 		if (!newSlot.startTime || !newSlot.endTime) return
 
 		updateTimeSlot({
@@ -87,6 +88,9 @@ export function AvailabilityEditor({
 
 		setNewSlot({})
 		setIsAdding(false)
+		await revalidateTagAction({
+			tagId: 'myAvailability',
+		})
 	}, [newSlot, type, date, day, groupId, updateTimeSlot, setCurrentStep])
 
 	return (
@@ -103,7 +107,12 @@ export function AvailabilityEditor({
 						<Button
 							variant='ghost'
 							size='icon'
-							onClick={() => deleteTimeSlot({ id: slot.id })}
+							onClick={async () => {
+								deleteTimeSlot({ id: slot.id })
+								await revalidateTagAction({
+									tagId: 'myAvailability',
+								})
+							}}
 							className='p-1 sm:p-1.5 hover:bg-white/10 rounded-lg transition-colors'
 							aria-label='Delete time slot'
 						>

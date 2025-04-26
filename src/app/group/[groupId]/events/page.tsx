@@ -1,3 +1,4 @@
+import { FloatingDock } from '@/src/components/ui/floating-dock'
 import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
@@ -6,7 +7,6 @@ import { getNavigationItems } from '@/src/shared/navigationItems'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import { CurrentEventsPage } from './CurrentEventsPage'
-import { FloatingDock } from '@/src/components/ui/floating-dock'
 
 interface PageProps {
 	params: Promise<unknown>

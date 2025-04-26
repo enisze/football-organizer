@@ -1,4 +1,5 @@
 import { prisma } from '@/src/server/db/client'
+import { cacheTag } from 'next/dist/server/use-cache/cache-tag'
 import { MyAvailability } from '../availability/components/MyAvailability'
 
 interface MyAvailabilityPageProps {
@@ -13,6 +14,8 @@ export async function MyAvailabilityPage({
 	userId,
 }: MyAvailabilityPageProps) {
 	'use cache'
+
+	cacheTag('myAvailability')
 
 	const [
 		generalTimeSlots,

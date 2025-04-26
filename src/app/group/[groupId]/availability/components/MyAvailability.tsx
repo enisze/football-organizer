@@ -16,7 +16,7 @@ import { useTour } from '@reactour/tour'
 import { Clock } from 'lucide-react'
 import { useQueryState } from 'nuqs'
 import { groupBy } from 'remeda'
-import { revalidateGroupAction } from '../../actions'
+import { revalidateGroupAction, revalidateTagAction } from '../../actions'
 
 interface MyAvailabilityProps {
 	groupId: string
@@ -40,6 +40,9 @@ export function MyAvailability({
 	const handleDateSelect = async (newDate: Date | undefined) => {
 		if (newDate) {
 			await setDate(newDate.toISOString())
+			await revalidateTagAction({
+				tagId: 'myAvailability',
+			})
 			await revalidateGroupAction({ groupId })
 		}
 	}
