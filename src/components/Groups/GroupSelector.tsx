@@ -27,7 +27,7 @@ export const GroupSelector: FunctionComponent<{
 		<Select
 			onValueChange={(val) => {
 				router.push(
-					routes.groupDetails({
+					routes.groupEvents({
 						groupId: val,
 					}),
 				)
