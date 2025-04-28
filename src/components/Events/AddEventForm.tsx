@@ -67,7 +67,7 @@ export const AddEventForm = ({ onSubmit, templates }: AddEventFormProps) => {
 					type='date'
 					name='date'
 					text=''
-					className='w-fit'
+					className='w-full'
 				/>
 			</div>
 
