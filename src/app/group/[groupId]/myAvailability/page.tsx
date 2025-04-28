@@ -1,8 +1,6 @@
-import { FloatingDock } from '@/src/components/ui/floating-dock'
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
-import { getNavigationItems } from '@/src/shared/navigationItems'
 import { redirect } from 'next/navigation'
 import { MyAvailabilityPage } from './MyAvailabilityPage'
 
@@ -37,11 +35,6 @@ export default async function AvailabilityPage({
 		return <div>Du gehörst nicht zu dieser Gruppe</div>
 	}
 
-	const navigationItems = getNavigationItems({
-		groupId,
-		selectedDate: parsedSearchParams?.selectedDate,
-	})
-
 	return (
 		<>
 			<div className='flex-1'>
@@ -51,7 +44,6 @@ export default async function AvailabilityPage({
 					date={parsedSearchParams?.selectedDate}
 				/>
 			</div>
-			<FloatingDock items={navigationItems} />
 		</>
 	)
 }

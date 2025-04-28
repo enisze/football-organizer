@@ -7,12 +7,10 @@ export const { routes, useSafeParams, useSafeSearchParams } =
 		pricing: defineRoute('/pricing'),
 		agb: defineRoute('/agb'),
 		group: defineRoute('/group'),
-		settings: defineRoute('/settings', {
-			search: z
-				.object({
-					groupId: z.string().optional(),
-				})
-				.optional(),
+		settings: defineRoute('/group/[groupId]/settings', {
+			params: z.object({
+				groupId: z.string(),
+			}),
 		}),
 		groupDetails: defineRoute('/group/[groupId]', {
 			params: z.object({

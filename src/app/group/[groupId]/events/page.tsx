@@ -1,9 +1,7 @@
-import { FloatingDock } from '@/src/components/ui/floating-dock'
 import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
-import { getNavigationItems } from '@/src/shared/navigationItems'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import { CurrentEventsPage } from './CurrentEventsPage'
@@ -34,8 +32,6 @@ export default async function EventsPage({ params }: PageProps) {
 
 	const isOwner = await isOwnerOfGroup(groupId)
 
-	const navigationItems = getNavigationItems({ groupId })
-
 	return (
 		<>
 			<Suspense>
@@ -45,7 +41,6 @@ export default async function EventsPage({ params }: PageProps) {
 					userId={session.user.id}
 				/>
 			</Suspense>
-			<FloatingDock items={navigationItems} />
 		</>
 	)
 }

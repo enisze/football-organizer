@@ -1,5 +1,5 @@
 'use client'
-import { routes, useSafeSearchParams } from '@/src/shared/navigation'
+import { routes, useSafeParams } from '@/src/shared/navigation'
 import {
 	Select,
 	SelectContent,
@@ -20,8 +20,8 @@ export const GroupSelector: FunctionComponent<{
 	groups?: (UserOnGroups & { group: { name: string } })[]
 }> = ({ groups }) => {
 	const router = useRouter()
-	const searchParams = useSafeSearchParams('settings')
-	const groupId = searchParams?.groupId
+	const params = useSafeParams('settings')
+	const groupId = params?.groupId
 
 	return (
 		<Select

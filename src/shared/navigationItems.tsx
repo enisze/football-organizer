@@ -65,9 +65,7 @@ export const getNavigationItems = ({
 			title: 'Einstellungen',
 			icon: <Settings className='h-full w-full' />,
 			href: routes.settings({
-				search: {
-					groupId,
-				},
+				groupId,
 			}),
 			id: 'settings',
 		},
