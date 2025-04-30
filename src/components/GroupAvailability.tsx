@@ -56,7 +56,7 @@ export function GroupAvailabilityView({
 		shallow: true,
 	})
 
-	const [maxUsers, setMaxUsers] = useQueryState('minUsers', {
+	const [maxUsers, setMaxUsers] = useQueryState('maxUsers', {
 		defaultValue: 0,
 		parse: (value) => Number(value),
 		shallow: true,

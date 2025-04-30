@@ -1,4 +1,5 @@
 import { prisma } from '@/src/server/db/client'
+import { set, subDays } from 'date-fns'
 import { cacheTag } from 'next/dist/server/use-cache/cache-tag'
 import { MyAvailability } from '../availability/components/MyAvailability'
 
@@ -16,6 +17,17 @@ export async function MyAvailabilityPage({
 	'use cache'
 
 	cacheTag('myAvailability')
+
+	//TODO: This is not a good solution
+	const newDate = subDays(
+		set(new Date(), {
+			hours: 24,
+			minutes: 0,
+			seconds: 0,
+			milliseconds: 0,
+		}),
+		1,
+	)
 
 	const [
 		generalTimeSlots,
@@ -42,7 +54,7 @@ export async function MyAvailabilityPage({
 		prisma.timeSlot.findMany({
 			where: {
 				user: { id: userId },
-				date: date ? new Date(date) : new Date(),
+				date: date ? new Date(date) : newDate,
 				groupId,
 				type: 'DATE_SPECIFIC',
 			},

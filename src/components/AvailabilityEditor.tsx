@@ -118,6 +118,7 @@ export function AvailabilityEditor({
 			{allowExceptions && (
 				<div className='flex items-center gap-3 mb-2'>
 					<Switch
+						checked={!!exceptionSlot}
 						onCheckedChange={(checked) => {
 							if (exceptionSlot && !checked) {
 								deleteTimeSlot({ id: exceptionSlot.id })
