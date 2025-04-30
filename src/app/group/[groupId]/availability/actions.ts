@@ -2,7 +2,7 @@
 
 import { authedActionClient } from '@/src/lib/actionClient'
 import { prisma } from '@/src/server/db/client'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { z } from 'zod'
 
 const timeSlotSchema = z.array(
@@ -59,10 +59,12 @@ export const updateTimeSlotAction = authedActionClient
 			date: z.date().optional(),
 			day: z.number().min(0).max(6).optional(),
 			groupId: z.string(),
+			isException: z.boolean().optional(),
 		}),
 	)
 	.action(async ({ parsedInput, ctx: { userId } }) => {
-		const { startTime, endTime, type, date, day, groupId } = parsedInput
+		const { startTime, endTime, type, date, day, groupId, isException } =
+			parsedInput
 
 		if (type === 'DATE_SPECIFIC' && !date) {
 			throw new Error('Date is required for date-specific time slots')
@@ -81,10 +83,12 @@ export const updateTimeSlotAction = authedActionClient
 				day: type === 'DAY_SPECIFIC' ? day : null,
 				userId,
 				groupId,
+				isException: isException ?? false,
 			},
 		})
 
-		revalidatePath(`/group/${groupId}`)
+		revalidateTag('myAvailability')
+
 		return timeSlot
 	})
 
@@ -98,5 +102,5 @@ export const deleteTimeSlotAction = authedActionClient
 			},
 		})
 
-		revalidatePath('/group')
+		revalidateTag('myAvailability')
 	})

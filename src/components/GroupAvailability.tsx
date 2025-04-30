@@ -51,14 +51,14 @@ export function GroupAvailabilityView({
 		shallow: true,
 	})
 	const [minUsers, setMinUsers] = useQueryState('minUsers', {
-		defaultValue: '0',
-		parse: (value) => value,
+		defaultValue: 0,
+		parse: (value) => Number(value),
 		shallow: true,
 	})
 
 	const [maxUsers, setMaxUsers] = useQueryState('minUsers', {
-		defaultValue: '0',
-		parse: (value) => value,
+		defaultValue: 0,
+		parse: (value) => Number(value),
 		shallow: true,
 	})
 	const [calendarOpen, setCalendarOpen] = useState(false)
@@ -69,7 +69,7 @@ export function GroupAvailabilityView({
 			groupId,
 			date: date,
 			duration,
-			minUsers: Number.parseInt(minUsers),
+			minUsers: minUsers,
 		})
 	}, 300)
 
@@ -141,7 +141,7 @@ export function GroupAvailabilityView({
 								<UserCountInput
 									label='Mindestanzahl'
 									value={minUsers}
-									onChange={(value: string) => {
+									onChange={(value) => {
 										setMinUsers(value)
 										refresh()
 									}}
@@ -151,7 +151,7 @@ export function GroupAvailabilityView({
 								<UserCountInput
 									label='Maximalanzahl'
 									value={maxUsers}
-									onChange={(value: string) => {
+									onChange={(value) => {
 										setMaxUsers(value)
 										refresh()
 									}}
@@ -196,7 +196,7 @@ export function GroupAvailabilityView({
 						<div className='grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-[140px] mt-4 md:mt-6'>
 							{processedSlots.map((slot, index) => {
 								const availableCount = slot.availableUsers.length
-								const percentage = (availableCount / 10) * 100
+								const percentage = (availableCount / maxUsers) * 100
 
 								return (
 									<div
@@ -212,7 +212,7 @@ export function GroupAvailabilityView({
 													variant='secondary'
 													className='bg-white/10 text-xs'
 												>
-													{availableCount}/10
+													{availableCount}/{maxUsers}
 												</Badge>
 											</div>
 

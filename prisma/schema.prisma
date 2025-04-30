@@ -60,18 +60,19 @@ enum TimeSlotType {
 }
 
 model TimeSlot {
-  id        String       @id @default(cuid())
-  startTime String
-  endTime   String
-  userId    String
-  groupId   String
-  type      TimeSlotType
-  day       Int?
-  date      DateTime?
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  group     Group        @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  id          String       @id @default(cuid())
+  startTime   String
+  endTime     String
+  userId      String
+  groupId     String
+  type        TimeSlotType
+  day         Int?
+  date        DateTime?
+  isException Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group       Group        @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([groupId])

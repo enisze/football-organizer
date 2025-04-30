@@ -1,8 +1,8 @@
 import { Button } from '@/ui/button'
 
 interface UserCountInputProps {
-	value: string
-	onChange: (value: string) => void
+	value: number
+	onChange: (value: number) => void
 	label: string
 	min?: number
 	max?: number
@@ -23,8 +23,8 @@ export function UserCountInput({
 					size='icon'
 					className='h-6 w-6 shrink-0 rounded-full'
 					onClick={() => {
-						const newValue = Math.max(min, Number.parseInt(value || '8') - 1)
-						onChange(newValue.toString())
+						const newValue = Math.max(min, (value || 8) - 1)
+						onChange(newValue)
 					}}
 				>
 					-
@@ -35,11 +35,11 @@ export function UserCountInput({
 					onChange={(e) => {
 						const value = e.target.value.replace(/[^0-9]/g, '')
 						if (value === '') {
-							onChange(min.toString())
+							onChange(min)
 							return
 						}
 						const val = Math.min(max, Math.max(min, Number.parseInt(value)))
-						onChange(val.toString())
+						onChange(val)
 					}}
 					className='h-8 w-16 rounded-md border border-white/10 bg-white/5 px-2 text-center focus:outline-none focus:ring-2 focus:ring-white/20'
 				/>
@@ -47,8 +47,8 @@ export function UserCountInput({
 					size='icon'
 					className='h-6 w-6 shrink-0 rounded-full'
 					onClick={() => {
-						const newValue = Math.min(max, Number.parseInt(value || '8') + 1)
-						onChange(newValue.toString())
+						const newValue = Math.min(max, (value || 8) + 1)
+						onChange(newValue)
 					}}
 				>
 					+

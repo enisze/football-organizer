@@ -61,6 +61,12 @@ const isUserAvailable = (
 		(slot) =>
 			slot.type === 'DATE_SPECIFIC' && slot.date?.getTime() === date.getTime(),
 	)
+
+	// If any date-specific slot is an exception, user is unavailable for this date
+	if (dateSpecificSlots.some((slot) => slot.isException)) {
+		return false
+	}
+
 	if (dateSpecificSlots.length > 0) {
 		return dateSpecificSlots.some(
 			(slot) =>

@@ -7,6 +7,7 @@ interface TimeSlotEditorProps {
 	date?: Date
 	day?: number
 	type: TimeSlotType
+	allowExceptions?: boolean
 }
 
 export function TimeSlotEditor({
@@ -15,6 +16,7 @@ export function TimeSlotEditor({
 	date,
 	day,
 	type,
+	allowExceptions = type === 'DATE_SPECIFIC',
 }: TimeSlotEditorProps) {
 	const formattedTimeSlots: TimeSlot[] = timeSlots.map((slot) => ({
 		...slot,
@@ -33,6 +35,7 @@ export function TimeSlotEditor({
 				groupId={groupId}
 				date={date}
 				day={day}
+				allowExceptions={allowExceptions}
 			/>
 		</div>
 	)
