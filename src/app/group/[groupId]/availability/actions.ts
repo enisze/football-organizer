@@ -88,6 +88,7 @@ export const updateTimeSlotAction = authedActionClient
 		})
 
 		revalidateTag('myAvailability')
+		revalidateTag('groupAvailability')
 
 		return timeSlot
 	})
@@ -103,4 +104,5 @@ export const deleteTimeSlotAction = authedActionClient
 		})
 
 		revalidateTag('myAvailability')
+		revalidateTag('groupAvailability')
 	})

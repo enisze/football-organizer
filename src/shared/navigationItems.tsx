@@ -15,6 +15,7 @@ export const getNavigationItems = ({
 	selectedDate,
 	duration,
 	minUsers,
+	maxUsers,
 	date,
 }: SearchParams & { groupId: string }) => {
 	// Helper function to remove undefined values from an object
@@ -56,6 +57,7 @@ export const getNavigationItems = ({
 				search: removeUndefined<SearchParams>({
 					duration,
 					minUsers,
+					maxUsers,
 					date: date ? new Date(date).toISOString() : undefined,
 				}),
 			}),
