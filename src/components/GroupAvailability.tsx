@@ -237,9 +237,9 @@ export function GroupAvailabilityView({
 										<div
 											className={cn(
 												'absolute bottom-0 left-0 right-0 transition-all duration-200',
-												availableCount < 5
+												percentage < 50
 													? 'bg-red-500/30'
-													: availableCount < 8
+													: percentage < 75
 														? 'bg-orange-500/30'
 														: 'bg-emerald-500/30',
 											)}
