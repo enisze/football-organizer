@@ -42,6 +42,7 @@ export default async function AvailabilityPage({
 					groupId={groupId}
 					userId={session.user.id}
 					date={parsedSearchParams?.selectedDate}
+					tab={parsedSearchParams?.tab ?? 'weekly'}
 				/>
 			</div>
 		</>

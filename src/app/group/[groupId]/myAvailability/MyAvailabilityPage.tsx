@@ -7,12 +7,14 @@ interface MyAvailabilityPageProps {
 	groupId: string
 	date: string | undefined
 	userId: string
+	tab: string
 }
 
 export async function MyAvailabilityPage({
 	groupId,
 	date,
 	userId,
+	tab,
 }: MyAvailabilityPageProps) {
 	'use cache'
 
@@ -29,55 +31,44 @@ export async function MyAvailabilityPage({
 		1,
 	)
 
-	const [
-		generalTimeSlots,
-		weekendTimeSlots,
-		daySpecificTimeSlots,
-		weeklyTimeSlots,
-	] = await Promise.all([
-		prisma.timeSlot.findMany({
-			where: {
-				user: { id: userId },
-				groupId,
-				type: 'GENERAL',
-			},
-			orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
-		}),
-		prisma.timeSlot.findMany({
-			where: {
-				user: { id: userId },
-				groupId,
-				type: 'WEEKEND',
-			},
-			orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
-		}),
-		prisma.timeSlot.findMany({
-			where: {
-				user: { id: userId },
-				date: date ? new Date(date) : newDate,
-				groupId,
-				type: 'DATE_SPECIFIC',
-			},
-			orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
-		}),
-		prisma.timeSlot.findMany({
-			where: {
-				user: { id: userId },
-				groupId,
-				type: 'DAY_SPECIFIC',
-			},
-			orderBy: [{ day: 'asc' }, { startTime: 'asc' }],
-		}),
-	])
+	const [daySpecificTimeSlots, weeklyTimeSlots, exceptionSlots] =
+		await Promise.all([
+			prisma.timeSlot.findMany({
+				where: {
+					user: { id: userId },
+					date: date ? new Date(date) : newDate,
+					groupId,
+					type: 'DATE_SPECIFIC',
+				},
+				orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
+			}),
+			prisma.timeSlot.findMany({
+				where: {
+					user: { id: userId },
+					groupId,
+					type: 'DAY_SPECIFIC',
+				},
+				orderBy: [{ day: 'asc' }, { startTime: 'asc' }],
+			}),
+			prisma.timeSlot.findMany({
+				where: {
+					user: { id: userId },
+					groupId,
+					type: 'DATE_SPECIFIC',
+					isException: true,
+				},
+				orderBy: [{ day: 'asc' }, { startTime: 'asc' }],
+			}),
+		])
 
 	return (
 		<div className='mb-3 animate-in fade-in duration-500'>
 			<MyAvailability
 				groupId={groupId}
-				initialWeekdaySlots={generalTimeSlots}
-				initialWeekendSlots={weekendTimeSlots}
 				initialDaySpecificSlots={daySpecificTimeSlots}
 				initialWeeklySlots={weeklyTimeSlots}
+				exceptionSlots={exceptionSlots}
+				tab={tab}
 			/>
 		</div>
 	)

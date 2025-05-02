@@ -26,8 +26,6 @@ export async function GroupAvailabilityPage({
 			OR: [
 				{ type: 'DATE_SPECIFIC', date },
 				{ type: 'DAY_SPECIFIC', day: date.getDay() },
-				{ type: 'GENERAL' },
-				{ type: 'WEEKEND' },
 			],
 			groupId,
 			user: {

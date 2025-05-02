@@ -87,17 +87,7 @@ const isUserAvailable = (
 		)
 	}
 
-	// Finally check for general/weekend slots
-	const isWeekend = date.getDay() === 0 || date.getDay() === 6
-	const relevantTypeSlots = userSlots.filter(
-		(slot) => slot.type === (isWeekend ? 'WEEKEND' : 'GENERAL'),
-	)
-
-	return relevantTypeSlots.some(
-		(slot) =>
-			timeToMinutes(slot.startTime) <= timeToMinutes(timeSlot.startTime) &&
-			timeToMinutes(slot.endTime) >= timeToMinutes(timeSlot.endTime),
-	)
+	return false
 }
 
 // Combine consecutive slots based on duration

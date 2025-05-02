@@ -63,8 +63,7 @@ export function AvailabilityEditor({
 	const [isAdding, setIsAdding] = useState(false)
 	const [newSlot, setNewSlot] = useState<Partial<TimeRange>>({})
 
-	const isWeekend =
-		type === 'WEEKEND' || (type === 'DAY_SPECIFIC' && (day === 6 || day === 0))
+	const isWeekend = type === 'DAY_SPECIFIC' && (day === 6 || day === 0)
 	const timeOptions = useMemo(
 		() =>
 			generateTimeOptions(

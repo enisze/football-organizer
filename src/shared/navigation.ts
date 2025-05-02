@@ -38,6 +38,10 @@ export const { routes, useSafeParams, useSafeSearchParams } =
 			search: z
 				.object({
 					selectedDate: z.string().optional(),
+					tab: z
+						.enum(['date', 'weekly', 'exception'])
+						.optional()
+						.default('weekly'),
 				})
 				.optional(),
 		}),

@@ -1,5 +1,6 @@
 'use client'
 
+import { ExceptionsEditor } from '@/src/components/ExceptionsEditor'
 import { TimeSlotEditor } from '@/src/components/TimeSlotEditor'
 import { WeeklyAvailabilityEditor } from '@/src/components/WeeklyAvailabilityEditor'
 import { Calendar } from '@/ui/calendar'
@@ -20,21 +21,25 @@ import { revalidateGroupAction, revalidateTagAction } from '../../actions'
 
 interface MyAvailabilityProps {
 	groupId: string
-	initialWeekdaySlots: Array<TimeSlot>
-	initialWeekendSlots: Array<TimeSlot>
 	initialDaySpecificSlots: Array<TimeSlot>
 	initialWeeklySlots: Array<TimeSlot>
+	exceptionSlots: Array<TimeSlot>
+	tab: string
 }
 
 export function MyAvailability({
 	groupId,
-	initialWeekdaySlots,
-	initialWeekendSlots,
 	initialDaySpecificSlots,
 	initialWeeklySlots,
+	exceptionSlots,
+	tab,
 }: MyAvailabilityProps) {
 	const [date, setDate] = useQueryState('selectedDate', {
 		defaultValue: new Date().toISOString(),
+	})
+
+	const [selectedTab, setSelectedTab] = useQueryState('tab', {
+		defaultValue: tab,
 	})
 
 	const handleDateSelect = async (newDate: Date | undefined) => {
@@ -59,14 +64,18 @@ export function MyAvailability({
 	return (
 		<div className='container px-4 mx-auto space-y-8 pt-2 pb-20'>
 			<h2 className='text-2xl font-bold -mb-4'>Meine Zeiten</h2>
-			<Tabs defaultValue='weekly' className='w-full flex flex-col'>
+			<Tabs
+				defaultValue={selectedTab}
+				onValueChange={setSelectedTab}
+				className='w-full flex flex-col'
+			>
 				<TabsList className='inline-flex rounded-xl bg-white/5 p-1 self-center'>
 					<TabsTrigger
-						value='general'
+						value='date'
 						className='px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5'
-						data-tour='general'
+						data-tour='date'
 					>
-						Allgemein
+						Täglich
 					</TabsTrigger>
 					<TabsTrigger
 						value='weekly'
@@ -76,67 +85,26 @@ export function MyAvailability({
 							setCurrentStep((prev) => prev + 1)
 						}}
 					>
-						Wöchentlich
+						Zeiten
 					</TabsTrigger>
 					<TabsTrigger
-						value='date'
+						value='exception'
 						className='px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5'
 						data-tour='date'
 					>
-						Täglich
+						Ausnahmen
 					</TabsTrigger>
 				</TabsList>
-
-				<TabsContent value='general' className='space-y-4'>
-					<div className='grid gap-6 md:grid-cols-2'>
-						<Card
-							className='bg-white/5 backdrop-blur-sm border-white/10'
-							data-section='weekday-availability'
-						>
-							<CardHeader>
-								<CardTitle className='text-lg flex items-center gap-2'>
-									<Clock className='h-4 w-4 ' />
-									Werktags-Verfügbarkeit
-								</CardTitle>
-								<CardDescription className='text-white/70'>
-									Lege deine allgemeine Verfügbarkeit für Werktage fest
-								</CardDescription>
-							</CardHeader>
-							<CardContent>
-								<TimeSlotEditor
-									timeSlots={initialWeekdaySlots}
-									groupId={groupId}
-									type='GENERAL'
-								/>
-							</CardContent>
-						</Card>
-
-						<Card className='bg-white/5 backdrop-blur-sm border-white/10'>
-							<CardHeader>
-								<CardTitle className='text-lg flex items-center gap-2'>
-									<Clock className='h-4 w-4 flex-none' />
-									Wochenend-Verfügbarkeit
-								</CardTitle>
-								<CardDescription className='text-white/70'>
-									Lege deine allgemeine Verfügbarkeit für Wochenenden fest
-								</CardDescription>
-							</CardHeader>
-							<CardContent>
-								<TimeSlotEditor
-									timeSlots={initialWeekendSlots}
-									groupId={groupId}
-									type='WEEKEND'
-								/>
-							</CardContent>
-						</Card>
-					</div>
-				</TabsContent>
 
 				<TabsContent value='weekly' className='space-y-4'>
 					<WeeklyAvailabilityEditor
 						timeSlots={weeklySlotsByDay}
 						groupId={groupId}
 					/>
+				</TabsContent>
+
+				<TabsContent value='exception' className='space-y-4'>
+					<ExceptionsEditor groupId={groupId} exceptionSlots={exceptionSlots} />
 				</TabsContent>
 
 				<TabsContent value='date' className='space-y-4'>

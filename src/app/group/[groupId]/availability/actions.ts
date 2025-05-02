@@ -2,60 +2,15 @@
 
 import { authedActionClient } from '@/src/lib/actionClient'
 import { prisma } from '@/src/server/db/client'
-import { revalidatePath, revalidateTag } from 'next/cache'
+import { revalidateTag } from 'next/cache'
 import { z } from 'zod'
-
-const timeSlotSchema = z.array(
-	z.object({
-		startTime: z.string(),
-		endTime: z.string(),
-	}),
-)
-
-export const updateGeneralAvailabilityAction = authedActionClient
-	.schema(
-		z.object({
-			timeSlots: timeSlotSchema,
-			isWeekend: z.boolean(),
-			groupId: z.string(),
-		}),
-	)
-	.action(async ({ parsedInput, ctx: { userId } }) => {
-		const { timeSlots, isWeekend, groupId } = parsedInput
-
-		// Delete existing slots of this type for this user
-		await prisma.timeSlot.deleteMany({
-			where: {
-				userId,
-				groupId,
-				type: isWeekend ? 'WEEKEND' : 'GENERAL',
-			},
-		})
-
-		// Create new slots
-		const newSlots = await Promise.all(
-			timeSlots.map((slot) =>
-				prisma.timeSlot.create({
-					data: {
-						...slot,
-						type: isWeekend ? 'WEEKEND' : 'GENERAL',
-						userId,
-						groupId,
-					},
-				}),
-			),
-		)
-
-		revalidatePath(`/group/${groupId}`)
-		return newSlots
-	})
 
 export const updateTimeSlotAction = authedActionClient
 	.schema(
 		z.object({
 			startTime: z.string(),
 			endTime: z.string(),
-			type: z.enum(['GENERAL', 'WEEKEND', 'DAY_SPECIFIC', 'DATE_SPECIFIC']),
+			type: z.enum(['DAY_SPECIFIC', 'DATE_SPECIFIC']),
 			date: z.date().optional(),
 			day: z.number().min(0).max(6).optional(),
 			groupId: z.string(),
@@ -101,6 +56,90 @@ export const deleteTimeSlotAction = authedActionClient
 				id,
 				userId,
 			},
+		})
+
+		revalidateTag('myAvailability')
+		revalidateTag('groupAvailability')
+	})
+
+export const updateExceptionSlotsAction = authedActionClient
+	.schema(
+		z.object({
+			dates: z.array(
+				z.object({
+					date: z.date(),
+					operation: z.enum(['add', 'remove']),
+				}),
+			),
+			groupId: z.string(),
+		}),
+	)
+	.action(async ({ parsedInput, ctx: { userId } }) => {
+		const { dates, groupId } = parsedInput
+
+		const datesToAdd = dates
+			.filter((d) => d.operation === 'add')
+			.map((d) => d.date)
+		const datesToRemove = dates
+			.filter((d) => d.operation === 'remove')
+			.map((d) => d.date)
+
+		await prisma.$transaction(async (tx) => {
+			// Remove exceptions
+			if (datesToRemove.length > 0) {
+				await tx.timeSlot.deleteMany({
+					where: {
+						userId,
+						groupId,
+						isException: true,
+						type: 'DATE_SPECIFIC',
+						date: {
+							in: datesToRemove,
+						},
+					},
+				})
+			}
+
+			if (datesToAdd.length > 0) {
+				// Get existing exception slots for these dates
+				const existingExceptions = await tx.timeSlot.findMany({
+					where: {
+						userId,
+						groupId,
+						isException: true,
+						type: 'DATE_SPECIFIC',
+						date: {
+							in: datesToAdd,
+						},
+					},
+					select: {
+						date: true,
+					},
+				})
+
+				// Filter out dates that already have exceptions
+				const existingDates = new Set(
+					existingExceptions.map((ex) => ex.date?.toISOString()),
+				)
+				const newDatesToAdd = datesToAdd.filter(
+					(date) => !existingDates.has(date.toISOString()),
+				)
+
+				// Add new exceptions only for dates that don't have one
+				if (newDatesToAdd.length > 0) {
+					await tx.timeSlot.createMany({
+						data: newDatesToAdd.map((date) => ({
+							startTime: '00:00',
+							endTime: '23:59',
+							type: 'DATE_SPECIFIC',
+							date,
+							userId,
+							groupId,
+							isException: true,
+						})),
+					})
+				}
+			}
 		})
 
 		revalidateTag('myAvailability')
