@@ -90,7 +90,7 @@ export function MyAvailability({
 					<TabsTrigger
 						value='exception'
 						className='px-4 py-2 rounded-lg transition-colors data-[state=active]:bg-white/10 hover:bg-white/5'
-						data-tour='date'
+						data-tour='exception'
 					>
 						Ausnahmen
 					</TabsTrigger>

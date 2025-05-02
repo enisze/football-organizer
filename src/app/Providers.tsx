@@ -26,8 +26,9 @@ const tourSteps = [
 			'Bitte klicke hier, um deine Zeiten anzupassen. Drücke dann auf den Pfeil um weiterzumachen.',
 	},
 	{
-		selector: '[data-tour="general"]',
-		content: 'Lege deine allgemeine Zeiten für Werktage und Wochenenden fest.',
+		selector: '[data-tour="exception"]',
+		content:
+			'Hier kannst du Ausnahmen für deine Verfügbarkeit hinzufügen oder entfernen.',
 	},
 	{
 		selector: '[data-tour="date"]',
