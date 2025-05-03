@@ -6,6 +6,7 @@ import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
 import { UserAvatar } from '../UserAvatar'
+import { DashboardLink } from './DashboardLink'
 
 export const Navbar = async () => {
 	const session = await serverAuth()
@@ -26,8 +27,9 @@ export const Navbar = async () => {
 							<Button variant='outline'>Login / Registrieren</Button>
 						</Link>
 					)}
+					<DashboardLink groupId={group?.id ?? ''} />
+					<UserAvatar name={session?.user?.name ?? ''} />
 				</div>
-				<UserAvatar name={session?.user?.name ?? ''} />
 			</nav>
 		</header>
 	)

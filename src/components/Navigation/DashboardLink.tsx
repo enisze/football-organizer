@@ -1,6 +1,7 @@
 'use client'
 import { useSession } from '@/src/lib/auth-client'
-import { Button } from '@/ui/button'
+import { routes } from '@/src/shared/navigation'
+import { buttonVariants } from '@/ui/button'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -9,15 +10,17 @@ export const DashboardLink = ({ groupId }: { groupId: string | undefined }) => {
 
 	const pathname = usePathname()
 
-	const onDashboard =
-		pathname?.includes('/group') && !pathname?.includes('/settings')
+	const onDashboard = pathname?.includes('/group')
 
 	return (
 		<>
 			{!onDashboard && data?.user?.id && (
 				<form>
-					<Link href={groupId ? `/group/${groupId}` : '/group'}>
-						<Button variant='outline'>Dashboard</Button>
+					<Link
+						href={routes.groupEvents({ groupId: groupId ?? '' })}
+						className={buttonVariants({ variant: 'outline' })}
+					>
+						Dashboard
 					</Link>
 				</form>
 			)}
