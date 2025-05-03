@@ -65,7 +65,7 @@ export function MyAvailability({
 
 	return (
 		<div className='container px-4 mx-auto space-y-8 pt-2 pb-20'>
-			<h2 className='text-2xl font-bold -mb-4'>Meine Zeiten</h2>
+			<h2 className='text-2xl font-bold -mb-4 self-start'>Meine Zeiten</h2>
 			<Tabs
 				defaultValue={selectedTab}
 				onValueChange={setSelectedTab}
@@ -110,7 +110,7 @@ export function MyAvailability({
 				</TabsContent>
 
 				<TabsContent value='date' className='space-y-4'>
-					<Card className='bg-white/5 backdrop-blur-sm border-white/10'>
+					<Card className='bg-white/5 backdrop-blur-sm'>
 						<CardHeader>
 							<CardTitle className='flex text-lg items-center gap-2'>
 								<Clock className='h-6 w-6 flex-none' />

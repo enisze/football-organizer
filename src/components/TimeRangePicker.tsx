@@ -65,7 +65,7 @@ export function TimeRangePicker({
 
 	return (
 		<div className='space-y-4'>
-			<div className='grid grid-cols-2 gap-4'>
+			<div className='grid grid-cols-2 gap-2'>
 				<div className='space-y-2'>
 					<Label htmlFor='start-time' className='text-xs text-slate-400'>
 						Startzeit
@@ -112,7 +112,7 @@ export function TimeRangePicker({
 				<Label htmlFor='presets' className='text-xs text-slate-400'>
 					Schnellauswahl Zeiten
 				</Label>
-				<div id='presets' className='flex flex-wrap gap-2'>
+				<div id='presets' className='grid grid-cols-2 gap-2'>
 					{presets.map((preset) => (
 						<Button
 							key={preset.label}

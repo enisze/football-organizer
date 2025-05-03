@@ -106,9 +106,6 @@ export function TimeSlotCreator({
 
 				<div className='p-4 space-y-6'>
 					<div className='space-y-2'>
-						<Label htmlFor='time-range' className='text-sm font-medium'>
-							Zeitraum (8:00 - 00:00)
-						</Label>
 						<div id='time-range'>
 							<TimeRangePicker
 								startTime={slot.start}
@@ -122,7 +119,7 @@ export function TimeSlotCreator({
 						<Label htmlFor='quick-select' className='text-sm font-medium'>
 							Schnellauswahl
 						</Label>
-						<div id='quick-select' className='flex flex-wrap gap-2'>
+						<div id='quick-select' className='grid grid-cols-2 gap-2'>
 							<Button
 								size='sm'
 								variant='outline'
@@ -162,7 +159,7 @@ export function TimeSlotCreator({
 						<Label htmlFor='day-selection' className='text-sm font-medium'>
 							Tage auswählen
 						</Label>
-						<div id='day-selection' className='grid grid-cols-1 gap-2'>
+						<div id='day-selection' className='grid grid-cols-2 gap-1'>
 							{days.map((day) => (
 								<div key={day.id} className='flex items-center space-x-2'>
 									<Checkbox
