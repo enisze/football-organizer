@@ -41,8 +41,6 @@ export async function GroupAvailabilityPage({
 		},
 	})
 
-	if (!timeslots.length) return null
-
 	// Deduplicate users by ID and keep the first occurrence of each user
 	const uniqueUsers = uniqueBy(
 		timeslots.map((slot) => slot.user),

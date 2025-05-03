@@ -138,11 +138,15 @@ export function ExceptionsEditor({
 										{removedDates.length === 1 ? 'gelöschte' : 'gelöschte'}
 									</span>
 								)}{' '}
-								{(addedDates.length === 1 && removedDates.length === 0) ||
-								(addedDates.length === 0 && removedDates.length === 1)
-									? 'Ausnahme'
-									: 'Ausnahmen'}
-								{!hasChanges && 'Keine Änderungen'}
+								{hasChanges ? (
+									<>
+										{addedDates.length + removedDates.length > 1
+											? 'Ausnahmen'
+											: 'Ausnahme'}
+									</>
+								) : (
+									<span>Keine Änderungen</span>
+								)}
 							</div>
 						</CardContent>
 					</Card>
