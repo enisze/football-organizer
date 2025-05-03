@@ -110,7 +110,7 @@ export function MyAvailability({
 
 				<TabsContent value='date' className='space-y-4'>
 					<Card className='bg-white/5 backdrop-blur-sm'>
-						<CardHeader>
+						<CardHeader className='pb-2'>
 							<CardTitle className='flex text-lg items-center gap-2'>
 								<Clock className='h-6 w-6 flex-none' />
 								Datumsspezifische Verfügbarkeit
@@ -119,7 +119,7 @@ export function MyAvailability({
 								Lege deine Verfügbarkeit für bestimmte Tage fest
 							</CardDescription>
 						</CardHeader>
-						<CardContent className='grid gap-6 md:grid-cols-[300px_1fr]'>
+						<CardContent className='grid gap-2 md:grid-cols-[300px_1fr]'>
 							<div className='bg-white/5 rounded-xl p-4'>
 								<Calendar
 									mode='single'

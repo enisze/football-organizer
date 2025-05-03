@@ -85,7 +85,7 @@ export function WeeklyAvailabilityEditor({
 
 	return (
 		<Card className='bg-white/5 text-white border-none'>
-			<CardHeader>
+			<CardHeader className='pb-2'>
 				<CardTitle className='flex text-lg items-center gap-2'>
 					<Clock className='h-6 w-6' />
 					<span className=''>Wöchentliche Verfügbarkeit</span>
@@ -96,13 +96,6 @@ export function WeeklyAvailabilityEditor({
 			</CardHeader>
 			<CardContent className='space-y-6'>
 				<div className='bg-white/5 backdrop-blur-sm border-white/20 rounded-lg overflow-hidden'>
-					<div className='p-4 border-b border-white/20 flex items-center justify-center gap-1'>
-						<Clock className='w-5 h-5 flex-none text-slate-400' />
-						<h2 className='font-medium text-slate-200'>
-							Wochenübersicht (8:00 - 24:00)
-						</h2>
-					</div>
-
 					<div className='relative'>
 						<div className='flex border-b border-white/20 px-4 py-2'>
 							<div className='w-10 flex-shrink-0' />
