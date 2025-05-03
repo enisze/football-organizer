@@ -65,7 +65,6 @@ export function MyAvailability({
 
 	return (
 		<div className='container px-4 mx-auto space-y-8 pt-2 pb-20'>
-			<h2 className='text-2xl font-bold -mb-4 self-start'>Meine Zeiten</h2>
 			<Tabs
 				defaultValue={selectedTab}
 				onValueChange={setSelectedTab}

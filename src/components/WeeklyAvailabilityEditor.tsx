@@ -95,11 +95,6 @@ export function WeeklyAvailabilityEditor({
 				</CardDescription>
 			</CardHeader>
 			<CardContent className='space-y-6'>
-				<Button variant='purple' onClick={() => setIsCreatingSlot(true)}>
-					<Plus className='w-4 h-4 mr-2' />
-					Neues Zeitfenster erstellen
-				</Button>
-
 				<div className='bg-white/5 backdrop-blur-sm border-white/20 rounded-lg overflow-hidden'>
 					<div className='p-4 border-b border-white/20 flex items-center justify-center gap-1'>
 						<Clock className='w-5 h-5 flex-none text-slate-400' />
@@ -201,6 +196,11 @@ export function WeeklyAvailabilityEditor({
 						}}
 					/>
 				)}
+
+				<Button variant='purple' onClick={() => setIsCreatingSlot(true)}>
+					<Plus className='w-4 h-4 mr-2' />
+					Neues Zeitfenster erstellen
+				</Button>
 			</CardContent>
 		</Card>
 	)
