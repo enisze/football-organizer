@@ -94,7 +94,7 @@ export function WeeklyAvailabilityEditor({
 					Verwalte deine regelmäßigen Verfügbarkeitszeiten für jede Woche.
 				</CardDescription>
 			</CardHeader>
-			<CardContent className='space-y-6'>
+			<CardContent className='space-y-2'>
 				<div className='bg-white/5 backdrop-blur-sm border-white/20 rounded-lg overflow-hidden'>
 					<div className='relative'>
 						<div className='flex border-b border-white/20 px-4 py-2'>
