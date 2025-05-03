@@ -9,6 +9,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/ui/select'
+import { useTour } from '@reactour/tour'
 import { useState } from 'react'
 
 interface TimeRangePickerProps {
@@ -63,18 +64,27 @@ export function TimeRangePicker({
 		onChangeAction(preset.start, preset.end)
 	}
 
+	const { setCurrentStep } = useTour()
+
 	return (
-		<div className='space-y-4'>
+		<div className='space-y-2'>
 			<div className='grid grid-cols-2 gap-2'>
-				<div className='space-y-2'>
+				<div
+					className='space-y-2 '
+					data-tour='start-time'
+					onClick={() => {
+						setCurrentStep((prev) => prev + 1)
+					}}
+					onKeyDown={(e) => {
+						if (e.key === 'Enter') {
+							setCurrentStep((prev) => prev + 1)
+						}
+					}}
+				>
 					<Label htmlFor='start-time' className='text-xs text-slate-400'>
 						Startzeit
 					</Label>
-					<Select
-						// id='start-time'
-						value={start}
-						onValueChange={handleStartChange}
-					>
+					<Select value={start} onValueChange={handleStartChange}>
 						<SelectTrigger className='bg-slate-700 border-slate-600'>
 							<SelectValue placeholder='Startzeit' />
 						</SelectTrigger>
@@ -87,7 +97,19 @@ export function TimeRangePicker({
 						</SelectContent>
 					</Select>
 				</div>
-				<div className='space-y-2'>
+
+				<div
+					className='space-y-2 '
+					data-tour='end-time'
+					onClick={() => {
+						setCurrentStep((prev) => prev + 1)
+					}}
+					onKeyDown={(e) => {
+						if (e.key === 'Enter') {
+							setCurrentStep((prev) => prev + 1)
+						}
+					}}
+				>
 					<Label htmlFor='end-time' className='text-xs text-slate-400'>
 						Endzeit
 					</Label>
@@ -108,7 +130,7 @@ export function TimeRangePicker({
 				</div>
 			</div>
 
-			<div className='space-y-2'>
+			<div className='space-y-2' data-tour='presets-time'>
 				<Label htmlFor='presets' className='text-xs text-slate-400'>
 					Schnellauswahl Zeiten
 				</Label>

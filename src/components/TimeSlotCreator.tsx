@@ -104,7 +104,7 @@ export function TimeSlotCreator({
 					</button>
 				</div>
 
-				<div className='p-4 space-y-6'>
+				<div className='p-4 space-y-2'>
 					<div className='space-y-2'>
 						<div id='time-range'>
 							<TimeRangePicker
@@ -115,7 +115,7 @@ export function TimeSlotCreator({
 						</div>
 					</div>
 
-					<div className='space-y-2'>
+					<div className='space-y-2' data-tour='quick-select'>
 						<Label htmlFor='quick-select' className='text-sm font-medium'>
 							Schnellauswahl
 						</Label>
@@ -155,7 +155,7 @@ export function TimeSlotCreator({
 						</div>
 					</div>
 
-					<div className='space-y-3'>
+					<div className='space-y-2' data-tour='day-selection'>
 						<Label htmlFor='day-selection' className='text-sm font-medium'>
 							Tage auswählen
 						</Label>
@@ -191,6 +191,7 @@ export function TimeSlotCreator({
 							onClick={handleSave}
 							variant='purple'
 							disabled={slot.days.length === 0}
+							data-tour='save-time-slot'
 						>
 							Speichern
 						</Button>

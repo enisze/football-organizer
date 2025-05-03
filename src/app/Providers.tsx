@@ -38,26 +38,31 @@ const tourSteps = [
 	{
 		selector: '[data-tour="weekly"]',
 		content:
-			'Hier kannst du für jeden Wochentag individuelle Zeiten festlegen. Klicke auf den Tab, um weiterzumachen.',
+			'Hier kannst du für jeden Wochentag individuelle Zeiten festlegen.',
 	},
 	{
-		selector: '[data-tour="add-time-slot"]',
+		selector: '[data-tour="create-time-slot"]',
 		content: 'Klicke hier, um ein neues Zeitfenster hinzuzufügen.',
 	},
 	{
-		selector: '[data-tour="start-time"]',
-		content: 'Klicke hier um die Startzeit für dein Zeitfenster auszuwählen.',
+		selector: '[data-tour="presets-time"]',
+		content: 'Hier kannst du vorausgewählte Zeitfenster auswählen.',
 	},
 	{
-		selector: '[data-tour="start-time-content"]',
+		selector: '[data-tour="quick-select"]',
+		content: 'Hier kannst du vordefinierte Tage auswählen.',
+	},
+	{
+		selector: '[data-tour="day-selection"]',
+		content:
+			'hier kannst du die Tage auswählen, für die du die Zeiten festlegen möchtest.',
+	},
+	{
+		selector: '[data-tour="start-time"]',
 		content: 'Wähle hier die Startzeit für dein Zeitfenster aus.',
 	},
 	{
 		selector: '[data-tour="end-time"]',
-		content: 'Klicke hier um die Endzeit für dein Zeitfenster auszuwählen.',
-	},
-	{
-		selector: '[data-tour="end-time-content"]',
 		content: 'Wähle hier die Endzeit für dein Zeitfenster aus.',
 	},
 	{
@@ -65,8 +70,9 @@ const tourSteps = [
 		content: 'Klicke hier, um das neue Zeitfenster zu speichern.',
 	},
 	{
-		selector: '[data-tour="time-slots"]',
-		content: 'Super! Du hast dein erstes Zeitfenster erstellt.',
+		selector: '[data-tour="timeslots"]',
+		content:
+			'Super! Du hast dein erstes Zeitfenster erstellt. Du kannst nun auf ein Zeitfenster klicken, um es zu bearbeiten oder zu löschen.',
 	},
 ]
 

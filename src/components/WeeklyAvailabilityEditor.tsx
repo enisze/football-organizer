@@ -84,7 +84,7 @@ export function WeeklyAvailabilityEditor({
 	}
 
 	return (
-		<Card className='bg-white/5 text-white border-none'>
+		<Card className='bg-white/5 text-white border-none' data-tour='timelsots'>
 			<CardHeader className='pb-2'>
 				<CardTitle className='flex text-lg items-center gap-2'>
 					<Clock className='h-6 w-6' />
@@ -190,7 +190,11 @@ export function WeeklyAvailabilityEditor({
 					/>
 				)}
 
-				<Button variant='purple' onClick={() => setIsCreatingSlot(true)}>
+				<Button
+					variant='purple'
+					onClick={() => setIsCreatingSlot(true)}
+					data-tour='create-time-slot'
+				>
 					<Plus className='w-4 h-4 mr-2' />
 					Neues Zeitfenster erstellen
 				</Button>
