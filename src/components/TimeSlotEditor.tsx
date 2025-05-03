@@ -175,7 +175,7 @@ export function TimeSlotEditor({
 							))}
 
 						{isAdding ? (
-							<div className='space-y-3 sm:space-y-4 bg-white/5 rounded-xl p-3 sm:p-4'>
+							<div className='space-y-2 bg-white/5 rounded-xl p-3 sm:p-4'>
 								<div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
 									<div
 										className='space-y-1.5 sm:space-y-2'

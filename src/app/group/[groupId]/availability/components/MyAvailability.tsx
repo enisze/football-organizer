@@ -130,7 +130,7 @@ export function MyAvailability({
 							</div>
 
 							{date ? (
-								<div className='space-y-4'>
+								<div className='space-y-2'>
 									<h3 className='text-lg font-medium'>
 										{new Date(date).toLocaleDateString('de-DE', {
 											weekday: 'long',
