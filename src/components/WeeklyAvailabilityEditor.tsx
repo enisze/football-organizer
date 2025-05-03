@@ -125,7 +125,7 @@ export function WeeklyAvailabilityEditor({
 										<span className='text-slate-300'>{day.name}</span>
 									</div>
 
-									<div className='flex-1 relative h-12'>
+									<div className='flex-1 relative h-8'>
 										<div className='absolute inset-0 flex pointer-events-none'>
 											{timeLabels.map((time, index) => (
 												<div
@@ -143,7 +143,7 @@ export function WeeklyAvailabilityEditor({
 											return (
 												<div
 													key={slot.id}
-													className='absolute cursor-pointer top-1 h-10 gap-2 bg-green-300 rounded-md'
+													className='absolute cursor-pointer top-1 h-6 gap-2 bg-green-300 rounded-md'
 													style={style}
 													onClick={() => {
 														setEditingSlot(slot)
