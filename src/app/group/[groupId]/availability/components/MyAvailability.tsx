@@ -87,7 +87,7 @@ export function MyAvailability({
 							setCurrentStep((prev) => prev + 1)
 						}}
 					>
-						Zeiten
+						Wöchentlich
 					</TabsTrigger>
 					<TabsTrigger
 						value='exception'
