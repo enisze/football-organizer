@@ -26,16 +26,19 @@ export const FloatingDock = ({
 			<div className='max-w-screen-xl mx-auto'>
 				<div className='grid grid-cols-4 gap-1'>
 					{items.map((item) => {
-						const adjustedSearchParams = {
+						const itemLink = new URL(
+							item.href,
+							process.env.NEXT_PUBLIC_BASE_URL,
+						)
+
+						//@ts-ignore TODO: Fix at some point
+						const merged = new URLSearchParams({
+							...Object.fromEntries(itemLink.searchParams),
 							...searchParams,
-							minUsers: searchParams?.minUsers?.toString() ?? '',
-							maxUsers: searchParams?.maxUsers?.toString() ?? '',
-						}
+						})
 
-						const urlSearchParams = new URLSearchParams(adjustedSearchParams)
-
-						const url = new URL(item.href, window.location.origin)
-						url.search = urlSearchParams.toString()
+						const url = new URL(item.href, process.env.NEXT_PUBLIC_BASE_URL)
+						url.search = merged.toString()
 
 						return (
 							<Link
