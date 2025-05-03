@@ -112,8 +112,8 @@ export function MyAvailability({
 				<TabsContent value='date' className='space-y-4'>
 					<Card className='bg-white/5 backdrop-blur-sm border-white/10'>
 						<CardHeader>
-							<CardTitle className='text-lg flex items-center gap-2'>
-								<Clock className='h-4 w-4 flex-none' />
+							<CardTitle className='flex text-lg items-center gap-2'>
+								<Clock className='h-6 w-6 flex-none' />
 								Datumsspezifische Verfügbarkeit
 							</CardTitle>
 							<CardDescription className='text-white/70'>

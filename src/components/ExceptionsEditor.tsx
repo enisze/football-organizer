@@ -112,9 +112,9 @@ export function ExceptionsEditor({
 	return (
 		<Card className='bg-white/5 text-white border-none'>
 			<CardHeader>
-				<CardTitle className='flex items-center gap-3'>
+				<CardTitle className='flex text-lg items-center gap-2'>
 					<Clock className='h-6 w-6' />
-					<span className='text-2xl'>Ausnahmetage verwalten</span>
+					<span className=''>Ausnahmetage verwalten</span>
 				</CardTitle>
 				<CardDescription className='text-slate-400'>
 					Wähle Tage aus, an denen du nicht verfügbar bist.
