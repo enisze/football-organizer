@@ -1,6 +1,12 @@
 'use client'
 
 import { cn } from '@/lib/utils/cn'
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from '@/ui/accordion'
 import { Badge } from '@/ui/badge'
 import { Button } from '@/ui/button'
 import { Calendar } from '@/ui/calendar'
@@ -193,7 +199,7 @@ export function GroupAvailabilityView({
 							</TabsList>
 						</Tabs>
 
-						<div className='grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-[140px] mt-4 md:mt-6'>
+						<div className='grid gap-2 grid-cols-1 mt-4 md:mt-6'>
 							{processedSlots.map((slot, index) => {
 								const availableCount = slot.availableUsers.length
 								const percentage = (availableCount / maxUsers) * 100
@@ -217,20 +223,31 @@ export function GroupAvailabilityView({
 											</div>
 
 											<div className='mt-2'>
-												<div className='text-xs font-medium text-white/70 mb-1'>
-													Teilnehmer
-												</div>
-												<div className='flex flex-wrap gap-1.5'>
-													{slot.availableUsers.map((user) => (
-														<div
-															key={user.id}
-															className='flex items-center gap-1.5 rounded-full bg-white/5 px-2 py-0.5 text-xs'
-														>
-															<div className='h-1.5 w-1.5 rounded-full bg-white/70' />
-															{user.name}
-														</div>
-													))}
-												</div>
+												<Accordion type='single' collapsible className='w-full'>
+													<AccordionItem
+														value='participants'
+														className='border-none'
+													>
+														<AccordionTrigger className='py-1 hover:no-underline'>
+															<div className='text-xs font-medium text-white/70'>
+																Teilnehmer
+															</div>
+														</AccordionTrigger>
+														<AccordionContent>
+															<div className='flex flex-wrap gap-1.5'>
+																{slot.availableUsers.map((user) => (
+																	<div
+																		key={user.id}
+																		className='flex items-center gap-1.5 rounded-full bg-white/5 px-2 py-0.5 text-xs'
+																	>
+																		<div className='h-1.5 w-1.5 rounded-full bg-white/70' />
+																		{user.name}
+																	</div>
+																))}
+															</div>
+														</AccordionContent>
+													</AccordionItem>
+												</Accordion>
 											</div>
 										</div>
 
