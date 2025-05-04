@@ -62,7 +62,15 @@ const tourSteps = [
 		content: 'Wähle hier die Startzeit für dein Zeitfenster aus.',
 	},
 	{
+		selector: '[data-tour="start-time-content"]',
+		content: 'Wähle hier die Startzeit für dein Zeitfenster aus.',
+	},
+	{
 		selector: '[data-tour="end-time"]',
+		content: 'Wähle hier die Endzeit für dein Zeitfenster aus.',
+	},
+	{
+		selector: '[data-tour="end-time-content"]',
 		content: 'Wähle hier die Endzeit für dein Zeitfenster aus.',
 	},
 	{

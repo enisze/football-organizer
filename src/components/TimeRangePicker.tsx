@@ -88,7 +88,10 @@ export function TimeRangePicker({
 						<SelectTrigger className='bg-slate-700 border-slate-600'>
 							<SelectValue placeholder='Startzeit' />
 						</SelectTrigger>
-						<SelectContent className='bg-slate-800 border-slate-700 max-h-[300px]'>
+						<SelectContent
+							className='bg-slate-800 border-slate-700 max-h-[300px]'
+							data-tour='start-time-content'
+						>
 							{timeOptions.map((time) => (
 								<SelectItem key={`start-${time}`} value={time}>
 									{time}
@@ -117,7 +120,10 @@ export function TimeRangePicker({
 						<SelectTrigger className='bg-slate-700 border-slate-600'>
 							<SelectValue placeholder='Endzeit' />
 						</SelectTrigger>
-						<SelectContent className='bg-slate-800 border-slate-700 max-h-[300px]'>
+						<SelectContent
+							className='bg-slate-800 border-slate-700 max-h-[300px]'
+							data-tour='end-time-content'
+						>
 							{timeOptions
 								.filter((time) => time > start)
 								.map((time) => (
