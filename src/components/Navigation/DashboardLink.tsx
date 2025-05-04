@@ -18,7 +18,7 @@ export const DashboardLink = ({ groupId }: { groupId: string | undefined }) => {
 				<form>
 					<Link
 						href={routes.groupEvents({ groupId: groupId ?? '' })}
-						className={buttonVariants({ variant: 'outline' })}
+						className={buttonVariants({ variant: 'purple' })}
 					>
 						Dashboard
 					</Link>
