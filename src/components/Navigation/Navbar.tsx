@@ -10,7 +10,7 @@ import { Heading } from '../Heading'
 import { UserAvatar } from '../UserAvatar'
 import { DashboardLink } from './DashboardLink'
 
-export const Navbar = async ({
+export const Navbar = ({
 	group,
 	user,
 }: {

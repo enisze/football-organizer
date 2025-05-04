@@ -3,6 +3,7 @@ import { serverAuth } from '@/src/server/auth/session'
 import { routes } from '@/src/shared/navigation'
 import { getNavigationItems } from '@/src/shared/navigationItems'
 import { redirect } from 'next/navigation'
+import { Suspense } from 'react'
 import { HelpSideEffect } from '../../settings/HelpSideEffect'
 
 export default async function Page({
@@ -33,7 +34,9 @@ export default async function Page({
 				<HelpSideEffect />
 				{children}
 
-				<FloatingDock items={navigationItems} />
+				<Suspense>
+					<FloatingDock items={navigationItems} />
+				</Suspense>
 			</div>
 		</div>
 	)

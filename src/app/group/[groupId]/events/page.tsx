@@ -33,14 +33,12 @@ export default async function EventsPage({ params }: PageProps) {
 	const isOwner = await isOwnerOfGroup(groupId)
 
 	return (
-		<>
-			<Suspense>
-				<CurrentEventsPage
-					groupId={groupId}
-					isOwner={isOwner}
-					userId={session.user.id}
-				/>
-			</Suspense>
-		</>
+		<Suspense>
+			<CurrentEventsPage
+				groupId={groupId}
+				isOwner={isOwner}
+				userId={session.user.id}
+			/>
+		</Suspense>
 	)
 }
