@@ -8,6 +8,7 @@ import { z } from 'zod'
 export const updateTimeSlotAction = authedActionClient
 	.schema(
 		z.object({
+			id: z.string().optional(),
 			startTime: z.string(),
 			endTime: z.string(),
 			type: z.enum(['DAY_SPECIFIC', 'DATE_SPECIFIC']),
@@ -29,8 +30,8 @@ export const updateTimeSlotAction = authedActionClient
 			throw new Error('Day is required for day-of-week time slots')
 		}
 
-		const timeSlot = await prisma.timeSlot.create({
-			data: {
+		const timeSlot = await prisma.timeSlot.upsert({
+			create: {
 				startTime,
 				endTime,
 				type,
@@ -39,6 +40,19 @@ export const updateTimeSlotAction = authedActionClient
 				userId,
 				groupId,
 				isException: isException ?? false,
+			},
+			update: {
+				startTime,
+				endTime,
+				type,
+				date: type === 'DATE_SPECIFIC' ? date : null,
+				day: type === 'DAY_SPECIFIC' ? day : null,
+				userId,
+				groupId,
+				isException: isException ?? false,
+			},
+			where: {
+				id: parsedInput.id,
 			},
 		})
 

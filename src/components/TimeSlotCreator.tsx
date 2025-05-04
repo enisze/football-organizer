@@ -14,6 +14,7 @@ type Day = {
 }
 
 type TimeSlot = {
+	id?: string
 	start: string
 	end: string
 	days: string[]
@@ -35,6 +36,7 @@ export function TimeSlotCreator({
 	onDeleteAction,
 }: TimeSlotCreatorProps) {
 	const [slot, setSlot] = useState<TimeSlot>({
+		id: initialData?.id,
 		start: initialData?.start || '09:00',
 		end: initialData?.end || '10:00',
 		days: initialData?.days || [],

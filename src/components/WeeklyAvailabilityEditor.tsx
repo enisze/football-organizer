@@ -60,12 +60,14 @@ export function WeeklyAvailabilityEditor({
 	}
 
 	const handleSlotSave = async (slot: {
+		id?: string
 		start: string
 		end: string
 		days: string[]
 	}) => {
 		for (const dayId of slot.days) {
 			updateTimeSlot({
+				id: slot.id,
 				startTime: slot.start,
 				endTime: slot.end,
 				type: 'DAY_SPECIFIC',
@@ -162,6 +164,7 @@ export function WeeklyAvailabilityEditor({
 					initialData={
 						editingSlot
 							? {
+									id: editingSlot.id,
 									start: editingSlot.startTime,
 									end: editingSlot.endTime,
 									days: [editingSlot.day?.toString() ?? ''],
