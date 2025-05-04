@@ -18,10 +18,8 @@ import { UserAvatar } from '../UserAvatar'
 import { DashboardLink } from './DashboardLink'
 
 export const Navbar = ({
-	group,
 	user,
 }: {
-	group: { id: string } | null
 	user: User | undefined
 }) => {
 	const pathname = usePathname()
@@ -67,7 +65,7 @@ export const Navbar = ({
 							</Link>
 						)}
 						<Suspense>
-							<DashboardLink groupId={group?.id ?? ''} />
+							<DashboardLink />
 						</Suspense>
 
 						<UserAvatar name={user?.name ?? ''} />

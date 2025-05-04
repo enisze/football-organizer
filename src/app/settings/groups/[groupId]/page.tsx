@@ -34,7 +34,7 @@ const GroupSettings = async ({ params }: PageProps) => {
 	const groupName = groupData?.name
 
 	if (!userId || !groupId) {
-		redirect('/')
+		redirect(routes.home())
 	}
 
 	return (

@@ -5,6 +5,7 @@ import { getNavigationItems } from '@/src/shared/navigationItems'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import { HelpSideEffect } from '../../settings/HelpSideEffect'
+import { LastUsedGroupSideEffect } from '../LastUsedGroupAtom'
 
 export default async function Page({
 	children,
@@ -32,6 +33,7 @@ export default async function Page({
 		<div className='flex flex-col pb-2'>
 			<div className='flex-1'>
 				<HelpSideEffect />
+				<LastUsedGroupSideEffect groupId={parsedParams.groupId} />
 				{children}
 
 				<Suspense>

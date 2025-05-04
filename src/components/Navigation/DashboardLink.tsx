@@ -5,7 +5,7 @@ import { buttonVariants } from '@/ui/button'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-export const DashboardLink = ({ groupId }: { groupId: string | undefined }) => {
+export const DashboardLink = () => {
 	const { data } = useSession()
 
 	const pathname = usePathname()
@@ -16,7 +16,7 @@ export const DashboardLink = ({ groupId }: { groupId: string | undefined }) => {
 		<>
 			{!onDashboard && data?.user?.id && (
 				<Link
-					href={routes.groupEvents({ groupId: groupId ?? '' })}
+					href={routes.group()}
 					className={buttonVariants({ variant: 'purple' })}
 				>
 					Dashboard

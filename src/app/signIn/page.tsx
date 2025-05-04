@@ -1,5 +1,6 @@
 import { authClient } from '@/src/lib/auth-client'
 import { serverAuth } from '@/src/server/auth/session'
+import { routes } from '@/src/shared/navigation'
 import { Card } from '@/ui/card'
 import { Container } from '@/ui/container'
 import { redirect } from 'next/navigation'
@@ -15,7 +16,7 @@ export default async function SignInPage({
 	const session = await serverAuth()
 
 	if (session) {
-		redirect('/')
+		redirect(routes.home())
 	}
 
 	const { callbackUrl } = resolvedParams
