@@ -4,13 +4,7 @@ import { ExceptionsEditor } from '@/src/components/ExceptionsEditor'
 import { TimeSlotEditor } from '@/src/components/TimeSlotEditor'
 import { WeeklyAvailabilityEditor } from '@/src/components/WeeklyAvailabilityEditor'
 import { Calendar } from '@/ui/calendar'
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '@/ui/card'
+import { CardDescription, CardTitle } from '@/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs'
 import type { TimeSlot } from '@prisma/client'
 import { useTour } from '@reactour/tour'
@@ -108,51 +102,44 @@ export function MyAvailability({
 					<ExceptionsEditor groupId={groupId} exceptionSlots={exceptionSlots} />
 				</TabsContent>
 
-				<TabsContent value='date' className='space-y-4'>
-					<Card className='bg-white/5 backdrop-blur-sm'>
-						<CardHeader className='pb-2'>
-							<CardTitle className='flex text-lg items-center gap-2'>
-								<Clock className='h-6 w-6 flex-none' />
-								Datumsspezifische Verfügbarkeit
-							</CardTitle>
-							<CardDescription className='text-white/70'>
-								Lege deine Verfügbarkeit für bestimmte Tage fest
-							</CardDescription>
-						</CardHeader>
-						<CardContent className='grid gap-2 md:grid-cols-[300px_1fr]'>
-							<div className='bg-white/5 rounded-xl p-4'>
-								<Calendar
-									mode='single'
-									selected={date ? new Date(date) : undefined}
-									onSelect={handleDateSelect}
-									className='mx-auto'
-								/>
-							</div>
+				<TabsContent value='date' className='space-y-2'>
+					<CardTitle className='flex text-lg items-center gap-2'>
+						<Clock className='h-6 w-6 flex-none' />
+						Datumsspezifische Verfügbarkeit
+					</CardTitle>
+					<CardDescription className='text-white/70'>
+						Lege deine Verfügbarkeit für bestimmte Tage fest
+					</CardDescription>
+					<div className='bg-white/5 rounded-xl p-4'>
+						<Calendar
+							mode='single'
+							selected={date ? new Date(date) : undefined}
+							onSelect={handleDateSelect}
+							className='mx-auto'
+						/>
+					</div>
 
-							{date ? (
-								<div className='space-y-2'>
-									<h3 className='text-lg font-medium'>
-										{new Date(date).toLocaleDateString('de-DE', {
-											weekday: 'long',
-											month: 'long',
-											day: 'numeric',
-										})}
-									</h3>
-									<TimeSlotEditor
-										timeSlots={initialDaySpecificSlots ?? []}
-										groupId={groupId}
-										date={new Date(date)}
-										type='DATE_SPECIFIC'
-									/>
-								</div>
-							) : (
-								<div className='flex items-center justify-center text-white/70'>
-									Wähle ein Datum aus, um die spezifische Verfügbarkeit
-									festzulegen
-								</div>
-							)}
-						</CardContent>
-					</Card>
+					{date ? (
+						<div className='space-y-2'>
+							<h3 className='text-lg font-medium'>
+								{new Date(date).toLocaleDateString('de-DE', {
+									weekday: 'long',
+									month: 'long',
+									day: 'numeric',
+								})}
+							</h3>
+							<TimeSlotEditor
+								timeSlots={initialDaySpecificSlots ?? []}
+								groupId={groupId}
+								date={new Date(date)}
+								type='DATE_SPECIFIC'
+							/>
+						</div>
+					) : (
+						<div className='flex items-center justify-center text-white/70'>
+							Wähle ein Datum aus, um die spezifische Verfügbarkeit festzulegen
+						</div>
+					)}
 				</TabsContent>
 			</Tabs>
 		</div>

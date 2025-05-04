@@ -7,13 +7,7 @@ import {
 } from '@/src/app/group/[groupId]/availability/actions'
 import { TimeSlotCreator } from '@/src/components/TimeSlotCreator'
 import { Button } from '@/ui/button'
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '@/ui/card'
+import { CardDescription, CardTitle } from '@/ui/card'
 import type { TimeSlot } from '@prisma/client'
 import { Clock, Plus } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
@@ -84,121 +78,117 @@ export function WeeklyAvailabilityEditor({
 	}
 
 	return (
-		<Card className='bg-white/5 text-white border-none' data-tour='timelsots'>
-			<CardHeader className='pb-2'>
-				<CardTitle className='flex text-lg items-center gap-2'>
-					<Clock className='h-6 w-6' />
-					<span className=''>Wöchentliche Verfügbarkeit</span>
-				</CardTitle>
-				<CardDescription className='text-slate-400'>
-					Verwalte deine regelmäßigen Verfügbarkeitszeiten für jede Woche.
-				</CardDescription>
-			</CardHeader>
-			<CardContent className='space-y-2'>
-				<div className='bg-white/5 backdrop-blur-sm border-white/20 rounded-lg overflow-hidden'>
-					<div className='relative'>
-						<div className='flex border-b border-white/20 px-4 py-2'>
-							<div className='w-10 flex-shrink-0' />
-							<div className='flex-1 flex'>
-								{timeLabels.map((time) => (
-									<div
-										key={time}
-										className='flex-1 text-xs text-white/80 text-center'
-									>
-										{time}
-									</div>
-								))}
-							</div>
-						</div>
-
-						{days.map((day) => {
-							const daySlots = timeSlots[Number.parseInt(day.id, 10)] || []
-							return (
+		<div data-tour='timelsots' className='px-4 flex flex-col gap-2'>
+			<CardTitle className='flex text-lg items-center gap-2'>
+				<Clock className='h-6 w-6' />
+				<span className=''>Wöchentliche Verfügbarkeit</span>
+			</CardTitle>
+			<CardDescription className='text-slate-400'>
+				Verwalte deine regelmäßigen Verfügbarkeitszeiten für jede Woche.
+			</CardDescription>
+			<div className='bg-white/5 backdrop-blur-sm border-white/20 rounded-lg overflow-hidden'>
+				<div className='relative'>
+					<div className='flex border-b border-white/20 px-4 py-2'>
+						<div className='w-10 flex-shrink-0' />
+						<div className='flex-1 flex'>
+							{timeLabels.map((time) => (
 								<div
-									key={day.id}
-									className={cn(
-										'flex border-b border-white/20 px-4 py-1 relative',
-										day.id === '0' && 'border-none',
-									)}
+									key={time}
+									className='flex-1 text-xs text-white/80 text-center'
 								>
-									<div className='w-10 flex-shrink-0 font-medium flex items-center'>
-										<span className='text-slate-300'>{day.name}</span>
+									{time}
+								</div>
+							))}
+						</div>
+					</div>
+
+					{days.map((day) => {
+						const daySlots = timeSlots[Number.parseInt(day.id, 10)] || []
+						return (
+							<div
+								key={day.id}
+								className={cn(
+									'flex border-b border-white/20 px-4 py-1 relative',
+									day.id === '0' && 'border-none',
+								)}
+							>
+								<div className='w-10 flex-shrink-0 font-medium flex items-center'>
+									<span className='text-slate-300'>{day.name}</span>
+								</div>
+
+								<div className='flex-1 relative h-8'>
+									<div className='absolute inset-0 flex pointer-events-none'>
+										{timeLabels.map((time, index) => (
+											<div
+												key={time}
+												className={`flex-1 ${index > 0 ? 'border-l border-white/20' : ''} h-full`}
+											/>
+										))}
 									</div>
 
-									<div className='flex-1 relative h-8'>
-										<div className='absolute inset-0 flex pointer-events-none'>
-											{timeLabels.map((time, index) => (
-												<div
-													key={time}
-													className={`flex-1 ${index > 0 ? 'border-l border-white/20' : ''} h-full`}
-												/>
-											))}
-										</div>
-
-										{daySlots.map((slot) => {
-											const style = calculateSlotStyle(
-												slot.startTime,
-												slot.endTime,
-											)
-											return (
-												<div
-													key={slot.id}
-													className='absolute cursor-pointer top-1 h-6 gap-2 bg-green-300 rounded-md'
-													style={style}
-													onClick={() => {
+									{daySlots.map((slot) => {
+										const style = calculateSlotStyle(
+											slot.startTime,
+											slot.endTime,
+										)
+										return (
+											<div
+												key={slot.id}
+												className='absolute cursor-pointer top-1 h-6 gap-2 bg-green-300 rounded-md'
+												style={style}
+												onClick={() => {
+													setEditingSlot(slot)
+													setIsCreatingSlot(true)
+												}}
+												onKeyDown={(e) => {
+													if (e.key === 'Enter') {
 														setEditingSlot(slot)
 														setIsCreatingSlot(true)
-													}}
-													onKeyDown={(e) => {
-														if (e.key === 'Enter') {
-															setEditingSlot(slot)
-															setIsCreatingSlot(true)
-														}
-													}}
-												/>
-											)
-										})}
-									</div>
+													}
+												}}
+											/>
+										)
+									})}
 								</div>
-							)
-						})}
-					</div>
+							</div>
+						)
+					})}
 				</div>
+			</div>
 
-				{isCreatingSlot && (
-					<TimeSlotCreator
-						days={days}
-						initialData={
-							editingSlot
-								? {
-										start: editingSlot.startTime,
-										end: editingSlot.endTime,
-										days: [editingSlot.day?.toString() ?? ''],
-									}
-								: undefined
-						}
-						onSaveAction={handleSlotSave}
-						onCancelAction={() => {
-							setIsCreatingSlot(false)
-							setEditingSlot(null)
-						}}
-						onDeleteAction={() => {
-							setIsCreatingSlot(false)
-							setEditingSlot(null)
-							deleteTimeSlot({ id: editingSlot?.id ?? '' })
-						}}
-					/>
-				)}
+			{isCreatingSlot && (
+				<TimeSlotCreator
+					days={days}
+					initialData={
+						editingSlot
+							? {
+									start: editingSlot.startTime,
+									end: editingSlot.endTime,
+									days: [editingSlot.day?.toString() ?? ''],
+								}
+							: undefined
+					}
+					onSaveAction={handleSlotSave}
+					onCancelAction={() => {
+						setIsCreatingSlot(false)
+						setEditingSlot(null)
+					}}
+					onDeleteAction={() => {
+						setIsCreatingSlot(false)
+						setEditingSlot(null)
+						deleteTimeSlot({ id: editingSlot?.id ?? '' })
+					}}
+				/>
+			)}
 
-				<Button
-					variant='purple'
-					onClick={() => setIsCreatingSlot(true)}
-					data-tour='create-time-slot'
-				>
-					<Plus className='w-4 h-4 mr-2' />
-					Neues Zeitfenster erstellen
-				</Button>
-			</CardContent>
-		</Card>
+			<Button
+				variant='purple'
+				onClick={() => setIsCreatingSlot(true)}
+				data-tour='create-time-slot'
+			>
+				<Plus className='w-4 h-4 mr-2' />
+				Neues Zeitfenster erstellen
+			</Button>
+		</div>
 	)
 }
