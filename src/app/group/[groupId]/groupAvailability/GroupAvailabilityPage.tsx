@@ -28,16 +28,19 @@ export async function GroupAvailabilityPage({
 				{ type: 'DAY_SPECIFIC', day: date.getDay() },
 			],
 			groupId,
-			user: {
-				groups: {
-					some: {
-						groupId,
-					},
-				},
-			},
 		},
 		include: {
 			user: true,
+		},
+	})
+
+	const users = await prisma.user.findMany({
+		where: {
+			groups: {
+				some: {
+					groupId,
+				},
+			},
 		},
 	})
 
@@ -61,7 +64,7 @@ export async function GroupAvailabilityPage({
 	return (
 		<div className='mb-3 animate-in fade-in duration-500'>
 			<GroupAvailabilityView
-				users={uniqueUsers}
+				users={users}
 				date={date}
 				processedSlots={filteredAvailability}
 				groupId={groupId}
