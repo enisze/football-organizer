@@ -43,368 +43,562 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from '@/ui/accordion'
-import { Button } from '@/ui/button'
+import { Button, buttonVariants } from '@/ui/button'
 import {
 	Bell,
 	Calendar,
 	ChevronRight,
 	Clock,
-	Facebook,
-	Instagram,
 	LogIn,
 	Mail,
 	MapPin,
-	Twitter,
+	Plus,
+	Settings,
+	UserCircle,
 	Users,
 } from 'lucide-react'
 import Image from 'next/image'
+import { routes } from '../shared/navigation'
 
 export default function LandingPage() {
 	return (
-		<div className='min-h-screen bg-gray-950 text-gray-100'>
-			{/* Header */}
-			<header className='sticky top-0 z-50 w-full border-b border-gray-800 bg-gray-950/80 backdrop-blur-sm'>
-				<div className='container flex h-16 items-center justify-between'>
-					<div className='flex items-center gap-2'>
-						<Calendar className='h-6 w-6 text-emerald-500' />
-						<span className='text-xl font-bold'>Event Wizard</span>
-					</div>
-					<nav className='hidden md:flex items-center gap-6'>
-						<Link
-							href='#features'
-							className='text-sm hover:text-emerald-400 transition-colors'
-						>
-							Features
-						</Link>
-						<Link
-							href='#screenshots'
-							className='text-sm hover:text-emerald-400 transition-colors'
-						>
-							Screenshots
-						</Link>
-						<Link
-							href='#testimonials'
-							className='text-sm hover:text-emerald-400 transition-colors'
-						>
-							Testimonials
-						</Link>
-						<Link
-							href='#faq'
-							className='text-sm hover:text-emerald-400 transition-colors'
-						>
-							FAQ
-						</Link>
-					</nav>
-					<div className='flex items-center gap-4'>
-						<Link
-							href='#'
-							className='text-sm font-medium hover:text-emerald-400 transition-colors'
-						>
-							Sign In
-						</Link>
-						<Button className='bg-emerald-600 hover:bg-emerald-700'>
-							Sign Up
-						</Button>
-					</div>
-				</div>
-			</header>
-
+		<div className='min-h-screen bg-[#0c1021] text-gray-100'>
 			{/* Hero Section */}
 			<section className='relative overflow-hidden py-20 md:py-32'>
-				<div className='absolute inset-0 bg-gradient-to-b from-emerald-900/20 to-transparent opacity-30'></div>
-				<div className='container relative z-10 flex flex-col items-center text-center'>
-					<h1 className='max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl'>
-						Find and Join Local Sport Events{' '}
-						<span className='text-emerald-500'>Effortlessly</span>
-					</h1>
-					<p className='mt-6 max-w-2xl text-lg text-gray-300'>
-						Connect with local players, join games that fit your schedule, and
-						never miss a match with Event Wizard - your personal sports
-						community organizer.
-					</p>
-					<div className='mt-10 flex flex-col sm:flex-row gap-4'>
-						<Button
-							size='lg'
-							className='bg-emerald-600 hover:bg-emerald-700 text-white'
-						>
-							Join a Game Today
-						</Button>
-						<Button
-							size='lg'
-							variant='outline'
-							className='border-gray-700 text-gray-300 hover:bg-gray-800'
-						>
-							How It Works <ChevronRight className='ml-2 h-4 w-4' />
-						</Button>
-					</div>
-					<div className='mt-12 flex items-center justify-center text-sm text-gray-400'>
-						<Users className='mr-2 h-4 w-4 text-emerald-500' />
-						<span>Join over 5,000 active players in your city</span>
+				<div className='absolute inset-0 bg-gradient-to-b from-[#5b68e3]/10 to-transparent opacity-30' />
+				<div className='container relative z-10'>
+					<div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
+						<div className='flex flex-col justify-center space-y-6'>
+							<h1 className='text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl'>
+								Lokale Sportevents{' '}
+								<span className='text-[#5b68e3]'>einfach finden</span> und
+								teilnehmen
+							</h1>
+							<p className='text-lg text-gray-300'>
+								Verbinde dich mit lokalen Spielern, nimm an Spielen teil, die zu
+								deinem Zeitplan passen, und verpasse nie wieder ein Spiel mit
+								Event Wizard - deinem persönlichen Sport-Community-Organizer.
+							</p>
+							<div className='flex flex-col sm:flex-row gap-4'>
+								<Link
+									className={buttonVariants({
+										variant: 'purple',
+										size: 'lg',
+									})}
+									href={routes.signIn()}
+								>
+									Heute noch mitspielen
+								</Link>
+								<Button
+									size='lg'
+									variant='outline'
+									className='border-gray-700 text-gray-300 hover:bg-gray-800'
+								>
+									So funktioniert's <ChevronRight className='ml-2 h-4 w-4' />
+								</Button>
+							</div>
+							<div className='flex items-center text-sm text-gray-400'>
+								<Users className='mr-2 h-4 w-4 text-[#5b68e3]' />
+								<span>
+									Schließe dich über 5.000 aktiven Spielern in deiner Stadt an
+								</span>
+							</div>
+						</div>
+						<div className='flex justify-center'>
+							<Phone />
+						</div>
 					</div>
 				</div>
 			</section>
 
 			{/* Features Section */}
-			<section id='features' className='py-20 bg-gray-900'>
+			<section id='features' className='py-20 bg-[#0a0e1c]'>
 				<div className='container'>
 					<h2 className='text-center text-3xl font-bold tracking-tight sm:text-4xl mb-16'>
-						Everything You Need to{' '}
-						<span className='text-emerald-500'>Play More</span>
+						Alles was du brauchst, um{' '}
+						<span className='text-[#5b68e3]'>mehr zu spielen</span>
 					</h2>
 
 					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
 						{/* Feature 1 */}
-						<div className='bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-emerald-500 transition-colors'>
-							<div className='h-12 w-12 rounded-full bg-emerald-900/50 flex items-center justify-center mb-4'>
-								<Calendar className='h-6 w-6 text-emerald-500' />
+						<div className='bg-[#131b31] rounded-lg p-6 border border-gray-800 hover:border-[#5b68e3] transition-colors'>
+							<div className='h-12 w-12 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mb-4'>
+								<Calendar className='h-6 w-6 text-[#5b68e3]' />
 							</div>
-							<h3 className='text-xl font-bold mb-2'>Browse & Join Events</h3>
+							<h3 className='text-xl font-bold mb-2'>
+								Events durchsuchen & teilnehmen
+							</h3>
 							<p className='text-gray-300'>
-								Easily find and join scheduled events with detailed information
-								on location, time, and price.
+								Finde und nimm einfach an geplanten Events teil, mit
+								detaillierten Informationen zu Ort, Zeit und Preis.
 							</p>
 						</div>
 
 						{/* Feature 2 */}
-						<div className='bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-emerald-500 transition-colors'>
-							<div className='h-12 w-12 rounded-full bg-emerald-900/50 flex items-center justify-center mb-4'>
-								<Users className='h-6 w-6 text-emerald-500' />
+						<div className='bg-[#131b31] rounded-lg p-6 border border-gray-800 hover:border-[#5b68e3] transition-colors'>
+							<div className='h-12 w-12 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mb-4'>
+								<Users className='h-6 w-6 text-[#5b68e3]' />
 							</div>
-							<h3 className='text-xl font-bold mb-2'>Player Count</h3>
+							<h3 className='text-xl font-bold mb-2'>Teilnehmeranzahl</h3>
 							<p className='text-gray-300'>
-								See how many players have already joined each event and never
-								show up to an empty field again.
+								Sieh, wie viele Spieler bereits an jedem Event teilnehmen und
+								erscheine nie wieder auf einem leeren Spielfeld.
 							</p>
 						</div>
 
 						{/* Feature 3 */}
-						<div className='bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-emerald-500 transition-colors'>
-							<div className='h-12 w-12 rounded-full bg-emerald-900/50 flex items-center justify-center mb-4'>
-								<Clock className='h-6 w-6 text-emerald-500' />
+						<div className='bg-[#131b31] rounded-lg p-6 border border-gray-800 hover:border-[#5b68e3] transition-colors'>
+							<div className='h-12 w-12 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mb-4'>
+								<Clock className='h-6 w-6 text-[#5b68e3]' />
 							</div>
-							<h3 className='text-xl font-bold mb-2'>Weekly Availability</h3>
+							<h3 className='text-xl font-bold mb-2'>
+								Wöchentliche Verfügbarkeit
+							</h3>
 							<p className='text-gray-300'>
-								Set your personal weekly availability and get automatically
-								matched with games that fit your schedule.
+								Lege deine persönliche wöchentliche Verfügbarkeit fest und werde
+								automatisch mit passenden Spielen gematcht.
 							</p>
 						</div>
 
 						{/* Feature 4 */}
-						<div className='bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-emerald-500 transition-colors'>
-							<div className='h-12 w-12 rounded-full bg-emerald-900/50 flex items-center justify-center mb-4'>
-								<Bell className='h-6 w-6 text-emerald-500' />
+						<div className='bg-[#131b31] rounded-lg p-6 border border-gray-800 hover:border-[#5b68e3] transition-colors'>
+							<div className='h-12 w-12 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mb-4'>
+								<Bell className='h-6 w-6 text-[#5b68e3]' />
 							</div>
-							<h3 className='text-xl font-bold mb-2'>Smart Notifications</h3>
+							<h3 className='text-xl font-bold mb-2'>
+								Intelligente Benachrichtigungen
+							</h3>
 							<p className='text-gray-300'>
-								Receive automatic notifications via email when new games match
-								your availability preferences.
+								Erhalte automatische Benachrichtigungen per E-Mail, wenn neue
+								Spiele deinen Verfügbarkeitspräferenzen entsprechen.
 							</p>
 						</div>
 
 						{/* Feature 5 */}
-						<div className='bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-emerald-500 transition-colors'>
-							<div className='h-12 w-12 rounded-full bg-emerald-900/50 flex items-center justify-center mb-4'>
-								<LogIn className='h-6 w-6 text-emerald-500' />
+						<div className='bg-[#131b31] rounded-lg p-6 border border-gray-800 hover:border-[#5b68e3] transition-colors'>
+							<div className='h-12 w-12 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mb-4'>
+								<LogIn className='h-6 w-6 text-[#5b68e3]' />
 							</div>
-							<h3 className='text-xl font-bold mb-2'>Easy Login</h3>
+							<h3 className='text-xl font-bold mb-2'>Einfache Anmeldung</h3>
 							<p className='text-gray-300'>
-								Simple and secure login via Google or Discord - no need to
-								remember another password.
+								Einfache und sichere Anmeldung über Google oder Discord - kein
+								weiteres Passwort zum Merken.
 							</p>
 						</div>
 
 						{/* Feature 6 */}
-						<div className='bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-emerald-500 transition-colors'>
-							<div className='h-12 w-12 rounded-full bg-emerald-900/50 flex items-center justify-center mb-4'>
-								<MapPin className='h-6 w-6 text-emerald-500' />
+						<div className='bg-[#131b31] rounded-lg p-6 border border-gray-800 hover:border-[#5b68e3] transition-colors'>
+							<div className='h-12 w-12 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mb-4'>
+								<MapPin className='h-6 w-6 text-[#5b68e3]' />
 							</div>
-							<h3 className='text-xl font-bold mb-2'>Location Based</h3>
+							<h3 className='text-xl font-bold mb-2'>Standortbasiert</h3>
 							<p className='text-gray-300'>
-								Find events near you with our location-based search and never
-								travel too far for a game.
+								Finde Events in deiner Nähe mit unserer standortbasierten Suche
+								und reise nie zu weit für ein Spiel.
 							</p>
 						</div>
 					</div>
 				</div>
 			</section>
 
-			{/* Screenshots Section */}
-			<section id='screenshots' className='py-20'>
+			{/* App Interface Section */}
+			<section id='overview' className='py-20'>
 				<div className='container'>
 					<h2 className='text-center text-3xl font-bold tracking-tight sm:text-4xl mb-16'>
-						See Event Wizard <span className='text-emerald-500'>in Action</span>
+						Entdecke die <span className='text-[#5b68e3]'>Event Wizard</span>{' '}
+						Funktionen
 					</h2>
 
-					<div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
-						<div className='bg-gray-800 rounded-xl overflow-hidden border border-gray-700'>
-							<div className='p-4 border-b border-gray-700'>
-								<h3 className='font-medium'>Event Browser Interface</h3>
-							</div>
-							<div className='p-2'>
-								<Image
-									src='/placeholder.svg?height=400&width=600'
-									alt='Event browser interface'
-									width={600}
-									height={400}
-									className='rounded-lg'
-								/>
-							</div>
+					<div className='grid grid-cols-1 lg:grid-cols-2 gap-16 mb-20'>
+						<div className='order-2 lg:order-1 flex flex-col justify-center'>
+							<h3 className='text-2xl font-bold mb-4'>
+								Events durchsuchen und teilnehmen
+							</h3>
+							<p className='text-gray-300 mb-6'>
+								Durchsuche alle verfügbaren Events mit wichtigen Details wie
+								Datum, Uhrzeit, Ort und verfügbaren Plätzen. Sieh auf einen
+								Blick, wie viele Spieler bereits teilnehmen und ob das Event
+								noch Plätze frei hat.
+							</p>
+							<ul className='space-y-3'>
+								<li className='flex items-start'>
+									<div className='h-6 w-6 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3 mt-0.5'>
+										<Users className='h-3 w-3 text-[#5b68e3]' />
+									</div>
+									<span className='text-gray-300'>
+										Teilnehmeranzahl in Echtzeit (z.B. 2/10)
+									</span>
+								</li>
+								<li className='flex items-start'>
+									<div className='h-6 w-6 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3 mt-0.5'>
+										<Clock className='h-3 w-3 text-[#5b68e3]' />
+									</div>
+									<span className='text-gray-300'>
+										Übersichtliche Zeitangaben für jedes Event
+									</span>
+								</li>
+								<li className='flex items-start'>
+									<div className='h-6 w-6 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3 mt-0.5'>
+										<MapPin className='h-3 w-3 text-[#5b68e3]' />
+									</div>
+									<span className='text-gray-300'>
+										Genaue Standortinformationen für jedes Event
+									</span>
+								</li>
+							</ul>
 						</div>
-
-						<div className='bg-gray-800 rounded-xl overflow-hidden border border-gray-700'>
-							<div className='p-4 border-b border-gray-700'>
-								<h3 className='font-medium'>Availability Settings</h3>
-							</div>
-							<div className='p-2'>
+						<div className='order-1 lg:order-2 flex justify-center'>
+							<div className='relative'>
+								<div className='absolute -top-10 -left-10 w-40 h-40 bg-[#5b68e3] rounded-full filter blur-[100px] opacity-30' />
 								<Image
-									src='/placeholder.svg?height=400&width=600'
-									alt='Availability settings interface'
-									width={600}
-									height={400}
-									className='rounded-lg'
+									src='/events.avif'
+									alt='Event Wizard Events Übersicht'
+									width={350}
+									height={700}
+									className='rounded-xl border-4 border-gray-800 shadow-2xl'
 								/>
 							</div>
 						</div>
 					</div>
 
-					<div className='mt-12 text-center'>
-						<Button
-							variant='outline'
-							className='border-gray-700 text-gray-300 hover:bg-gray-800'
-						>
-							View More Screenshots
-						</Button>
+					<div className='grid grid-cols-1 lg:grid-cols-2 gap-16 mb-20'>
+						<div className='flex justify-center'>
+							<div className='relative'>
+								<div className='absolute -top-10 -right-10 w-40 h-40 bg-[#5b68e3] rounded-full filter blur-[100px] opacity-30' />
+								<Image
+									src='/weekly.avif'
+									alt='Wöchentliche Verfügbarkeit einstellen'
+									width={350}
+									height={700}
+									className='rounded-xl border-4 border-gray-800 shadow-2xl'
+								/>
+							</div>
+						</div>
+						<div className='flex flex-col justify-center'>
+							<h3 className='text-2xl font-bold mb-4'>
+								Wöchentliche Verfügbarkeit festlegen
+							</h3>
+							<p className='text-gray-300 mb-6'>
+								Verwalte deine regelmäßigen Verfügbarkeitszeiten für jede Woche.
+								Markiere einfach die Zeiten, zu denen du normalerweise spielen
+								kannst, und wir finden passende Events für dich.
+							</p>
+							<ul className='space-y-3'>
+								<li className='flex items-start'>
+									<div className='h-6 w-6 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3 mt-0.5'>
+										<Calendar className='h-3 w-3 text-[#5b68e3]' />
+									</div>
+									<span className='text-gray-300'>
+										Einfache visuelle Zeitauswahl für jeden Wochentag
+									</span>
+								</li>
+								<li className='flex items-start'>
+									<div className='h-6 w-6 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3 mt-0.5'>
+										<Clock className='h-3 w-3 text-[#5b68e3]' />
+									</div>
+									<span className='text-gray-300'>
+										Flexible Zeitfenster von morgens bis abends
+									</span>
+								</li>
+								<li className='flex items-start'>
+									<div className='h-6 w-6 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3 mt-0.5'>
+										<Plus className='h-3 w-3 text-[#5b68e3]' />
+									</div>
+									<span className='text-gray-300'>
+										Erstelle neue Zeitfenster mit einem Klick
+									</span>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div className='grid grid-cols-1 lg:grid-cols-2 gap-16 mb-20'>
+						<div className='order-2 lg:order-1 flex flex-col justify-center'>
+							<h3 className='text-2xl font-bold mb-4'>
+								Datumsspezifische Verfügbarkeit
+							</h3>
+							<p className='text-gray-300 mb-6'>
+								Lege deine Verfügbarkeit für bestimmte Tage individuell fest.
+								Perfekt für Tage mit besonderen Zeitplänen oder wenn du nur zu
+								bestimmten Uhrzeiten verfügbar bist.
+							</p>
+							<ul className='space-y-3'>
+								<li className='flex items-start'>
+									<div className='h-6 w-6 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3 mt-0.5'>
+										<Calendar className='h-3 w-3 text-[#5b68e3]' />
+									</div>
+									<span className='text-gray-300'>
+										Wähle spezifische Tage im Kalender aus
+									</span>
+								</li>
+								<li className='flex items-start'>
+									<div className='h-6 w-6 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3 mt-0.5'>
+										<Clock className='h-3 w-3 text-[#5b68e3]' />
+									</div>
+									<span className='text-gray-300'>
+										Definiere genaue Start- und Endzeiten für deine
+										Verfügbarkeit
+									</span>
+								</li>
+								<li className='flex items-start'>
+									<div className='h-6 w-6 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3 mt-0.5'>
+										<Settings className='h-3 w-3 text-[#5b68e3]' />
+									</div>
+									<span className='text-gray-300'>
+										Markiere Tage als komplett nicht verfügbar mit einem Klick
+									</span>
+								</li>
+							</ul>
+						</div>
+						<div className='order-1 lg:order-2 flex justify-center'>
+							<div className='relative'>
+								<div className='absolute -top-10 -left-10 w-40 h-40 bg-[#5b68e3] rounded-full filter blur-[100px] opacity-30' />
+								<Image
+									src='/daily.avif'
+									alt='Datumsspezifische Verfügbarkeit einstellen'
+									width={350}
+									height={700}
+									className='rounded-xl border-4 border-gray-800 shadow-2xl'
+								/>
+							</div>
+						</div>
+					</div>
+
+					<div className='grid grid-cols-1 lg:grid-cols-2 gap-16 mb-20'>
+						<div className='order-2 lg:order-1 flex flex-col justify-center'>
+							<h3 className='text-2xl font-bold mb-4'>
+								Ausnahmetage verwalten
+							</h3>
+							<p className='text-gray-300 mb-6'>
+								Wähle Tage aus, an denen du nicht verfügbar bist. Perfekt für
+								Urlaub, besondere Anlässe oder wenn du einfach eine Pause
+								brauchst. So erhältst du keine Benachrichtigungen für Events an
+								diesen Tagen.
+							</p>
+							<ul className='space-y-3'>
+								<li className='flex items-start'>
+									<div className='h-6 w-6 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3 mt-0.5'>
+										<Calendar className='h-3 w-3 text-[#5b68e3]' />
+									</div>
+									<span className='text-gray-300'>
+										Übersichtlicher Monatskalender zur Auswahl
+									</span>
+								</li>
+								<li className='flex items-start'>
+									<div className='h-6 w-6 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3 mt-0.5'>
+										<Clock className='h-3 w-3 text-[#5b68e3]' />
+									</div>
+									<span className='text-gray-300'>
+										Markiere einzelne oder mehrere Tage als nicht verfügbar
+									</span>
+								</li>
+								<li className='flex items-start'>
+									<div className='h-6 w-6 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3 mt-0.5'>
+										<Settings className='h-3 w-3 text-[#5b68e3]' />
+									</div>
+									<span className='text-gray-300'>
+										Änderungen werden automatisch gespeichert
+									</span>
+								</li>
+							</ul>
+						</div>
+						<div className='order-1 lg:order-2 flex justify-center'>
+							<div className='relative'>
+								<div className='absolute -top-10 -left-10 w-40 h-40 bg-[#5b68e3] rounded-full filter blur-[100px] opacity-30' />
+								<Image
+									src='/exception.avif'
+									alt='Ausnahmetage verwalten'
+									width={350}
+									height={700}
+									className='rounded-xl border-4 border-gray-800 shadow-2xl'
+								/>
+							</div>
+						</div>
+					</div>
+
+					<div className='grid grid-cols-1 lg:grid-cols-2 gap-16'>
+						<div className='flex justify-center'>
+							<div className='relative'>
+								<div className='absolute -top-10 -right-10 w-40 h-40 bg-[#5b68e3] rounded-full filter blur-[100px] opacity-30' />
+								<Image
+									src='/group.avif'
+									alt='Gruppenslots verwalten'
+									width={350}
+									height={700}
+									className='rounded-xl border-4 border-gray-800 shadow-2xl'
+								/>
+							</div>
+						</div>
+						<div className='flex flex-col justify-center'>
+							<h3 className='text-2xl font-bold mb-4'>
+								Gruppenslots organisieren
+							</h3>
+							<p className='text-gray-300 mb-6'>
+								Organisiere Spiele für deine Gruppe mit flexiblen Zeitslots.
+								Lege die Mindest- und Maximalanzahl der Teilnehmer fest und
+								verfolge, wer teilnimmt.
+							</p>
+							<ul className='space-y-3'>
+								<li className='flex items-start'>
+									<div className='h-6 w-6 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3 mt-0.5'>
+										<Users className='h-3 w-3 text-[#5b68e3]' />
+									</div>
+									<span className='text-gray-300'>
+										Teilnehmerverwaltung mit Mindest- und Maximalanzahl
+									</span>
+								</li>
+								<li className='flex items-start'>
+									<div className='h-6 w-6 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3 mt-0.5'>
+										<Clock className='h-3 w-3 text-[#5b68e3]' />
+									</div>
+									<span className='text-gray-300'>
+										Flexible Zeitslots mit verschiedenen Dauern (1h, 90m, 2h)
+									</span>
+								</li>
+								<li className='flex items-start'>
+									<div className='h-6 w-6 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3 mt-0.5'>
+										<Calendar className='h-3 w-3 text-[#5b68e3]' />
+									</div>
+									<span className='text-gray-300'>
+										Einfache Übersicht über alle Teilnehmer pro Zeitslot
+									</span>
+								</li>
+							</ul>
+						</div>
 					</div>
 				</div>
 			</section>
 
 			{/* Testimonials Section */}
-			<section id='testimonials' className='py-20 bg-gray-900'>
+			<section id='testimonials' className='py-20 bg-[#0a0e1c]'>
 				<div className='container'>
 					<h2 className='text-center text-3xl font-bold tracking-tight sm:text-4xl mb-16'>
-						What Our <span className='text-emerald-500'>Players Say</span>
+						Was unsere <span className='text-[#5b68e3]'>Spieler sagen</span>
 					</h2>
 
 					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
 						{/* Testimonial 1 */}
-						<div className='bg-gray-800 rounded-lg p-6 border border-gray-700'>
+						<div className='bg-[#131b31] rounded-lg p-6 border border-gray-800'>
 							<div className='flex items-center mb-4'>
-								<div className='h-10 w-10 rounded-full bg-emerald-900 flex items-center justify-center mr-3'>
+								<div className='h-10 w-10 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3'>
 									<span className='font-bold'>JD</span>
 								</div>
 								<div>
-									<h4 className='font-bold'>James Davis</h4>
-									<p className='text-sm text-gray-400'>Football Enthusiast</p>
+									<h4 className='font-bold'>Jan Decker</h4>
+									<p className='text-sm text-gray-400'>Fußball-Enthusiast</p>
 								</div>
 							</div>
 							<p className='text-gray-300'>
-								"Event Wizard has completely changed how I find games. I used to
-								struggle to find consistent matches, but now I play twice a week
-								with a great group of people."
+								"Event Wizard hat komplett verändert, wie ich Spiele finde.
+								Früher hatte ich Schwierigkeiten, regelmäßige Matches zu finden,
+								aber jetzt spiele ich zweimal pro Woche mit einer tollen Gruppe
+								von Leuten."
 							</p>
 						</div>
 
 						{/* Testimonial 2 */}
-						<div className='bg-gray-800 rounded-lg p-6 border border-gray-700'>
+						<div className='bg-[#131b31] rounded-lg p-6 border border-gray-800'>
 							<div className='flex items-center mb-4'>
-								<div className='h-10 w-10 rounded-full bg-emerald-900 flex items-center justify-center mr-3'>
+								<div className='h-10 w-10 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3'>
 									<span className='font-bold'>SL</span>
 								</div>
 								<div>
-									<h4 className='font-bold'>Sarah Lee</h4>
-									<p className='text-sm text-gray-400'>Basketball Player</p>
+									<h4 className='font-bold'>Sarah Lehmann</h4>
+									<p className='text-sm text-gray-400'>Basketball-Spielerin</p>
 								</div>
 							</div>
 							<p className='text-gray-300'>
-								"The availability feature is a game-changer. I set my free times
-								once, and now I get notifications whenever there's a game that
-								fits my schedule."
+								"Die Verfügbarkeitsfunktion ist ein Game-Changer. Ich stelle
+								meine freien Zeiten einmal ein und erhalte jetzt
+								Benachrichtigungen, wann immer es ein Spiel gibt, das zu meinem
+								Zeitplan passt."
 							</p>
 						</div>
 
 						{/* Testimonial 3 */}
-						<div className='bg-gray-800 rounded-lg p-6 border border-gray-700'>
+						<div className='bg-[#131b31] rounded-lg p-6 border border-gray-800'>
 							<div className='flex items-center mb-4'>
-								<div className='h-10 w-10 rounded-full bg-emerald-900 flex items-center justify-center mr-3'>
+								<div className='h-10 w-10 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3'>
 									<span className='font-bold'>MR</span>
 								</div>
 								<div>
-									<h4 className='font-bold'>Mike Rodriguez</h4>
-									<p className='text-sm text-gray-400'>5-a-side Organizer</p>
+									<h4 className='font-bold'>Michael Richter</h4>
+									<p className='text-sm text-gray-400'>5-gegen-5 Organisator</p>
 								</div>
 							</div>
 							<p className='text-gray-300'>
-								"As someone who organizes games, Event Wizard has made my life
-								so much easier. I can quickly see who's available and send out
-								invites with just a few clicks."
+								"Als jemand, der Spiele organisiert, hat Event Wizard mein Leben
+								so viel einfacher gemacht. Ich kann schnell sehen, wer verfügbar
+								ist, und Einladungen mit nur wenigen Klicks versenden."
 							</p>
 						</div>
 					</div>
 				</div>
 			</section>
-			<Hero />
 
 			{/* FAQ Section */}
 			<section id='faq' className='py-20'>
 				<div className='container'>
 					<h2 className='text-center text-3xl font-bold tracking-tight sm:text-4xl mb-16'>
-						Frequently Asked <span className='text-emerald-500'>Questions</span>
+						Häufig gestellte <span className='text-[#5b68e3]'>Fragen</span>
 					</h2>
 
 					<div className='max-w-3xl mx-auto'>
 						<Accordion type='single' collapsible className='w-full'>
-							<AccordionItem value='item-1' className='border-gray-700'>
+							<AccordionItem value='item-1' className='border-gray-800'>
 								<AccordionTrigger className='text-left'>
-									How do I join an event?
+									Wie nehme ich an einem Event teil?
 								</AccordionTrigger>
 								<AccordionContent className='text-gray-300'>
-									Simply browse available events, click on one you're interested
-									in, and hit the "Join" button. You'll receive a confirmation
-									email with all the details you need.
+									Durchsuche einfach die verfügbaren Events, klicke auf eines,
+									das dich interessiert, und drücke den "Teilnehmen"-Button. Du
+									erhältst eine Bestätigungs-E-Mail mit allen Details, die du
+									benötigst.
 								</AccordionContent>
 							</AccordionItem>
 
-							<AccordionItem value='item-2' className='border-gray-700'>
+							<AccordionItem value='item-2' className='border-gray-800'>
 								<AccordionTrigger className='text-left'>
-									Is Event Wizard free to use?
+									Ist Event Wizard kostenlos nutzbar?
 								</AccordionTrigger>
 								<AccordionContent className='text-gray-300'>
-									Event Wizard is free to join and browse events. Some events
-									may have fees set by organizers, but these are clearly
-									displayed before you join.
+									Event Wizard ist kostenlos für die Anmeldung und das
+									Durchsuchen von Events. Einige Events können Gebühren haben,
+									die von den Organisatoren festgelegt werden, aber diese werden
+									deutlich angezeigt, bevor du teilnimmst.
 								</AccordionContent>
 							</AccordionItem>
 
-							<AccordionItem value='item-3' className='border-gray-700'>
+							<AccordionItem value='item-3' className='border-gray-800'>
 								<AccordionTrigger className='text-left'>
-									How do I set my weekly availability?
+									Wie lege ich meine wöchentliche Verfügbarkeit fest?
 								</AccordionTrigger>
 								<AccordionContent className='text-gray-300'>
-									Go to your profile settings, select the "Availability" tab,
-									and use our simple calendar interface to mark the times you're
-									free to play each week.
+									Gehe zu deinen Profileinstellungen, wähle den Tab
+									"Verfügbarkeit" und nutze unsere einfache Kalenderoberfläche,
+									um die Zeiten zu markieren, zu denen du jede Woche spielen
+									kannst.
 								</AccordionContent>
 							</AccordionItem>
 
-							<AccordionItem value='item-4' className='border-gray-700'>
+							<AccordionItem value='item-4' className='border-gray-800'>
 								<AccordionTrigger className='text-left'>
-									Can I organize my own events?
+									Kann ich meine eigenen Events organisieren?
 								</AccordionTrigger>
 								<AccordionContent className='text-gray-300'>
-									Click on "Create Event" from your dashboard, fill in the
-									details, and publish. You can manage RSVPs, send updates, and
-									more.
+									Klicke auf "Event erstellen" in deinem Dashboard, fülle die
+									Details aus und veröffentliche es. Du kannst Zusagen
+									verwalten, Updates senden und vieles mehr.
 								</AccordionContent>
 							</AccordionItem>
 
-							<AccordionItem value='item-5' className='border-gray-700'>
+							<AccordionItem value='item-5' className='border-gray-800'>
 								<AccordionTrigger className='text-left'>
-									What sports are supported?
+									Welche Sportarten werden unterstützt?
 								</AccordionTrigger>
 								<AccordionContent className='text-gray-300'>
-									Event Wizard supports all types of sports and physical
-									activities - from football and basketball to tennis, running
-									groups, yoga sessions, and more.
+									Event Wizard unterstützt alle Arten von Sportarten und
+									körperlichen Aktivitäten - von Fußball und Basketball bis hin
+									zu Tennis, Laufgruppen, Yoga-Sessions und mehr.
 								</AccordionContent>
 							</AccordionItem>
 						</Accordion>
@@ -413,69 +607,70 @@ export default function LandingPage() {
 			</section>
 
 			{/* CTA Section */}
-			<section className='py-20 bg-emerald-900'>
+			<section className='py-20 bg-[#5b68e3]/10'>
 				<div className='container text-center'>
 					<h2 className='text-3xl font-bold tracking-tight sm:text-4xl mb-6'>
-						Ready to Find Your Next Game?
+						Bereit für dein nächstes Spiel?
 					</h2>
 					<p className='max-w-2xl mx-auto text-lg mb-10'>
-						Join thousands of players who are already using Event Wizard to
-						discover and participate in local sports events.
+						Schließe dich Tausenden von Spielern an, die Event Wizard bereits
+						nutzen, um lokale Sportevents zu entdecken und daran teilzunehmen.
 					</p>
-					<Button
-						size='lg'
-						className='bg-white text-emerald-900 hover:bg-gray-100'
+					<Link
+						className={buttonVariants({ variant: 'purple', size: 'lg' })}
+						href={routes.signIn()}
 					>
-						Sign Up Now — It's Free
-					</Button>
+						Jetzt kostenlos registrieren
+					</Link>
 				</div>
 			</section>
 
 			{/* Footer */}
-			<footer className='bg-gray-950 border-t border-gray-800 py-12'>
+			<footer className='bg-[#0c1021] border-t border-gray-800 py-12'>
 				<div className='container'>
 					<div className='grid grid-cols-1 md:grid-cols-4 gap-8'>
 						<div>
 							<div className='flex items-center gap-2 mb-4'>
-								<Calendar className='h-6 w-6 text-emerald-500' />
-								<span className='text-xl font-bold'>Event Wizard</span>
+								<span className='text-xl font-bold'>
+									<span className='text-[#5b68e3]'>Event</span> Wizard
+								</span>
 							</div>
 							<p className='text-gray-400 text-sm'>
-								Connecting sports enthusiasts with local games and events.
+								Verbindet Sportbegeisterte mit lokalen Spielen und Events.
 							</p>
 						</div>
 
 						<div>
-							<h3 className='font-bold mb-4'>Product</h3>
+							<h3 className='font-bold mb-4'>Produkt</h3>
 							<ul className='space-y-2 text-sm text-gray-400'>
 								<li>
 									<Link
-										href='#'
-										className='hover:text-emerald-400 transition-colors'
+										href='#features'
+										className='hover:text-[#5b68e3] transition-colors'
 									>
-										Features
+										Funktionen
 									</Link>
 								</li>
 								<li>
 									<Link
-										href='#'
-										className='hover:text-emerald-400 transition-colors'
+										href='/pricing'
+										className='hover:text-[#5b68e3] transition-colors'
 									>
-										Pricing
+										Preise
 									</Link>
 								</li>
 								<li>
 									<Link
-										href='#'
-										className='hover:text-emerald-400 transition-colors'
+										href='#testimonials'
+										className='hover:text-[#5b68e3] transition-colors'
 									>
-										Testimonials
+										Erfahrungen
 									</Link>
 								</li>
 								<li>
 									<Link
-										href='#'
-										className='hover:text-emerald-400 transition-colors'
+										href='#faq'
+										className='hover:text-[#5b68e3] transition-colors'
 									>
 										FAQ
 									</Link>
@@ -484,82 +679,45 @@ export default function LandingPage() {
 						</div>
 
 						<div>
-							<h3 className='font-bold mb-4'>Company</h3>
+							<h3 className='font-bold mb-4'>Unternehmen</h3>
 							<ul className='space-y-2 text-sm text-gray-400'>
 								<li>
 									<Link
-										href='#'
-										className='hover:text-emerald-400 transition-colors'
+										href='/datenschutz'
+										className='hover:text-[#5b68e3] transition-colors'
 									>
-										About Us
+										Datenschutz
 									</Link>
 								</li>
 								<li>
 									<Link
-										href='#'
-										className='hover:text-emerald-400 transition-colors'
+										href='/agb'
+										className='hover:text-[#5b68e3] transition-colors'
 									>
-										Careers
-									</Link>
-								</li>
-								<li>
-									<Link
-										href='#'
-										className='hover:text-emerald-400 transition-colors'
-									>
-										Privacy Policy
-									</Link>
-								</li>
-								<li>
-									<Link
-										href='#'
-										className='hover:text-emerald-400 transition-colors'
-									>
-										Terms of Service
+										Nutzungsbedingungen
 									</Link>
 								</li>
 							</ul>
 						</div>
 
 						<div>
-							<h3 className='font-bold mb-4'>Connect</h3>
+							<h3 className='font-bold mb-4'>Kontakt</h3>
 							<div className='flex space-x-4 mb-4'>
 								<Link
-									href='#'
-									className='text-gray-400 hover:text-emerald-400 transition-colors'
-								>
-									<Facebook className='h-5 w-5' />
-									<span className='sr-only'>Facebook</span>
-								</Link>
-								<Link
-									href='#'
-									className='text-gray-400 hover:text-emerald-400 transition-colors'
-								>
-									<Twitter className='h-5 w-5' />
-									<span className='sr-only'>Twitter</span>
-								</Link>
-								<Link
-									href='#'
-									className='text-gray-400 hover:text-emerald-400 transition-colors'
-								>
-									<Instagram className='h-5 w-5' />
-									<span className='sr-only'>Instagram</span>
-								</Link>
-								<Link
-									href='#'
-									className='text-gray-400 hover:text-emerald-400 transition-colors'
+									href='mailto:enis@zejnilovic.de'
+									className='text-gray-400 hover:text-[#5b68e3] transition-colors'
 								>
 									<Mail className='h-5 w-5' />
 									<span className='sr-only'>Email</span>
 								</Link>
 							</div>
 							<p className='text-sm text-gray-400'>
-								Contact us:{' '}
+								Kontaktiere uns:{' '}
 								<Link
-									href='mailto:hello@eventwizard.com'
-									className='text-emerald-400'
+									href='mailto:enis@zejnilovic.de'
+									className='text-[#5b68e3]'
 								>
-									hello@eventwizard.com
+									enis@zejnilovic.de
 								</Link>
 							</p>
 						</div>
@@ -567,11 +725,46 @@ export default function LandingPage() {
 
 					<div className='mt-12 pt-8 border-t border-gray-800 text-center text-sm text-gray-400'>
 						<p>
-							© {new Date().getFullYear()} Event Wizard. All rights reserved.
+							© {new Date().getFullYear()} Event Wizard. Alle Rechte
+							vorbehalten.
 						</p>
 					</div>
 				</div>
 			</footer>
+
+			{/* Mobile Navigation */}
+			<div className='md:hidden fixed bottom-0 left-0 right-0 bg-[#0c1021] border-t border-gray-800 py-2'>
+				<div className='grid grid-cols-4 gap-1'>
+					<Link
+						href='#'
+						className='flex flex-col items-center justify-center p-2 text-[#5b68e3]'
+					>
+						<Calendar className='h-5 w-5' />
+						<span className='text-xs mt-1'>Events</span>
+					</Link>
+					<Link
+						href='#'
+						className='flex flex-col items-center justify-center p-2 text-gray-400'
+					>
+						<Clock className='h-5 w-5' />
+						<span className='text-xs mt-1'>Zeiten</span>
+					</Link>
+					<Link
+						href='#'
+						className='flex flex-col items-center justify-center p-2 text-gray-400'
+					>
+						<UserCircle className='h-5 w-5' />
+						<span className='text-xs mt-1'>Gruppe</span>
+					</Link>
+					<Link
+						href='#'
+						className='flex flex-col items-center justify-center p-2 text-gray-400'
+					>
+						<Settings className='h-5 w-5' />
+						<span className='text-xs mt-1'>Einstellungen</span>
+					</Link>
+				</div>
+			</div>
 		</div>
 	)
 }

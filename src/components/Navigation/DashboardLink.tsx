@@ -15,14 +15,12 @@ export const DashboardLink = ({ groupId }: { groupId: string | undefined }) => {
 	return (
 		<>
 			{!onDashboard && data?.user?.id && (
-				<form>
-					<Link
-						href={routes.groupEvents({ groupId: groupId ?? '' })}
-						className={buttonVariants({ variant: 'purple' })}
-					>
-						Dashboard
-					</Link>
-				</form>
+				<Link
+					href={routes.groupEvents({ groupId: groupId ?? '' })}
+					className={buttonVariants({ variant: 'purple' })}
+				>
+					Dashboard
+				</Link>
 			)}
 		</>
 	)

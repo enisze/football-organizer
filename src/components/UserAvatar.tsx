@@ -29,9 +29,7 @@ export const UserAvatar: FunctionComponent<UserAvatarProps> = ({
 
 	return (
 		<Avatar className={className}>
-			<AvatarFallback className='bg-white dark:bg-slate-900'>
-				{first + second}
-			</AvatarFallback>
+			<AvatarFallback className='bg-white/5'>{first + second}</AvatarFallback>
 		</Avatar>
 	)
 }
