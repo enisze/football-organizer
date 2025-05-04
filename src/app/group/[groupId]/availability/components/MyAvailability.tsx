@@ -58,7 +58,7 @@ export function MyAvailability({
 	const { setCurrentStep } = useTour()
 
 	return (
-		<div className='container px-4 mx-auto space-y-8 pt-2 pb-20'>
+		<div className='container px-4 mx-auto space-y-8 pt-2'>
 			<Tabs
 				defaultValue={selectedTab}
 				onValueChange={setSelectedTab}
