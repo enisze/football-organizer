@@ -3,6 +3,7 @@
 import { Button } from '@/ui/button'
 import { Checkbox } from '@/ui/checkbox'
 import { Label } from '@/ui/label'
+import { useTour } from '@reactour/tour'
 import { X } from 'lucide-react'
 import { useState } from 'react'
 import { TimeRangePicker } from './TimeRangePicker'
@@ -42,6 +43,8 @@ export function TimeSlotCreator({
 		days: initialData?.days || [],
 	})
 
+	const { setCurrentStep } = useTour()
+
 	const handleTimeChange = (start: string, end: string) => {
 		setSlot((prev) => ({ ...prev, start, end }))
 	}
@@ -53,6 +56,7 @@ export function TimeSlotCreator({
 				? prev.days.filter((id) => id !== dayId)
 				: [...prev.days, dayId],
 		}))
+		setCurrentStep((prev) => prev + 1)
 	}
 
 	const selectWeekdays = () => {
@@ -60,6 +64,7 @@ export function TimeSlotCreator({
 			...prev,
 			days: ['1', '2', '3', '4', '5'],
 		}))
+		setCurrentStep((prev) => prev + 1)
 	}
 
 	const selectWeekend = () => {
@@ -67,6 +72,7 @@ export function TimeSlotCreator({
 			...prev,
 			days: ['0', '6'],
 		}))
+		setCurrentStep((prev) => prev + 1)
 	}
 
 	const selectAll = () => {
@@ -74,6 +80,7 @@ export function TimeSlotCreator({
 			...prev,
 			days: days.map((day) => day.id),
 		}))
+		setCurrentStep((prev) => prev + 1)
 	}
 
 	const clearAll = () => {
@@ -88,6 +95,7 @@ export function TimeSlotCreator({
 			return
 		}
 		onSaveAction(slot)
+		setCurrentStep((prev) => prev + 1)
 	}
 
 	return (
