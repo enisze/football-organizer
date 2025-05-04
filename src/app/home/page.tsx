@@ -1,6 +1,6 @@
-import LandingPage from '@/src/components/Heading'
+import { LandingPage } from '@/src/components/LandingPage'
 
-const Home = async () => {
+const Home = () => {
 	return (
 		<div className='h-full'>
 			<title>Event Wizard</title>

@@ -1,7 +1,7 @@
 import { Button } from '@/ui/button'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import LandingPage from '../components/Heading'
+import { LandingPage } from '../components/LandingPage'
 import { serverAuth } from '../server/auth/session'
 import { prisma } from '../server/db/client'
 import { routes } from '../shared/navigation'
