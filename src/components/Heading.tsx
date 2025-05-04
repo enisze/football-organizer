@@ -54,7 +54,6 @@ import {
 	MapPin,
 	Plus,
 	Settings,
-	UserCircle,
 	Users,
 } from 'lucide-react'
 import Image from 'next/image'
@@ -731,40 +730,6 @@ export default function LandingPage() {
 					</div>
 				</div>
 			</footer>
-
-			{/* Mobile Navigation */}
-			<div className='md:hidden fixed bottom-0 left-0 right-0 bg-[#0c1021] border-t border-gray-800 py-2'>
-				<div className='grid grid-cols-4 gap-1'>
-					<Link
-						href='#'
-						className='flex flex-col items-center justify-center p-2 text-[#5b68e3]'
-					>
-						<Calendar className='h-5 w-5' />
-						<span className='text-xs mt-1'>Events</span>
-					</Link>
-					<Link
-						href='#'
-						className='flex flex-col items-center justify-center p-2 text-gray-400'
-					>
-						<Clock className='h-5 w-5' />
-						<span className='text-xs mt-1'>Zeiten</span>
-					</Link>
-					<Link
-						href='#'
-						className='flex flex-col items-center justify-center p-2 text-gray-400'
-					>
-						<UserCircle className='h-5 w-5' />
-						<span className='text-xs mt-1'>Gruppe</span>
-					</Link>
-					<Link
-						href='#'
-						className='flex flex-col items-center justify-center p-2 text-gray-400'
-					>
-						<Settings className='h-5 w-5' />
-						<span className='text-xs mt-1'>Einstellungen</span>
-					</Link>
-				</div>
-			</div>
 		</div>
 	)
 }
