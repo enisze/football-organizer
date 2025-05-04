@@ -119,6 +119,7 @@ export function ExceptionsEditor({
 					onSelect={handleSelect}
 					defaultMonth={currentMonth}
 					onMonthChange={setCurrentMonth}
+					weekStartsOn={1}
 					modifiersStyles={{
 						selected: {
 							backgroundColor: 'rgb(127 29 29 / 0.7)',

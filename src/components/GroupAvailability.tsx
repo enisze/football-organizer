@@ -126,6 +126,7 @@ export function GroupAvailabilityView({
 								selected={currentDate}
 								onSelect={handleDateChange}
 								className='mx-auto'
+								weekStartsOn={1}
 							/>
 						</PopoverContent>
 					</Popover>

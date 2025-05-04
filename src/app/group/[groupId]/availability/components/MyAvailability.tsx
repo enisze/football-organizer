@@ -116,6 +116,7 @@ export function MyAvailability({
 							selected={date ? new Date(date) : undefined}
 							onSelect={handleDateSelect}
 							className='mx-auto'
+							weekStartsOn={1}
 						/>
 					</div>
 
