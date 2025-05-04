@@ -46,32 +46,38 @@ const tourSteps = [
 	},
 	{
 		selector: '[data-tour="presets-time"]',
-		content: 'Hier kannst du vorausgewählte Zeitfenster auswählen.',
+		content:
+			'Hier kannst du vorausgewählte Zeitfenster auswählen. Du kannst es direkt ausprobieren.',
 	},
 	{
 		selector: '[data-tour="quick-select"]',
-		content: 'Hier kannst du vordefinierte Tage auswählen.',
+		content:
+			'Hier kannst du vordefinierte Tage auswählen. Du kannst es direkt ausprobieren.',
 	},
 	{
 		selector: '[data-tour="day-selection"]',
 		content:
-			'hier kannst du die Tage auswählen, für die du die Zeiten festlegen möchtest.',
+			'Hier kannst du die Tage auswählen, für die du die Zeiten festlegen möchtest. Probiere einen Tag auszuwählen.',
 	},
 	{
 		selector: '[data-tour="start-time"]',
-		content: 'Wähle hier die Startzeit für dein Zeitfenster aus.',
+		content:
+			'Wähle hier die Startzeit für dein Zeitfenster aus, um weiterzumachen.',
 	},
 	{
 		selector: '[data-tour="start-time-content"]',
-		content: 'Wähle hier die Startzeit für dein Zeitfenster aus.',
+		content:
+			'Wähle hier die Startzeit für dein Zeitfenster aus, um weiterzumachen.',
 	},
 	{
 		selector: '[data-tour="end-time"]',
-		content: 'Wähle hier die Endzeit für dein Zeitfenster aus.',
+		content:
+			'Wähle hier die Endzeit für dein Zeitfenster aus, um weiterzumachen.',
 	},
 	{
 		selector: '[data-tour="end-time-content"]',
-		content: 'Wähle hier die Endzeit für dein Zeitfenster aus.',
+		content:
+			'Wähle hier die Endzeit für dein Zeitfenster aus, um weiterzumachen.',
 	},
 	{
 		selector: '[data-tour="save-time-slot"]',

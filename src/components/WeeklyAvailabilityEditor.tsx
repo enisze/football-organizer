@@ -9,6 +9,7 @@ import { TimeSlotCreator } from '@/src/components/TimeSlotCreator'
 import { Button } from '@/ui/button'
 import { CardDescription, CardTitle } from '@/ui/card'
 import type { TimeSlot } from '@prisma/client'
+import { useTour } from '@reactour/tour'
 import { Clock, Plus } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
 import { useState } from 'react'
@@ -38,6 +39,8 @@ export function WeeklyAvailabilityEditor({
 	const { execute: deleteTimeSlot } = useAction(deleteTimeSlotAction)
 	const [isCreatingSlot, setIsCreatingSlot] = useState(false)
 	const [editingSlot, setEditingSlot] = useState<TimeSlot | null>(null)
+
+	const { setCurrentStep } = useTour()
 
 	const timeToPosition = (time: string): number => {
 		const [hoursStr, minutesStr] = time.split(':') || ['0', '0']
@@ -186,7 +189,10 @@ export function WeeklyAvailabilityEditor({
 
 			<Button
 				variant='purple'
-				onClick={() => setIsCreatingSlot(true)}
+				onClick={() => {
+					setIsCreatingSlot(true)
+					setCurrentStep((prev) => prev + 1)
+				}}
 				data-tour='create-time-slot'
 			>
 				<Plus className='w-4 h-4 mr-2' />
