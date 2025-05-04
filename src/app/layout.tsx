@@ -1,9 +1,7 @@
 import Script from 'next/script'
 import { Suspense } from 'react'
 import '../../styles/globals.css'
-import { Navbar } from '../components/Navigation/Navbar'
-import { serverAuth } from '../server/auth/session'
-import { prisma } from '../server/db/client'
+import { NavbarWrapper } from '../components/Navigation/NavbarWrapper'
 import Providers from './Providers'
 
 export const metadata = {
@@ -19,11 +17,6 @@ export default async function RootLayout({
 }: {
 	children: React.ReactNode
 }) {
-	const session = await serverAuth()
-	const group = await prisma.group.findFirst({
-		where: { users: { some: { id: session?.user?.id } } },
-		select: { id: true },
-	})
 	return (
 		<html lang='en'>
 			<body className='h-full dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-800 dark:text-slate-50 min-h-screen bg-white font-sans text-slate-900 antialiased'>
@@ -38,7 +31,7 @@ export default async function RootLayout({
 				/>
 				<Providers>
 					<Suspense>
-						<Navbar group={group} user={session?.user} />
+						<NavbarWrapper />
 					</Suspense>
 					{children}
 				</Providers>

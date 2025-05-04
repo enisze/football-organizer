@@ -2,6 +2,7 @@ import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
 import { redirect } from 'next/navigation'
+import { Suspense } from 'react'
 import { MyAvailabilityPage } from './MyAvailabilityPage'
 
 interface PageProps {
@@ -38,12 +39,14 @@ export default async function AvailabilityPage({
 	return (
 		<>
 			<div className='flex-1'>
-				<MyAvailabilityPage
-					groupId={groupId}
-					userId={session.user.id}
-					date={parsedSearchParams?.selectedDate}
-					tab={parsedSearchParams?.tab ?? 'weekly'}
-				/>
+				<Suspense>
+					<MyAvailabilityPage
+						groupId={groupId}
+						userId={session.user.id}
+						date={parsedSearchParams?.selectedDate}
+						tab={parsedSearchParams?.tab ?? 'weekly'}
+					/>
+				</Suspense>
 			</div>
 		</>
 	)

@@ -2,6 +2,7 @@ import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
 import { redirect } from 'next/navigation'
+import { Suspense } from 'react'
 import { GroupAvailabilityPage } from './GroupAvailabilityPage'
 
 interface PageProps {
@@ -43,12 +44,14 @@ export default async function GroupAvailabilityRoute({
 
 	return (
 		<div className='flex flex-col pb-2'>
-			<GroupAvailabilityPage
-				groupId={groupId}
-				duration={parsedSearchParams?.duration}
-				minUsers={parsedMinUsers}
-				date={parsedDate}
-			/>
+			<Suspense>
+				<GroupAvailabilityPage
+					groupId={groupId}
+					duration={parsedSearchParams?.duration}
+					minUsers={parsedMinUsers}
+					date={parsedDate}
+				/>
+			</Suspense>
 		</div>
 	)
 }
