@@ -1,4 +1,4 @@
-import { Hero } from '@/src/components/Heading'
+import LandingPage from '@/src/components/Heading'
 import { serverAuth } from '@/src/server/auth/session'
 import { routes } from '@/src/shared/navigation'
 import { Button } from '@/ui/button'
@@ -12,7 +12,7 @@ const Home = async () => {
 			<title>Event Wizard</title>
 
 			<main className='flex relative h-full w-full flex-col items-center justify-center'>
-				<Hero />
+				<LandingPage />
 				{!session && (
 					<Link href={routes.signIn()}>
 						<Button className='shadow-md shadow-yellow-300/50'>
