@@ -1,11 +1,10 @@
 import { authClient } from '@/src/lib/auth-client'
 import { serverAuth } from '@/src/server/auth/session'
-import { Button } from '@/ui/button'
 import { Card } from '@/ui/card'
 import { Container } from '@/ui/container'
-import { Chrome, MessageSquare } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import CredentialsForm from './CredentialsForm'
+import { ProviderButton } from './ProviderButton'
 
 export default async function SignInPage({
 	searchParams,
@@ -13,7 +12,6 @@ export default async function SignInPage({
 	searchParams: Promise<{ callbackUrl?: string }>
 }) {
 	const resolvedParams = await searchParams
-
 	const session = await serverAuth()
 
 	if (session) {
@@ -21,7 +19,6 @@ export default async function SignInPage({
 	}
 
 	const { callbackUrl } = resolvedParams
-
 	const isDev = process.env.NODE_ENV === 'development'
 
 	return (
@@ -34,10 +31,9 @@ export default async function SignInPage({
 
 				<div className='flex flex-col gap-y-4'>
 					<form className='flex flex-col gap-y-2'>
-						<Button
-							variant='outline'
-							className='w-full flex items-center justify-center gap-2'
-							formAction={async () => {
+						<ProviderButton
+							provider='google'
+							action={async () => {
 								'use server'
 								const res = await authClient.signIn.social({
 									provider: 'google',
@@ -48,15 +44,11 @@ export default async function SignInPage({
 									redirect(res.data?.url)
 								}
 							}}
-						>
-							<Chrome className='w-5 h-5' />
-							Continue with Google
-						</Button>
+						/>
 
-						<Button
-							variant='outline'
-							className='w-full flex items-center justify-center gap-2'
-							formAction={async () => {
+						<ProviderButton
+							provider='discord'
+							action={async () => {
 								'use server'
 								const res = await authClient.signIn.social({
 									provider: 'discord',
@@ -67,10 +59,7 @@ export default async function SignInPage({
 									redirect(res.data?.url)
 								}
 							}}
-						>
-							<MessageSquare className='w-5 h-5' />
-							Continue with Discord
-						</Button>
+						/>
 					</form>
 
 					{isDev && (
