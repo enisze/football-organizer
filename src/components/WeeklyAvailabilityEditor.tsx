@@ -67,7 +67,7 @@ export function WeeklyAvailabilityEditor({
 	}) => {
 		for (const dayId of slot.days) {
 			updateTimeSlot({
-				id: slot.id,
+				id: slot.id ?? '',
 				startTime: slot.start,
 				endTime: slot.end,
 				type: 'DAY_SPECIFIC',
