@@ -96,6 +96,7 @@ export function TimeSlotEditor({
 			day: type === 'DAY_SPECIFIC' ? day : undefined,
 			groupId,
 			isException: true,
+			id: '',
 		})
 	}, [type, date, day, groupId, updateTimeSlot])
 
@@ -103,6 +104,7 @@ export function TimeSlotEditor({
 		if (!newSlot.startTime || !newSlot.endTime) return
 
 		updateTimeSlot({
+			id: '',
 			startTime: newSlot.startTime,
 			endTime: newSlot.endTime,
 			type,

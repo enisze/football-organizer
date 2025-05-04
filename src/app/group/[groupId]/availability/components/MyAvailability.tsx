@@ -102,7 +102,7 @@ export function MyAvailability({
 					<ExceptionsEditor groupId={groupId} exceptionSlots={exceptionSlots} />
 				</TabsContent>
 
-				<TabsContent value='date' className='space-y-2'>
+				<TabsContent value='date' className='space-y-2 pb-20'>
 					<CardTitle className='flex text-lg items-center gap-2'>
 						<Clock className='h-6 w-6 flex-none' />
 						Datumsspezifische Verfügbarkeit
