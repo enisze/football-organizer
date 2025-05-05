@@ -9,29 +9,46 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/ui/dialog'
-import { toast } from '@/ui/use-toast'
 import type { Event } from '@prisma/client'
 import { PlusIcon } from 'lucide-react'
 import { useState } from 'react'
 
 interface EventDialogProps {
 	templates: Partial<Event>[]
+	open?: boolean
+	onOpenChange?: (open: boolean) => void
+	initialTime?: {
+		startTime: string
+		endTime: string
+		date: string
+	}
 }
 
-export const EventDialog = ({ templates }: EventDialogProps) => {
-	const [open, setOpen] = useState(false)
+export const EventDialog = ({
+	templates,
+	open,
+	onOpenChange,
+	initialTime,
+}: EventDialogProps) => {
+	const [internalOpen, setInternalOpen] = useState(false)
+
+	const isControlled = open !== undefined && onOpenChange !== undefined
+	const isOpen = isControlled ? open : internalOpen
+	const setOpen = isControlled ? onOpenChange : setInternalOpen
 
 	return (
-		<Dialog open={open} onOpenChange={(open) => setOpen(open)}>
-			<DialogTrigger asChild>
-				<Button
-					type='button'
-					variant='purple'
-					className='flex rounded-full w-10'
-				>
-					<PlusIcon className='h-2 w-2' />
-				</Button>
-			</DialogTrigger>
+		<Dialog open={isOpen} onOpenChange={setOpen}>
+			{!isControlled && (
+				<DialogTrigger asChild>
+					<Button
+						type='button'
+						variant='purple'
+						className='flex rounded-full w-10'
+					>
+						<PlusIcon className='h-2 w-2' />
+					</Button>
+				</DialogTrigger>
+			)}
 			<DialogContent className='sm:max-w-[425px]'>
 				<DialogHeader>
 					<DialogTitle>Add Event</DialogTitle>
@@ -42,12 +59,9 @@ export const EventDialog = ({ templates }: EventDialogProps) => {
 				<AddEventForm
 					onSubmit={() => {
 						setOpen(false)
-						toast({
-							title: 'Event erstellt',
-							description: 'Das Event wurde erfolgreich erstellt.',
-						})
 					}}
 					templates={templates}
+					initialTime={initialTime}
 				/>
 			</DialogContent>
 		</Dialog>

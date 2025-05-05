@@ -11,6 +11,7 @@ import {
 	SelectValue,
 } from '@/ui/select'
 import { Switch } from '@/ui/switch'
+import { toast } from '@/ui/use-toast'
 import type { Event } from '@prisma/client'
 import { useParams } from 'next/navigation'
 import { useState } from 'react'
@@ -18,9 +19,18 @@ import { useState } from 'react'
 interface AddEventFormProps {
 	onSubmit: () => void
 	templates: Partial<Event>[]
+	initialTime?: {
+		startTime: string
+		endTime: string
+		date: string
+	}
 }
 
-export const AddEventForm = ({ onSubmit, templates }: AddEventFormProps) => {
+export const AddEventForm = ({
+	onSubmit,
+	templates,
+	initialTime,
+}: AddEventFormProps) => {
 	const params = useParams()
 	const groupId = params?.groupId as string
 	const [selectedTemplate, setSelectedTemplate] = useState<string>('')
@@ -68,6 +78,7 @@ export const AddEventForm = ({ onSubmit, templates }: AddEventFormProps) => {
 					name='date'
 					text=''
 					className='w-full'
+					defaultValue={initialTime?.date}
 				/>
 			</div>
 
@@ -80,8 +91,20 @@ export const AddEventForm = ({ onSubmit, templates }: AddEventFormProps) => {
 				<TextField label='Addresse' name='address' text='' />
 			</div>
 
-			<TextField label='Startzeit' type='time' name='startTime' text='' />
-			<TextField label='Endzeit' type='time' name='endTime' text='' />
+			<TextField
+				label='Startzeit'
+				type='time'
+				name='startTime'
+				text=''
+				defaultValue={initialTime?.startTime}
+			/>
+			<TextField
+				label='Endzeit'
+				type='time'
+				name='endTime'
+				text=''
+				defaultValue={initialTime?.endTime}
+			/>
 
 			<div className='flex gap-x-2 col-span-2 items-center justify-between'>
 				<Label htmlFor='environment'>Indoor</Label>
@@ -96,17 +119,34 @@ export const AddEventForm = ({ onSubmit, templates }: AddEventFormProps) => {
 				type='number'
 				text=''
 			/>
-			<Button
-				variant='purple'
-				type='submit'
-				formAction={async (formData: FormData) => {
-					formData.append('groupId', groupId)
-					await createEvent(formData)
-					onSubmit()
-				}}
-			>
-				Submit
-			</Button>
+			<div className='flex gap-2'>
+				<Button
+					variant='purple'
+					type='button'
+					onClick={() => {
+						onSubmit()
+					}}
+				>
+					Schließen
+				</Button>
+
+				<Button
+					variant='purple'
+					type='submit'
+					formAction={async (formData: FormData) => {
+						formData.append('groupId', groupId)
+						await createEvent(formData)
+						onSubmit()
+
+						toast({
+							title: 'Event erstellt',
+							description: 'Das Event wurde erfolgreich erstellt.',
+						})
+					}}
+				>
+					Erstellen
+				</Button>
+			</div>
 		</form>
 	)
 }
