@@ -314,7 +314,10 @@ export function GroupAvailabilityView({
 											{Array.from({ length: 8 }, (_, i) => (
 												<div
 													key={i}
-													className={`flex-1 ${i > 0 ? 'border-l border-white/20' : ''} h-full`}
+													className={cn(
+														'flex-1  h-full',
+														i > 0 && 'border-l border-white/20',
+													)}
 												/>
 											))}
 										</div>

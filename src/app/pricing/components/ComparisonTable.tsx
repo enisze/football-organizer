@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils/cn'
 import { Check, X } from 'lucide-react'
 import type React from 'react'
 
@@ -58,9 +59,9 @@ const ComparisonTable: React.FC = () => {
 						{features.map((feature, featureIdx) => (
 							<tr
 								key={feature.name}
-								className={
-									featureIdx % 2 === 0 ? 'bg-gray-800 bg-opacity-50' : undefined
-								}
+								className={cn(
+									featureIdx % 2 === 0 && 'bg-gray-800 bg-opacity-50',
+								)}
 							>
 								<td className='whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-6'>
 									{feature.name}

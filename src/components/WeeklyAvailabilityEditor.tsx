@@ -126,7 +126,10 @@ export function WeeklyAvailabilityEditor({
 										{timeLabels.map((time, index) => (
 											<div
 												key={time}
-												className={`flex-1 ${index > 0 ? 'border-l border-white/20' : ''} h-full`}
+												className={cn(
+													'flex-1 h-full',
+													index > 0 && 'border-l border-white/20',
+												)}
 											/>
 										))}
 									</div>

@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils/cn'
 import { Avatar, AvatarFallback } from '@/ui/avatar'
 import type { UserEventStatus } from '@prisma/client'
 import type { FunctionComponent } from 'react'
@@ -18,7 +19,10 @@ export const AvatarStatus: FunctionComponent<{
 	return (
 		<div className={`flex items-center gap-x-2 ${color}`}>
 			<Avatar
-				className={`rounded-full h-10 w-10 justify-center border-[1px] border-slate-300 dark:border-white ${color}`}
+				className={cn(
+					'rounded-full h-10 w-10 justify-center border-[1px] border-slate-300 dark:border-white',
+					color,
+				)}
 			>
 				<AvatarFallback>{shortName}</AvatarFallback>
 			</Avatar>

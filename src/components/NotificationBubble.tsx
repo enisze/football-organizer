@@ -1,3 +1,5 @@
+import { cn } from '@/lib/utils/cn'
+
 export const NotificationBubble = ({
 	position = 'topRight',
 	className,
@@ -21,7 +23,11 @@ export const NotificationBubble = ({
 	const pos = getPos()
 	return (
 		<div
-			className={`absolute inline-flex rounded-full bg-sky-400 opacity-75 h-3 w-3 ${pos} ${className}`}
+			className={cn(
+				'absolute inline-flex rounded-full bg-sky-400 opacity-75 h-3 w-3',
+				pos,
+				className,
+			)}
 		/>
 	)
 }

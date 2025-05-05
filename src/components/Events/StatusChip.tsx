@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils/cn'
 import type { EventStatus } from '@prisma/client'
 import type { FunctionComponent } from 'react'
 
@@ -18,7 +19,12 @@ const StatusDot: FunctionComponent<{
 
 	return (
 		<div
-			className={`${sizes[size]} rounded-full ${colors[status]} ${size === 'md' ? 'opacity-70' : ''}`}
+			className={cn(
+				'rounded-full',
+				sizes[size],
+				colors[status],
+				size === 'md' && 'opacity-70',
+			)}
 		/>
 	)
 }

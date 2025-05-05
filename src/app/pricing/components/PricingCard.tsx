@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils/cn'
 import { Check, X } from 'lucide-react'
 import type React from 'react'
 
@@ -37,7 +38,10 @@ const PricingCard: React.FC<PricingCardProps> = ({
 
 	return (
 		<div
-			className={`relative flex flex-col rounded-xl border ${borderColor} bg-gray-800 shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl p-6 h-full`}
+			className={cn(
+				'relative flex flex-col rounded-xl border  bg-gray-800 shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl p-6 h-full',
+				borderColor,
+			)}
 		>
 			{popularBadge}
 			<h3 className='text-xl font-bold text-white mb-2'>{title}</h3>
@@ -64,7 +68,9 @@ const PricingCard: React.FC<PricingCardProps> = ({
 							<X size={18} className='text-gray-500 mr-2 flex-shrink-0' />
 						)}
 						<span
-							className={feature.included ? 'text-gray-200' : 'text-gray-500'}
+							className={cn(
+								feature.included ? 'text-gray-200' : 'text-gray-500',
+							)}
 						>
 							{feature.name}
 						</span>
@@ -73,7 +79,11 @@ const PricingCard: React.FC<PricingCardProps> = ({
 			</ul>
 
 			<button
-				className={`mt-auto w-full rounded-lg ${accentColor} py-3 px-4 font-semibold text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
+				className={cn(
+					'mt-auto w-full rounded-lg  py-3 px-4 font-semibold text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2',
+					accentColor,
+				)}
+				type='button'
 			>
 				{ctaText}
 			</button>

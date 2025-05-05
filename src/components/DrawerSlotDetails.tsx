@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils/cn'
 import { Button } from '@/ui/button'
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/ui/drawer'
 import { ScrollArea } from '@/ui/scroll-area'
@@ -65,13 +66,14 @@ export function DrawerSlotDetails({
 								<div className='overflow-hidden h-2 text-xs flex rounded bg-white/10'>
 									<div
 										style={{ width: `${percentage}%` }}
-										className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center transition-all ${
+										className={cn(
+											'shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center transition-all',
 											percentage < 50
 												? 'bg-red-500'
 												: percentage < 75
 													? 'bg-orange-500'
-													: 'bg-emerald-500'
-										}`}
+													: 'bg-emerald-500',
+										)}
 									/>
 								</div>
 							</div>

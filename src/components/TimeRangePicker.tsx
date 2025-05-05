@@ -1,5 +1,6 @@
 'use client'
 
+import { cn } from '@/lib/utils/cn'
 import { Button } from '@/ui/button'
 import { Label } from '@/ui/label'
 import {
@@ -90,9 +91,9 @@ export function TimeRangePicker({
 	const { setCurrentStep } = useTour()
 
 	return (
-		<div className={`space-y-2 ${className}`}>
+		<div className={cn('space-y-2', className)}>
 			<div
-				className={`grid ${singleTime ? 'grid-cols-1' : 'grid-cols-2'} gap-2`}
+				className={cn('grid gap-2', singleTime ? 'grid-cols-1' : 'grid-cols-2')}
 			>
 				<div
 					className='space-y-2'

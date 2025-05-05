@@ -1,4 +1,5 @@
 'use client'
+import { cn } from '@/lib/utils/cn'
 import { routes } from '@/src/shared/navigation'
 import { Button, buttonVariants } from '@/ui/button'
 import { Input } from '@/ui/input'
@@ -111,9 +112,10 @@ export const SuccessComp = ({
 									inputMode='numeric'
 									pattern='[0-9]*'
 									maxLength={1}
-									className={`w-12 h-12 text-center bg-white/5 border-white/10 text-white placeholder:text-white/50 ${
-										error ? 'border-red-500' : ''
-									}`}
+									className={cn(
+										'w-12 h-12 text-center bg-white/5 border-white/10 text-white placeholder:text-white/50',
+										error && 'border-red-500',
+									)}
 									value={codeValues[index]}
 									onChange={(e) => handleInputChange(index, e.target.value)}
 									onKeyDown={(e) => handleKeyDown(index, e)}

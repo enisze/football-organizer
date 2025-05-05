@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils/cn'
 import Link from 'next/link'
 import type { FunctionComponent } from 'react'
 import { Phone } from './Phone'
@@ -16,7 +17,10 @@ export const Heading: FunctionComponent<{
 		<Link href={'/home'}>
 			<div className='text-center'>
 				<span
-					className={`cursor-pointer font-extrabold leading-normal ${fontSize} bg-gradient-to-r from-blue-400 to-blue-200 bg-clip-text text-transparent dark:from-blue-800 dark:to-slate-800`}
+					className={cn(
+						'cursor-pointer font-extrabold leading-normal bg-gradient-to-r from-blue-400 to-blue-200 bg-clip-text text-transparent dark:from-blue-800 dark:to-slate-800',
+						fontSize,
+					)}
 				>
 					Event
 					<span className='text-slate-900 dark:text-slate-100'> Wizard</span>
