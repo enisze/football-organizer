@@ -55,6 +55,8 @@ export const { routes, useSafeParams, useSafeSearchParams } =
 					minUsers: z.coerce.number().default(8),
 					maxUsers: z.coerce.number().default(10),
 					date: z.string().optional(),
+					startTime: z.string().optional(),
+					endTime: z.string().optional(),
 				})
 				.optional(),
 		}),

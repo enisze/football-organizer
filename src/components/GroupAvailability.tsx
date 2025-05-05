@@ -6,9 +6,9 @@ import { DrawerSlotDetails } from '@/src/components/DrawerSlotDetails'
 import { Button } from '@/ui/button'
 import { Calendar } from '@/ui/calendar'
 import { CardTitle } from '@/ui/card'
+import { Label } from '@/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover'
 import { Tabs, TabsList, TabsTrigger } from '@/ui/tabs'
-import type { User } from '@prisma/client'
 import { format } from 'date-fns'
 import { de } from 'date-fns/locale'
 import { CalendarIcon } from 'lucide-react'
@@ -23,10 +23,10 @@ import type {
 	ProcessedTimeSlot,
 	TimeSlotDuration,
 } from '../app/group/[groupId]/availability/processAvailability'
+import { TimeRangePicker } from './TimeRangePicker'
 import { UserCountInput } from './ui/UserCountInput'
 
 interface GroupAvailabilityViewProps {
-	users: User[]
 	date: Date
 	processedSlots: ProcessedTimeSlot[]
 	groupId: string
@@ -34,7 +34,6 @@ interface GroupAvailabilityViewProps {
 
 export function GroupAvailabilityView({
 	date: initialDate,
-	users,
 	processedSlots,
 	groupId,
 }: GroupAvailabilityViewProps) {
@@ -54,6 +53,14 @@ export function GroupAvailabilityView({
 	const [maxUsers, setMaxUsers] = useQueryState('maxUsers', {
 		defaultValue: 0,
 		parse: (value) => Number(value),
+		shallow: true,
+	})
+	const [startTime, setStartTime] = useQueryState('startTime', {
+		defaultValue: '08:00',
+		shallow: true,
+	})
+	const [endTime, setEndTime] = useQueryState('endTime', {
+		defaultValue: '22:00',
 		shallow: true,
 	})
 	const [calendarOpen, setCalendarOpen] = useState(false)
@@ -83,6 +90,12 @@ export function GroupAvailabilityView({
 	)
 
 	const currentDate = date ? new Date(date) : initialDate
+
+	const filteredSlots = processedSlots.filter((slot) => {
+		const slotStart = slot.startTime
+		const slotEnd = slot.endTime
+		return slotStart >= startTime && slotEnd <= endTime
+	})
 
 	return (
 		<div className='container p-0 mx-auto space-y-2 pt-2 pb-16 px-4'>
@@ -150,6 +163,43 @@ export function GroupAvailabilityView({
 							min={1}
 							max={10}
 						/>
+					</div>
+				</div>
+				<div className='space-y-2'>
+					<h3 className='font-bold text-lg md:text-xl'>Zeitraum</h3>
+					<div className='grid gap-4 grid-cols-2'>
+						<div className='space-y-2'>
+							<Label htmlFor='startTime' className='text-sm font-medium'>
+								Von
+							</Label>
+							<TimeRangePicker
+								startTime={startTime}
+								onChangeAction={(start) => {
+									setStartTime(start)
+									refresh()
+								}}
+								minTime='08:00'
+								maxTime='23:30'
+								interval={30}
+								singleTime={true}
+							/>
+						</div>
+						<div className='space-y-2'>
+							<Label htmlFor='endTime' className='text-sm font-medium'>
+								Bis
+							</Label>
+							<TimeRangePicker
+								startTime={endTime}
+								onChangeAction={(start) => {
+									setEndTime(start)
+									refresh()
+								}}
+								minTime='08:00'
+								maxTime='23:30'
+								interval={30}
+								singleTime={true}
+							/>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -231,7 +281,7 @@ export function GroupAvailabilityView({
 							</div>
 						</div>
 
-						{processedSlots.map((slot, index) => {
+						{filteredSlots.map((slot, index) => {
 							const timeToPosition = (time: string): number => {
 								const [hoursStr, minutesStr] = time.split(':')
 								const hours = Number.parseInt(hoursStr || '0', 10)
@@ -294,7 +344,7 @@ export function GroupAvailabilityView({
 					</div>
 				</div>
 
-				{processedSlots.length === 0 && (
+				{filteredSlots.length === 0 && (
 					<div className='bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 flex items-center justify-center p-4 mt-4'>
 						<p className='text-white/50 text-xs md:text-sm'>
 							Keine Zeitfenster verfügbar

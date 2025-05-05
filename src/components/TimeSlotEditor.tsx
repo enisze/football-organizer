@@ -5,14 +5,6 @@ import {
 	updateTimeSlotAction,
 } from '@/src/app/group/[groupId]/availability/actions'
 import { Button } from '@/ui/button'
-import { Label } from '@/ui/label'
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/ui/select'
 import { Switch } from '@/ui/switch'
 import type { TimeSlot, TimeSlotType } from '@prisma/client'
 import { useTour } from '@reactour/tour'
@@ -20,6 +12,7 @@ import { Plus, X } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
 import { useCallback, useMemo, useState } from 'react'
 import { revalidateTagAction } from '../app/group/[groupId]/actions'
+import { TimeRangePicker } from './TimeRangePicker'
 
 interface AvailabilityEditorProps {
 	date?: Date
@@ -178,93 +171,16 @@ export function TimeSlotEditor({
 
 						{isAdding ? (
 							<div className='space-y-2 bg-white/5 rounded-xl p-3 sm:p-4'>
-								<div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
-									<div
-										className='space-y-1.5 sm:space-y-2'
-										data-tour='start-time'
-										onClick={() => {
-											setCurrentStep((prev) => prev + 1)
-										}}
-										onKeyDown={(e) => {
-											if (e.key === 'Enter') {
-												setCurrentStep((prev) => prev + 1)
-											}
-										}}
-									>
-										<Label className='text-sm text-white/70'>Start</Label>
-										<Select
-											value={newSlot.startTime || ''}
-											onValueChange={(value) => {
-												setNewSlot((prev) => ({
-													...prev,
-													startTime: value,
-												}))
-											}}
-										>
-											<SelectTrigger className='bg-white/5 border-white/10 text-sm h-9 sm:h-10'>
-												<SelectValue placeholder='Zeit auswählen' />
-											</SelectTrigger>
-											<SelectContent
-												className='overflow-y-auto max-h-[40vh]'
-												data-tour='start-time-content'
-											>
-												{timeOptions.map((time) => (
-													<SelectItem
-														key={time}
-														value={time}
-														className='text-sm'
-													>
-														{time}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-									</div>
-									<div
-										className='space-y-1.5 sm:space-y-2'
-										data-tour='end-time'
-										onClick={() => {
-											setCurrentStep((prev) => prev + 1)
-										}}
-										onKeyDown={(e) => {
-											if (e.key === 'Enter') {
-												setCurrentStep((prev) => prev + 1)
-											}
-										}}
-									>
-										<Label className='text-sm text-white/70'>Ende</Label>
-										<Select
-											value={newSlot.endTime || ''}
-											onValueChange={(value) => {
-												setNewSlot((prev) => ({
-													...prev,
-													endTime: value,
-												}))
-											}}
-											disabled={!newSlot.startTime}
-										>
-											<SelectTrigger className='bg-white/5 border-white/10 text-sm h-9 sm:h-10'>
-												<SelectValue placeholder='Zeit auswählen' />
-											</SelectTrigger>
-											<SelectContent
-												className='overflow-y-auto max-h-[40vh]'
-												data-tour='end-time-content'
-											>
-												{timeOptions
-													.filter((time) => time > (newSlot.startTime || ''))
-													.map((time) => (
-														<SelectItem
-															key={time}
-															value={time}
-															className='text-sm'
-														>
-															{time}
-														</SelectItem>
-													))}
-											</SelectContent>
-										</Select>
-									</div>
-								</div>
+								<TimeRangePicker
+									startTime={newSlot.startTime}
+									endTime={newSlot.endTime}
+									onChangeAction={(start, end) => {
+										setNewSlot({ startTime: start, endTime: end || '' })
+									}}
+									minTime={isWeekend ? '10:00' : '18:00'}
+									maxTime='23:00'
+									interval={30}
+								/>
 								<div className='flex justify-end gap-2'>
 									<Button
 										variant='ghost'

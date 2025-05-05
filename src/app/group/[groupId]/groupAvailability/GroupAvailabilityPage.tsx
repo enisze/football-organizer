@@ -34,16 +34,6 @@ export async function GroupAvailabilityPage({
 		},
 	})
 
-	const users = await prisma.user.findMany({
-		where: {
-			groups: {
-				some: {
-					groupId,
-				},
-			},
-		},
-	})
-
 	// Deduplicate users by ID and keep the first occurrence of each user
 	const uniqueUsers = uniqueBy(
 		timeslots.map((slot) => slot.user),
@@ -64,7 +54,6 @@ export async function GroupAvailabilityPage({
 	return (
 		<div className='mb-3 animate-in fade-in duration-500'>
 			<GroupAvailabilityView
-				users={users}
 				date={date}
 				processedSlots={filteredAvailability}
 				groupId={groupId}
