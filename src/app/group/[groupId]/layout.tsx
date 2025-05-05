@@ -1,5 +1,6 @@
 import { FloatingDock } from '@/src/components/ui/floating-dock'
 import { serverAuth } from '@/src/server/auth/session'
+import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
 import { getNavigationItems } from '@/src/shared/navigationItems'
 import { redirect } from 'next/navigation'
@@ -21,12 +22,30 @@ export default async function Page({
 
 	const parsedParams = routes.groupDetails.$parseParams(resolvedParams)
 
+	const latestEvent = await prisma.event.findFirst({
+		where: {
+			groupId: parsedParams.groupId,
+		},
+		include: {
+			participants: true,
+		},
+		orderBy: {
+			createdAt: 'desc',
+		},
+	})
+
+	const groupMembers = await prisma.userOnGroups.findMany({
+		where: {
+			groupId: parsedParams.groupId,
+		},
+	})
+
 	const navigationItems = getNavigationItems({
 		groupId: parsedParams.groupId,
 		duration: '90min',
 		date: new Date().toISOString(),
-		minUsers: 8,
-		maxUsers: 10,
+		minUsers: latestEvent?.participants.length ?? 1,
+		maxUsers: latestEvent?.maxParticipants ?? groupMembers.length ?? 10,
 	})
 
 	return (
