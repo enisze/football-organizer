@@ -23,6 +23,7 @@ import type {
 	ProcessedTimeSlot,
 	TimeSlotDuration,
 } from '../app/group/[groupId]/availability/processAvailability'
+import { TimelineView } from './TimeLineView'
 import { TimeRangePicker } from './TimeRangePicker'
 import { UserCountInput } from './ui/UserCountInput'
 
@@ -263,97 +264,11 @@ export function GroupAvailabilityView({
 					}
 				/>
 
-				<div className='bg-white/5 backdrop-blur-sm border-white/20 rounded-lg overflow-hidden mt-4'>
-					<div className='relative'>
-						<div className='flex border-b border-white/20 px-4 py-2'>
-							<div className='w-5 flex-shrink-0' />
-							<div className='flex-1 flex'>
-								{Array.from({ length: 9 }, (_, i) =>
-									String(8 + i * 2).padStart(2, '0'),
-								).map((time) => (
-									<div
-										key={time}
-										className='flex-1 text-xs text-white/80 text-center'
-									>
-										{time}
-									</div>
-								))}
-							</div>
-						</div>
-
-						{filteredSlots.map((slot, index) => {
-							const timeToPosition = (time: string): number => {
-								const [hoursStr, minutesStr] = time.split(':')
-								const hours = Number.parseInt(hoursStr || '0', 10)
-								const minutes = Number.parseInt(minutesStr || '0', 10)
-								const totalMinutes = hours * 60 + minutes
-								const minutesSince8 = totalMinutes - 8 * 60
-								const totalRangeMinutes = 16 * 60
-								return (minutesSince8 / totalRangeMinutes) * 100
-							}
-
-							const startPos = timeToPosition(slot.startTime)
-							const endPos = timeToPosition(slot.endTime)
-							const width = endPos - startPos
-							const availableCount = slot.availableUsers.length
-							const percentage = (availableCount / maxUsers) * 100
-
-							return (
-								<div
-									key={index}
-									className='flex border-b border-white/20 px-2 py-1 relative'
-								>
-									<div className='w-6 flex-shrink-0 font-medium flex items-center border-r border-white/20'>
-										<span className='text-slate-300 text-xs'>
-											{availableCount}/{maxUsers}
-										</span>
-									</div>
-
-									<div className='flex-1 relative h-8'>
-										<div className='absolute inset-0 flex pointer-events-none'>
-											{Array.from({ length: 8 }, (_, i) => (
-												<div
-													key={i}
-													className={cn(
-														'flex-1  h-full',
-														i > 0 && 'border-l border-white/20',
-													)}
-												/>
-											))}
-										</div>
-
-										<button
-											className={cn(
-												'absolute cursor-pointer top-1 h-6 flex items-center justify-center px-2 rounded-md transition-colors',
-												percentage < 50
-													? 'bg-red-500/30'
-													: percentage < 75
-														? 'bg-orange-500/30'
-														: 'bg-emerald-500/30',
-											)}
-											style={{
-												left: `${startPos}%`,
-												width: `${width}%`,
-											}}
-											onClick={() => {
-												setSelectedSlot(slot)
-											}}
-											type='button'
-										/>
-									</div>
-								</div>
-							)
-						})}
-					</div>
-				</div>
-
-				{filteredSlots.length === 0 && (
-					<div className='bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 flex items-center justify-center p-4 mt-4'>
-						<p className='text-white/50 text-xs md:text-sm'>
-							Keine Zeitfenster verfügbar
-						</p>
-					</div>
-				)}
+				<TimelineView
+					slots={filteredSlots}
+					maxUsers={maxUsers}
+					onSlotClick={(slot) => setSelectedSlot(slot)}
+				/>
 			</div>
 		</div>
 	)
