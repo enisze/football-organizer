@@ -10,7 +10,7 @@ import {
 import { Badge } from '@/ui/badge'
 import { Button } from '@/ui/button'
 import { Calendar } from '@/ui/calendar'
-import { CardDescription, CardTitle } from '@/ui/card'
+import { CardTitle } from '@/ui/card'
 import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover'
 import { Tabs, TabsList, TabsTrigger } from '@/ui/tabs'
 import type { User } from '@prisma/client'
@@ -95,10 +95,6 @@ export function GroupAvailabilityView({
 					day: 'numeric',
 				})}
 			</CardTitle>
-			<CardDescription className='text-sm md:text-base text-white/70'>
-				<div>Gruppenverfügbarkeit</div>
-				<div className='text-xs'>(Gruppengröße: {users.length})</div>
-			</CardDescription>
 			<div className='grid gap-2'>
 				<div>
 					<h3 className='text-base md:text-lg font-semibold mb-2'>Datum</h3>
@@ -136,7 +132,7 @@ export function GroupAvailabilityView({
 					<h3 className='font-bold text-lg md:text-xl'>Teilnehmer</h3>
 					<div className='grid gap-4 grid-cols-2'>
 						<UserCountInput
-							label='Mindestanzahl'
+							label='Minimum'
 							value={minUsers}
 							onChange={(value) => {
 								setMinUsers(value)
@@ -146,7 +142,7 @@ export function GroupAvailabilityView({
 							max={10}
 						/>
 						<UserCountInput
-							label='Maximalanzahl'
+							label='Maximum'
 							value={maxUsers}
 							onChange={(value) => {
 								setMaxUsers(value)
@@ -159,7 +155,7 @@ export function GroupAvailabilityView({
 				</div>
 			</div>
 
-			<div className='border-t border-white/10 pt-2'>
+			<div className='pt-2'>
 				<Tabs
 					value={duration ?? undefined}
 					onValueChange={async (value) => {
