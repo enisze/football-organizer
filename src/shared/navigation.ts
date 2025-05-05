@@ -21,8 +21,8 @@ export const { routes, useSafeParams, useSafeSearchParams } =
 					date: z.string().optional(),
 					selectedDate: z.string().optional(),
 					duration: z.enum(['60min', '90min', '120min']).optional(),
-					minUsers: z.coerce.number().default(8),
-					maxUsers: z.coerce.number().default(10),
+					minUsers: z.coerce.number().optional(),
+					maxUsers: z.coerce.number().optional(),
 				})
 				.optional(),
 		}),
