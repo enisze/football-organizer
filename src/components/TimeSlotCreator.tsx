@@ -120,7 +120,9 @@ export function TimeSlotCreator({
 							<TimeRangePicker
 								startTime={slot.start}
 								endTime={slot.end}
-								onChangeAction={handleTimeChange}
+								onChangeAction={(start, end) =>
+									handleTimeChange(start, end ?? '')
+								}
 							/>
 						</div>
 					</div>
