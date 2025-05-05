@@ -10,7 +10,7 @@ export const DashboardLink = () => {
 
 	const pathname = usePathname()
 
-	const onDashboard = pathname?.includes('/group')
+	const onDashboard = pathname?.includes('/group/')
 
 	return (
 		<>

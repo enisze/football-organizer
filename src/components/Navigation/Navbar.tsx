@@ -14,8 +14,8 @@ import { Menu } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { Suspense } from 'react'
 import { Heading } from '../Heading'
-import { UserAvatar } from '../UserAvatar'
 import { DashboardLink } from './DashboardLink'
+import { UserAvatar } from '../UserAvatar'
 
 export const Navbar = ({
 	user,
@@ -27,7 +27,7 @@ export const Navbar = ({
 
 	return (
 		<header className='sticky top-0 z-50 w-full border-b border-gray-800 bg-[#0c1021]/80 backdrop-blur-sm'>
-			<div className='container flex h-16 items-center justify-between'>
+			<div className='px-4 flex h-16 items-center justify-between'>
 				<Heading size='sm' />
 				{showNavigation && (
 					<nav className='hidden md:flex items-center gap-6'>
@@ -69,6 +69,7 @@ export const Navbar = ({
 						</Suspense>
 
 						<UserAvatar name={user?.name ?? ''} />
+
 						{showNavigation && (
 							<div className='md:hidden'>
 								<DropdownMenu>

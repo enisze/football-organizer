@@ -1,5 +1,6 @@
 'use client'
 import { Avatar, AvatarFallback } from '@/ui/avatar'
+import { usePathname } from 'next/navigation'
 import type { FunctionComponent } from 'react'
 
 interface UserAvatarProps {
@@ -16,6 +17,10 @@ export const UserAvatar: FunctionComponent<UserAvatarProps> = ({
 	let first = 'X'
 	let second = 'X'
 
+	const pathname = usePathname()
+
+	const onDashboard = pathname?.includes('/group/')
+
 	if (lettersOnly) {
 		const words = lettersOnly.split(/\s+/)
 		if (words.length > 1) {
@@ -26,6 +31,8 @@ export const UserAvatar: FunctionComponent<UserAvatarProps> = ({
 			second = lettersOnly.charAt(1) || 'X'
 		}
 	}
+
+	if (!onDashboard) return null
 
 	return (
 		<Avatar className={className}>
