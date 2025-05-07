@@ -125,6 +125,7 @@ export function TimeSlotCreator({
 								onChangeAction={(start, end) =>
 									handleTimeChange(start, end ?? '')
 								}
+								showPresets
 							/>
 						</div>
 					</div>
