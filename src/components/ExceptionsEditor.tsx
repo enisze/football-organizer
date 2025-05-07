@@ -30,7 +30,7 @@ export function ExceptionsEditor({
 		updateExceptionSlotsAction,
 	)
 	const [currentMonth, setCurrentMonth] = useState(new Date())
-	const [isGlobalSlot, setIsGlobalSlot] = useState(false)
+	const [isGlobalSlot, setIsGlobalSlot] = useState(true)
 
 	// Find initial exception dates
 	const exceptionDates = exceptionSlots.map((slot) => slot.date as Date)
