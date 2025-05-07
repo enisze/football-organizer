@@ -27,7 +27,11 @@ export async function GroupAvailabilityPage({
 				{ type: 'DATE_SPECIFIC', date },
 				{ type: 'DAY_SPECIFIC', day: date.getDay() },
 			],
-			groupId,
+			groups: {
+				some: {
+					id: groupId,
+				},
+			},
 		},
 		include: {
 			user: true,

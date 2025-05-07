@@ -16,11 +16,20 @@ export const updateTimeSlotAction = authedActionClient
 			day: z.number().min(0).max(6).optional(),
 			groupId: z.string(),
 			isException: z.boolean().optional(),
+			isGlobalSlot: z.boolean(),
 		}),
 	)
 	.action(async ({ parsedInput, ctx: { userId } }) => {
-		const { startTime, endTime, type, date, day, groupId, isException } =
-			parsedInput
+		const {
+			startTime,
+			endTime,
+			type,
+			date,
+			day,
+			groupId,
+			isException,
+			isGlobalSlot,
+		} = parsedInput
 
 		if (type === 'DATE_SPECIFIC' && !date) {
 			throw new Error('Date is required for date-specific time slots')
@@ -30,6 +39,26 @@ export const updateTimeSlotAction = authedActionClient
 			throw new Error('Day is required for day-of-week time slots')
 		}
 
+		const groups = isGlobalSlot
+			? await prisma.group.findMany({
+					where: {
+						users: {
+							some: {
+								id: userId,
+							},
+						},
+					},
+				})
+			: [
+					{
+						id: groupId,
+					},
+				]
+
+		const groupIds = groups.map((g) => {
+			return { id: g.id }
+		})
+
 		const timeSlot = await prisma.timeSlot.upsert({
 			create: {
 				startTime,
@@ -38,7 +67,9 @@ export const updateTimeSlotAction = authedActionClient
 				date: type === 'DATE_SPECIFIC' ? date : null,
 				day: type === 'DAY_SPECIFIC' ? day : null,
 				userId,
-				groupId,
+				groups: {
+					connect: groupIds,
+				},
 				isException: isException ?? false,
 			},
 			update: {
@@ -48,7 +79,9 @@ export const updateTimeSlotAction = authedActionClient
 				date: type === 'DATE_SPECIFIC' ? date : null,
 				day: type === 'DAY_SPECIFIC' ? day : null,
 				userId,
-				groupId,
+				groups: {
+					connect: groupIds,
+				},
 				isException: isException ?? false,
 			},
 			where: {
@@ -86,6 +119,7 @@ export const updateExceptionSlotsAction = authedActionClient
 				}),
 			),
 			groupId: z.string(),
+			areGlobalExceptions: z.boolean(),
 		}),
 	)
 	.action(async ({ parsedInput, ctx: { userId } }) => {
@@ -98,13 +132,39 @@ export const updateExceptionSlotsAction = authedActionClient
 			.filter((d) => d.operation === 'remove')
 			.map((d) => d.date)
 
+		const groups = parsedInput.areGlobalExceptions
+			? await prisma.group.findMany({
+					where: {
+						users: {
+							some: {
+								id: userId,
+							},
+						},
+					},
+				})
+			: [
+					{
+						id: groupId,
+					},
+				]
+
+		const groupIds = groups.map((g) => {
+			return g.id
+		})
+
 		await prisma.$transaction(async (tx) => {
 			// Remove exceptions
 			if (datesToRemove.length > 0) {
 				await tx.timeSlot.deleteMany({
 					where: {
 						userId,
-						groupId,
+						groups: {
+							some: {
+								id: {
+									in: groupIds,
+								},
+							},
+						},
 						isException: true,
 						type: 'DATE_SPECIFIC',
 						date: {
@@ -119,7 +179,13 @@ export const updateExceptionSlotsAction = authedActionClient
 				const existingExceptions = await tx.timeSlot.findMany({
 					where: {
 						userId,
-						groupId,
+						groups: {
+							some: {
+								id: {
+									in: groupIds,
+								},
+							},
+						},
 						isException: true,
 						type: 'DATE_SPECIFIC',
 						date: {
@@ -141,19 +207,78 @@ export const updateExceptionSlotsAction = authedActionClient
 
 				// Add new exceptions only for dates that don't have one
 				if (newDatesToAdd.length > 0) {
-					await tx.timeSlot.createMany({
+					const createdSlots = await tx.timeSlot.createManyAndReturn({
 						data: newDatesToAdd.map((date) => ({
 							startTime: '00:00',
 							endTime: '23:59',
 							type: 'DATE_SPECIFIC',
 							date,
 							userId,
-							groupId,
 							isException: true,
 						})),
 					})
+
+					for (const slot of createdSlots) {
+						await tx.timeSlot.update({
+							where: { id: slot.id },
+							data: {
+								groups: {
+									connect: groupIds.map((id) => ({ id })),
+								},
+							},
+						})
+					}
 				}
 			}
+		})
+
+		revalidateTag('myAvailability')
+		revalidateTag('groupAvailability')
+	})
+
+export const copyTimeSlotToAllGroupsAction = authedActionClient
+	.schema(
+		z.object({
+			timeSlotId: z.string(),
+		}),
+	)
+	.action(async ({ parsedInput, ctx: { userId } }) => {
+		const { timeSlotId } = parsedInput
+
+		// Get the time slot to copy
+		const timeSlot = await prisma.timeSlot.findUnique({
+			where: { id: timeSlotId },
+			include: { groups: true },
+		})
+
+		if (!timeSlot) {
+			throw new Error('Time slot not found')
+		}
+
+		// Get all groups the user is a member of
+		const userGroups = await prisma.group.findMany({
+			where: {
+				users: {
+					some: {
+						id: userId,
+					},
+				},
+			},
+		})
+
+		// Get groups that don't already have this time slot
+		const groupsToAdd = userGroups.filter(
+			(group) => !timeSlot.groups.some((g) => g.id === group.id),
+		)
+
+		// Add the time slot to all remaining groups
+		await prisma.timeSlot.update({
+			where: { id: timeSlotId },
+			data: {
+				groups: {
+					connect: groupsToAdd.map((group) => ({ id: group.id })),
+				},
+			},
 		})
 
 		revalidateTag('myAvailability')

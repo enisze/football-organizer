@@ -19,6 +19,7 @@ type TimeSlot = {
 	start: string
 	end: string
 	days: string[]
+	isGlobalSlot: boolean
 }
 
 interface TimeSlotCreatorProps {
@@ -41,6 +42,7 @@ export function TimeSlotCreator({
 		start: initialData?.start || '09:00',
 		end: initialData?.end || '10:00',
 		days: initialData?.days || [],
+		isGlobalSlot: initialData?.isGlobalSlot || true,
 	})
 
 	const { setCurrentStep } = useTour()
@@ -188,6 +190,19 @@ export function TimeSlotCreator({
 								</div>
 							))}
 						</div>
+					</div>
+
+					<div className='flex items-center space-x-2 mt-4'>
+						<Checkbox
+							id='isGlobalSlot'
+							checked={slot.isGlobalSlot}
+							onCheckedChange={(checked) =>
+								setSlot((prev) => ({ ...prev, isGlobalSlot: checked === true }))
+							}
+						/>
+						<Label htmlFor='isGlobalSlot'>
+							Für alle meine Gruppen anwenden
+						</Label>
 					</div>
 
 					<div className='flex gap-2 pt-2'>

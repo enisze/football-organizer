@@ -5,14 +5,9 @@ import { Calendar } from '@/ui/calendar'
 import { CardDescription, CardTitle } from '@/ui/card'
 import type { TimeSlot } from '@prisma/client'
 import { Clock, Plus } from 'lucide-react'
-import { useAction } from 'next-safe-action/hooks'
 import { useQueryState } from 'nuqs'
 import { useState } from 'react'
 import { revalidateTagAction } from '../app/group/[groupId]/actions'
-import {
-	deleteTimeSlotAction,
-	updateTimeSlotAction,
-} from '../app/group/[groupId]/availability/actions'
 import { SimpleTimeSlotCreator } from './SimpleTimeSlotCreator'
 import { TimelineView } from './TimeLineView'
 
@@ -33,9 +28,6 @@ export function DateSpecificEditor({
 		defaultValue: new Date().toISOString(),
 	})
 
-	const { execute: updateTimeSlot } = useAction(updateTimeSlotAction)
-	const { execute: deleteTimeSlot } = useAction(deleteTimeSlotAction)
-
 	const handleDateSelect = async (newDate: Date | undefined) => {
 		if (newDate) {
 			await setDate(newDate.toISOString())
@@ -45,32 +37,6 @@ export function DateSpecificEditor({
 			await revalidateTagAction({
 				tagId: 'groupAvailability',
 			})
-		}
-	}
-
-	const handleSaveTimeSlot = async (slot: {
-		startTime: string
-		endTime: string
-	}) => {
-		if (!date) return
-
-		updateTimeSlot({
-			id: selectedTimeSlot?.id ?? '',
-			startTime: slot.startTime,
-			endTime: slot.endTime,
-			type: 'DATE_SPECIFIC',
-			date: new Date(date),
-			groupId,
-		})
-
-		setShowTimeSlotCreator(false)
-		setSelectedTimeSlot(null)
-	}
-
-	const handleDeleteTimeSlot = async () => {
-		if (selectedTimeSlot?.id) {
-			deleteTimeSlot({ id: selectedTimeSlot.id })
-			setShowTimeSlotCreator(false)
 		}
 	}
 
@@ -129,12 +95,11 @@ export function DateSpecificEditor({
 			{showTimeSlotCreator && (
 				<SimpleTimeSlotCreator
 					initialData={selectedTimeSlot ?? undefined}
-					onSaveAction={handleSaveTimeSlot}
 					onCancelAction={() => {
 						setShowTimeSlotCreator(false)
 						setSelectedTimeSlot(null)
 					}}
-					onDeleteAction={selectedTimeSlot ? handleDeleteTimeSlot : undefined}
+					groupId={groupId}
 				/>
 			)}
 		</>

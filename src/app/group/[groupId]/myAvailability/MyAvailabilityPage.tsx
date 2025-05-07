@@ -37,7 +37,11 @@ export async function MyAvailabilityPage({
 				where: {
 					user: { id: userId },
 					date: date ? new Date(date) : newDate,
-					groupId,
+					groups: {
+						some: {
+							id: groupId,
+						},
+					},
 					type: 'DATE_SPECIFIC',
 				},
 				orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
@@ -45,7 +49,11 @@ export async function MyAvailabilityPage({
 			prisma.timeSlot.findMany({
 				where: {
 					user: { id: userId },
-					groupId,
+					groups: {
+						some: {
+							id: groupId,
+						},
+					},
 					type: 'DAY_SPECIFIC',
 				},
 				orderBy: [{ day: 'asc' }, { startTime: 'asc' }],
@@ -53,7 +61,11 @@ export async function MyAvailabilityPage({
 			prisma.timeSlot.findMany({
 				where: {
 					user: { id: userId },
-					groupId,
+					groups: {
+						some: {
+							id: groupId,
+						},
+					},
 					type: 'DATE_SPECIFIC',
 					isException: true,
 				},

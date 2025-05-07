@@ -1,7 +1,12 @@
-import { updateExceptionSlotsAction } from '@/src/app/group/[groupId]/availability/actions'
+import {
+	copyTimeSlotToAllGroupsAction,
+	updateExceptionSlotsAction,
+} from '@/src/app/group/[groupId]/availability/actions'
 import { Button } from '@/ui/button'
 import { Calendar } from '@/ui/calendar'
 import { CardDescription, CardTitle } from '@/ui/card'
+import { Checkbox } from '@/ui/checkbox'
+import { Label } from '@/ui/label'
 import type { TimeSlot } from '@prisma/client'
 import { Clock, Save } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
@@ -25,10 +30,12 @@ export function ExceptionsEditor({
 		updateExceptionSlotsAction,
 	)
 	const [currentMonth, setCurrentMonth] = useState(new Date())
+	const [isGlobalSlot, setIsGlobalSlot] = useState(false)
 
 	// Find initial exception dates
 	const exceptionDates = exceptionSlots.map((slot) => slot.date as Date)
 	const [selectedDates, setSelectedDates] = useState<Date[]>(exceptionDates)
+	const { execute: copyToAllGroups } = useAction(copyTimeSlotToAllGroupsAction)
 
 	const handleSelect = (days: Date[] | undefined) => {
 		if (!days) return
@@ -68,7 +75,21 @@ export function ExceptionsEditor({
 			updateExceptionSlots({
 				dates: dateOperations,
 				groupId,
+				areGlobalExceptions: isGlobalSlot,
 			})
+		}
+	}
+
+	const handleCopyToAllGroups = async () => {
+		for (const date of selectedDates) {
+			const slot = exceptionSlots.find(
+				(slot) =>
+					slot.date?.toISOString().split('T')[0] ===
+					date.toISOString().split('T')[0],
+			)
+			if (slot?.id) {
+				copyToAllGroups({ timeSlotId: slot.id })
+			}
 		}
 	}
 
@@ -103,6 +124,8 @@ export function ExceptionsEditor({
 
 	const removedExceptionsCount = deselectedDates.length
 
+	const hasExistingSlots = selectedDates.length > 0
+
 	return (
 		<div className='flex flex-col gap-2 px-4'>
 			<CardTitle className='flex text-lg items-center gap-2'>
@@ -112,7 +135,7 @@ export function ExceptionsEditor({
 			<CardDescription className='text-slate-400'>
 				Wähle Tage aus, an denen du nicht verfügbar bist.
 			</CardDescription>
-			<div className='bg-white/5 rounded-lg p-4'>
+			<div className='bg-white/5 rounded-lg p-4 flex flex-col gap-4'>
 				<Calendar
 					mode='multiple'
 					selected={selectedDates}
@@ -135,6 +158,15 @@ export function ExceptionsEditor({
 						deselected: deselectedDates,
 					}}
 				/>
+
+				<div className='flex items-center space-x-2'>
+					<Checkbox
+						id='isGlobalSlot'
+						checked={isGlobalSlot}
+						onCheckedChange={(checked) => setIsGlobalSlot(checked === true)}
+					/>
+					<Label htmlFor='isGlobalSlot'>Für alle meine Gruppen nutzen</Label>
+				</div>
 			</div>
 
 			<div className='bg-white/5 rounded-lg p-4 flex items-center justify-between'>
@@ -180,14 +212,16 @@ export function ExceptionsEditor({
 				</div>
 			</div>
 
-			<Button
-				onClick={handleSaveChanges}
-				disabled={!hasChanges}
-				className='w-full py-6 flex items-center justify-center gap-2'
-			>
-				<Save className='h-5 w-5' />
-				<span>Änderungen speichern</span>
-			</Button>
+			<div className='flex flex-col gap-2'>
+				<Button
+					onClick={handleSaveChanges}
+					disabled={!hasChanges}
+					className='ml-auto w-full max-w-xs flex items-center justify-center gap-2'
+				>
+					<Save className='h-5 w-5' />
+					<span>Änderungen speichern</span>
+				</Button>
+			</div>
 		</div>
 	)
 }

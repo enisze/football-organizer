@@ -1,38 +1,74 @@
 import { Button } from '@/ui/button'
+import { Checkbox } from '@/ui/checkbox'
+import { Label } from '@/ui/label'
 import type { TimeSlot } from '@prisma/client'
 import { X } from 'lucide-react'
+import { useAction } from 'next-safe-action/hooks'
+import { useQueryState } from 'nuqs'
 import { useState } from 'react'
+import {
+	deleteTimeSlotAction,
+	updateTimeSlotAction,
+} from '../app/group/[groupId]/availability/actions'
 import { TimeRangePicker } from './TimeRangePicker'
 
 interface SimpleTimeSlotCreatorProps {
 	initialData?: Partial<TimeSlot>
-	onSaveAction: (slot: { startTime: string; endTime: string }) => void
 	onCancelAction: () => void
-	onDeleteAction?: () => void
+	groupId: string
 }
 
 export function SimpleTimeSlotCreator({
 	initialData,
-	onSaveAction,
+	groupId,
 	onCancelAction,
-	onDeleteAction,
 }: SimpleTimeSlotCreatorProps) {
-	const [slot, setSlot] = useState<{ startTime: string; endTime: string }>({
+	const [slot, setSlot] = useState<{
+		startTime: string
+		endTime: string
+	}>({
 		startTime: initialData?.startTime || '09:00',
 		endTime: initialData?.endTime || '10:00',
 	})
 
+	const [isGlobal, setIsGlobal] = useState(true)
+
+	const [date] = useQueryState('selectedDate')
+
 	const handleTimeChange = (start: string, end?: string) => {
-		setSlot({ startTime: start, endTime: end || start })
+		setSlot((prev) => ({
+			...prev,
+			startTime: start,
+			endTime: end || start,
+		}))
 	}
 
 	const handleSave = () => {
 		if (!slot.startTime || !slot.endTime) return
-		onSaveAction(slot)
+
+		if (!date) return
+
+		updateTimeSlot({
+			id: initialData?.id ?? '',
+			startTime: slot.startTime,
+			endTime: slot.endTime,
+			type: 'DATE_SPECIFIC',
+			date: new Date(date),
+			groupId,
+			isGlobalSlot: isGlobal,
+		})
+
+		onCancelAction()
 	}
 
-	const handleQuickSelect = (start: string, end: string) => {
-		setSlot({ startTime: start, endTime: end })
+	const { execute: updateTimeSlot } = useAction(updateTimeSlotAction)
+	const { execute: deleteTimeSlot } = useAction(deleteTimeSlotAction)
+
+	const handleDeleteTimeSlot = async () => {
+		if (initialData?.id) {
+			deleteTimeSlot({ id: initialData.id })
+			onCancelAction()
+		}
 	}
 
 	return (
@@ -64,9 +100,22 @@ export function SimpleTimeSlotCreator({
 						/>
 					</div>
 
+					<div className='flex items-center space-x-2'>
+						<Checkbox
+							id='isGlobalSlot'
+							checked={isGlobal}
+							onCheckedChange={(checked) => {
+								setIsGlobal(checked === true)
+							}}
+						/>
+						<Label htmlFor='isGlobalSlot'>
+							Für alle meine Gruppen anwenden
+						</Label>
+					</div>
+
 					<div className='flex gap-2 pt-2'>
-						{initialData?.id && onDeleteAction && (
-							<Button onClick={onDeleteAction} variant='destructive'>
+						{initialData?.id && (
+							<Button onClick={handleDeleteTimeSlot} variant='destructive'>
 								Löschen
 							</Button>
 						)}

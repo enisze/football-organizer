@@ -67,15 +67,18 @@ export function WeeklyAvailabilityEditor({
 		start: string
 		end: string
 		days: string[]
+		isGlobalSlot: boolean
 	}) => {
 		for (const dayId of slot.days) {
 			updateTimeSlot({
-				id: slot.id ?? '',
+				id: slot.id,
 				startTime: slot.start,
 				endTime: slot.end,
 				type: 'DAY_SPECIFIC',
 				day: Number.parseInt(dayId, 10),
 				groupId,
+				isException: false,
+				isGlobalSlot: slot.isGlobalSlot,
 			})
 		}
 		setIsCreatingSlot(false)
@@ -142,7 +145,9 @@ export function WeeklyAvailabilityEditor({
 										return (
 											<div
 												key={slot.id}
-												className='absolute cursor-pointer top-1 h-6 gap-2 bg-green-300 rounded-md'
+												className={cn(
+													'absolute cursor-pointer top-1 h-6 gap-2 bg-green-300 rounded-md',
+												)}
 												style={style}
 												onClick={() => {
 													setEditingSlot(slot)
@@ -174,6 +179,7 @@ export function WeeklyAvailabilityEditor({
 									start: editingSlot.startTime,
 									end: editingSlot.endTime,
 									days: [editingSlot.day?.toString() ?? ''],
+									isGlobalSlot: true,
 								}
 							: undefined
 					}
