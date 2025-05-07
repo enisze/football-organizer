@@ -165,7 +165,7 @@ export function ExceptionsEditor({
 						checked={isGlobalSlot}
 						onCheckedChange={(checked) => setIsGlobalSlot(checked === true)}
 					/>
-					<Label htmlFor='isGlobalSlot'>Für alle meine Gruppen nutzen</Label>
+					<Label htmlFor='isGlobalSlot'>Für alle meine Gruppen anwenden</Label>
 				</div>
 			</div>
 
