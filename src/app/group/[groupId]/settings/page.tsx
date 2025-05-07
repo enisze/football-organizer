@@ -5,7 +5,6 @@ import { GroupSelectorServer } from '@/src/components/Groups/GroupSelectorServer
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
-import { getNavigationItems } from '@/src/shared/navigationItems'
 import {
 	Card,
 	CardContent,
@@ -40,13 +39,6 @@ export default async function MainPage({ params }: PageProps) {
 
 	const user = await prisma.user.findUnique({
 		where: { id: userId },
-	})
-
-	const navigationItems = getNavigationItems({
-		groupId,
-		duration: '90min',
-		date: new Date().toISOString(),
-		minUsers: 8,
 	})
 
 	return (
