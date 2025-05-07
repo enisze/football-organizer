@@ -17,7 +17,7 @@ export function TimelineView({
 }: TimelineProps) {
 	if (slots.length === 0) {
 		return (
-			<div className='bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 flex items-center justify-center p-4 mt-4'>
+			<div className='bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 flex items-center justify-center p-4'>
 				<p className='text-white/50 text-xs md:text-sm'>
 					Keine Zeitfenster verfügbar
 				</p>
