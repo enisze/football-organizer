@@ -1,14 +1,20 @@
 import { cn } from '@/lib/utils/cn'
+import type { TimeSlot } from '@prisma/client'
 import type { ProcessedTimeSlot } from '../app/group/[groupId]/availability/processAvailability'
 
 interface TimelineProps {
-	slots: ProcessedTimeSlot[]
-	maxUsers: number
-	onSlotClick: (slot: ProcessedTimeSlot) => void
+	slots: (ProcessedTimeSlot | TimeSlot)[]
+	maxUsers?: number
+	onSlotClick: (slot: ProcessedTimeSlot | TimeSlot) => void
+	singleLine?: boolean
 }
 
-export function TimelineView({ slots, maxUsers, onSlotClick }: TimelineProps) {
-	// Early return with no slots message
+export function TimelineView({
+	slots,
+	maxUsers = 1,
+	onSlotClick,
+	singleLine = false,
+}: TimelineProps) {
 	if (slots.length === 0) {
 		return (
 			<div className='bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 flex items-center justify-center p-4 mt-4'>
@@ -34,7 +40,6 @@ export function TimelineView({ slots, maxUsers, onSlotClick }: TimelineProps) {
 		{ earliest: 24, latest: 0 },
 	)
 
-	// Since we know we have slots, we can use the actual range
 	const start = timeRange.earliest
 	const end = timeRange.latest
 
@@ -52,11 +57,45 @@ export function TimelineView({ slots, maxUsers, onSlotClick }: TimelineProps) {
 		return (minutesSince / totalRangeMinutes) * 100
 	}
 
+	const renderSlot = (slot: ProcessedTimeSlot | TimeSlot, index: number) => {
+		const startPos = timeToPosition(slot.startTime)
+		const endPos = timeToPosition(slot.endTime)
+		const width = endPos - startPos
+
+		let color = 'bg-green-300 hover:bg-green-300'
+		if ('availableUsers' in slot) {
+			const availableCount = slot.availableUsers.length
+			const percentage = (availableCount / maxUsers) * 100
+			color =
+				percentage < 50
+					? 'bg-red-400 hover:bg-red-400'
+					: percentage < 75
+						? 'bg-orange-400 hover:bg-orange-400'
+						: 'bg-green-300 hover:bg-green-300'
+		}
+
+		return (
+			<button
+				key={index}
+				className={cn(
+					'absolute cursor-pointer top-1 h-6 flex items-center justify-center px-2 rounded-md transition-colors',
+					color,
+				)}
+				style={{
+					left: `${startPos}%`,
+					width: `${width}%`,
+				}}
+				onClick={() => onSlotClick(slot)}
+				type='button'
+			/>
+		)
+	}
+
 	return (
-		<div className='bg-white/5 backdrop-blur-sm border-white/20 rounded-lg overflow-hidden mt-4'>
+		<div className='bg-white/5 backdrop-blur-sm border-white/20 rounded-lg overflow-hidden'>
 			<div className='relative'>
 				<div className='flex border-b border-white/20 px-4 py-2'>
-					<div className='w-5 flex-shrink-0' />
+					{!singleLine && <div className='w-5 flex-shrink-0' />}
 					<div className='flex-1 flex'>
 						{timeLabels.map((time) => (
 							<div
@@ -69,57 +108,56 @@ export function TimelineView({ slots, maxUsers, onSlotClick }: TimelineProps) {
 					</div>
 				</div>
 
-				{slots.map((slot, index) => {
-					const startPos = timeToPosition(slot.startTime)
-					const endPos = timeToPosition(slot.endTime)
-					const width = endPos - startPos
-					const availableCount = slot.availableUsers.length
-					const percentage = (availableCount / maxUsers) * 100
-
-					return (
-						<div
-							key={index}
-							className='flex border-b border-white/20 px-2 py-1 relative'
-						>
-							<div className='w-6 flex-shrink-0 font-medium flex items-center border-r border-white/20'>
-								<span className='text-slate-300 text-xs'>
-									{availableCount}/{maxUsers}
-								</span>
+				{singleLine ? (
+					<div className='flex px-2 py-1 relative'>
+						<div className='flex-1 relative h-8'>
+							<div className='absolute inset-0 flex pointer-events-none'>
+								{timeLabels.map((_, i) => (
+									<div
+										key={i}
+										className={cn(
+											'flex-1 h-full',
+											i > 0 && 'border-l border-white/20',
+										)}
+									/>
+								))}
 							</div>
-
-							<div className='flex-1 relative h-8'>
-								<div className='absolute inset-0 flex pointer-events-none'>
-									{timeLabels.map((_, i) => (
-										<div
-											key={i}
-											className={cn(
-												'flex-1 h-full',
-												i > 0 && 'border-l border-white/20',
-											)}
-										/>
-									))}
+							{slots.map((slot, index) => renderSlot(slot, index))}
+						</div>
+					</div>
+				) : (
+					slots.map((slot, index) => {
+						const availableCount =
+							'availableUsers' in slot ? slot.availableUsers.length : 1
+						return (
+							<div
+								key={index}
+								className='flex border-b border-white/20 px-2 py-1 relative'
+							>
+								<div className='w-6 flex-shrink-0 font-medium flex items-center border-r border-white/20'>
+									<span className='text-slate-300 text-xs'>
+										{availableCount}/{maxUsers}
+									</span>
 								</div>
 
-								<button
-									className={cn(
-										'absolute cursor-pointer top-1 h-6 flex items-center justify-center px-2 rounded-md transition-colors',
-										percentage < 50
-											? 'bg-red-500/30'
-											: percentage < 75
-												? 'bg-orange-500/30'
-												: 'bg-emerald-500/30',
-									)}
-									style={{
-										left: `${startPos}%`,
-										width: `${width}%`,
-									}}
-									onClick={() => onSlotClick(slot)}
-									type='button'
-								/>
+								<div className='flex-1 relative h-8'>
+									<div className='absolute inset-0 flex pointer-events-none'>
+										{timeLabels.map((_, i) => (
+											<div
+												key={i}
+												className={cn(
+													'flex-1 h-full',
+													i > 0 && 'border-l border-white/20',
+												)}
+											/>
+										))}
+									</div>
+									{renderSlot(slot, index)}
+								</div>
 							</div>
-						</div>
-					)
-				})}
+						)
+					})
+				)}
 			</div>
 		</div>
 	)

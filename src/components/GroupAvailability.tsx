@@ -264,11 +264,13 @@ export function GroupAvailabilityView({
 					}
 				/>
 
-				<TimelineView
-					slots={filteredSlots}
-					maxUsers={maxUsers}
-					onSlotClick={(slot) => setSelectedSlot(slot)}
-				/>
+				<div className='pt-2'>
+					<TimelineView
+						slots={filteredSlots}
+						maxUsers={maxUsers}
+						onSlotClick={(slot) => setSelectedSlot(slot as ProcessedTimeSlot)}
+					/>
+				</div>
 			</div>
 		</div>
 	)

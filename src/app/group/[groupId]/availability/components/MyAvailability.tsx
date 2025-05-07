@@ -1,17 +1,22 @@
 'use client'
 
 import { ExceptionsEditor } from '@/src/components/ExceptionsEditor'
-import { TimeSlotEditor } from '@/src/components/TimeSlotEditor'
+import { SimpleTimeSlotCreator } from '@/src/components/SimpleTimeSlotCreator'
+import { TimelineView } from '@/src/components/TimeLineView'
 import { WeeklyAvailabilityEditor } from '@/src/components/WeeklyAvailabilityEditor'
+import { Button } from '@/ui/button'
 import { Calendar } from '@/ui/calendar'
 import { CardDescription, CardTitle } from '@/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs'
 import type { TimeSlot } from '@prisma/client'
 import { useTour } from '@reactour/tour'
-import { Clock } from 'lucide-react'
+import { Clock, Plus } from 'lucide-react'
+import { useAction } from 'next-safe-action/hooks'
 import { useQueryState } from 'nuqs'
+import { useState } from 'react'
 import { groupBy } from 'remeda'
 import { revalidateTagAction } from '../../actions'
+import { deleteTimeSlotAction, updateTimeSlotAction } from '../actions'
 
 interface MyAvailabilityProps {
 	groupId: string
@@ -36,6 +41,14 @@ export function MyAvailability({
 		defaultValue: tab,
 	})
 
+	const [showTimeSlotCreator, setShowTimeSlotCreator] = useState(false)
+	const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(
+		null,
+	)
+
+	const { execute: updateTimeSlot } = useAction(updateTimeSlotAction)
+	const { execute: deleteTimeSlot } = useAction(deleteTimeSlotAction)
+
 	const handleDateSelect = async (newDate: Date | undefined) => {
 		if (newDate) {
 			await setDate(newDate.toISOString())
@@ -45,6 +58,33 @@ export function MyAvailability({
 			await revalidateTagAction({
 				tagId: 'groupAvailability',
 			})
+		}
+	}
+
+	const handleSaveTimeSlot = async (slot: {
+		startTime: string
+		endTime: string
+	}) => {
+		if (!date) return
+
+		updateTimeSlot({
+			id: selectedTimeSlot?.id ?? '',
+			startTime: slot.startTime,
+			endTime: slot.endTime,
+			type: 'DATE_SPECIFIC',
+			date: new Date(date),
+			groupId,
+		})
+
+		setShowTimeSlotCreator(false)
+		setSelectedTimeSlot(null)
+	}
+
+	const handleDeleteTimeSlot = async () => {
+		if (selectedTimeSlot?.id) {
+			deleteTimeSlot({ id: selectedTimeSlot.id })
+			setShowTimeSlotCreator(false)
+			setSelectedTimeSlot(null)
 		}
 	}
 
@@ -121,7 +161,7 @@ export function MyAvailability({
 					</div>
 
 					{date ? (
-						<div className='space-y-2'>
+						<div className='flex flex-col gap-2'>
 							<h3 className='text-lg font-medium'>
 								{new Date(date).toLocaleDateString('de-DE', {
 									weekday: 'long',
@@ -129,12 +169,23 @@ export function MyAvailability({
 									day: 'numeric',
 								})}
 							</h3>
-							<TimeSlotEditor
-								timeSlots={initialDaySpecificSlots ?? []}
-								groupId={groupId}
-								date={new Date(date)}
-								type='DATE_SPECIFIC'
+
+							<TimelineView
+								slots={initialDaySpecificSlots ?? []}
+								onSlotClick={(slot) => {
+									setSelectedTimeSlot(slot as TimeSlot)
+									setShowTimeSlotCreator(true)
+								}}
+								singleLine
 							/>
+							<Button
+								variant='purple'
+								size='sm'
+								onClick={() => setShowTimeSlotCreator(true)}
+							>
+								<Plus className='h-4 w-4 mr-1.5' />
+								Neues Zeitfenster
+							</Button>
 						</div>
 					) : (
 						<div className='flex items-center justify-center text-white/70'>
@@ -143,6 +194,18 @@ export function MyAvailability({
 					)}
 				</TabsContent>
 			</Tabs>
+
+			{showTimeSlotCreator && (
+				<SimpleTimeSlotCreator
+					initialData={selectedTimeSlot ?? undefined}
+					onSaveAction={handleSaveTimeSlot}
+					onCancelAction={() => {
+						setShowTimeSlotCreator(false)
+						setSelectedTimeSlot(null)
+					}}
+					onDeleteAction={selectedTimeSlot ? handleDeleteTimeSlot : undefined}
+				/>
+			)}
 		</div>
 	)
 }
