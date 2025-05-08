@@ -1,7 +1,7 @@
 import { prisma } from '@/src/server/db/client'
-import { set, subDays } from 'date-fns'
 import { cacheTag } from 'next/dist/server/use-cache/cache-tag'
 import { MyAvailability } from '../availability/components/MyAvailability'
+import { getUTCDate } from '../availability/utils/getUTCDate'
 
 interface MyAvailabilityPageProps {
 	groupId: string
@@ -20,23 +20,14 @@ export async function MyAvailabilityPage({
 
 	cacheTag('myAvailability')
 
-	//TODO: This is not a good solution
-	const newDate = subDays(
-		set(new Date(), {
-			hours: 24,
-			minutes: 0,
-			seconds: 0,
-			milliseconds: 0,
-		}),
-		1,
-	)
+	const utcDate = date ? getUTCDate(new Date(date)) : getUTCDate(new Date())
 
 	const [daySpecificTimeSlots, weeklyTimeSlots, exceptionSlots] =
 		await Promise.all([
 			prisma.timeSlot.findMany({
 				where: {
 					user: { id: userId },
-					date: date ? new Date(date) : newDate,
+					date: utcDate,
 					groups: {
 						some: {
 							id: groupId,

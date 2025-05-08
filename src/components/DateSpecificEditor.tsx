@@ -8,6 +8,7 @@ import { Clock, Plus } from 'lucide-react'
 import { useQueryState } from 'nuqs'
 import { useState } from 'react'
 import { revalidateTagAction } from '../app/group/[groupId]/actions'
+import { getUTCDate } from '../app/group/[groupId]/availability/utils/getUTCDate'
 import { SimpleTimeSlotCreator } from './SimpleTimeSlotCreator'
 import { TimelineView } from './TimeLineView'
 
@@ -24,13 +25,12 @@ export function DateSpecificEditor({
 	const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(
 		null,
 	)
-	const [date, setDate] = useQueryState('selectedDate', {
-		defaultValue: new Date().toISOString(),
-	})
+	const [date, setDate] = useQueryState('selectedDate')
 
 	const handleDateSelect = async (newDate: Date | undefined) => {
 		if (newDate) {
-			await setDate(newDate.toISOString())
+			const utcDate = getUTCDate(newDate)
+			await setDate(utcDate.toISOString())
 			await revalidateTagAction({
 				tagId: 'myAvailability',
 			})

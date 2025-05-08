@@ -23,7 +23,6 @@ import type {
 	ProcessedTimeSlot,
 	TimeSlotDuration,
 } from '../app/group/[groupId]/availability/processAvailability'
-import { getUTCDate } from '../app/group/[groupId]/availability/utils/getUTCDate'
 import { TimelineView } from './TimeLineView'
 import { TimeRangePicker } from './TimeRangePicker'
 import { UserCountInput } from './ui/UserCountInput'
@@ -84,8 +83,7 @@ export function GroupAvailabilityView({
 	const handleDateChange = useCallback(
 		async (newDate: Date | undefined) => {
 			if (!newDate) return
-			const utcDate = getUTCDate(newDate)
-			setDate(utcDate.toISOString())
+			setDate(newDate.toISOString())
 			setCalendarOpen(false)
 			refresh()
 		},
@@ -93,12 +91,6 @@ export function GroupAvailabilityView({
 	)
 
 	const currentDate = date ? new Date(date) : initialDate
-
-	const filteredSlots = processedSlots.filter((slot) => {
-		const slotStart = slot.startTime
-		const slotEnd = slot.endTime
-		return slotStart >= startTime && slotEnd <= endTime
-	})
 
 	return (
 		<div className='container p-0 mx-auto space-y-2 pt-2 pb-16 px-4'>
@@ -268,7 +260,7 @@ export function GroupAvailabilityView({
 
 				<div className='pt-2'>
 					<TimelineView
-						slots={filteredSlots}
+						slots={processedSlots}
 						maxUsers={maxUsers}
 						onSlotClick={(slot) => setSelectedSlot(slot as ProcessedTimeSlot)}
 					/>

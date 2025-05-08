@@ -32,8 +32,10 @@ const generateBaseTimeSlots = (
 ): TimeRange[] => {
 	const slots: TimeRange[] = []
 
-	for (let hour = startHour; hour < endHour; hour++) {
+	for (let hour = startHour; hour <= endHour; hour++) {
 		for (let minute = 0; minute < 60; minute += 30) {
+			if (hour === endHour && minute > 0) continue
+
 			const startMinutes = hour * 60 + minute
 			const endMinutes = startMinutes + 30
 
@@ -57,10 +59,15 @@ const isUserAvailable = (
 	const userSlots = relevantSlots.filter((slot) => slot.user.id === user.id)
 
 	// First check for date-specific slots
-	const dateSpecificSlots = userSlots.filter(
-		(slot) =>
-			slot.type === 'DATE_SPECIFIC' && slot.date?.getTime() === date.getTime(),
-	)
+	const dateSpecificSlots = userSlots.filter((slot) => {
+		if (slot.type !== 'DATE_SPECIFIC' || !slot.date) return false
+
+		return (
+			slot.date.getFullYear() === date.getFullYear() &&
+			slot.date.getMonth() === date.getMonth() &&
+			slot.date.getDate() === date.getDate()
+		)
+	})
 
 	// If any date-specific slot is an exception, user is unavailable for this date
 	if (dateSpecificSlots.some((slot) => slot.isException)) {
@@ -146,15 +153,19 @@ export function processGroupAvailability({
 	users,
 	timeslots,
 	duration = '90min',
+	startHour = 0,
+	endHour = 23,
 }: {
 	date: Date
 	users: User[]
 	timeslots: (TimeSlot & { user: User })[]
 	duration: TimeSlotDuration | undefined
+	startHour?: number
+	endHour?: number
 }): ProcessedTimeSlot[] {
 	if (timeslots.length === 0) return []
 
-	const baseSlots = generateBaseTimeSlots(10, 23)
+	const baseSlots = generateBaseTimeSlots(startHour, endHour)
 
 	// Check availability for each base slot
 	const availabilitySlots = baseSlots
