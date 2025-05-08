@@ -20,9 +20,9 @@ export async function MyAvailabilityPage({
 
 	cacheTag('myAvailability')
 
-	// Convert to Date object first, then get UTC date
-	const currentDate = date ? new Date(date) : new Date()
-	const utcDate = getUTCDate(currentDate)
+	// Parse date and convert to user's timezone
+	const localDate = date ? new Date(date) : new Date()
+	const utcDate = getUTCDate(localDate)
 
 	const [daySpecificTimeSlots, weeklyTimeSlots, exceptionSlots] =
 		await Promise.all([
@@ -48,6 +48,7 @@ export async function MyAvailabilityPage({
 						},
 					},
 					type: 'DAY_SPECIFIC',
+					day: localDate.getDay(),
 				},
 				orderBy: [{ day: 'asc' }, { startTime: 'asc' }],
 			}),

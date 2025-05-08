@@ -27,6 +27,7 @@ export async function GroupAvailabilityPage({
 	cacheTag('groupAvailability')
 
 	const utcDate = getUTCDate(date)
+
 	const localDayOfWeek = date.getDay()
 
 	const timeslots = await prisma.timeSlot.findMany({
@@ -55,7 +56,7 @@ export async function GroupAvailabilityPage({
 	const endHour = endTime?.split(':').at(0)
 
 	const groupAvailability = processGroupAvailability({
-		date: utcDate,
+		date,
 		users: uniqueUsers,
 		timeslots,
 		duration,
@@ -77,7 +78,7 @@ export async function GroupAvailabilityPage({
 	return (
 		<div className='mb-3 animate-in fade-in duration-500'>
 			<GroupAvailabilityView
-				date={utcDate}
+				date={date}
 				processedSlots={filteredSlots}
 				groupId={groupId}
 			/>
