@@ -1,7 +1,6 @@
 import { ClearLocalStorageButton } from '@/src/app/settings/ClearLocalStorageButton'
 import { HelpButton } from '@/src/app/settings/HelpButton'
 import { SignOutButton } from '@/src/app/settings/SignOutButton'
-import { CalendarIntegration } from '@/src/components/CalendarIntegration'
 import { GroupSelectorServer } from '@/src/components/Groups/GroupSelectorServer'
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
@@ -98,7 +97,7 @@ export default async function MainPage({ params }: PageProps) {
 						</CardContent>
 					</Card>
 
-					<Card className='bg-white/5 backdrop-blur-sm border-white/10'>
+					{/* <Card className='bg-white/5 backdrop-blur-sm border-white/10'>
 						<CardHeader>
 							<div className='flex items-center justify-between'>
 								<div className='space-y-1'>
@@ -114,7 +113,7 @@ export default async function MainPage({ params }: PageProps) {
 						<CardContent>
 							<CalendarIntegration groupId={groupId} />
 						</CardContent>
-					</Card>
+					</Card> */}
 
 					<Card className='bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-colors'>
 						<CardHeader>
