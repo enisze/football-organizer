@@ -94,7 +94,7 @@ export function GroupAvailabilityView({
 					0,
 				),
 			)
-			setDate(utcDate.toISOString())
+			setDate(newDate.toISOString())
 			setCalendarOpen(false)
 			refresh()
 		},
