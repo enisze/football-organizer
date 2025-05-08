@@ -1,19 +1,23 @@
 export const getUTCDate = (date: Date) => {
+	// Get the local date parts
 	const year = date.getFullYear()
 	const month = date.getMonth()
 	const day = date.getDate()
 
-	// Create date in local timezone first, then convert to UTC
-	const localDate = new Date(year, month, day)
-	const utcDate = new Date(Date.UTC(year, month, day))
+	// Create a new date with the time set to noon to avoid DST issues
+	const localDate = new Date(year, month, day, 12, 0, 0)
 
-	// Adjust for timezone offset if needed
-	if (localDate.getDate() !== date.getDate()) {
-		// If date changed due to timezone, adjust back
-		utcDate.setUTCDate(date.getDate())
-	}
-
-	console.log(localDate, utcDate)
+	// Create UTC date with the same calendar date
+	const utcDate = new Date(
+		Date.UTC(
+			localDate.getFullYear(),
+			localDate.getMonth(),
+			localDate.getDate(),
+			0,
+			0,
+			0,
+		),
+	)
 
 	return utcDate
 }
