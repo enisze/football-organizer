@@ -1,4 +1,6 @@
 import type { TimeSlot, User } from '@prisma/client'
+import { isSameDay } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
 
 export type TimeSlotDuration = '60min' | '90min' | '120min'
 export type ProcessedTimeSlot = {
@@ -57,16 +59,18 @@ const isUserAvailable = (
 	relevantSlots: (TimeSlot & { user: User })[],
 ): boolean => {
 	const userSlots = relevantSlots.filter((slot) => slot.user.id === user.id)
+	const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
 	// First check for date-specific slots
 	const dateSpecificSlots = userSlots.filter((slot) => {
 		if (slot.type !== 'DATE_SPECIFIC' || !slot.date) return false
 
-		return (
-			slot.date.getFullYear() === date.getFullYear() &&
-			slot.date.getMonth() === date.getMonth() &&
-			slot.date.getDate() === date.getDate()
+		// Compare dates in user's local timezone
+		const slotDate = new Date(
+			formatInTimeZone(new Date(slot.date), timeZone, 'yyyy-MM-dd'),
 		)
+		const localDate = new Date(formatInTimeZone(date, timeZone, 'yyyy-MM-dd'))
+		return isSameDay(slotDate, localDate)
 	})
 
 	// If any date-specific slot is an exception, user is unavailable for this date
@@ -82,10 +86,11 @@ const isUserAvailable = (
 		)
 	}
 
-	// Then check for day-of-week slots
+	// Then check for day-of-week slots using local day
 	const dayOfWeekSlots = userSlots.filter(
 		(slot) => slot.type === 'DAY_SPECIFIC' && slot.day === date.getDay(),
 	)
+
 	if (dayOfWeekSlots.length > 0) {
 		return dayOfWeekSlots.some(
 			(slot) =>

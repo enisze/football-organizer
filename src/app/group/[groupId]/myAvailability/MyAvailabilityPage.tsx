@@ -20,7 +20,9 @@ export async function MyAvailabilityPage({
 
 	cacheTag('myAvailability')
 
-	const utcDate = date ? getUTCDate(new Date(date)) : getUTCDate(new Date())
+	// Convert to Date object first, then get UTC date
+	const currentDate = date ? new Date(date) : new Date()
+	const utcDate = getUTCDate(currentDate)
 
 	const [daySpecificTimeSlots, weeklyTimeSlots, exceptionSlots] =
 		await Promise.all([

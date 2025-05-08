@@ -27,12 +27,13 @@ export async function GroupAvailabilityPage({
 	cacheTag('groupAvailability')
 
 	const utcDate = getUTCDate(date)
+	const localDayOfWeek = date.getDay()
 
 	const timeslots = await prisma.timeSlot.findMany({
 		where: {
 			OR: [
 				{ type: 'DATE_SPECIFIC', date: utcDate },
-				{ type: 'DAY_SPECIFIC', day: utcDate.getDay() },
+				{ type: 'DAY_SPECIFIC', day: localDayOfWeek },
 			],
 			groups: {
 				some: {
@@ -45,7 +46,6 @@ export async function GroupAvailabilityPage({
 		},
 	})
 
-	// Deduplicate users by ID and keep the first occurrence of each user
 	const uniqueUsers = uniqueBy(
 		timeslots.map((slot) => slot.user),
 		(user) => user.id,
