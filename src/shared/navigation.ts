@@ -60,6 +60,16 @@ export const { routes, useSafeParams, useSafeSearchParams } =
 				})
 				.optional(),
 		}),
+		groupAdmin: defineRoute('/group/[groupId]/admin', {
+			params: z.object({
+				groupId: z.string(),
+			}),
+			search: z
+				.object({
+					userId: z.string().optional(),
+				})
+				.optional(),
+		}),
 		groupSettings: defineRoute('/settings/groups'),
 		groupSettingsDetails: defineRoute('/settings/groups/[groupId]', {
 			params: z.object({
