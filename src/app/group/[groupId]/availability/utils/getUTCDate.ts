@@ -13,5 +13,7 @@ export const getUTCDate = (date: Date) => {
 		utcDate.setUTCDate(date.getDate())
 	}
 
+	console.log(localDate, utcDate)
+
 	return utcDate
 }
