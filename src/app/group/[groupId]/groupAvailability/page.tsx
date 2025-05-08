@@ -53,7 +53,7 @@ export default async function GroupAvailabilityRoute({
 					groupId={groupId}
 					duration={parsedSearchParams?.duration}
 					minUsers={parsedMinUsers}
-					date={utcDate}
+					date={parsedDate}
 				/>
 			</Suspense>
 		</div>
