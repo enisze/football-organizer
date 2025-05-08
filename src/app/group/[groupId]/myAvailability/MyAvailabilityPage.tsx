@@ -50,7 +50,6 @@ export async function MyAvailabilityPage({
 						},
 					},
 					type: 'DAY_SPECIFIC',
-					day: localDate.getDay(),
 				},
 				orderBy: [{ day: 'asc' }, { startTime: 'asc' }],
 			}),
