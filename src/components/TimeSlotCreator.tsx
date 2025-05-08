@@ -23,6 +23,7 @@ type TimeSlot = {
 }
 
 interface TimeSlotCreatorProps {
+	selectedDay?: number
 	days: Day[]
 	initialData?: TimeSlot
 	onSaveAction: (slot: TimeSlot) => void
@@ -31,6 +32,7 @@ interface TimeSlotCreatorProps {
 }
 
 export function TimeSlotCreator({
+	selectedDay,
 	days,
 	initialData,
 	onSaveAction,
@@ -41,7 +43,10 @@ export function TimeSlotCreator({
 		id: initialData?.id,
 		start: initialData?.start || '09:00',
 		end: initialData?.end || '10:00',
-		days: initialData?.days || [],
+		days:
+			(initialData?.days ?? selectedDay)
+				? [(selectedDay ?? '').toString()]
+				: [],
 		isGlobalSlot: initialData?.isGlobalSlot || true,
 	})
 

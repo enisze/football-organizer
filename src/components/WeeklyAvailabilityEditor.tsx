@@ -39,6 +39,7 @@ export function WeeklyAvailabilityEditor({
 	const { execute: deleteTimeSlot } = useAction(deleteTimeSlotAction)
 	const [isCreatingSlot, setIsCreatingSlot] = useState(false)
 	const [editingSlot, setEditingSlot] = useState<TimeSlot | null>(null)
+	const [selectedDay, setSelectedDay] = useState<number | undefined>(undefined)
 
 	const { setCurrentStep } = useTour()
 
@@ -116,9 +117,21 @@ export function WeeklyAvailabilityEditor({
 							<div
 								key={day.id}
 								className={cn(
-									'flex border-b border-white/20 px-4 py-1 relative',
+									'flex border-b border-white/20 px-4 py-1 relative group cursor-pointer hover:bg-white/5 transition-colors',
 									day.id === '0' && 'border-none',
 								)}
+								onClick={() => {
+									setSelectedDay(Number.parseInt(day.id, 10))
+
+									setIsCreatingSlot(true)
+								}}
+								onKeyDown={(e) => {
+									if (e.key === 'Enter') {
+										setSelectedDay(Number.parseInt(day.id, 10))
+
+										setIsCreatingSlot(true)
+									}
+								}}
 							>
 								<div className='w-10 flex-shrink-0 font-medium flex items-center'>
 									<span className='text-slate-300'>{day.name}</span>
@@ -172,6 +185,7 @@ export function WeeklyAvailabilityEditor({
 			{isCreatingSlot && (
 				<TimeSlotCreator
 					days={days}
+					selectedDay={selectedDay}
 					initialData={
 						editingSlot
 							? {
