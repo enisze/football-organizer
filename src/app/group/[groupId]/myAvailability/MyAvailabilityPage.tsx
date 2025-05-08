@@ -1,5 +1,7 @@
 import { prisma } from '@/src/server/db/client'
+import type { TimeSlot } from '@prisma/client'
 import { cacheTag } from 'next/dist/server/use-cache/cache-tag'
+import { groupBy } from 'remeda'
 import { MyAvailability } from '../availability/components/MyAvailability'
 import { getUTCDate } from '../availability/utils/getUTCDate'
 
@@ -67,12 +69,19 @@ export async function MyAvailabilityPage({
 			}),
 		])
 
+	const weeklySlotsByDay = groupBy(
+		weeklyTimeSlots.filter(
+			(slot): slot is TimeSlot & { day: number } => slot.day !== null,
+		),
+		(slot) => slot.day,
+	)
+
 	return (
 		<div className='mb-3 animate-in fade-in duration-500'>
 			<MyAvailability
 				groupId={groupId}
 				initialDaySpecificSlots={daySpecificTimeSlots}
-				initialWeeklySlots={weeklyTimeSlots}
+				initialWeeklySlots={weeklySlotsByDay}
 				exceptionSlots={exceptionSlots}
 				tab={tab}
 			/>

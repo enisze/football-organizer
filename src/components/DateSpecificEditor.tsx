@@ -25,7 +25,9 @@ export function DateSpecificEditor({
 	const [selectedTimeSlot, setSelectedTimeSlot] = useState<TimeSlot | null>(
 		null,
 	)
-	const [date, setDate] = useQueryState('selectedDate')
+	const [date, setDate] = useQueryState('selectedDate', {
+		defaultValue: new Date().toISOString(),
+	})
 
 	const handleDateSelect = async (newDate: Date | undefined) => {
 		if (newDate) {

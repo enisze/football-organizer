@@ -40,6 +40,8 @@ export function TimelineView({
 		{ earliest: 24, latest: 0 },
 	)
 
+	const slotLength = slots.length
+
 	const start = timeRange.earliest
 	const end = timeRange.latest
 
@@ -132,7 +134,10 @@ export function TimelineView({
 						return (
 							<div
 								key={index}
-								className='flex border-b border-white/20 px-2 py-1 relative'
+								className={cn(
+									'flex border-b border-white/20 px-2 py-1 relative',
+									index === slotLength - 1 && 'border-b-0',
+								)}
 							>
 								<div className='w-6 flex-shrink-0 font-medium flex items-center border-r border-white/20'>
 									<span className='text-slate-300 text-xs'>

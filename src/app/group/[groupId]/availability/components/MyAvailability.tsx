@@ -7,12 +7,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs'
 import type { TimeSlot } from '@prisma/client'
 import { useTour } from '@reactour/tour'
 import { useQueryState } from 'nuqs'
-import { groupBy } from 'remeda'
 
 interface MyAvailabilityProps {
 	groupId: string
 	initialDaySpecificSlots: Array<TimeSlot>
-	initialWeeklySlots: Array<TimeSlot>
+	initialWeeklySlots: Record<number, TimeSlot[]>
 	exceptionSlots: Array<TimeSlot>
 	tab: string
 }
@@ -27,13 +26,6 @@ export function MyAvailability({
 	const [selectedTab, setSelectedTab] = useQueryState('tab', {
 		defaultValue: tab,
 	})
-
-	const weeklySlotsByDay = groupBy(
-		initialWeeklySlots.filter(
-			(slot): slot is TimeSlot & { day: number } => slot.day !== null,
-		),
-		(slot) => slot.day,
-	)
 
 	const { setCurrentStep } = useTour()
 
@@ -73,7 +65,7 @@ export function MyAvailability({
 
 				<TabsContent value='weekly' className='space-y-4'>
 					<WeeklyAvailabilityEditor
-						timeSlots={weeklySlotsByDay}
+						timeSlots={initialWeeklySlots}
 						groupId={groupId}
 					/>
 				</TabsContent>
