@@ -23,6 +23,7 @@ import type {
 	ProcessedTimeSlot,
 	TimeSlotDuration,
 } from '../app/group/[groupId]/availability/processAvailability'
+import { getUTCDate } from '../app/group/[groupId]/availability/utils/getUTCDate'
 import { TimelineView } from './TimeLineView'
 import { TimeRangePicker } from './TimeRangePicker'
 import { UserCountInput } from './ui/UserCountInput'
@@ -83,7 +84,8 @@ export function GroupAvailabilityView({
 	const handleDateChange = useCallback(
 		async (newDate: Date | undefined) => {
 			if (!newDate) return
-			setDate(newDate.toISOString())
+			const utcDate = getUTCDate(newDate)
+			setDate(utcDate.toISOString())
 			setCalendarOpen(false)
 			refresh()
 		},
