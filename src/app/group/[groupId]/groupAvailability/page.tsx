@@ -3,6 +3,7 @@ import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
+import { getUTCDate } from '../availability/utils/getUTCDate'
 import { GroupAvailabilityPage } from './GroupAvailabilityPage'
 
 interface PageProps {
@@ -43,17 +44,7 @@ export default async function GroupAvailabilityRoute({
 		? new Date(parsedSearchParams.date)
 		: new Date()
 
-	const utcDate = new Date(
-		Date.UTC(
-			parsedDate.getUTCFullYear(),
-			parsedDate.getUTCMonth(),
-			parsedDate.getUTCDate(),
-			0,
-			0,
-			0,
-			0,
-		),
-	)
+	const utcDate = getUTCDate(parsedDate)
 
 	return (
 		<div className='flex flex-col pb-2'>
@@ -62,7 +53,7 @@ export default async function GroupAvailabilityRoute({
 					groupId={groupId}
 					duration={parsedSearchParams?.duration}
 					minUsers={parsedMinUsers}
-					date={parsedDate}
+					date={utcDate}
 				/>
 			</Suspense>
 		</div>
