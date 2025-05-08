@@ -38,9 +38,22 @@ export default async function GroupAvailabilityRoute({
 	const parsedMinUsers = parsedSearchParams?.minUsers
 		? parsedSearchParams?.minUsers
 		: 8
+
 	const parsedDate = parsedSearchParams?.date
-		? new Date(parsedSearchParams?.date)
+		? new Date(parsedSearchParams.date)
 		: new Date()
+
+	const utcDate = new Date(
+		Date.UTC(
+			parsedDate.getUTCFullYear(),
+			parsedDate.getUTCMonth(),
+			parsedDate.getUTCDate(),
+			0,
+			0,
+			0,
+			0,
+		),
+	)
 
 	return (
 		<div className='flex flex-col pb-2'>

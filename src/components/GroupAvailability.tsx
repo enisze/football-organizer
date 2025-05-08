@@ -83,6 +83,19 @@ export function GroupAvailabilityView({
 	const handleDateChange = useCallback(
 		async (newDate: Date | undefined) => {
 			if (!newDate) return
+			// Convert the local date to UTC midnight
+			const utcDate = new Date(
+				Date.UTC(
+					newDate.getFullYear(),
+					newDate.getMonth(),
+					newDate.getDate(),
+					0,
+					0,
+					0,
+					0,
+				),
+			)
+			// setDate(utcDate.toISOString())
 			setDate(newDate.toISOString())
 			setCalendarOpen(false)
 			refresh()

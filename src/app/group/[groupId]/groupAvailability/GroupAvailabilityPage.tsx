@@ -25,7 +25,7 @@ export async function GroupAvailabilityPage({
 		where: {
 			OR: [
 				{ type: 'DATE_SPECIFIC', date },
-				{ type: 'DAY_SPECIFIC', day: date.getDay() },
+				{ type: 'DAY_SPECIFIC', day: date.getUTCDay() },
 			],
 			groups: {
 				some: {
