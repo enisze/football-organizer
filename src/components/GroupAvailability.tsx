@@ -1,9 +1,9 @@
 'use client'
 
+import { cn } from '@/lib/utils/cn'
 import { EventDialog } from '@/src/app/settings/groups/[groupId]/EventDialog'
 import { DrawerSlotDetails } from '@/src/components/DrawerSlotDetails'
 import { Calendar } from '@/ui/calendar'
-import { CardTitle } from '@/ui/card'
 import { Label } from '@/ui/label'
 import { Tabs, TabsList, TabsTrigger } from '@/ui/tabs'
 import { useQueryState } from 'nuqs'
@@ -79,6 +79,7 @@ export function GroupAvailabilityView({
 	const handleDateChange = useCallback(
 		async (newDate: Date | undefined) => {
 			if (!newDate) return
+
 			const utcDate = getUTCDate(newDate)
 			setDate(utcDate.toISOString())
 			refresh()
@@ -90,18 +91,9 @@ export function GroupAvailabilityView({
 
 	return (
 		<div className='container p-0 mx-auto space-y-2 pt-2 pb-16 px-4'>
-			<h2 className='text-2xl font-bold'>Gruppenslots</h2>
-			<CardTitle className='text-xl md:text-2xl'>
-				{currentDate.toLocaleDateString('de-DE', {
-					weekday: 'long',
-					month: 'long',
-					day: 'numeric',
-				})}
-			</CardTitle>
+			<h2 className='text-lg font-bold'>Gruppenslots</h2>
 			<div className='grid gap-2'>
 				<div>
-					<h3 className='text-base md:text-lg font-semibold mb-2'>Datum</h3>
-
 					<div className='bg-white/5 rounded-xl p-4'>
 						<Calendar
 							id='date-picker'
@@ -146,10 +138,10 @@ export function GroupAvailabilityView({
 				</div>
 
 				<div className='space-y-2'>
-					<h3 className='font-bold text-lg md:text-xl'>Teilnehmer</h3>
+					<h3 className='font-bold'>Teilnehmer</h3>
 					<div className='grid gap-4 grid-cols-2'>
 						<UserCountInput
-							label='Minimum'
+							label='Min'
 							value={minUsers}
 							onChange={(value) => {
 								setMinUsers(value)
@@ -159,7 +151,7 @@ export function GroupAvailabilityView({
 							max={10}
 						/>
 						<UserCountInput
-							label='Maximum'
+							label='Max'
 							value={maxUsers}
 							onChange={(value) => {
 								setMaxUsers(value)
@@ -171,10 +163,10 @@ export function GroupAvailabilityView({
 					</div>
 				</div>
 				<div className='space-y-2'>
-					<h3 className='font-bold text-lg md:text-xl'>Zeitraum</h3>
+					<h3 className='font-bold'>Zeitraum</h3>
 					<div className='grid gap-4 grid-cols-2'>
-						<div className='space-y-2'>
-							<Label htmlFor='startTime' className='text-sm font-medium'>
+						<div>
+							<Label htmlFor='startTime' className='text-xs font-medium'>
 								Von
 							</Label>
 							<TimeRangePicker
@@ -189,8 +181,8 @@ export function GroupAvailabilityView({
 								singleTime={true}
 							/>
 						</div>
-						<div className='space-y-2'>
-							<Label htmlFor='endTime' className='text-sm font-medium'>
+						<div>
+							<Label htmlFor='endTime' className='text-xs font-medium'>
 								Bis
 							</Label>
 							<TimeRangePicker
@@ -268,7 +260,7 @@ export function GroupAvailabilityView({
 					}
 				/>
 
-				<div className='pt-2'>
+				<div className={cn('pt-2')}>
 					<TimelineView
 						slots={processedSlots}
 						maxUsers={maxUsers}

@@ -16,8 +16,8 @@ export function UserCountInput({
 	max = 10,
 }: UserCountInputProps) {
 	return (
-		<div className=''>
-			<h3 className='font-semibold mb-2'>{label}</h3>
+		<div>
+			<h3 className='font-semibold text-xs mb-1'>{label}</h3>
 			<div className='flex items-center justify-center gap-x-2 px-2'>
 				<Button
 					size='icon'
