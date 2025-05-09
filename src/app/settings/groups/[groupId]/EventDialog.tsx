@@ -51,9 +51,9 @@ export const EventDialog = ({
 			)}
 			<DialogContent className='sm:max-w-[425px]'>
 				<DialogHeader>
-					<DialogTitle>Add Event</DialogTitle>
+					<DialogTitle>Event erstellen</DialogTitle>
 					<DialogDescription>
-						Create a new event for your group
+						Erstelle ein neues Event für deine Gruppe
 					</DialogDescription>
 				</DialogHeader>
 				<AddEventForm

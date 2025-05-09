@@ -56,7 +56,7 @@ export const AddEventForm = ({
 		<form className='grid grid-cols-2 justify-center gap-2'>
 			{templates.length > 0 && (
 				<div className='col-span-2 mb-4'>
-					<Label>Use Template</Label>
+					<Label>Nutze ein Template</Label>
 					<Select onValueChange={handleTemplateSelect} value={selectedTemplate}>
 						<SelectTrigger>
 							<SelectValue placeholder='Select a template' />
@@ -121,7 +121,7 @@ export const AddEventForm = ({
 			/>
 			<div className='flex gap-2'>
 				<Button
-					variant='purple'
+					variant='secondary'
 					type='button'
 					onClick={() => {
 						onSubmit()

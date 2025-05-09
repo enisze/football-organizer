@@ -28,10 +28,12 @@ export function TimelineView({
 	// Find the earliest and latest times from the slots
 	const timeRange = slots.reduce(
 		(acc, slot) => {
-			const [startHr = '0'] = slot.startTime.split(':')
-			const [endHr = '0'] = slot.endTime.split(':')
-			const startHour = Number.parseInt(startHr, 10)
-			const endHour = Number.parseInt(endHr, 10)
+			const [startHr = '0', startMin = '0'] = slot.startTime.split(':')
+			const [endHr = '0', endMin = '0'] = slot.endTime.split(':')
+			const startHour =
+				Number.parseInt(startHr, 10) + Number.parseInt(startMin, 10) / 60
+			const endHour =
+				Number.parseInt(endHr, 10) + Number.parseInt(endMin, 10) / 60
 			return {
 				earliest: Math.min(acc.earliest, startHour),
 				latest: Math.max(acc.latest, endHour),
@@ -41,22 +43,23 @@ export function TimelineView({
 	)
 
 	const slotLength = slots.length
+	const start = Math.floor(timeRange.earliest)
+	const end = Math.ceil(timeRange.latest)
 
-	const start = timeRange.earliest
-	const end = timeRange.latest
-
-	const timeLabels = Array.from({ length: end - start + 1 }, (_, i) =>
-		String(start + i).padStart(2, '0'),
-	)
+	const timeLabels: string[] = []
+	for (let i = start; i <= end; i++) {
+		timeLabels.push(String(i).padStart(2, '0'))
+	}
 
 	const timeToPosition = (time: string): number => {
-		const [hoursStr, minutesStr] = time.split(':')
-		const hours = Number.parseInt(hoursStr || '0', 10)
-		const minutes = Number.parseInt(minutesStr || '0', 10)
-		const totalMinutes = hours * 60 + minutes
-		const minutesSince = totalMinutes - start * 60
+		const [hoursStr, minutesStr = '0'] = time.split(':')
+		if (!hoursStr) return 0
+		const totalMinutes =
+			Number.parseInt(hoursStr, 10) * 60 + Number.parseInt(minutesStr, 10)
+		const startMinutes = start * 60
 		const totalRangeMinutes = (end - start) * 60
-		return (minutesSince / totalRangeMinutes) * 100
+		// Add small adjustment for better 30-minute positioning
+		return ((totalMinutes - startMinutes) / totalRangeMinutes) * 100
 	}
 
 	const renderSlot = (slot: ProcessedTimeSlot | TimeSlot, index: number) => {
