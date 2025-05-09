@@ -3,7 +3,7 @@ import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
-import { GroupAvailabilityPage } from './GroupAvailabilityPage'
+import { GroupAvailabilityPage } from '../availability/components/GroupAvailabilityPage'
 
 interface PageProps {
 	params: Promise<unknown>

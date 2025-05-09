@@ -1,7 +1,7 @@
 'use client'
 
 import { revalidateTagAction } from '@/src/app/group/[groupId]/actions'
-import { WeeklyAvailabilityEditor } from '@/src/components/WeeklyAvailabilityEditor'
+import { WeeklyAvailabilityEditor } from '@/src/app/group/[groupId]/availability/components/WeeklyAvailabilityEditor'
 import {
 	Select,
 	SelectContent,

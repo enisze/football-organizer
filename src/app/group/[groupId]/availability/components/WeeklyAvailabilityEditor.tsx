@@ -5,7 +5,7 @@ import {
 	deleteTimeSlotAction,
 	updateTimeSlotAction,
 } from '@/src/app/group/[groupId]/availability/actions'
-import { TimeSlotCreator } from '@/src/components/TimeSlotCreator'
+import { TimeSlotCreator } from '@/src/app/group/[groupId]/availability/components/TimeSlotCreator'
 import { Button } from '@/ui/button'
 import { CardDescription, CardTitle } from '@/ui/card'
 import type { TimeSlot } from '@prisma/client'

@@ -6,10 +6,7 @@ import { X } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
 import { useQueryState } from 'nuqs'
 import { useState } from 'react'
-import {
-	deleteTimeSlotAction,
-	updateTimeSlotAction,
-} from '../app/group/[groupId]/availability/actions'
+import { deleteTimeSlotAction, updateTimeSlotAction } from '../actions'
 import { TimeRangePicker } from './TimeRangePicker'
 
 interface SimpleTimeSlotCreatorProps {

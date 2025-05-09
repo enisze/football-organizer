@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils/cn'
 import type { TimeSlot } from '@prisma/client'
-import type { ProcessedTimeSlot } from '../app/group/[groupId]/availability/processAvailability'
+import type { ProcessedTimeSlot } from '../processAvailability'
 
 interface TimelineProps {
 	slots: (ProcessedTimeSlot | TimeSlot)[]

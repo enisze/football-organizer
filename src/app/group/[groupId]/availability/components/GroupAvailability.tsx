@@ -9,18 +9,15 @@ import { Tabs, TabsList, TabsTrigger } from '@/ui/tabs'
 import { useQueryState } from 'nuqs'
 import { useCallback, useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
-import {
-	revalidateGroupAction,
-	revalidateTagAction,
-} from '../app/group/[groupId]/actions'
+import { UserCountInput } from '../../../../../components/ui/UserCountInput'
+import { revalidateGroupAction, revalidateTagAction } from '../../actions'
 import type {
 	ProcessedTimeSlot,
 	TimeSlotDuration,
-} from '../app/group/[groupId]/availability/processAvailability'
-import { getUTCDate } from '../app/group/[groupId]/availability/utils/getUTCDate'
+} from '../processAvailability'
+import { getUTCDate } from '../utils/getUTCDate'
 import { TimelineView } from './TimeLineView'
 import { TimeRangePicker } from './TimeRangePicker'
-import { UserCountInput } from './ui/UserCountInput'
 
 interface GroupAvailabilityViewProps {
 	date: Date

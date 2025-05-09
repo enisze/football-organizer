@@ -1,8 +1,8 @@
 'use client'
 
+import { WeeklyAvailabilityEditor } from '@/src/app/group/[groupId]/availability/components/WeeklyAvailabilityEditor'
 import { DateSpecificEditor } from '@/src/components/DateSpecificEditor'
 import { ExceptionsEditor } from '@/src/components/ExceptionsEditor'
-import { WeeklyAvailabilityEditor } from '@/src/components/WeeklyAvailabilityEditor'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs'
 import type { TimeSlot } from '@prisma/client'
 import { useTour } from '@reactour/tour'

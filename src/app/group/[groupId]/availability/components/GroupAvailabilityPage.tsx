@@ -1,10 +1,10 @@
-import { GroupAvailabilityView } from '@/src/components/GroupAvailability'
+import { GroupAvailabilityView } from '@/src/app/group/[groupId]/availability/components/GroupAvailability'
 import { prisma } from '@/src/server/db/client'
 import { endOfMonth, startOfMonth } from 'date-fns'
 import { cacheTag } from 'next/dist/server/use-cache/cache-tag'
 import { uniqueBy } from 'remeda'
-import { processGroupAvailability } from '../availability/processAvailability'
-import { getUTCDate } from '../availability/utils/getUTCDate'
+import { processGroupAvailability } from '../processAvailability'
+import { getUTCDate } from '../utils/getUTCDate'
 
 interface GroupAvailabilityPageProps {
 	groupId: string

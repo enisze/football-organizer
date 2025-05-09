@@ -8,9 +8,9 @@ import { Clock, Plus } from 'lucide-react'
 import { useQueryState } from 'nuqs'
 import { useState } from 'react'
 import { revalidateTagAction } from '../app/group/[groupId]/actions'
+import { SimpleTimeSlotCreator } from '../app/group/[groupId]/availability/components/SimpleTimeSlotCreator'
+import { TimelineView } from '../app/group/[groupId]/availability/components/TimeLineView'
 import { getUTCDate } from '../app/group/[groupId]/availability/utils/getUTCDate'
-import { SimpleTimeSlotCreator } from './SimpleTimeSlotCreator'
-import { TimelineView } from './TimeLineView'
 
 interface DateSpecificEditorProps {
 	initialDaySpecificSlots: Array<TimeSlot>
