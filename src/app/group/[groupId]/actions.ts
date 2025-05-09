@@ -95,19 +95,16 @@ export const revalidateGroupAction = async ({
 	date,
 	duration,
 	minUsers,
-	selectedMonth,
 }: {
 	groupId: string
 	date?: string | null
 	duration?: '60min' | '90min' | '120min' | null
 	minUsers?: number
-	selectedMonth?: string | null
 }) => {
 	const search: Record<string, string | number> = {}
 	if (!isNullish(date)) search.date = date
 	if (!isNullish(duration)) search.duration = duration
 	if (!isNullish(minUsers)) search.minUsers = minUsers
-	if (!isNullish(selectedMonth)) search.selectedMonth = selectedMonth
 
 	revalidatePath(
 		routes.groupDetails({

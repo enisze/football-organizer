@@ -58,6 +58,7 @@ export function DateSpecificEditor({
 					onSelect={handleDateSelect}
 					className='mx-auto'
 					weekStartsOn={1}
+					disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
 				/>
 			</div>
 

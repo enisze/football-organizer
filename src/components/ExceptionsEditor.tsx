@@ -143,6 +143,7 @@ export function ExceptionsEditor({
 					defaultMonth={currentMonth}
 					onMonthChange={setCurrentMonth}
 					weekStartsOn={1}
+					disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
 					modifiersStyles={{
 						selected: {
 							backgroundColor: 'rgb(127 29 29 / 0.7)',

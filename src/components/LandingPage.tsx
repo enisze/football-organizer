@@ -7,7 +7,7 @@ import {
 import { Button, buttonVariants } from '@/ui/button'
 import {
 	Bell,
-	Calendar,
+	CalendarIcon,
 	ChevronRight,
 	Clock,
 	LogIn,
@@ -85,7 +85,7 @@ export const LandingPage = () => {
 						{/* Feature 1 */}
 						<div className='bg-[#131b31] rounded-lg p-6 border border-gray-800 hover:border-[#5b68e3] transition-colors'>
 							<div className='h-12 w-12 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mb-4'>
-								<Calendar className='h-6 w-6 text-[#5b68e3]' />
+								<CalendarIcon className='h-6 w-6 text-[#5b68e3]' />
 							</div>
 							<h3 className='text-xl font-bold mb-2'>
 								Events durchsuchen & teilnehmen
@@ -248,7 +248,7 @@ export const LandingPage = () => {
 							<ul className='space-y-3'>
 								<li className='flex items-start'>
 									<div className='h-6 w-6 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3 mt-0.5'>
-										<Calendar className='h-3 w-3 text-[#5b68e3]' />
+										<CalendarIcon className='h-3 w-3 text-[#5b68e3]' />
 									</div>
 									<span className='text-gray-300'>
 										Einfache visuelle Zeitauswahl für jeden Wochentag
@@ -286,7 +286,7 @@ export const LandingPage = () => {
 							<ul className='space-y-3'>
 								<li className='flex items-start'>
 									<div className='h-6 w-6 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3 mt-0.5'>
-										<Calendar className='h-3 w-3 text-[#5b68e3]' />
+										<CalendarIcon className='h-3 w-3 text-[#5b68e3]' />
 									</div>
 									<span className='text-gray-300'>
 										Wähle spezifische Tage im Kalender aus
@@ -339,7 +339,7 @@ export const LandingPage = () => {
 							<ul className='space-y-3'>
 								<li className='flex items-start'>
 									<div className='h-6 w-6 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3 mt-0.5'>
-										<Calendar className='h-3 w-3 text-[#5b68e3]' />
+										<CalendarIcon className='h-3 w-3 text-[#5b68e3]' />
 									</div>
 									<span className='text-gray-300'>
 										Übersichtlicher Monatskalender zur Auswahl
@@ -418,7 +418,7 @@ export const LandingPage = () => {
 								</li>
 								<li className='flex items-start'>
 									<div className='h-6 w-6 rounded-full bg-[#5b68e3]/20 flex items-center justify-center mr-3 mt-0.5'>
-										<Calendar className='h-3 w-3 text-[#5b68e3]' />
+										<CalendarIcon className='h-3 w-3 text-[#5b68e3]' />
 									</div>
 									<span className='text-gray-300'>
 										Einfache Übersicht über alle Teilnehmer pro Zeitslot

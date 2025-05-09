@@ -38,9 +38,6 @@ export function GroupAvailabilityView({
 	const [date, setDate] = useQueryState('date', {
 		shallow: true,
 	})
-	const [selectedMonth, setSelectedMonth] = useQueryState('selectedMonth', {
-		shallow: true,
-	})
 	const [duration, setDuration] = useQueryState('duration', {
 		parse: (value) => value as TimeSlotDuration,
 		shallow: true,
@@ -76,7 +73,6 @@ export function GroupAvailabilityView({
 			date: date,
 			duration,
 			minUsers: minUsers,
-			selectedMonth: selectedMonth,
 		})
 	}, 300)
 
@@ -85,22 +81,12 @@ export function GroupAvailabilityView({
 			if (!newDate) return
 			const utcDate = getUTCDate(newDate)
 			setDate(utcDate.toISOString())
-			setSelectedMonth(utcDate.toISOString())
 			refresh()
 		},
-		[setDate, setSelectedMonth, refresh],
-	)
-
-	const handleMonthChange = useCallback(
-		async (newDate: Date) => {
-			setSelectedMonth(newDate.toISOString())
-			refresh()
-		},
-		[setSelectedMonth, refresh],
+		[setDate, refresh],
 	)
 
 	const currentDate = date ? new Date(date) : initialDate
-	const currentMonth = selectedMonth ? new Date(selectedMonth) : currentDate
 
 	return (
 		<div className='container p-0 mx-auto space-y-2 pt-2 pb-16 px-4'>
@@ -124,8 +110,9 @@ export function GroupAvailabilityView({
 							onSelect={handleDateChange}
 							className='mx-auto'
 							weekStartsOn={1}
-							month={currentMonth}
-							onMonthChange={handleMonthChange}
+							disabled={(date) =>
+								date < new Date(new Date().setHours(0, 0, 0, 0))
+							}
 							modifiers={{
 								below50: (date: Date) => {
 									const userCount = monthlyAvailability.get(date.getDate())

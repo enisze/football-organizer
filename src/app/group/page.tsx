@@ -7,7 +7,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/ui/card'
-import { Calendar, Users } from 'lucide-react'
+import { CalendarIcon, Users } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { prisma } from '../../server/db/client'
@@ -74,7 +74,7 @@ const MainPage = async () => {
 										</div>
 									</div>
 									<div className='flex items-center gap-2 bg-white/5 rounded-lg p-3'>
-										<Calendar className='h-4 w-4 text-emerald-400 flex-none' />
+										<CalendarIcon className='h-4 w-4 text-emerald-400 flex-none' />
 										<div className='text-sm flex gap-2'>
 											<p className='text-white/70'>Events</p>
 											<p className='text-white font-medium'>

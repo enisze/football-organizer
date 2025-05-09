@@ -13,12 +13,15 @@ interface GroupAvailabilityPageProps {
 	duration: '60min' | '90min' | '120min' | undefined
 	startTime?: string
 	endTime?: string
-	selectedMonth?: Date
 }
 
-async function getMonthlyAvailability(groupId: string, month: Date) {
-	const start = startOfMonth(month)
-	const end = endOfMonth(month)
+async function getMonthlyAvailability(groupId: string) {
+	const monthDate = new Date()
+
+	const start = startOfMonth(monthDate)
+	const end = endOfMonth(monthDate)
+	const currentDate = new Date()
+	currentDate.setHours(0, 0, 0, 0)
 
 	const timeslots = await prisma.timeSlot.findMany({
 		where: {
@@ -51,9 +54,18 @@ async function getMonthlyAvailability(groupId: string, month: Date) {
 	const daysInMonth = new Map<number, number>()
 
 	for (let day = start.getDate(); day <= end.getDate(); day++) {
-		const currentDate = new Date(month.getFullYear(), month.getMonth(), day)
+		const currentLoopDate = new Date(
+			monthDate.getFullYear(),
+			monthDate.getMonth(),
+			day,
+		)
+
+		if (currentLoopDate < currentDate) {
+			continue
+		}
+
 		const daySlots = processGroupAvailability({
-			date: currentDate,
+			date: currentLoopDate,
 			users: uniqueUsers,
 			timeslots,
 			duration: undefined,
@@ -77,7 +89,6 @@ export async function GroupAvailabilityPage({
 	duration,
 	startTime,
 	endTime,
-	selectedMonth = date,
 }: GroupAvailabilityPageProps) {
 	'use cache'
 
@@ -103,7 +114,7 @@ export async function GroupAvailabilityPage({
 				user: true,
 			},
 		}),
-		getMonthlyAvailability(groupId, selectedMonth),
+		getMonthlyAvailability(groupId),
 	])
 
 	const uniqueUsers = uniqueBy(
