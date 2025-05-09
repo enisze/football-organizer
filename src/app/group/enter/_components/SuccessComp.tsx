@@ -158,7 +158,7 @@ export const SuccessComp = ({
 
 			{groupName && (
 				<div className='flex flex-col items-center gap-4 p-4 bg-white/5 rounded-lg border border-white/10'>
-					<div className='flex items-center gap-2 text-emerald-400'>
+					<div className='flex items-center gap-2 text-emerald-400 font-bold'>
 						<CheckCircleIcon className='h-5 w-5' />
 						<span>Du bist Gruppe {groupName} beigetreten</span>
 					</div>

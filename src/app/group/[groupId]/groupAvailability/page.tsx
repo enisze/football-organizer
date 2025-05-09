@@ -43,6 +43,10 @@ export default async function GroupAvailabilityRoute({
 		? new Date(parsedSearchParams.date)
 		: new Date()
 
+	const selectedMonth = parsedSearchParams?.selectedMonth
+		? new Date(parsedSearchParams.selectedMonth)
+		: parsedDate
+
 	return (
 		<div className='flex flex-col pb-2'>
 			<Suspense>
@@ -53,6 +57,7 @@ export default async function GroupAvailabilityRoute({
 					date={parsedDate}
 					startTime={parsedSearchParams?.startTime}
 					endTime={parsedSearchParams?.endTime}
+					selectedMonth={selectedMonth}
 				/>
 			</Suspense>
 		</div>

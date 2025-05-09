@@ -1,17 +1,11 @@
 'use client'
 
-import { cn } from '@/lib/utils/cn'
 import { EventDialog } from '@/src/app/settings/groups/[groupId]/EventDialog'
 import { DrawerSlotDetails } from '@/src/components/DrawerSlotDetails'
-import { Button } from '@/ui/button'
 import { Calendar } from '@/ui/calendar'
 import { CardTitle } from '@/ui/card'
 import { Label } from '@/ui/label'
-import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover'
 import { Tabs, TabsList, TabsTrigger } from '@/ui/tabs'
-import { format } from 'date-fns'
-import { de } from 'date-fns/locale'
-import { CalendarIcon } from 'lucide-react'
 import { useQueryState } from 'nuqs'
 import { useCallback, useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
@@ -32,14 +26,19 @@ interface GroupAvailabilityViewProps {
 	date: Date
 	processedSlots: ProcessedTimeSlot[]
 	groupId: string
+	monthlyAvailability: Map<number, number>
 }
 
 export function GroupAvailabilityView({
 	date: initialDate,
 	processedSlots,
 	groupId,
+	monthlyAvailability,
 }: GroupAvailabilityViewProps) {
 	const [date, setDate] = useQueryState('date', {
+		shallow: true,
+	})
+	const [selectedMonth, setSelectedMonth] = useQueryState('selectedMonth', {
 		shallow: true,
 	})
 	const [duration, setDuration] = useQueryState('duration', {
@@ -65,7 +64,6 @@ export function GroupAvailabilityView({
 		defaultValue: '22:00',
 		shallow: true,
 	})
-	const [calendarOpen, setCalendarOpen] = useState(false)
 	const [selectedSlot, setSelectedSlot] = useState<ProcessedTimeSlot | null>(
 		null,
 	)
@@ -78,6 +76,7 @@ export function GroupAvailabilityView({
 			date: date,
 			duration,
 			minUsers: minUsers,
+			selectedMonth: selectedMonth,
 		})
 	}, 300)
 
@@ -86,13 +85,22 @@ export function GroupAvailabilityView({
 			if (!newDate) return
 			const utcDate = getUTCDate(newDate)
 			setDate(utcDate.toISOString())
-			setCalendarOpen(false)
+			setSelectedMonth(utcDate.toISOString())
 			refresh()
 		},
-		[setDate, refresh],
+		[setDate, setSelectedMonth, refresh],
+	)
+
+	const handleMonthChange = useCallback(
+		async (newDate: Date) => {
+			setSelectedMonth(newDate.toISOString())
+			refresh()
+		},
+		[setSelectedMonth, refresh],
 	)
 
 	const currentDate = date ? new Date(date) : initialDate
+	const currentMonth = selectedMonth ? new Date(selectedMonth) : currentDate
 
 	return (
 		<div className='container p-0 mx-auto space-y-2 pt-2 pb-16 px-4'>
@@ -107,34 +115,47 @@ export function GroupAvailabilityView({
 			<div className='grid gap-2'>
 				<div>
 					<h3 className='text-base md:text-lg font-semibold mb-2'>Datum</h3>
-					<Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-						<PopoverTrigger asChild>
-							<Button
-								variant='outline'
-								className={cn(
-									'w-full justify-start text-left font-normal text-sm md:text-base hover:bg-slate-700',
-									!date && 'text-muted-foreground',
-								)}
-							>
-								<CalendarIcon className='mr-2 h-4 w-4 md:h-5 md:w-5' />
-								{date ? (
-									format(date, 'PPP', { locale: de })
-								) : (
-									<span>Datum auswählen</span>
-								)}
-							</Button>
-						</PopoverTrigger>
-						<PopoverContent className='w-auto p-0'>
-							<Calendar
-								id='date-picker'
-								mode='single'
-								selected={currentDate}
-								onSelect={handleDateChange}
-								className='mx-auto'
-								weekStartsOn={1}
-							/>
-						</PopoverContent>
-					</Popover>
+
+					<div className='bg-white/5 rounded-xl p-4'>
+						<Calendar
+							id='date-picker'
+							mode='single'
+							selected={currentDate}
+							onSelect={handleDateChange}
+							className='mx-auto'
+							weekStartsOn={1}
+							month={currentMonth}
+							onMonthChange={handleMonthChange}
+							modifiers={{
+								below50: (date: Date) => {
+									const userCount = monthlyAvailability.get(date.getDate())
+									if (!userCount) return false
+									const percentage = (userCount / maxUsers) * 100
+									return percentage < 50
+								},
+								below75: (date: Date) => {
+									const userCount = monthlyAvailability.get(date.getDate())
+									if (!userCount) return false
+									const percentage = (userCount / maxUsers) * 100
+									return percentage >= 50 && percentage < 90
+								},
+								hundred: (date: Date) => {
+									const userCount = monthlyAvailability.get(date.getDate())
+									if (!userCount) return false
+									const percentage = (userCount / maxUsers) * 100
+									return percentage >= 90
+								},
+							}}
+							modifiersClassNames={{
+								below50:
+									'relative after:content-[""] after:absolute after:bottom-[2px] after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-red-500',
+								below75:
+									'relative after:content-[""] after:absolute after:bottom-[2px] after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-yellow-500',
+								hundred:
+									'relative after:content-[""] after:absolute after:bottom-[2px] after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-green-500',
+							}}
+						/>
+					</div>
 				</div>
 
 				<div className='space-y-2'>

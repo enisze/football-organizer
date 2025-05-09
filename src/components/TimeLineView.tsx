@@ -74,7 +74,7 @@ export function TimelineView({
 			color =
 				percentage < 50
 					? 'bg-red-400 hover:bg-red-400'
-					: percentage < 75
+					: percentage < 90
 						? 'bg-orange-400 hover:bg-orange-400'
 						: 'bg-green-300 hover:bg-green-300'
 		}
