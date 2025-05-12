@@ -6,16 +6,21 @@ import { DrawerSlotDetails } from '@/src/components/DrawerSlotDetails'
 import { Calendar } from '@/ui/calendar'
 import { Label } from '@/ui/label'
 import { Tabs, TabsList, TabsTrigger } from '@/ui/tabs'
+import { useAction } from 'next-safe-action/hooks'
 import { useQueryState } from 'nuqs'
 import { useCallback, useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 import { UserCountInput } from '../../../../../components/ui/UserCountInput'
-import { revalidateGroupAction, revalidateTagAction } from '../../actions'
+import {
+	revalidateTagNextAction,
+	revalidategroupNextAction,
+} from '../../actions'
 import type {
 	ProcessedTimeSlot,
 	TimeSlotDuration,
 } from '../processAvailability'
 import { getUTCDate } from '../utils/getUTCDate'
+import { TimeLineLoading } from './TimeLineLoading'
 import { TimelineView } from './TimeLineView'
 import { TimeRangePicker } from './TimeRangePicker'
 
@@ -63,9 +68,17 @@ export function GroupAvailabilityView({
 	)
 	const [showEventDialog, setShowEventDialog] = useState(false)
 
+	const { execute: revalidateT, isPending: isLoadingT } = useAction(
+		revalidateTagNextAction,
+	)
+
+	const { execute: revalidateG, isPending: isLoadingG } = useAction(
+		revalidategroupNextAction,
+	)
+
 	const refresh = useDebouncedCallback(() => {
-		revalidateTagAction({ tagId: 'groupAvailability' })
-		revalidateGroupAction({
+		revalidateT({ tagId: 'groupAvailability' })
+		revalidateG({
 			groupId,
 			date: date,
 			duration,
@@ -258,11 +271,15 @@ export function GroupAvailabilityView({
 				/>
 
 				<div className={cn('pt-2')}>
-					<TimelineView
-						slots={processedSlots}
-						maxUsers={maxUsers}
-						onSlotClick={(slot) => setSelectedSlot(slot as ProcessedTimeSlot)}
-					/>
+					{isLoadingG || isLoadingT ? (
+						<TimeLineLoading />
+					) : (
+						<TimelineView
+							slots={processedSlots}
+							maxUsers={maxUsers}
+							onSlotClick={(slot) => setSelectedSlot(slot as ProcessedTimeSlot)}
+						/>
+					)}
 				</div>
 			</div>
 		</div>

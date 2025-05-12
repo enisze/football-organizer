@@ -4,6 +4,7 @@ import { routes } from '@/src/shared/navigation'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import { GroupAvailabilityPage } from '../availability/components/GroupAvailabilityPage'
+import { GroupLoading } from './GroupLoading'
 
 interface PageProps {
 	params: Promise<unknown>
@@ -45,7 +46,7 @@ export default async function GroupAvailabilityRoute({
 
 	return (
 		<div className='flex flex-col pb-2'>
-			<Suspense>
+			<Suspense fallback={<GroupLoading />}>
 				<GroupAvailabilityPage
 					groupId={groupId}
 					duration={parsedSearchParams?.duration}

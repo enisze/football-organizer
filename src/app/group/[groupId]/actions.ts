@@ -114,6 +114,29 @@ export const revalidateGroupAction = async ({
 	)
 }
 
+export const revalidategroupNextAction = authedActionClient
+	.schema(
+		z.object({
+			groupId: z.string(),
+			date: z.string().nullable(),
+			duration: z.enum(['60min', '90min', '120min']).nullable(),
+			minUsers: z.number().optional(),
+		}),
+	)
+	.action(async ({ parsedInput: { groupId, date, duration, minUsers } }) => {
+		revalidateGroupAction({ groupId, date, duration, minUsers })
+	})
+
+export const revalidateTagNextAction = authedActionClient
+	.schema(
+		z.object({
+			tagId: z.string(),
+		}),
+	)
+	.action(async ({ parsedInput: { tagId } }) => {
+		revalidateTag(tagId)
+	})
+
 export const revalidateTagAction = async ({
 	tagId,
 }: {
