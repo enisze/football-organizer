@@ -3,41 +3,33 @@
 import { cn } from '@/lib/utils/cn'
 import { EventDialog } from '@/src/app/settings/groups/[groupId]/EventDialog'
 import { DrawerSlotDetails } from '@/src/components/DrawerSlotDetails'
-import { Calendar } from '@/ui/calendar'
 import { Label } from '@/ui/label'
 import { Tabs, TabsList, TabsTrigger } from '@/ui/tabs'
+import { atom, useAtomValue } from 'jotai'
 import { useAction } from 'next-safe-action/hooks'
 import { useQueryState } from 'nuqs'
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 import { UserCountInput } from '../../../../../components/ui/UserCountInput'
-import {
-	revalidateTagNextAction,
-	revalidategroupNextAction,
-} from '../../actions'
+import { revalidateTagNextAction } from '../../actions'
 import type {
 	ProcessedTimeSlot,
 	TimeSlotDuration,
 } from '../processAvailability'
-import { getUTCDate } from '../utils/getUTCDate'
 import { TimeLineLoading } from './TimeLineLoading'
 import { TimelineView } from './TimeLineView'
 import { TimeRangePicker } from './TimeRangePicker'
 
 interface GroupAvailabilityViewProps {
-	date: Date
 	processedSlots: ProcessedTimeSlot[]
-	groupId: string
-	monthlyAvailability: Map<number, number>
 }
 
+export const loadingAvailabilityAtom = atom(false)
+
 export function GroupAvailabilityView({
-	date: initialDate,
 	processedSlots,
-	groupId,
-	monthlyAvailability,
 }: GroupAvailabilityViewProps) {
-	const [date, setDate] = useQueryState('date', {
+	const [date] = useQueryState('date', {
 		shallow: true,
 	})
 	const [duration, setDuration] = useQueryState('duration', {
@@ -68,85 +60,31 @@ export function GroupAvailabilityView({
 	)
 	const [showEventDialog, setShowEventDialog] = useState(false)
 
+	const loadingAvailability = useAtomValue(loadingAvailabilityAtom)
+
 	const { execute: revalidateT, isPending: isLoadingT } = useAction(
 		revalidateTagNextAction,
 	)
 
-	const { execute: revalidateG, isPending: isLoadingG } = useAction(
-		revalidategroupNextAction,
-	)
-
 	const refresh = useDebouncedCallback(() => {
 		revalidateT({ tagId: 'groupAvailability' })
-		revalidateG({
-			groupId,
-			date: date,
-			duration,
-			minUsers: minUsers,
-		})
 	}, 300)
 
-	const handleDateChange = useCallback(
-		async (newDate: Date | undefined) => {
-			if (!newDate) return
-
-			const utcDate = getUTCDate(newDate)
-			setDate(utcDate.toISOString())
-			refresh()
-		},
-		[setDate, refresh],
-	)
-
-	const currentDate = date ? new Date(date) : initialDate
+	const currentDate = date ? new Date(date) : undefined
 
 	return (
-		<div className='container p-0 mx-auto space-y-2 pt-2 pb-16 px-4'>
-			<h2 className='text-lg font-bold'>Gruppenslots</h2>
+		<>
 			<div className='grid gap-2'>
-				<div>
-					<div className='bg-white/5 rounded-xl p-4'>
-						<Calendar
-							id='date-picker'
-							mode='single'
-							selected={currentDate}
-							onSelect={handleDateChange}
-							className='mx-auto'
-							weekStartsOn={1}
-							disabled={(date) =>
-								date < new Date(new Date().setHours(0, 0, 0, 0))
-							}
-							modifiers={{
-								below50: (date: Date) => {
-									const userCount = monthlyAvailability.get(date.getDate())
-									if (!userCount) return false
-									const percentage = (userCount / maxUsers) * 100
-									return percentage < 50
-								},
-								below75: (date: Date) => {
-									const userCount = monthlyAvailability.get(date.getDate())
-									if (!userCount) return false
-									const percentage = (userCount / maxUsers) * 100
-									return percentage >= 50 && percentage < 90
-								},
-								hundred: (date: Date) => {
-									const userCount = monthlyAvailability.get(date.getDate())
-									if (!userCount) return false
-									const percentage = (userCount / maxUsers) * 100
-									return percentage >= 90
-								},
-							}}
-							modifiersClassNames={{
-								below50:
-									'relative after:content-[""] after:absolute after:bottom-[2px] after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-red-500',
-								below75:
-									'relative after:content-[""] after:absolute after:bottom-[2px] after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-yellow-500',
-								hundred:
-									'relative after:content-[""] after:absolute after:bottom-[2px] after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-green-500',
-							}}
-						/>
-					</div>
-				</div>
-
+				<h3 className='font-bold'>
+					{date
+						? new Date(date).toLocaleDateString('de', {
+								weekday: 'long',
+								year: 'numeric',
+								month: 'long',
+								day: 'numeric',
+							})
+						: ''}
+				</h3>
 				<div className='space-y-2'>
 					<h3 className='font-bold'>Teilnehmer</h3>
 					<div className='grid gap-4 grid-cols-2'>
@@ -247,7 +185,7 @@ export function GroupAvailabilityView({
 					onOpenChange={() => setSelectedSlot(null)}
 					startTime={selectedSlot?.startTime ?? ''}
 					endTime={selectedSlot?.endTime ?? ''}
-					date={currentDate}
+					date={currentDate ?? new Date()}
 					availableUsers={selectedSlot?.availableUsers ?? []}
 					maxUsers={maxUsers}
 					onCreateEvent={() => {
@@ -271,7 +209,7 @@ export function GroupAvailabilityView({
 				/>
 
 				<div className={cn('pt-2')}>
-					{isLoadingG || isLoadingT ? (
+					{isLoadingT || loadingAvailability ? (
 						<TimeLineLoading />
 					) : (
 						<TimelineView
@@ -282,6 +220,6 @@ export function GroupAvailabilityView({
 					)}
 				</div>
 			</div>
-		</div>
+		</>
 	)
 }

@@ -57,6 +57,7 @@ export const { routes, useSafeParams, useSafeSearchParams } =
 					date: z.string().optional(),
 					startTime: z.string().optional(),
 					endTime: z.string().optional(),
+					month: z.coerce.number().optional(),
 				})
 				.optional(),
 		}),

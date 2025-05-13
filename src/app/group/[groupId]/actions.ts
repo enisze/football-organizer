@@ -95,16 +95,19 @@ export const revalidateGroupAction = async ({
 	date,
 	duration,
 	minUsers,
+	maxUsers,
 }: {
 	groupId: string
 	date?: string | null
 	duration?: '60min' | '90min' | '120min' | null
 	minUsers?: number
+	maxUsers?: number
 }) => {
 	const search: Record<string, string | number> = {}
 	if (!isNullish(date)) search.date = date
 	if (!isNullish(duration)) search.duration = duration
 	if (!isNullish(minUsers)) search.minUsers = minUsers
+	if (!isNullish(maxUsers)) search.maxUsers = maxUsers
 
 	revalidatePath(
 		routes.groupDetails({
@@ -113,19 +116,6 @@ export const revalidateGroupAction = async ({
 		}),
 	)
 }
-
-export const revalidategroupNextAction = authedActionClient
-	.schema(
-		z.object({
-			groupId: z.string(),
-			date: z.string().nullable(),
-			duration: z.enum(['60min', '90min', '120min']).nullable(),
-			minUsers: z.number().optional(),
-		}),
-	)
-	.action(async ({ parsedInput: { groupId, date, duration, minUsers } }) => {
-		revalidateGroupAction({ groupId, date, duration, minUsers })
-	})
 
 export const revalidateTagNextAction = authedActionClient
 	.schema(

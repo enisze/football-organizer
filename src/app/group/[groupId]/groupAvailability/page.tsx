@@ -3,6 +3,7 @@ import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
+import { GroupAvailabilityMonthly } from '../availability/components/GroupAvailabilityMonthly'
 import { GroupAvailabilityPage } from '../availability/components/GroupAvailabilityPage'
 import { GroupLoading } from './GroupLoading'
 
@@ -46,16 +47,28 @@ export default async function GroupAvailabilityRoute({
 
 	return (
 		<div className='flex flex-col pb-2'>
-			<Suspense fallback={<GroupLoading />}>
-				<GroupAvailabilityPage
-					groupId={groupId}
-					duration={parsedSearchParams?.duration}
-					minUsers={parsedMinUsers}
-					date={parsedDate}
-					startTime={parsedSearchParams?.startTime}
-					endTime={parsedSearchParams?.endTime}
-				/>
-			</Suspense>
+			<div className='container p-0 mx-auto space-y-2 pt-2 pb-16 px-4'>
+				<h2 className='text-lg font-bold'>Gruppenslots</h2>
+				<div className='grid gap-2'>
+					<Suspense fallback={<GroupLoading />}>
+						<GroupAvailabilityMonthly
+							groupId={groupId}
+							month={parsedSearchParams?.month}
+						/>
+					</Suspense>
+
+					<Suspense fallback={<GroupLoading />}>
+						<GroupAvailabilityPage
+							groupId={groupId}
+							duration={parsedSearchParams?.duration}
+							minUsers={parsedMinUsers}
+							date={parsedDate}
+							startTime={parsedSearchParams?.startTime}
+							endTime={parsedSearchParams?.endTime}
+						/>
+					</Suspense>
+				</div>
+			</div>
 		</div>
 	)
 }

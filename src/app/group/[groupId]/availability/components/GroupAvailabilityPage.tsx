@@ -1,6 +1,5 @@
 import { GroupAvailabilityView } from '@/src/app/group/[groupId]/availability/components/GroupAvailability'
 import { prisma } from '@/src/server/db/client'
-import { endOfMonth, startOfMonth } from 'date-fns'
 import { cacheTag } from 'next/dist/server/use-cache/cache-tag'
 import { uniqueBy } from 'remeda'
 import { processGroupAvailability } from '../processAvailability'
@@ -13,73 +12,6 @@ interface GroupAvailabilityPageProps {
 	duration: '60min' | '90min' | '120min' | undefined
 	startTime?: string
 	endTime?: string
-}
-
-async function getMonthlyAvailability(groupId: string) {
-	const monthDate = new Date()
-
-	const start = startOfMonth(monthDate)
-	const end = endOfMonth(monthDate)
-	const currentDate = new Date()
-	currentDate.setHours(0, 0, 0, 0)
-
-	const timeslots = await prisma.timeSlot.findMany({
-		where: {
-			OR: [
-				{
-					type: 'DATE_SPECIFIC',
-					date: {
-						gte: getUTCDate(start),
-						lte: getUTCDate(end),
-					},
-				},
-				{ type: 'DAY_SPECIFIC' },
-			],
-			groups: {
-				some: {
-					id: groupId,
-				},
-			},
-		},
-		include: {
-			user: true,
-		},
-	})
-
-	const uniqueUsers = uniqueBy(
-		timeslots.map((slot) => slot.user),
-		(user) => user.id,
-	)
-
-	const daysInMonth = new Map<number, number>()
-
-	for (let day = start.getDate(); day <= end.getDate(); day++) {
-		const currentLoopDate = new Date(
-			monthDate.getFullYear(),
-			monthDate.getMonth(),
-			day,
-		)
-
-		if (currentLoopDate < currentDate) {
-			continue
-		}
-
-		const daySlots = processGroupAvailability({
-			date: currentLoopDate,
-			users: uniqueUsers,
-			timeslots,
-			duration: undefined,
-		})
-
-		if (daySlots.length > 0) {
-			const maxUsers = Math.max(
-				...daySlots.map((slot) => slot.availableUsers.length),
-			)
-			daysInMonth.set(day, maxUsers)
-		}
-	}
-
-	return daysInMonth
 }
 
 export async function GroupAvailabilityPage({
@@ -97,7 +29,7 @@ export async function GroupAvailabilityPage({
 	const utcDate = getUTCDate(date)
 	const localDayOfWeek = date.getDay()
 
-	const [timeslots, monthlyAvailability] = await Promise.all([
+	const [timeslots] = await Promise.all([
 		prisma.timeSlot.findMany({
 			where: {
 				OR: [
@@ -114,7 +46,6 @@ export async function GroupAvailabilityPage({
 				user: true,
 			},
 		}),
-		getMonthlyAvailability(groupId),
 	])
 
 	const uniqueUsers = uniqueBy(
@@ -147,12 +78,9 @@ export async function GroupAvailabilityPage({
 
 	return (
 		<div className='mb-3 animate-in fade-in duration-500'>
-			<GroupAvailabilityView
-				date={date}
-				processedSlots={filteredSlots}
-				groupId={groupId}
-				monthlyAvailability={monthlyAvailability}
-			/>
+			<div className='container p-0 mx-auto space-y-2 pt-2 pb-16 px-4'>
+				<GroupAvailabilityView processedSlots={filteredSlots} />
+			</div>
 		</div>
 	)
 }
