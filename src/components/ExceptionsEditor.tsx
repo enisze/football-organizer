@@ -1,7 +1,5 @@
-import {
-	copyTimeSlotToAllGroupsAction,
-	updateExceptionSlotsAction,
-} from '@/src/app/group/[groupId]/availability/actions'
+import { updateExceptionSlotsAction } from '@/src/app/group/[groupId]/availability/actions'
+import { getUTCDate } from '@/src/app/group/[groupId]/availability/utils/getUTCDate'
 import { Button } from '@/ui/button'
 import { Calendar } from '@/ui/calendar'
 import { CardDescription, CardTitle } from '@/ui/card'
@@ -10,7 +8,7 @@ import { Label } from '@/ui/label'
 import type { TimeSlot } from '@prisma/client'
 import { Clock, Save } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
-import { useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 interface ExceptionsEditorProps {
 	groupId: string
@@ -29,45 +27,47 @@ export function ExceptionsEditor({
 	const { execute: updateExceptionSlots } = useAction(
 		updateExceptionSlotsAction,
 	)
-	const [currentMonth, setCurrentMonth] = useState(new Date())
 	const [isGlobalSlot, setIsGlobalSlot] = useState(true)
 
-	// Find initial exception dates
-	const exceptionDates = exceptionSlots.map((slot) => slot.date as Date)
+	const exceptionDates = exceptionSlots.map((slot) =>
+		getUTCDate(slot.date as Date),
+	)
 	const [selectedDates, setSelectedDates] = useState<Date[]>(exceptionDates)
-	const { execute: copyToAllGroups } = useAction(copyTimeSlotToAllGroupsAction)
 
 	const handleSelect = (days: Date[] | undefined) => {
 		if (!days) return
-		setSelectedDates(days)
+		// Normalize the selected dates to UTC
+		setSelectedDates(days.map(getUTCDate))
 	}
 
-	const handleSaveChanges = async () => {
+	const handleSaveChanges = useCallback(async () => {
 		const dateOperations: DateOperation[] = []
 
 		// Find dates to add
 		for (const date of selectedDates) {
+			const normalizedDate = getUTCDate(date)
 			if (
 				!exceptionDates.find(
 					(exDate) =>
 						exDate.toISOString().split('T')[0] ===
-						date.toISOString().split('T')[0],
+						normalizedDate.toISOString().split('T')[0],
 				)
 			) {
-				dateOperations.push({ date, operation: 'add' })
+				dateOperations.push({ date: normalizedDate, operation: 'add' })
 			}
 		}
 
 		// Find dates to remove
 		for (const date of exceptionDates) {
+			const normalizedDate = getUTCDate(date)
 			if (
 				!selectedDates.find(
 					(selDate) =>
-						selDate.toISOString().split('T')[0] ===
-						date.toISOString().split('T')[0],
+						getUTCDate(selDate).toISOString().split('T')[0] ===
+						normalizedDate.toISOString().split('T')[0],
 				)
 			) {
-				dateOperations.push({ date, operation: 'remove' })
+				dateOperations.push({ date: normalizedDate, operation: 'remove' })
 			}
 		}
 
@@ -78,38 +78,34 @@ export function ExceptionsEditor({
 				areGlobalExceptions: isGlobalSlot,
 			})
 		}
-	}
+	}, [
+		exceptionDates,
+		groupId,
+		isGlobalSlot,
+		selectedDates,
+		updateExceptionSlots,
+	])
 
-	const handleCopyToAllGroups = async () => {
-		for (const date of selectedDates) {
-			const slot = exceptionSlots.find(
-				(slot) =>
-					slot.date?.toISOString().split('T')[0] ===
-					date.toISOString().split('T')[0],
-			)
-			if (slot?.id) {
-				copyToAllGroups({ timeSlotId: slot.id })
-			}
-		}
-	}
-
-	const hasChanges =
-		selectedDates.length !== exceptionDates.length ||
-		selectedDates.some(
-			(date) =>
-				!exceptionDates.find(
-					(exDate) =>
-						exDate.toISOString().split('T')[0] ===
-						date.toISOString().split('T')[0],
-				),
-		)
+	const hasChanges = useMemo(
+		() =>
+			selectedDates.length !== exceptionDates.length ||
+			selectedDates.some(
+				(date) =>
+					!exceptionDates.find(
+						(exDate) =>
+							getUTCDate(exDate).toISOString().split('T')[0] ===
+							getUTCDate(date).toISOString().split('T')[0],
+					),
+			),
+		[exceptionDates, selectedDates],
+	)
 
 	const newExceptionsCount = selectedDates.filter(
 		(date) =>
 			!exceptionDates.find(
 				(exDate) =>
-					exDate.toISOString().split('T')[0] ===
-					date.toISOString().split('T')[0],
+					getUTCDate(exDate).toISOString().split('T')[0] ===
+					getUTCDate(date).toISOString().split('T')[0],
 			),
 	).length
 
@@ -117,14 +113,12 @@ export function ExceptionsEditor({
 		(date) =>
 			!selectedDates.find(
 				(selDate) =>
-					selDate.toISOString().split('T')[0] ===
-					date.toISOString().split('T')[0],
+					getUTCDate(selDate).toISOString().split('T')[0] ===
+					getUTCDate(date).toISOString().split('T')[0],
 			),
 	)
 
 	const removedExceptionsCount = deselectedDates.length
-
-	const hasExistingSlots = selectedDates.length > 0
 
 	return (
 		<div className='flex flex-col gap-2 px-4'>
@@ -140,8 +134,6 @@ export function ExceptionsEditor({
 					mode='multiple'
 					selected={selectedDates}
 					onSelect={handleSelect}
-					defaultMonth={currentMonth}
-					onMonthChange={setCurrentMonth}
 					weekStartsOn={1}
 					disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
 					modifiersStyles={{
