@@ -14,7 +14,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/ui/card'
-import { ThemeToggleArea } from '@/ui/theme-toggle'
 import { User } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
@@ -64,7 +63,7 @@ export default async function MainPage({ params }: PageProps) {
 				</div>
 
 				<div className='grid gap-4'>
-					<Card className='bg-white/5 backdrop-blur-sm border-white/10'>
+					{/* <Card className='bg-white/5 backdrop-blur-sm border-white/10'>
 						<CardHeader>
 							<div className='flex items-center justify-between'>
 								<div className='space-y-1'>
@@ -78,7 +77,7 @@ export default async function MainPage({ params }: PageProps) {
 							</div>
 							<ThemeToggleArea />
 						</CardHeader>
-					</Card>
+					</Card> */}
 
 					<Card className='bg-white/5 backdrop-blur-sm border-white/10'>
 						<CardHeader>
