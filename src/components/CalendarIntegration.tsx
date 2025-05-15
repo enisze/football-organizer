@@ -20,7 +20,7 @@ import {
 } from '@/ui/select'
 import { Separator } from '@/ui/separator'
 import { toast } from '@/ui/use-toast'
-import { differenceInHours, format } from 'date-fns'
+import { format } from 'date-fns'
 import { de } from 'date-fns/locale'
 import { CalendarClock, CalendarPlus, Check, X } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
@@ -36,7 +36,6 @@ interface CalendarIntegrationProps {
 	isOwner?: boolean
 	token?: string | null
 	tokenExpiry?: string | null
-	refreshToken?: string | null
 }
 
 type TimeRange = 'week' | 'month' | 'halfYear' | 'year'
@@ -47,7 +46,6 @@ export function CalendarIntegration({
 	isOwner = false,
 	token,
 	tokenExpiry,
-	refreshToken,
 }: CalendarIntegrationProps) {
 	const [timeRange, setTimeRange] = useState<TimeRange>('week')
 	const [eventType, setEventType] = useState<EventType>('all')
@@ -107,7 +105,6 @@ export function CalendarIntegration({
 
 	const handlePreview = () => {
 		executePreview({
-			groupId,
 			timeRange,
 			eventType,
 		})
@@ -130,9 +127,6 @@ export function CalendarIntegration({
 
 	const isTokenValid =
 		token && tokenExpiry && new Date(tokenExpiry) > new Date()
-	const daysUntilExpiry = tokenExpiry
-		? Math.ceil(differenceInHours(new Date(tokenExpiry), new Date()) / 24)
-		: 0
 
 	return (
 		<div className={cn('space-y-4', isOwner && 'px-4')}>
@@ -150,11 +144,6 @@ export function CalendarIntegration({
 						<h3 className='text-lg font-semibold text-white'>
 							Google Kalender Verbindung
 						</h3>
-						<p className='text-sm text-white/70'>
-							{isTokenValid
-								? `Token gültig für ${daysUntilExpiry} weitere Tage`
-								: 'Nicht verbunden'}
-						</p>
 					</div>
 					<div className='rounded-full bg-white/10 p-2'>
 						{isTokenValid ? (

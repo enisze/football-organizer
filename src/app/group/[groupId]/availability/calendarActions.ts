@@ -26,7 +26,6 @@ export type CalendarPreviewResult = {
 export const previewCalendarDataAction = authedActionClient
 	.schema(
 		z.object({
-			groupId: z.string(),
 			timeRange: z.enum(['week', 'month', 'halfYear', 'year']),
 			eventType: z.enum(['all', 'fullday', 'timed']).optional(),
 		}),
@@ -36,7 +35,15 @@ export const previewCalendarDataAction = authedActionClient
 			parsedInput,
 			ctx: { userId },
 		}): Promise<CalendarPreviewResult> => {
-			const { groupId, timeRange, eventType = 'all' } = parsedInput
+			const { timeRange, eventType = 'all' } = parsedInput
+
+			// Get all day-specific slots for the user first
+			const daySpecificSlots = await prisma.timeSlot.findMany({
+				where: {
+					userId,
+					type: 'DAY_SPECIFIC',
+				},
+			})
 
 			const token = await prisma.tokens.findFirst({
 				where: {
@@ -107,26 +114,56 @@ export const previewCalendarDataAction = authedActionClient
 					)
 					const endDate = new Date(event.end.dateTime || event.end.date || '')
 
-					if (isAllDay) {
+					// Find matching day-specific slot for this event's day
+					const dayOfWeek = startDate.getDay()
+					const matchingDaySlot = daySpecificSlots.find(
+						(slot) => slot.day === dayOfWeek,
+					)
+
+					// For time-specific events, check if they fall within the day slot's time range
+					if (!isAllDay) {
+						// If there's no day slot for this day, skip the event
+						if (!matchingDaySlot) continue
+						const eventStartTime = format(startDate, 'HH:mm', { locale: de })
+						const eventEndTime = format(endDate, 'HH:mm', { locale: de })
+						const eventStartDate = parse(eventStartTime, 'HH:mm', new Date())
+						const eventEndDate = parse(eventEndTime, 'HH:mm', new Date())
+						const slotStartDate = parse(
+							matchingDaySlot.startTime,
+							'HH:mm',
+							new Date(),
+						)
+						const slotEndDate = parse(
+							matchingDaySlot.endTime,
+							'HH:mm',
+							new Date(),
+						)
+
+						// Skip if event is outside of the day slot's time range
+						if (
+							isBefore(eventEndDate, slotStartDate) ||
+							isAfter(eventStartDate, slotEndDate)
+						) {
+							continue
+						}
+
+						previewSlots.push({
+							id: event.id || Math.random().toString(),
+							startTime: eventStartTime,
+							endTime: eventEndTime,
+							date: startDate,
+							isAllDay: false,
+							summary: event.summary || undefined,
+							selected: true,
+						})
+					} else {
+						// For all-day events, we still include them if there's a day slot
 						previewSlots.push({
 							id: event.id || Math.random().toString(),
 							startTime: '00:00',
 							endTime: '23:59',
 							date: startDate,
 							isAllDay: true,
-							summary: event.summary || undefined,
-							selected: true,
-						})
-					} else {
-						const startTime = format(startDate, 'HH:mm', { locale: de })
-						const endTime = format(endDate, 'HH:mm', { locale: de })
-
-						previewSlots.push({
-							id: event.id || Math.random().toString(),
-							startTime,
-							endTime,
-							date: startDate,
-							isAllDay: false,
 							summary: event.summary || undefined,
 							selected: true,
 						})

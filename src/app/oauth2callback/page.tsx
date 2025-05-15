@@ -3,6 +3,7 @@ import { prisma } from '@/src/server/db/client'
 import { SCOPES, oAuth2Client } from '@/src/server/google'
 import { routes } from '@/src/shared/navigation'
 import { OrganizerLink } from '@/ui/OrganizerLink'
+import { buttonVariants } from '@/ui/button'
 import { TokenType } from '@prisma/client'
 import { redirect } from 'next/navigation'
 
@@ -30,6 +31,8 @@ const OAuthCallbackPage = async ({ searchParams }: PageProps) => {
 	if (!expiry_date || !refresh_token || !access_token) {
 		throw new Error('Missing required token information')
 	}
+
+	console.log(tokens)
 
 	const tokenType = SCOPES.calendar.includes(scope)
 		? TokenType.calendar
@@ -70,7 +73,7 @@ const OAuthCallbackPage = async ({ searchParams }: PageProps) => {
 				</p>
 				<OrganizerLink
 					href={routes.home()}
-					className='inline-block mt-4 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90'
+					className={buttonVariants({ variant: 'outline' })}
 				>
 					Zurück zur Hauptseite
 				</OrganizerLink>

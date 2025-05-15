@@ -1,7 +1,12 @@
+'use client'
+
 import { cn } from '@/lib/utils/cn'
-import { buttonVariants } from '@/ui/button'
+import { refreshGoogleTokenAction } from '@/src/app/group/[groupId]/availability/googleActions'
+import { Button } from '@/ui/button'
+import { toast } from '@/ui/use-toast'
 import { CalendarDays, Mail } from 'lucide-react'
-import { SCOPES, oAuth2Client } from '../server/google'
+import { useAction } from 'next-safe-action/hooks'
+import { useRouter } from 'next/navigation'
 
 interface ConnectButtonProps {
 	type: 'calendar' | 'email'
@@ -9,22 +14,43 @@ interface ConnectButtonProps {
 }
 
 export function ConnectButton({ type, className }: ConnectButtonProps) {
-	const link = oAuth2Client.generateAuthUrl({
-		access_type: 'offline',
-		scope: SCOPES[type],
-		prompt: 'consent',
-		redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/oauth2callback`,
-	})
+	const router = useRouter()
+
+	const { execute: executeRefresh, status } = useAction(
+		refreshGoogleTokenAction,
+		{
+			onSuccess: ({ data }) => {
+				if (data?.redirect) {
+					router.push(data.redirect)
+				} else if (data?.success) {
+					toast({
+						title: 'Verbindung erfolgreich',
+						description: `Die Verbindung mit Google ${type === 'calendar' ? 'Kalender' : 'Mail'} wurde erfolgreich hergestellt.`,
+					})
+				}
+			},
+			onError: () => {
+				toast({
+					title: 'Fehler bei der Verbindung',
+					description: 'Bitte versuche es später erneut.',
+					variant: 'destructive',
+				})
+			},
+		},
+	)
+
+	const handleConnect = () => {
+		executeRefresh({
+			type,
+		})
+	}
 
 	return (
-		<a
-			className={cn(
-				buttonVariants({
-					variant: 'outline',
-				}),
-				'flex items-center gap-2',
-			)}
-			href={link}
+		<Button
+			variant='outline'
+			className={cn('flex items-center gap-2 w-full', className)}
+			onClick={handleConnect}
+			disabled={status === 'executing'}
 		>
 			{type === 'calendar' ? (
 				<>
@@ -37,6 +63,6 @@ export function ConnectButton({ type, className }: ConnectButtonProps) {
 					Mit Gmail verbinden
 				</>
 			)}
-		</a>
+		</Button>
 	)
 }

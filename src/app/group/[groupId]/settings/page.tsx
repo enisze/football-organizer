@@ -129,7 +129,6 @@ export default async function MainPage({ params }: PageProps) {
 								groupId={groupId}
 								isOwner={isOwner}
 								token={token?.access_token}
-								refreshToken={token?.refresh_token}
 								tokenExpiry={token?.expiry_date.toISOString()}
 							/>
 						</CardContent>
