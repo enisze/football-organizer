@@ -3,10 +3,21 @@
 import { authedActionClient } from '@/src/lib/actionClient'
 import { prisma } from '@/src/server/db/client'
 import { SCOPES, oAuth2Client } from '@/src/server/google'
+import {
+	addDays,
+	addMonths,
+	addYears,
+	format,
+	isAfter,
+	isBefore,
+	parse,
+} from 'date-fns'
+import { de } from 'date-fns/locale'
 import { google } from 'googleapis'
 import { revalidateTag } from 'next/cache'
 import { z } from 'zod'
 import type { PreviewTimeSlot } from './types'
+import { getUTCDate } from './utils/getUTCDate'
 
 export type CalendarPreviewResult = {
 	slots: PreviewTimeSlot[]
@@ -55,21 +66,18 @@ export const previewCalendarDataAction = authedActionClient
 				// Calculate time range
 				const now = new Date()
 				const timeMin = now.toISOString()
-				const timeMax = new Date()
-				switch (timeRange) {
-					case 'week':
-						timeMax.setDate(now.getDate() + 7)
-						break
-					case 'month':
-						timeMax.setMonth(now.getMonth() + 1)
-						break
-					case 'halfYear':
-						timeMax.setMonth(now.getMonth() + 6)
-						break
-					case 'year':
-						timeMax.setFullYear(now.getFullYear() + 1)
-						break
-				}
+				const timeMax = (() => {
+					switch (timeRange) {
+						case 'week':
+							return addDays(now, 7)
+						case 'month':
+							return addMonths(now, 1)
+						case 'halfYear':
+							return addMonths(now, 6)
+						case 'year':
+							return addYears(now, 1)
+					}
+				})()
 
 				// Get calendar events
 				const calendar = google.calendar({ version: 'v3', auth: oAuth2Client })
@@ -110,16 +118,8 @@ export const previewCalendarDataAction = authedActionClient
 							selected: true,
 						})
 					} else {
-						const startTime = startDate.toLocaleTimeString('de-DE', {
-							hour: '2-digit',
-							minute: '2-digit',
-							hour12: false,
-						})
-						const endTime = endDate.toLocaleTimeString('de-DE', {
-							hour: '2-digit',
-							minute: '2-digit',
-							hour12: false,
-						})
+						const startTime = format(startDate, 'HH:mm', { locale: de })
+						const endTime = format(endDate, 'HH:mm', { locale: de })
 
 						previewSlots.push({
 							id: event.id || Math.random().toString(),
@@ -184,40 +184,62 @@ export const applyCalendarSlotsAction = authedActionClient
 					},
 				})
 			} else {
-				// For time-specific events, create a date-specific slot
-				// Check if there's a day-specific slot for this day of week
-				const existingDaySlot = await prisma.timeSlot.findFirst({
+				// For time-specific events
+				// First check for day-specific slot on this day
+				const daySlot = await prisma.timeSlot.findFirst({
 					where: {
 						userId,
 						type: 'DAY_SPECIFIC',
 						day: slot.date.getDay(),
 						groups: {
-							some: {
-								id: groupId,
-							},
+							some: { id: groupId },
 						},
 					},
 				})
 
-				// Only create a date-specific slot if the event time is smaller than existing day slot
-				if (
-					!existingDaySlot ||
-					slot.startTime > existingDaySlot.startTime ||
-					slot.endTime < existingDaySlot.endTime
-				) {
-					await prisma.timeSlot.create({
-						data: {
-							startTime: slot.startTime,
-							endTime: slot.endTime,
-							type: 'DATE_SPECIFIC',
-							date: slot.date,
-							userId,
-							isException: false,
-							groups: {
-								connect: { id: groupId },
-							},
-						},
-					})
+				if (daySlot) {
+					console.log('Day slot found:', daySlot)
+
+					// Convert all times to Date objects for comparison
+					const eventStart = parse(slot.startTime, 'HH:mm', new Date())
+					const eventEnd = parse(slot.endTime, 'HH:mm', new Date())
+					const daySlotStart = parse(daySlot.startTime, 'HH:mm', new Date())
+					const daySlotEnd = parse(daySlot.endTime, 'HH:mm', new Date())
+
+					// Check if event overlaps with day slot
+					if (
+						!isBefore(eventEnd, daySlotStart) &&
+						!isAfter(eventStart, daySlotEnd)
+					) {
+						if (isAfter(eventStart, daySlotStart)) {
+							await prisma.timeSlot.create({
+								data: {
+									startTime: daySlot.startTime,
+									endTime: slot.startTime,
+									type: 'DATE_SPECIFIC',
+									date: getUTCDate(slot.date),
+									userId,
+									isException: false,
+									groups: { connect: { id: groupId } },
+								},
+							})
+						}
+
+						// If event ends before day slot end, create an "after" slot
+						if (isBefore(eventEnd, daySlotEnd)) {
+							await prisma.timeSlot.create({
+								data: {
+									startTime: slot.endTime,
+									endTime: daySlot.endTime,
+									type: 'DATE_SPECIFIC',
+									date: getUTCDate(slot.date),
+									userId,
+									isException: false,
+									groups: { connect: { id: groupId } },
+								},
+							})
+						}
+					}
 				}
 			}
 		}

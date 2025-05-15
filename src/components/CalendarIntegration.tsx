@@ -20,6 +20,8 @@ import {
 } from '@/ui/select'
 import { Separator } from '@/ui/separator'
 import { toast } from '@/ui/use-toast'
+import { differenceInHours, format } from 'date-fns'
+import { de } from 'date-fns/locale'
 import { CalendarClock, CalendarPlus, Check, X } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
 import { useState } from 'react'
@@ -129,10 +131,7 @@ export function CalendarIntegration({
 	const isTokenValid =
 		token && tokenExpiry && new Date(tokenExpiry) > new Date()
 	const daysUntilExpiry = tokenExpiry
-		? Math.ceil(
-				(new Date(tokenExpiry).getTime() - new Date().getTime()) /
-					(1000 * 3600 * 24),
-			)
+		? Math.ceil(differenceInHours(new Date(tokenExpiry), new Date()) / 24)
 		: 0
 
 	return (
@@ -259,21 +258,39 @@ export function CalendarIntegration({
 													<p className='text-sm font-medium'>
 														{previewSlots.length} Termine gefunden
 													</p>
-													<Button
-														variant='ghost'
-														size='sm'
-														onClick={() =>
-															setPreviewSlots((prev) =>
-																prev.map((slot) => ({
-																	...slot,
-																	selected: true,
-																})),
-															)
-														}
-														className='text-xs'
-													>
-														Alle auswählen
-													</Button>
+													<div>
+														<Button
+															variant='ghost'
+															size='sm'
+															onClick={() =>
+																setPreviewSlots((prev) =>
+																	prev.map((slot) => ({
+																		...slot,
+																		selected: true,
+																	})),
+																)
+															}
+															className='text-xs'
+														>
+															Alle auswählen
+														</Button>
+
+														<Button
+															variant='ghost'
+															size='sm'
+															onClick={() =>
+																setPreviewSlots((prev) =>
+																	prev.map((slot) => ({
+																		...slot,
+																		selected: false,
+																	})),
+																)
+															}
+															className='text-xs'
+														>
+															Alle abwählen
+														</Button>
+													</div>
 												</div>
 												{previewSlots.map((slot) => (
 													<div
@@ -290,9 +307,9 @@ export function CalendarIntegration({
 																{slot.summary || 'Ohne Titel'}
 															</p>
 															<p className='text-xs text-white/70'>
-																{new Date(slot.date).toLocaleDateString(
-																	'de-DE',
-																)}
+																{format(new Date(slot.date), 'PPP', {
+																	locale: de,
+																})}
 																{!slot.isAllDay &&
 																	` • ${slot.startTime} - ${slot.endTime}`}
 																{slot.isAllDay && ' • Ganztägig'}
