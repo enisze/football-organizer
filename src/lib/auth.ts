@@ -23,6 +23,11 @@ export const auth = betterAuth({
 				},
 			},
 		},
+		microsoft: {
+			clientId: process.env.MICROSOFT_CLIENT_ID as string,
+			clientSecret: process.env.MICROSOFT_CLIENT_SECRET as string,
+			tenantId: process.env.MICROSOFT_TENANT_ID as string,
+		},
 		discord: {
 			clientId: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID as string,
 			clientSecret: process.env.DISCORD_CLIENT_SECRET as string,

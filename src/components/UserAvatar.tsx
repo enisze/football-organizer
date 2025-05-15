@@ -1,25 +1,34 @@
-'use client'
 import { Avatar, AvatarFallback } from '@/ui/avatar'
-import { usePathname } from 'next/navigation'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@/ui/dropdown-menu'
+import { redirect } from 'next/navigation'
 import type { FunctionComponent } from 'react'
+import { serverAuth, serverSignOut } from '../server/auth/session'
+import { routes } from '../shared/navigation'
 
 interface UserAvatarProps {
 	name: string | null
 	className?: string
 }
 
-export const UserAvatar: FunctionComponent<UserAvatarProps> = ({
+export const UserAvatar: FunctionComponent<UserAvatarProps> = async ({
 	name,
 	className,
 }) => {
 	const lettersOnly = (name ?? '').replace(/[^A-Za-z\s]/g, '').trim()
 
+	const session = await serverAuth()
+
+	if (!session) {
+		return null
+	}
+
 	let first = 'X'
 	let second = 'X'
-
-	const pathname = usePathname()
-
-	const onDashboard = pathname?.includes('/group/')
 
 	if (lettersOnly) {
 		const words = lettersOnly.split(/\s+/)
@@ -32,11 +41,34 @@ export const UserAvatar: FunctionComponent<UserAvatarProps> = ({
 		}
 	}
 
-	if (!onDashboard) return null
-
 	return (
-		<Avatar className={className}>
-			<AvatarFallback className='bg-white/5'>{first + second}</AvatarFallback>
-		</Avatar>
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Avatar className={className}>
+					<AvatarFallback className='bg-white/5'>
+						{first + second}
+					</AvatarFallback>
+				</Avatar>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align='end'>
+				<DropdownMenuItem asChild>
+					<form>
+						<button
+							formAction={async () => {
+								'use server'
+								const { success } = await serverSignOut()
+
+								if (success) {
+									redirect(routes.signIn())
+								}
+							}}
+							type='submit'
+						>
+							Ausloggen
+						</button>
+					</form>
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	)
 }

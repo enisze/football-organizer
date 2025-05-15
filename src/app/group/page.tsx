@@ -15,6 +15,11 @@ import { LastUsedGroupBadge } from './LastUsedGroupBadge'
 
 const MainPage = async () => {
 	const session = await serverAuth()
+
+	if (!session?.user) {
+		redirect(routes.signIn())
+	}
+
 	const groups = await prisma.group.findMany({
 		where: { users: { some: { id: session?.user?.id } } },
 		select: {

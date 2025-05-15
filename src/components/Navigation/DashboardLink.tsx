@@ -1,11 +1,10 @@
-'use client'
-import { useSession } from '@/src/lib/auth-client'
+import { serverAuth } from '@/src/server/auth/session'
 import { routes } from '@/src/shared/navigation'
 import { buttonVariants } from '@/ui/button'
 import Link from 'next/link'
 
-export const DashboardLink = () => {
-	const { data } = useSession()
+export const DashboardLink = async () => {
+	const data = await serverAuth()
 
 	return (
 		<>

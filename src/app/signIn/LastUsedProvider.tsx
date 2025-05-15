@@ -8,7 +8,7 @@ import { lastUsedProviderAtom } from './ProviderButton'
 export function LastUsedProvider({
 	provider,
 	onClick,
-}: { provider: 'google' | 'discord'; onClick?: () => void }) {
+}: { provider: 'google' | 'discord' | 'microsoft'; onClick?: () => void }) {
 	const [lastUsedProvider, setLastUsedProvider] = useAtom(lastUsedProviderAtom)
 
 	useEffect(() => {

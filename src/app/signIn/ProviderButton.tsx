@@ -6,20 +6,32 @@ import { atomWithStorage } from 'jotai/utils'
 import { Chrome, MessageSquare } from 'lucide-react'
 import { LastUsedProvider } from './LastUsedProvider'
 
+const MicrosoftIcon = () => (
+	<svg viewBox='0 0 24 24' className='w-5 h-5' fill='currentColor'>
+		<title>Microsoft</title>
+		<path d='M11.4 24H0V12.6h11.4V24zM24 24H12.6V12.6H24V24zM11.4 11.4H0V0h11.4v11.4zM24 11.4H12.6V0H24v11.4z' />
+	</svg>
+)
+
 export const lastUsedProviderAtom = atomWithStorage<
-	'google' | 'discord' | null
+	'google' | 'discord' | 'microsoft' | null
 >('lastUsedProvider', null)
 
 export function ProviderButton({
 	provider,
 	action,
 }: {
-	provider: 'google' | 'discord'
+	provider: 'google' | 'discord' | 'microsoft'
 	action: () => Promise<void>
 }) {
 	const [, setLastUsedProvider] = useAtom(lastUsedProviderAtom)
 
-	const Icon = provider === 'google' ? Chrome : MessageSquare
+	const Icon =
+		provider === 'google'
+			? Chrome
+			: provider === 'microsoft'
+				? MicrosoftIcon
+				: MessageSquare
 
 	return (
 		<Button
