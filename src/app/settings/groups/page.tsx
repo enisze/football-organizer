@@ -1,7 +1,6 @@
 import { NewGroup } from '@/src/components/Groups/NewGroup'
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
-import { SCOPES, oAuth2Client } from '@/src/server/google'
 import { routes } from '@/src/shared/navigation'
 import { Badge } from '@/ui/badge'
 import { Button } from '@/ui/button'
@@ -30,13 +29,6 @@ const GroupSettings = async () => {
 			ownerId: userId,
 		},
 		include: { users: true, events: true },
-	})
-
-	const link = oAuth2Client.generateAuthUrl({
-		access_type: 'offline',
-		scope: SCOPES,
-		prompt: 'consent',
-		redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/oauth2callback`,
 	})
 
 	const showNewGroup = (groups?.length ?? 0) < 1 || isAdmin
@@ -139,15 +131,6 @@ const GroupSettings = async () => {
 						</span>
 					</div>
 				</Link>
-
-				<div className='pt-4 border-t border-white/10'>
-					<a
-						href={link}
-						className='text-white/70 hover:text-white transition-colors'
-					>
-						Gmail Token erneuern
-					</a>
-				</div>
 			</div>
 		</div>
 	)
