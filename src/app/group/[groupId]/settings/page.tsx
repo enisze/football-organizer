@@ -1,8 +1,7 @@
 import { ClearLocalStorageButton } from '@/src/app/settings/ClearLocalStorageButton'
 import { HelpButton } from '@/src/app/settings/HelpButton'
 import { SignOutButton } from '@/src/app/settings/SignOutButton'
-import { CalendarIntegration } from '@/src/components/CalendarIntegration'
-import { ConnectButton } from '@/src/components/ConnectButton'
+import { ApiOverview } from '@/src/components/ApiOverview'
 import { GroupSelectorServer } from '@/src/components/Groups/GroupSelectorServer'
 import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
 import { serverAuth } from '@/src/server/auth/session'
@@ -109,30 +108,11 @@ export default async function MainPage({ params }: PageProps) {
 						</CardContent>
 					</Card>
 
-					<Card className='bg-white/5 backdrop-blur-sm border-white/10'>
-						<CardHeader>
-							<div className='flex items-center justify-between'>
-								<div className='space-y-1'>
-									<CardTitle className='text-lg text-white'>
-										Kalender Integration
-									</CardTitle>
-									<CardDescription className='text-white/70'>
-										Importiere deine Kalenderdaten
-									</CardDescription>
-								</div>
-							</div>
-						</CardHeader>
-						<CardContent>
-							<ConnectButton type='email' className='mt-4 w-full' />
-							<ConnectButton type='calendar' className='mt-4 w-full' />
-							<CalendarIntegration
-								groupId={groupId}
-								isOwner={isOwner}
-								token={token?.access_token}
-								tokenExpiry={token?.expiry_date.toISOString()}
-							/>
-						</CardContent>
-					</Card>
+					<ApiOverview
+						groupId={groupId}
+						token={token?.access_token}
+						tokenExpiry={token?.expiry_date?.toISOString()}
+					/>
 
 					<Card className='bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-colors'>
 						<CardHeader>

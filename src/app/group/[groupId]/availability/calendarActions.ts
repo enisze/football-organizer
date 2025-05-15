@@ -52,7 +52,7 @@ export const previewCalendarDataAction = authedActionClient
 				},
 			})
 
-			if (!token) {
+			if (!token || !token.refresh_token) {
 				const authUrl = oAuth2Client.generateAuthUrl({
 					access_type: 'offline',
 					scope: SCOPES.calendar,
@@ -62,12 +62,35 @@ export const previewCalendarDataAction = authedActionClient
 				throw new Error(`AUTH_REQUIRED:${authUrl}`)
 			}
 
-			// Set up OAuth2 client
-			oAuth2Client.setCredentials({
-				access_token: token.access_token,
-				expiry_date: token.expiry_date.getTime(),
-				refresh_token: token.refresh_token,
-			})
+			// Try to refresh the token first
+			try {
+				oAuth2Client.setCredentials({
+					refresh_token: token.refresh_token,
+				})
+				
+				const { credentials } = await oAuth2Client.refreshAccessToken()
+				
+				// Update the tokens in the database
+				await prisma.tokens.update({
+					where: {
+						id: token.id,
+					},
+					data: {
+						access_token: credentials.access_token ?? '',
+						refresh_token: credentials.refresh_token ?? token.refresh_token,
+						expiry_date: credentials.expiry_date ? new Date(credentials.expiry_date) : undefined,
+					},
+				})
+
+				// Set up OAuth2 client with new credentials
+				oAuth2Client.setCredentials({
+					access_token: credentials.access_token,
+					expiry_date: credentials.expiry_date,
+					refresh_token: credentials.refresh_token ?? token.refresh_token,
+				})
+			} catch (error) {
+				throw new Error('Du musst deinen Kalender neu verbinden.')
+			}
 
 			try {
 				// Calculate time range

@@ -22,7 +22,7 @@ import { Separator } from '@/ui/separator'
 import { toast } from '@/ui/use-toast'
 import { format } from 'date-fns'
 import { de } from 'date-fns/locale'
-import { CalendarClock, CalendarPlus, Check, X } from 'lucide-react'
+import { CalendarPlus } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
 import { useState } from 'react'
 import {
@@ -69,7 +69,9 @@ export function CalendarIntegration({
 				setPreviewSlots(data?.slots)
 				setShowPreview(true)
 			},
-			onError: () => {
+			onError: ({ error: { serverError } }) => {
+				console.log(serverError)
+
 				toast({
 					title: 'Fehler bei der Vorschau',
 					description:
@@ -130,31 +132,6 @@ export function CalendarIntegration({
 
 	return (
 		<div className={cn('space-y-4', isOwner && 'px-4')}>
-			<div
-				className={cn(
-					'rounded-lg bg-white/5 p-4 backdrop-blur-sm',
-					isOwner && 'max-w-xl',
-				)}
-			>
-				<div className='flex items-start gap-3'>
-					<div className='rounded-full bg-white/10 p-2'>
-						<CalendarClock className='h-5 w-5 text-blue-400' />
-					</div>
-					<div className='flex-1'>
-						<h3 className='text-lg font-semibold text-white'>
-							Google Kalender Verbindung
-						</h3>
-					</div>
-					<div className='rounded-full bg-white/10 p-2'>
-						{isTokenValid ? (
-							<Check className='h-5 w-5 text-green-400' />
-						) : (
-							<X className='h-5 w-5 text-red-400' />
-						)}
-					</div>
-				</div>
-			</div>
-
 			{isTokenValid && (
 				<Dialog>
 					<DialogTrigger asChild>

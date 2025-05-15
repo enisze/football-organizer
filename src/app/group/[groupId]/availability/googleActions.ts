@@ -3,6 +3,7 @@
 import { authedActionClient } from '@/src/lib/actionClient'
 import { prisma } from '@/src/server/db/client'
 import { SCOPES, oAuth2Client } from '@/src/server/google'
+import { revalidateTag } from 'next/cache'
 import { z } from 'zod'
 
 export const refreshGoogleTokenAction = authedActionClient
@@ -52,6 +53,8 @@ export const refreshGoogleTokenAction = authedActionClient
 						: undefined,
 				},
 			})
+
+			revalidateTag('api-overview')
 
 			return { success: true }
 		} catch (error) {
