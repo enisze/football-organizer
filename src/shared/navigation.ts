@@ -100,6 +100,10 @@ export const { routes, useSafeParams, useSafeSearchParams } =
 		oauth2callback: defineRoute('/oauth2callback', {
 			search: z.object({
 				code: z.string(),
+				scope: z.enum([
+					'https://www.googleapis.com/auth/gmail.readonly',
+					'https://www.googleapis.com/auth/calendar.readonly',
+				]),
 			}),
 		}),
 	}))

@@ -37,6 +37,7 @@ export async function MyAvailabilityPage({
 							id: groupId,
 						},
 					},
+					isException: false,
 					type: 'DATE_SPECIFIC',
 				},
 				orderBy: [{ date: 'asc' }, { startTime: 'asc' }],

@@ -2,7 +2,7 @@
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { Button } from '@/ui/button'
 
-const Error = ({ error, reset }: { error: Error; reset: () => void }) => {
+const ErrorPage = ({ error, reset }: { error: Error; reset: () => void }) => {
 	return (
 		<div className='flex flex-col items-center justify-center h-screen'>
 			<h1 className='text-2xl font-bold'>Leider ist etwas schiefgelaufen!</h1>
@@ -16,4 +16,4 @@ const Error = ({ error, reset }: { error: Error; reset: () => void }) => {
 	)
 }
 
-export default Error
+export default ErrorPage

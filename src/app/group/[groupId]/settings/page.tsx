@@ -1,7 +1,10 @@
 import { ClearLocalStorageButton } from '@/src/app/settings/ClearLocalStorageButton'
 import { HelpButton } from '@/src/app/settings/HelpButton'
 import { SignOutButton } from '@/src/app/settings/SignOutButton'
+import { CalendarIntegration } from '@/src/components/CalendarIntegration'
+import { ConnectButton } from '@/src/components/ConnectButton'
 import { GroupSelectorServer } from '@/src/components/Groups/GroupSelectorServer'
+import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
@@ -39,6 +42,15 @@ export default async function MainPage({ params }: PageProps) {
 
 	const user = await prisma.user.findUnique({
 		where: { id: userId },
+	})
+
+	const isOwner = await isOwnerOfGroup(groupId)
+
+	const token = await prisma.tokens.findFirst({
+		where: {
+			ownerId: userId,
+			type: 'calendar',
+		},
 	})
 
 	return (
@@ -97,7 +109,7 @@ export default async function MainPage({ params }: PageProps) {
 						</CardContent>
 					</Card>
 
-					{/* <Card className='bg-white/5 backdrop-blur-sm border-white/10'>
+					<Card className='bg-white/5 backdrop-blur-sm border-white/10'>
 						<CardHeader>
 							<div className='flex items-center justify-between'>
 								<div className='space-y-1'>
@@ -111,9 +123,17 @@ export default async function MainPage({ params }: PageProps) {
 							</div>
 						</CardHeader>
 						<CardContent>
-							<CalendarIntegration groupId={groupId} />
+							<ConnectButton type='email' className='mt-4 w-full' />
+							<ConnectButton type='calendar' className='mt-4 w-full' />
+							<CalendarIntegration
+								groupId={groupId}
+								isOwner={isOwner}
+								token={token?.access_token}
+								refreshToken={token?.refresh_token}
+								tokenExpiry={token?.expiry_date.toISOString()}
+							/>
 						</CardContent>
-					</Card> */}
+					</Card>
 
 					<Card className='bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-colors'>
 						<CardHeader>

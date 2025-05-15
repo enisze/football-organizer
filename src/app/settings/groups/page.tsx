@@ -1,7 +1,7 @@
 import { NewGroup } from '@/src/components/Groups/NewGroup'
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
-import { SCOPES, oAuth2Client } from '@/src/server/gmail'
+import { SCOPES, oAuth2Client } from '@/src/server/google'
 import { routes } from '@/src/shared/navigation'
 import { Badge } from '@/ui/badge'
 import { Button } from '@/ui/button'

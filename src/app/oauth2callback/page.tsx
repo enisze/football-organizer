@@ -1,8 +1,10 @@
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
-import { oAuth2Client } from '@/src/server/gmail'
+import { SCOPES, oAuth2Client } from '@/src/server/google'
 import { routes } from '@/src/shared/navigation'
 import { OrganizerLink } from '@/ui/OrganizerLink'
+import { TokenType } from '@prisma/client'
+import { redirect } from 'next/navigation'
 
 interface PageProps {
 	searchParams: Promise<unknown>
@@ -10,35 +12,69 @@ interface PageProps {
 
 const OAuthCallbackPage = async ({ searchParams }: PageProps) => {
 	const session = await serverAuth()
+	if (!session?.user?.id) {
+		return redirect(routes.signIn())
+	}
+
 	const resolvedSearchParams = await searchParams
-	const { code } =
+	const { code, scope } =
 		routes.oauth2callback.$parseSearchParams(resolvedSearchParams)
+
+	if (!code || !scope) {
+		throw new Error('Missing code or invalid scope')
+	}
 
 	const { tokens } = await oAuth2Client.getToken(code)
 	const { expiry_date, access_token, refresh_token } = tokens
 
-	if (!expiry_date || !refresh_token || !access_token || !session?.user?.id)
-		throw new Error('INTERNAL_SERVER_ERROR' + 'Access revoked')
+	if (!expiry_date || !refresh_token || !access_token) {
+		throw new Error('Missing required token information')
+	}
 
-	await prisma.tokens.deleteMany({ where: { ownerId: session.user.id } })
+	const tokenType = SCOPES.calendar.includes(scope)
+		? TokenType.calendar
+		: SCOPES.email.includes(scope)
+			? TokenType.email
+			: null
 
+	if (!tokenType) {
+		throw new Error('Invalid scope type')
+	}
+
+	// Update any existing tokens for this user and scope
+	await prisma.tokens.deleteMany({
+		where: {
+			ownerId: session.user.id,
+			type: tokenType,
+		},
+	})
+
+	// Create new token
 	await prisma.tokens.create({
 		data: {
 			expiry_date: new Date(expiry_date),
 			access_token,
 			refresh_token,
 			ownerId: session.user.id,
+			type: tokenType,
 		},
 	})
 
 	return (
-		<div className='flex flex-col items-center justify-center h-screen'>
-			<h1 className='text-2xl font-bold'>
-				Das Token wurde erfolgreich gesetzt!
-			</h1>
-			<OrganizerLink href={routes.home()} className='justify-center'>
-				Zurück zur Startseite
-			</OrganizerLink>
+		<div className='min-h-screen flex items-center justify-center'>
+			<div className='text-center space-y-4'>
+				<h1 className='text-2xl font-bold'>Erfolgreich verbunden!</h1>
+				<p>
+					Du kannst dieses Fenster jetzt schließen und zur Hauptseite
+					zurückkehren.
+				</p>
+				<OrganizerLink
+					href={routes.home()}
+					className='inline-block mt-4 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90'
+				>
+					Zurück zur Hauptseite
+				</OrganizerLink>
+			</div>
 		</div>
 	)
 }

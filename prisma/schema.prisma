@@ -9,13 +9,19 @@ datasource db {
   relationMode = "prisma"
 }
 
+enum TokenType {
+  calendar
+  email
+}
+
 model Tokens {
-  id            String   @id @default(cuid())
-  access_token  String   @db.Text
-  refresh_token String   @unique
+  id            String    @id @default(cuid())
+  access_token  String    @db.Text
+  refresh_token String
   expiry_date   DateTime
   ownerId       String
-  user          User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  type          TokenType
+  user          User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
   @@index([ownerId])
 }
