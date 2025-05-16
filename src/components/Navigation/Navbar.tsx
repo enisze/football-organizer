@@ -5,7 +5,7 @@ import { routes } from '@/src/shared/navigation'
 import type { User } from 'better-auth/types'
 import { Suspense } from 'react'
 import { Heading } from '../Heading'
-import { UserAvatar } from '../UserAvatar'
+import { UserAvatarWithLogout } from '../UserAvatarWithLogout'
 import { DashboardLink } from './DashboardLink'
 
 export const Navbar = ({
@@ -28,7 +28,7 @@ export const Navbar = ({
 							<DashboardLink />
 						</Suspense>
 
-						<UserAvatar name={user?.name ?? ''} />
+						<UserAvatarWithLogout name={user?.name ?? ''} />
 					</div>
 				</div>
 			</div>

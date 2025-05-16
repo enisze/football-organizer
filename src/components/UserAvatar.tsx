@@ -1,27 +1,20 @@
+'use client'
 import { Avatar, AvatarFallback } from '@/ui/avatar'
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from '@/ui/dropdown-menu'
-import { redirect } from 'next/navigation'
 import type { FunctionComponent } from 'react'
-import { serverAuth, serverSignOut } from '../server/auth/session'
-import { routes } from '../shared/navigation'
+import { useSession } from '../lib/auth-client'
 
 interface UserAvatarProps {
 	name: string | null
 	className?: string
 }
 
-export const UserAvatar: FunctionComponent<UserAvatarProps> = async ({
+export const UserAvatar: FunctionComponent<UserAvatarProps> = ({
 	name,
 	className,
 }) => {
 	const lettersOnly = (name ?? '').replace(/[^A-Za-z\s]/g, '').trim()
 
-	const session = await serverAuth()
+	const session = useSession()
 
 	if (!session) {
 		return null
@@ -42,33 +35,8 @@ export const UserAvatar: FunctionComponent<UserAvatarProps> = async ({
 	}
 
 	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Avatar className={className}>
-					<AvatarFallback className='bg-white/5'>
-						{first + second}
-					</AvatarFallback>
-				</Avatar>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent align='end'>
-				<DropdownMenuItem asChild>
-					<form>
-						<button
-							formAction={async () => {
-								'use server'
-								const { success } = await serverSignOut()
-
-								if (success) {
-									redirect(routes.signIn())
-								}
-							}}
-							type='submit'
-						>
-							Ausloggen
-						</button>
-					</form>
-				</DropdownMenuItem>
-			</DropdownMenuContent>
-		</DropdownMenu>
+		<Avatar className={className}>
+			<AvatarFallback className='bg-white/5'>{first + second}</AvatarFallback>
+		</Avatar>
 	)
 }
