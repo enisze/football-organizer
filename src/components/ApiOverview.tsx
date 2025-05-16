@@ -37,10 +37,10 @@ export async function ApiOverview({
 				<div className='flex items-center justify-between'>
 					<div className='space-y-1'>
 						<CardTitle className='text-lg text-white'>
-							API Integrations
+							API Integrationen
 						</CardTitle>
 						<CardDescription className='text-white/70'>
-							Connect your accounts to enable powerful integrations
+							Verbinde deine Konten für erweiterte Funktionen
 						</CardDescription>
 					</div>
 				</div>
@@ -48,14 +48,14 @@ export async function ApiOverview({
 			<CardContent>
 				<Tabs defaultValue='all' className='w-full'>
 					<TabsList className='grid grid-cols-3 mb-6'>
-						<TabsTrigger value='all'>All Integrations</TabsTrigger>
-						<TabsTrigger value='mail'>Mail</TabsTrigger>
-						<TabsTrigger value='calendar'>Calendar</TabsTrigger>
+						<TabsTrigger value='all'>Alle Integrationen</TabsTrigger>
+						<TabsTrigger value='mail'>E-Mail</TabsTrigger>
+						<TabsTrigger value='calendar'>Kalender</TabsTrigger>
 					</TabsList>
 
 					<TabsContent value='all'>
 						<div className='space-y-4'>
-							{/* Google Mail Integration */}
+							{/* Email Integration Section */}
 							<div className='rounded-lg border border-slate-800 bg-slate-900/50 overflow-hidden'>
 								<div className='flex items-center justify-between p-4'>
 									<div className='flex items-center gap-3'>
@@ -63,23 +63,31 @@ export async function ApiOverview({
 											<Mail className='h-5 w-5 text-blue-400' />
 										</div>
 										<div>
-											<h3 className='font-medium text-white'>Google Mail</h3>
+											<h3 className='font-medium text-white'>
+												E-Mail Integration
+											</h3>
 											<p className='text-sm text-slate-400'>
-												Connect to your Gmail account
+												Verbinde deine E-Mail-Konten
 											</p>
 										</div>
 									</div>
 								</div>
 								<Separator className='bg-slate-800' />
-								<div className='p-4'>
+								<div className='p-4 space-y-3'>
 									<ConnectButton
 										type='email'
+										provider='google'
+										className='bg-slate-800 hover:bg-slate-700 text-white'
+									/>
+									<ConnectButton
+										type='email'
+										provider='microsoft'
 										className='bg-slate-800 hover:bg-slate-700 text-white'
 									/>
 								</div>
 							</div>
 
-							{/* Google Calendar Integration */}
+							{/* Calendar Integration Section */}
 							<div className='rounded-lg border border-slate-800 bg-slate-900/50 overflow-hidden'>
 								<div className='flex items-center justify-between p-4'>
 									<div className='flex items-center gap-3'>
@@ -88,10 +96,10 @@ export async function ApiOverview({
 										</div>
 										<div>
 											<h3 className='font-medium text-white'>
-												Google Calendar
+												Kalender Integration
 											</h3>
 											<p className='text-sm text-slate-400'>
-												Sync your calendar events
+												Verbinde deine Kalender-Konten
 											</p>
 										</div>
 									</div>
@@ -105,6 +113,12 @@ export async function ApiOverview({
 									/>
 									<ConnectButton
 										type='calendar'
+										provider='google'
+										className='bg-slate-800 hover:bg-slate-700 text-white'
+									/>
+									<ConnectButton
+										type='calendar'
+										provider='microsoft'
 										className='bg-slate-800 hover:bg-slate-700 text-white'
 									/>
 								</div>
@@ -120,23 +134,23 @@ export async function ApiOverview({
 										<Mail className='h-5 w-5 text-blue-400' />
 									</div>
 									<div>
-										<h3 className='font-medium text-white'>Google Mail</h3>
+										<h3 className='font-medium text-white'>E-Mail Dienste</h3>
 										<p className='text-sm text-slate-400'>
-											Connect to your Gmail account
+											Verbinde deine E-Mail-Konten
 										</p>
 									</div>
 								</div>
-								<Badge
-									variant='outline'
-									className='bg-red-900/20 text-red-400 border-red-800'
-								>
-									Disconnected
-								</Badge>
 							</div>
 							<Separator className='bg-slate-800' />
-							<div className='p-4'>
+							<div className='p-4 space-y-3'>
 								<ConnectButton
 									type='email'
+									provider='google'
+									className='bg-slate-800 hover:bg-slate-700 text-white'
+								/>
+								<ConnectButton
+									type='email'
+									provider='microsoft'
 									className='bg-slate-800 hover:bg-slate-700 text-white'
 								/>
 							</div>
@@ -151,9 +165,9 @@ export async function ApiOverview({
 										<Calendar className='h-5 w-5 text-green-400' />
 									</div>
 									<div>
-										<h3 className='font-medium text-white'>Google Calendar</h3>
+										<h3 className='font-medium text-white'>Kalender Dienste</h3>
 										<p className='text-sm text-slate-400'>
-											Sync your calendar events
+											Verbinde deine Kalender-Konten
 										</p>
 									</div>
 								</div>
@@ -165,7 +179,7 @@ export async function ApiOverview({
 											: 'bg-red-900/20 text-red-400 border-red-800'
 									}
 								>
-									{isCalendarValid ? 'Connected' : 'Disconnected'}
+									{isCalendarValid ? 'Verbunden' : 'Nicht verbunden'}
 								</Badge>
 							</div>
 							<Separator className='bg-slate-800' />
@@ -177,10 +191,18 @@ export async function ApiOverview({
 										tokenExpiry={tokenExpiry}
 									/>
 								) : (
-									<ConnectButton
-										type='calendar'
-										className='bg-slate-800 hover:bg-slate-700 text-white'
-									/>
+									<>
+										<ConnectButton
+											type='calendar'
+											provider='google'
+											className='bg-slate-800 hover:bg-slate-700 text-white'
+										/>
+										<ConnectButton
+											type='calendar'
+											provider='microsoft'
+											className='bg-slate-800 hover:bg-slate-700 text-white'
+										/>
+									</>
 								)}
 							</div>
 						</div>

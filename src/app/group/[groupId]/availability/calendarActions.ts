@@ -1,8 +1,9 @@
 'use server'
 
 import { authedActionClient } from '@/src/lib/actionClient'
+import { getProvider } from '@/src/server/auth/providers'
+import type { ProviderType } from '@/src/server/auth/providers/types'
 import { prisma } from '@/src/server/db/client'
-import { SCOPES, oAuth2Client } from '@/src/server/google'
 import {
 	addDays,
 	addMonths,
@@ -13,7 +14,6 @@ import {
 	parse,
 } from 'date-fns'
 import { de } from 'date-fns/locale'
-import { google } from 'googleapis'
 import { revalidateTag } from 'next/cache'
 import { z } from 'zod'
 import type { PreviewTimeSlot } from './types'
@@ -28,6 +28,7 @@ export const previewCalendarDataAction = authedActionClient
 		z.object({
 			timeRange: z.enum(['week', 'month', 'halfYear', 'year']),
 			eventType: z.enum(['all', 'fullday', 'timed']).optional(),
+			provider: z.enum(['google', 'microsoft']),
 		}),
 	)
 	.action(
@@ -35,7 +36,11 @@ export const previewCalendarDataAction = authedActionClient
 			parsedInput,
 			ctx: { userId },
 		}): Promise<CalendarPreviewResult> => {
-			const { timeRange, eventType = 'all' } = parsedInput
+			const {
+				timeRange,
+				eventType = 'all',
+				provider: providerName,
+			} = parsedInput
 
 			// Get all day-specific slots for the user first
 			const daySpecificSlots = await prisma.timeSlot.findMany({
@@ -49,50 +54,28 @@ export const previewCalendarDataAction = authedActionClient
 				where: {
 					ownerId: userId,
 					type: 'calendar',
+					provider: providerName,
 				},
 			})
 
+			const provider = getProvider(providerName as ProviderType)
 			if (!token || !token.refresh_token) {
-				const authUrl = oAuth2Client.generateAuthUrl({
-					access_type: 'offline',
-					scope: SCOPES.calendar,
-					prompt: 'consent',
-					redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/oauth2callback?scope=calendar`,
-				})
+				const authUrl = await provider.getAuthUrl('calendar')
 				throw new Error(`AUTH_REQUIRED:${authUrl}`)
 			}
 
-			// Try to refresh the token first
 			try {
-				oAuth2Client.setCredentials({
-					refresh_token: token.refresh_token,
-				})
-				
-				const { credentials } = await oAuth2Client.refreshAccessToken()
-				
-				// Update the tokens in the database
+				// Try to refresh the token first
+				const newToken = await provider.refreshToken(token.refresh_token)
 				await prisma.tokens.update({
-					where: {
-						id: token.id,
-					},
+					where: { id: token.id },
 					data: {
-						access_token: credentials.access_token ?? '',
-						refresh_token: credentials.refresh_token ?? token.refresh_token,
-						expiry_date: credentials.expiry_date ? new Date(credentials.expiry_date) : undefined,
+						access_token: newToken.access_token,
+						refresh_token: newToken.refresh_token,
+						expiry_date: newToken.expiry_date,
 					},
 				})
 
-				// Set up OAuth2 client with new credentials
-				oAuth2Client.setCredentials({
-					access_token: credentials.access_token,
-					expiry_date: credentials.expiry_date,
-					refresh_token: credentials.refresh_token ?? token.refresh_token,
-				})
-			} catch (error) {
-				throw new Error('Du musst deinen Kalender neu verbinden.')
-			}
-
-			try {
 				// Calculate time range
 				const now = new Date()
 				const timeMin = now.toISOString()
@@ -107,35 +90,29 @@ export const previewCalendarDataAction = authedActionClient
 						case 'year':
 							return addYears(now, 1)
 					}
-				})()
+				})().toISOString()
 
-				// Get calendar events
-				const calendar = google.calendar({ version: 'v3', auth: oAuth2Client })
-				const response = await calendar.events.list({
-					calendarId: 'primary',
+				const events = await provider.getCalendarEvents(
+					newToken,
 					timeMin,
-					timeMax: timeMax.toISOString(),
-					singleEvents: true,
-					orderBy: 'startTime',
-				})
-
-				const events = response.data.items || []
+					timeMax,
+				)
 				const previewSlots: PreviewTimeSlot[] = []
 
-				// Process each event
-				for (const event of events) {
-					if (!event.start || !event.end) continue
+				// Process each event based on the provider's format
+				for (const event of events ?? []) {
+					const start = event?.start.dateTime || event.start.date
+					const end = event.end.dateTime || event.end.date
+					const isAllDay = !event.start.dateTime
 
-					const isAllDay = !event.start.dateTime && !event.end.dateTime
+					if (!start || !end) continue
 
 					// Skip events based on eventType filter
 					if (eventType === 'fullday' && !isAllDay) continue
 					if (eventType === 'timed' && isAllDay) continue
 
-					const startDate = new Date(
-						event.start.dateTime || event.start.date || '',
-					)
-					const endDate = new Date(event.end.dateTime || event.end.date || '')
+					const startDate = new Date(start)
+					const endDate = new Date(end)
 
 					// Find matching day-specific slot for this event's day
 					const dayOfWeek = startDate.getDay()
@@ -143,10 +120,10 @@ export const previewCalendarDataAction = authedActionClient
 						(slot) => slot.day === dayOfWeek,
 					)
 
-					// For time-specific events, check if they fall within the day slot's time range
 					if (!isAllDay) {
-						// If there's no day slot for this day, skip the event
+						// For time-specific events
 						if (!matchingDaySlot) continue
+
 						const eventStartTime = format(startDate, 'HH:mm', { locale: de })
 						const eventEndTime = format(endDate, 'HH:mm', { locale: de })
 						const eventStartDate = parse(eventStartTime, 'HH:mm', new Date())
@@ -162,7 +139,6 @@ export const previewCalendarDataAction = authedActionClient
 							new Date(),
 						)
 
-						// Skip if event is outside of the day slot's time range
 						if (
 							isBefore(eventEndDate, slotStartDate) ||
 							isAfter(eventStartDate, slotEndDate)
@@ -180,7 +156,6 @@ export const previewCalendarDataAction = authedActionClient
 							selected: true,
 						})
 					} else {
-						// For all-day events, we still include them if there's a day slot
 						previewSlots.push({
 							id: event.id || Math.random().toString(),
 							startTime: '00:00',
@@ -195,17 +170,9 @@ export const previewCalendarDataAction = authedActionClient
 
 				return { slots: previewSlots }
 			} catch (error) {
-				if (error instanceof Error && error.message === 'invalid_grant') {
-					// Token expired, need to re-authenticate
-					const authUrl = oAuth2Client.generateAuthUrl({
-						access_type: 'offline',
-						scope: SCOPES.calendar,
-						prompt: 'consent',
-						redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/oauth2callback`,
-					})
-					throw new Error(`AUTH_REQUIRED:${authUrl}`)
-				}
-				throw error
+				console.error('Calendar preview error:', error)
+				const authUrl = await provider.getAuthUrl('calendar')
+				throw new Error(`AUTH_REQUIRED:${authUrl}`)
 			}
 		},
 	)
