@@ -42,14 +42,14 @@ export default async function MainPage({ params }: PageProps) {
 		where: { id: userId },
 	})
 
-	const isOwner = await isOwnerOfGroup(groupId)
-
 	const token = await prisma.tokens.findFirst({
 		where: {
 			ownerId: userId,
 			type: 'calendar',
 		},
 	})
+
+	const isOwner = await isOwnerOfGroup(groupId)
 
 	return (
 		<div className='min-h-screen flex flex-col items-center p-4 pb-24'>
@@ -111,6 +111,8 @@ export default async function MainPage({ params }: PageProps) {
 						groupId={groupId}
 						token={token?.access_token}
 						tokenExpiry={token?.expiry_date?.toISOString()}
+						isOwner={isOwner}
+						userId={userId}
 					/>
 
 					<Card className='bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-colors'>

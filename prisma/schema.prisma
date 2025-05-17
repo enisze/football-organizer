@@ -21,6 +21,7 @@ model Tokens {
   expiry_date   DateTime
   ownerId       String
   type          TokenType
+  provider      String    @default("google")
   user          User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
   @@index([ownerId])

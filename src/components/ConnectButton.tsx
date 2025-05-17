@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils/cn'
-import { refreshGoogleTokenAction } from '@/src/app/group/[groupId]/availability/googleActions'
+import { refreshAuthTokenAction } from '@/src/app/group/[groupId]/availability/authActions'
 import { Button } from '@/ui/button'
 import { toast } from '@/ui/use-toast'
 import { CalendarDays, Mail } from 'lucide-react'
@@ -10,14 +10,19 @@ import { useRouter } from 'next/navigation'
 
 interface ConnectButtonProps {
 	type: 'calendar' | 'email'
+	provider: 'google' | 'microsoft'
 	className?: string
 }
 
-export function ConnectButton({ type, className }: ConnectButtonProps) {
+export function ConnectButton({
+	type,
+	provider,
+	className,
+}: ConnectButtonProps) {
 	const router = useRouter()
 
 	const { execute: executeRefresh, status } = useAction(
-		refreshGoogleTokenAction,
+		refreshAuthTokenAction,
 		{
 			onSuccess: ({ data }) => {
 				if (data?.redirect) {
@@ -25,7 +30,7 @@ export function ConnectButton({ type, className }: ConnectButtonProps) {
 				} else if (data?.success) {
 					toast({
 						title: 'Verbindung erfolgreich',
-						description: `Die Verbindung mit Google ${type === 'calendar' ? 'Kalender' : 'Mail'} wurde erfolgreich hergestellt.`,
+						description: `Die Verbindung mit ${provider === 'google' ? 'Google' : 'Microsoft'} ${type === 'calendar' ? 'Kalender' : 'Mail'} wurde erfolgreich hergestellt.`,
 					})
 				}
 			},
@@ -42,6 +47,7 @@ export function ConnectButton({ type, className }: ConnectButtonProps) {
 	const handleConnect = () => {
 		executeRefresh({
 			type,
+			provider,
 		})
 	}
 
@@ -55,12 +61,13 @@ export function ConnectButton({ type, className }: ConnectButtonProps) {
 			{type === 'calendar' ? (
 				<>
 					<CalendarDays className='h-4 w-4' />
-					Mit Google Kalender verbinden
+					Mit {provider === 'google' ? 'Google' : 'Microsoft'} Kalender
+					verbinden
 				</>
 			) : (
 				<>
 					<Mail className='h-4 w-4' />
-					Mit Gmail verbinden
+					Mit {provider === 'google' ? 'Gmail' : 'Outlook'} verbinden
 				</>
 			)}
 		</Button>

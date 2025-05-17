@@ -1,14 +1,18 @@
+import { getProvider } from '@/src/server/auth/providers'
+import type { ProviderType } from '@/src/server/auth/providers/types'
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
-import { SCOPES, oAuth2Client } from '@/src/server/google'
 import { routes } from '@/src/shared/navigation'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { buttonVariants } from '@/ui/button'
-import { TokenType } from '@prisma/client'
 import { redirect } from 'next/navigation'
 
 interface PageProps {
-	searchParams: Promise<unknown>
+	searchParams: Promise<
+		unknown & {
+			state: string
+		}
+	>
 }
 
 const OAuthCallbackPage = async ({ searchParams }: PageProps) => {
@@ -18,30 +22,30 @@ const OAuthCallbackPage = async ({ searchParams }: PageProps) => {
 	}
 
 	const resolvedSearchParams = await searchParams
-	const { code, scope } =
-		routes.oauth2callback.$parseSearchParams(resolvedSearchParams)
 
-	if (!code || !scope) {
-		throw new Error('Missing code or invalid scope')
+	const parsedState = JSON.parse(resolvedSearchParams.state)
+
+	const { code, state } = routes.oauth2callback.$parseSearchParams({
+		...resolvedSearchParams,
+		state: parsedState,
+	})
+
+	if (!code || !state) {
+		throw new Error('Missing code or state parameter')
 	}
 
-	const { tokens } = await oAuth2Client.getToken(code)
+	const { providerScope: tokenType, provider } = state
+
+	if (!tokenType || !provider) {
+		throw new Error('Missing provider or scope in state')
+	}
+
+	const authProvider = getProvider(provider as ProviderType)
+	const tokens = await authProvider.getToken(code, tokenType)
 	const { expiry_date, access_token, refresh_token } = tokens
 
 	if (!expiry_date || !refresh_token || !access_token) {
 		throw new Error('Missing required token information')
-	}
-
-	console.log(tokens)
-
-	const tokenType = SCOPES.calendar.includes(scope)
-		? TokenType.calendar
-		: SCOPES.email.includes(scope)
-			? TokenType.email
-			: null
-
-	if (!tokenType) {
-		throw new Error('Invalid scope type')
 	}
 
 	// Update any existing tokens for this user and scope
@@ -49,6 +53,7 @@ const OAuthCallbackPage = async ({ searchParams }: PageProps) => {
 		where: {
 			ownerId: session.user.id,
 			type: tokenType,
+			provider,
 		},
 	})
 
@@ -60,6 +65,7 @@ const OAuthCallbackPage = async ({ searchParams }: PageProps) => {
 			refresh_token,
 			ownerId: session.user.id,
 			type: tokenType,
+			provider,
 		},
 	})
 
