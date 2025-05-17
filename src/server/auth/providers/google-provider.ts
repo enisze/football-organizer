@@ -14,11 +14,17 @@ const SCOPES = {
 }
 
 const getAuthUrl = async (type: AuthType): Promise<string> => {
+	const state = JSON.stringify({
+		providerScope: type,
+		provider: 'google',
+	})
+
 	return client.generateAuthUrl({
 		access_type: 'offline',
 		scope: SCOPES[type],
 		prompt: 'consent',
-		redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/oauth2callback?scope=${type}`,
+		state,
+		redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/oauth2callback`,
 	})
 }
 

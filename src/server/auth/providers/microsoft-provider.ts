@@ -11,7 +11,7 @@ const msalConfig: Configuration = {
 	auth: {
 		clientId: process.env.MICROSOFT_CLIENT_ID as string,
 		clientSecret: process.env.MICROSOFT_CLIENT_SECRET,
-		authority: 'https://login.microsoftonline.com/common',
+		authority: `https://login.microsoftonline.com/${process.env.MICROSOFT_TENANT_ID}`,
 	},
 }
 
@@ -27,15 +27,18 @@ const SCOPES = {
 }
 
 const getAuthUrl = async (type: AuthType): Promise<string> => {
-	if (!process.env.MICROSOFT_REDIRECT_URIS) {
-		throw new Error('[GET_AUTH_URL] Redirect URI is required')
-	}
-
 	const scopes = SCOPES[type]
+	// Create a state parameter that includes our additional data
+	const state = JSON.stringify({
+		providerScope: type,
+		provider: 'microsoft',
+	})
+
 	const authCodeUrlParameters: AuthorizationUrlRequest = {
-		scopes: [...scopes, 'offline_access'],
-		redirectUri: process.env.MICROSOFT_REDIRECT_URIS,
+		scopes: scopes,
+		redirectUri: `${process.env.NEXT_PUBLIC_BASE_URL}/oauth2callback`,
 		responseMode: 'query' as const,
+		state,
 	}
 
 	return await msalClient.getAuthCodeUrl(authCodeUrlParameters)
@@ -64,20 +67,18 @@ const refreshToken = async (refresh_token: string): Promise<AuthToken> => {
 	}
 }
 
-const getToken = async (code: string): Promise<AuthToken> => {
+const getToken = async (
+	code: string,
+	tokenType?: AuthType,
+): Promise<AuthToken> => {
 	if (!code) {
 		throw new Error('Authorization code is required')
 	}
 
-	const redirectUri = process.env.MICROSOFT_REDIRECT_URIS
-	if (!redirectUri) {
-		throw new Error('Redirect URI is required')
-	}
-
 	const tokenRequest = {
 		code,
-		redirectUri,
-		scopes: SCOPES.all,
+		redirectUri: `${process.env.NEXT_PUBLIC_BASE_URL}/oauth2callback`,
+		scopes: tokenType ? SCOPES[tokenType] : SCOPES.all,
 	}
 
 	const response = await msalClient.acquireTokenByCode(tokenRequest)

@@ -10,7 +10,7 @@ export type AuthType = 'calendar' | 'email'
 export type AuthProviderFunctions = {
 	getAuthUrl: (type: AuthType) => Promise<string>
 	refreshToken: (refresh_token: string) => Promise<AuthToken>
-	getToken: (code: string) => Promise<AuthToken>
+	getToken: (code: string, tokenType?: AuthType) => Promise<AuthToken>
 	getCalendarEvents: (
 		token: AuthToken,
 		timeMin: string,
