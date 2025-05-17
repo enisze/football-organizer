@@ -1,16 +1,21 @@
+import type { TokenType } from '@prisma/client'
+
+export const PROVIDERS = ['google', 'microsoft'] as const
+export type ProviderType = (typeof PROVIDERS)[number]
+
 export type AuthToken = {
 	access_token: string
 	refresh_token?: string
 	expiry_date: Date
 }
 
-export type ProviderType = 'google' | 'microsoft'
-export type AuthType = 'calendar' | 'email'
-
 export type AuthProviderFunctions = {
-	getAuthUrl: (type: AuthType) => Promise<string>
-	refreshToken: (refresh_token: string) => Promise<AuthToken>
-	getToken: (code: string, tokenType?: AuthType) => Promise<AuthToken>
+	getAuthUrl: (type: TokenType) => Promise<string>
+	refreshToken: (
+		refresh_token: string,
+		tokenType?: TokenType,
+	) => Promise<AuthToken>
+	getToken: (code: string, tokenType?: TokenType) => Promise<AuthToken>
 	getCalendarEvents: (
 		token: AuthToken,
 		timeMin: string,

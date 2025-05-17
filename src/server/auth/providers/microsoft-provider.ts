@@ -2,9 +2,11 @@ import {
 	type AuthorizationUrlRequest,
 	ConfidentialClientApplication,
 	type Configuration,
+	LogLevel,
 } from '@azure/msal-node'
 import { Client } from '@microsoft/microsoft-graph-client'
-import type { AuthProviderFunctions, AuthToken, AuthType } from './types'
+import type { TokenType } from '@prisma/client'
+import type { AuthProviderFunctions, AuthToken } from './types'
 
 // Initialize MSAL application
 const msalConfig: Configuration = {
@@ -13,20 +15,36 @@ const msalConfig: Configuration = {
 		clientSecret: process.env.MICROSOFT_CLIENT_SECRET,
 		authority: `https://login.microsoftonline.com/${process.env.MICROSOFT_TENANT_ID}`,
 	},
+	system: {
+		loggerOptions: {
+			loggerCallback(loglevel: LogLevel, message: string) {
+				console.log(message)
+			},
+			piiLoggingEnabled: false,
+			logLevel: LogLevel.Info,
+		},
+	},
 }
 
 const msalClient = new ConfidentialClientApplication(msalConfig)
 
 const SCOPES = {
-	calendar: ['https://graph.microsoft.com/Calendars.Read'] as string[],
-	email: ['https://graph.microsoft.com/Mail.Read'] as string[],
+	calendar: [
+		'https://graph.microsoft.com/Calendars.Read',
+		'offline_access',
+	] as string[],
+	email: [
+		'https://graph.microsoft.com/Mail.Read',
+		'offline_access',
+	] as string[],
 	all: [
 		'https://graph.microsoft.com/Calendars.Read',
 		'https://graph.microsoft.com/Mail.Read',
+		'offline_access',
 	] as string[],
 }
 
-const getAuthUrl = async (type: AuthType): Promise<string> => {
+const getAuthUrl = async (type: TokenType): Promise<string> => {
 	const scopes = SCOPES[type]
 	// Create a state parameter that includes our additional data
 	const state = JSON.stringify({
@@ -44,11 +62,14 @@ const getAuthUrl = async (type: AuthType): Promise<string> => {
 	return await msalClient.getAuthCodeUrl(authCodeUrlParameters)
 }
 
-const refreshToken = async (refresh_token: string): Promise<AuthToken> => {
+const refreshToken = async (
+	refresh_token: string,
+	tokenType?: TokenType,
+): Promise<AuthToken> => {
 	try {
 		const tokenRequest = {
 			refreshToken: refresh_token,
-			scopes: SCOPES.all,
+			scopes: tokenType ? SCOPES[tokenType] : SCOPES.all,
 		}
 
 		const response = await msalClient.acquireTokenByRefreshToken(tokenRequest)
@@ -58,7 +79,7 @@ const refreshToken = async (refresh_token: string): Promise<AuthToken> => {
 
 		return {
 			access_token: response.accessToken,
-			refresh_token: response.account?.homeAccountId,
+			refresh_token: refresh_token, // Keep using the same refresh token
 			expiry_date: response.expiresOn,
 		}
 	} catch (error) {
@@ -69,7 +90,7 @@ const refreshToken = async (refresh_token: string): Promise<AuthToken> => {
 
 const getToken = async (
 	code: string,
-	tokenType?: AuthType,
+	tokenType?: TokenType,
 ): Promise<AuthToken> => {
 	if (!code) {
 		throw new Error('Authorization code is required')
@@ -82,13 +103,32 @@ const getToken = async (
 	}
 
 	const response = await msalClient.acquireTokenByCode(tokenRequest)
+
 	if (!response?.accessToken || !response?.expiresOn) {
 		throw new Error('Failed to acquire token')
 	}
+	const tokenCache = msalClient.getTokenCache().serialize() // Synchronously serialize token cache
+	const parsedCache = JSON.parse(tokenCache)
+	const refreshTokenObject = parsedCache.RefreshToken
+
+	const refresh_token = refreshTokenObject
+		? //@ts-ignore TODO: Fix at some point
+			refreshTokenObject[Object.keys(refreshTokenObject)[0]].secret
+		: 'No refresh token found'
+
+	console.log('TOKEN', refresh_token)
+
+	// Raw extract of needed data for debugging
+	console.log('Raw token data:', {
+		accessToken: 'REDACTED',
+		expiresOn: response.expiresOn,
+		scope: response.scopes,
+		token_type: response.tokenType,
+	})
 
 	return {
 		access_token: response.accessToken,
-		refresh_token: response.account?.homeAccountId,
+		refresh_token,
 		expiry_date: response.expiresOn,
 	}
 }

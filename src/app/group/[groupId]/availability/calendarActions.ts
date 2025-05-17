@@ -3,6 +3,7 @@
 import { authedActionClient } from '@/src/lib/actionClient'
 import { getProvider } from '@/src/server/auth/providers'
 import type { ProviderType } from '@/src/server/auth/providers/types'
+import { PROVIDERS } from '@/src/server/auth/providers/types'
 import { prisma } from '@/src/server/db/client'
 import {
 	addDays,
@@ -28,7 +29,7 @@ export const previewCalendarDataAction = authedActionClient
 		z.object({
 			timeRange: z.enum(['week', 'month', 'halfYear', 'year']),
 			eventType: z.enum(['all', 'fullday', 'timed']).optional(),
-			provider: z.enum(['google', 'microsoft']),
+			provider: z.enum(PROVIDERS),
 		}),
 	)
 	.action(

@@ -1,5 +1,6 @@
 'use client'
 
+import type { ProviderType } from '@/src/server/auth/providers/types'
 import { Badge } from '@/ui/badge'
 import { useAtom } from 'jotai'
 import { useEffect } from 'react'
@@ -8,7 +9,7 @@ import { lastUsedProviderAtom } from './ProviderButton'
 export function LastUsedProvider({
 	provider,
 	onClick,
-}: { provider: 'google' | 'discord' | 'microsoft'; onClick?: () => void }) {
+}: { provider: ProviderType | 'discord'; onClick?: () => void }) {
 	const [lastUsedProvider, setLastUsedProvider] = useAtom(lastUsedProviderAtom)
 
 	useEffect(() => {

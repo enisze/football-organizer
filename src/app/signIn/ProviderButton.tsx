@@ -1,5 +1,6 @@
 'use client'
 
+import type { ProviderType } from '@/src/server/auth/providers/types'
 import { Button } from '@/ui/button'
 import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
@@ -14,14 +15,14 @@ const MicrosoftIcon = () => (
 )
 
 export const lastUsedProviderAtom = atomWithStorage<
-	'google' | 'discord' | 'microsoft' | null
+	ProviderType | 'discord' | null
 >('lastUsedProvider', null)
 
 export function ProviderButton({
 	provider,
 	action,
 }: {
-	provider: 'google' | 'discord' | 'microsoft'
+	provider: ProviderType | 'discord'
 	action: () => Promise<void>
 }) {
 	const [, setLastUsedProvider] = useAtom(lastUsedProviderAtom)

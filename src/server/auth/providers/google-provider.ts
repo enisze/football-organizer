@@ -1,6 +1,7 @@
+import type { TokenType } from '@prisma/client'
 import { OAuth2Client } from 'google-auth-library'
 import { google } from 'googleapis'
-import type { AuthProviderFunctions, AuthToken, AuthType } from './types'
+import type { AuthProviderFunctions, AuthToken } from './types'
 
 const client = new OAuth2Client({
 	clientId: process.env.GOOGLE_CLIENT_ID,
@@ -13,7 +14,7 @@ const SCOPES = {
 	email: ['https://www.googleapis.com/auth/gmail.readonly'],
 }
 
-const getAuthUrl = async (type: AuthType): Promise<string> => {
+const getAuthUrl = async (type: TokenType): Promise<string> => {
 	const state = JSON.stringify({
 		providerScope: type,
 		provider: 'google',
