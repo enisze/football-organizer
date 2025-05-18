@@ -82,6 +82,11 @@ export async function ApiOverview({
 		)
 	}
 
+	const providers =
+		process.env.NODE_ENV === 'development'
+			? PROVIDERS
+			: PROVIDERS.filter((provider) => provider !== 'microsoft')
+
 	return (
 		<Card className='border-white/10 bg-white/5 backdrop-blur-sm'>
 			<CardHeader>
@@ -118,7 +123,7 @@ export async function ApiOverview({
 							</div>
 							<Separator className='bg-slate-800' />
 							<div className='p-4 space-y-3'>
-								{PROVIDERS.map((provider) => {
+								{providers.map((provider) => {
 									const connected = checkStatus('email', provider)
 									return (
 										<div
@@ -157,7 +162,7 @@ export async function ApiOverview({
 						</div>
 						<Separator className='bg-slate-800' />
 						<div className='p-4 space-y-3'>
-							{PROVIDERS.map((provider) => {
+							{providers.map((provider) => {
 								const connected = checkStatus('calendar', provider)
 								return (
 									<div
