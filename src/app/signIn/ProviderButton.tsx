@@ -1,7 +1,7 @@
 'use client'
 
-import type { ProviderType } from '@/src/server/auth/providers/types'
 import { Button } from '@/ui/button'
+import type { ProviderType } from '@prisma/client'
 import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import { Chrome, MessageSquare } from 'lucide-react'

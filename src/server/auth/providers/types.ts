@@ -1,7 +1,6 @@
 import type { TokenType } from '@prisma/client'
 
 export const PROVIDERS = ['google', 'microsoft'] as const
-export type ProviderType = (typeof PROVIDERS)[number]
 
 export type AuthToken = {
 	access_token: string

@@ -1,4 +1,3 @@
-import type { ProviderType } from '@/src/server/auth/providers/types'
 import { PROVIDERS } from '@/src/server/auth/providers/types'
 import {
 	Card,
@@ -8,7 +7,7 @@ import {
 	CardTitle,
 } from '@/ui/card'
 import { Separator } from '@/ui/separator'
-import type { TokenType } from '@prisma/client'
+import type { ProviderType, TokenType } from '@prisma/client'
 import { Calendar, CheckCircle, Mail } from 'lucide-react'
 import { cacheTag } from 'next/dist/server/use-cache/cache-tag'
 import { getProvider } from '../server/auth/providers'
@@ -18,16 +17,12 @@ import { ConnectButton } from './ConnectButton'
 
 interface ApiOverviewProps {
 	groupId: string
-	token?: string | null
-	tokenExpiry?: string | null
 	isOwner: boolean
 	userId: string
 }
 
 export async function ApiOverview({
 	groupId,
-	token,
-	tokenExpiry,
 	isOwner,
 	userId,
 }: ApiOverviewProps) {
@@ -66,10 +61,7 @@ export async function ApiOverview({
 		tokens.map(async (token) => ({
 			type: token.type,
 			provider: token.provider,
-			isConnected: await isConnected(
-				token.type as TokenType,
-				token.provider as ProviderType,
-			),
+			isConnected: await isConnected(token.type, token.provider),
 		})),
 	)
 

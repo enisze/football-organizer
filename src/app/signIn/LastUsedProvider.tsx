@@ -1,7 +1,7 @@
 'use client'
 
-import type { ProviderType } from '@/src/server/auth/providers/types'
 import { Badge } from '@/ui/badge'
+import type { ProviderType } from '@prisma/client'
 import { useAtom } from 'jotai'
 import { useEffect } from 'react'
 import { lastUsedProviderAtom } from './ProviderButton'

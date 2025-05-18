@@ -1,5 +1,4 @@
 import { getProvider } from '@/src/server/auth/providers'
-import type { ProviderType } from '@/src/server/auth/providers/types'
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
@@ -41,7 +40,7 @@ const OAuthCallbackPage = async ({ searchParams }: PageProps) => {
 		throw new Error('Missing provider or scope in state')
 	}
 
-	const authProvider = getProvider(provider as ProviderType)
+	const authProvider = getProvider(provider)
 	const tokens = await authProvider.getToken(code, tokenType)
 	const { expiry_date, access_token, refresh_token } = tokens
 

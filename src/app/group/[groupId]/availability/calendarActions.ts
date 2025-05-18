@@ -2,7 +2,6 @@
 
 import { authedActionClient } from '@/src/lib/actionClient'
 import { getProvider } from '@/src/server/auth/providers'
-import type { ProviderType } from '@/src/server/auth/providers/types'
 import { prisma } from '@/src/server/db/client'
 import {
 	addDays,
@@ -86,7 +85,7 @@ export const previewCalendarDataAction = authedActionClient
 					if (!token.refresh_token) continue
 
 					try {
-						const provider = getProvider(token.provider as ProviderType)
+						const provider = getProvider(token.provider)
 						const newToken = await provider.refreshToken(token.refresh_token)
 
 						// Update token
