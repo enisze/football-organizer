@@ -1,6 +1,6 @@
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
-import { GroupSelectorServer } from '../Groups/GroupSelectorServer'
+import { GroupNavigator } from '../Groups/GroupNavigator'
 import { OrganizerMenu } from './OrganizerMenu'
 
 type Props = {
@@ -44,7 +44,7 @@ export const OrganizerServerMenu = async ({ groupId }: Props) => {
 	return (
 		<OrganizerMenu
 			balance={balance}
-			selector={<GroupSelectorServer />}
+			selector={<GroupNavigator />}
 			groupId={groupId}
 		/>
 	)

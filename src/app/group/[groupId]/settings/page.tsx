@@ -2,7 +2,7 @@ import { ClearLocalStorageButton } from '@/src/app/settings/ClearLocalStorageBut
 import { HelpButton } from '@/src/app/settings/HelpButton'
 import { SignOutButton } from '@/src/app/settings/SignOutButton'
 import { ApiOverview } from '@/src/components/ApiOverview'
-import { GroupSelectorServer } from '@/src/components/Groups/GroupSelectorServer'
+import { GroupNavigator } from '@/src/components/Groups/GroupNavigator'
 import { isOwnerOfGroup } from '@/src/helpers/isOwnerOfGroup'
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
@@ -120,7 +120,7 @@ export default async function MainPage({ params }: PageProps) {
 												<p className='text-white'>Gruppen verwalten</p>
 											</div>
 										</Link>
-										<GroupSelectorServer />
+										<GroupNavigator />
 									</CardDescription>
 								</div>
 							</div>
