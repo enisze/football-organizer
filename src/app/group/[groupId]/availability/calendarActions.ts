@@ -60,8 +60,6 @@ export const previewCalendarDataAction = authedActionClient
 			}
 
 			try {
-				const allEvents: CalendarEvent[] = []
-
 				// Calculate time range
 				const now = new Date()
 				const timeMin = now.toISOString()
@@ -78,43 +76,63 @@ export const previewCalendarDataAction = authedActionClient
 					}
 				})().toISOString()
 
-				// Fetch events from all connected providers
+				// Process all providers in parallel
+				const results = await Promise.all(
+					tokens
+						.filter((token) => token.refresh_token)
+						.map(async (token) => {
+							try {
+								const provider = getProvider(token.provider)
+								const newToken = await provider.refreshToken(
+									token.refresh_token,
+								)
+
+								// Update token
+								await prisma.tokens.update({
+									where: { id: token.id },
+									data: {
+										access_token: newToken.access_token,
+										refresh_token: newToken.refresh_token,
+										expiry_date: newToken.expiry_date,
+									},
+								})
+
+								const events = (await provider.getCalendarEvents(
+									newToken,
+									timeMin,
+									timeMax,
+								)) as CalendarEvent[]
+
+								return {
+									success: true as const,
+									events: events || [],
+									provider: token.provider,
+								}
+							} catch (error) {
+								console.error(
+									`Failed to fetch events from ${token.provider}:`,
+									error,
+								)
+								return {
+									success: false as const,
+									provider: token.provider,
+									error: (error as Error).message || 'Unknown error',
+								}
+							}
+						}),
+				)
+
+				const allEvents: CalendarEvent[] = []
 				const failedProviders: Array<{ provider: string; error: string }> = []
 
-				for (const token of tokens) {
-					if (!token.refresh_token) continue
-
-					try {
-						const provider = getProvider(token.provider)
-						const newToken = await provider.refreshToken(token.refresh_token)
-
-						// Update token
-						await prisma.tokens.update({
-							where: { id: token.id },
-							data: {
-								access_token: newToken.access_token,
-								refresh_token: newToken.refresh_token,
-								expiry_date: newToken.expiry_date,
-							},
-						})
-
-						const events = (await provider.getCalendarEvents(
-							newToken,
-							timeMin,
-							timeMax,
-						)) as CalendarEvent[]
-
-						if (events?.length) {
-							allEvents.push(...events)
-						}
-					} catch (error) {
-						console.error(
-							`Failed to fetch events from ${token.provider}:`,
-							error,
-						)
+				// Process results
+				for (const result of results) {
+					if (result.success) {
+						allEvents.push(...result.events)
+					} else {
 						failedProviders.push({
-							provider: token.provider,
-							error: (error as Error).message || 'Unknown error',
+							provider: result.provider,
+							error: result.error,
 						})
 					}
 				}
