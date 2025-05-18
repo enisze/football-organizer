@@ -30,7 +30,7 @@ export const GroupSelectorServer = async () => {
 							<div className='p-3 bg-white/5 rounded-xl group-hover:bg-white/10 transition-colors'>
 								<Users className='w-6 h-6 text-white' />
 							</div>
-							<span className='text-2xl font-medium text-white'>
+							<span className='text-lg font-medium text-white'>
 								Gruppe erstellen
 							</span>
 						</div>
@@ -44,7 +44,7 @@ export const GroupSelectorServer = async () => {
 							<div className='p-3 bg-white/5 rounded-xl group-hover:bg-white/10 transition-colors'>
 								<UserPlus className='w-6 h-6 text-white' />
 							</div>
-							<span className='text-2xl font-medium text-white'>
+							<span className='text-lg font-medium text-white'>
 								Gruppe beitreten
 							</span>
 						</div>
