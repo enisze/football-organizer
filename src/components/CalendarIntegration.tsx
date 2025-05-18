@@ -62,6 +62,16 @@ export function CalendarIntegration({
 					return
 				}
 
+				// Show partial success warning if some providers failed
+				if (data.partialSuccess) {
+					const failedProviders =
+						data.failedProviders?.map((p) => p.provider).join(', ') || ''
+					toast({
+						title: 'Teilweise erfolgreich',
+						description: `Einige Kalender konnten nicht abgerufen werden (${failedProviders}), aber wir haben trotzdem Termine gefunden.`,
+					})
+				}
+
 				setPreviewSlots(data?.slots)
 				setShowPreview(true)
 			},

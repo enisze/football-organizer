@@ -23,6 +23,8 @@ import {
 
 export type CalendarPreviewResult = {
 	slots: PreviewTimeSlot[]
+	partialSuccess?: boolean
+	failedProviders?: Array<{ provider: string; error: string }>
 }
 
 export const previewCalendarDataAction = authedActionClient
@@ -51,8 +53,6 @@ export const previewCalendarDataAction = authedActionClient
 				where: {
 					ownerId: userId,
 					type: 'calendar',
-					//TODO: REMove
-					provider: 'microsoft',
 				},
 			})
 
@@ -80,31 +80,48 @@ export const previewCalendarDataAction = authedActionClient
 				})().toISOString()
 
 				// Fetch events from all connected providers
+				const failedProviders: Array<{ provider: string; error: string }> = []
+
 				for (const token of tokens) {
 					if (!token.refresh_token) continue
 
-					const provider = getProvider(token.provider as ProviderType)
-					const newToken = await provider.refreshToken(token.refresh_token)
+					try {
+						const provider = getProvider(token.provider as ProviderType)
+						const newToken = await provider.refreshToken(token.refresh_token)
 
-					// Update token
-					await prisma.tokens.update({
-						where: { id: token.id },
-						data: {
-							access_token: newToken.access_token,
-							refresh_token: newToken.refresh_token,
-							expiry_date: newToken.expiry_date,
-						},
-					})
+						// Update token
+						await prisma.tokens.update({
+							where: { id: token.id },
+							data: {
+								access_token: newToken.access_token,
+								refresh_token: newToken.refresh_token,
+								expiry_date: newToken.expiry_date,
+							},
+						})
 
-					const events = (await provider.getCalendarEvents(
-						newToken,
-						timeMin,
-						timeMax,
-					)) as CalendarEvent[]
+						const events = (await provider.getCalendarEvents(
+							newToken,
+							timeMin,
+							timeMax,
+						)) as CalendarEvent[]
 
-					if (events?.length) {
-						allEvents.push(...events)
+						if (events?.length) {
+							allEvents.push(...events)
+						}
+					} catch (error) {
+						console.error(
+							`Failed to fetch events from ${token.provider}:`,
+							error,
+						)
+						failedProviders.push({
+							provider: token.provider,
+							error: (error as Error).message || 'Unknown error',
+						})
 					}
+				}
+
+				if (failedProviders.length > 0) {
+					console.warn('Some calendar providers failed:', failedProviders)
 				}
 
 				// Transform all events into preview slots
@@ -114,7 +131,16 @@ export const previewCalendarDataAction = authedActionClient
 					eventType,
 				)
 
-				return { slots: previewSlots }
+				// Return the result with information about any failures
+				return {
+					slots: previewSlots,
+					...(failedProviders.length > 0
+						? {
+								partialSuccess: true,
+								failedProviders,
+							}
+						: {}),
+				}
 			} catch (error) {
 				console.error('Calendar preview error:', error)
 				throw error
