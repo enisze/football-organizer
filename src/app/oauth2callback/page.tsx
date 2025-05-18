@@ -6,6 +6,7 @@ import { routes } from '@/src/shared/navigation'
 import { OrganizerLink } from '@/ui/OrganizerLink'
 import { buttonVariants } from '@/ui/button'
 import { redirect } from 'next/navigation'
+import { GoToRecentGroup } from './GoToRecentGroup'
 
 interface PageProps {
 	searchParams: Promise<
@@ -81,8 +82,9 @@ const OAuthCallbackPage = async ({ searchParams }: PageProps) => {
 					href={routes.home()}
 					className={buttonVariants({ variant: 'outline' })}
 				>
-					Zurück zur Hauptseite
+					Zurück zum Dashboard
 				</OrganizerLink>
+				<GoToRecentGroup />
 			</div>
 		</div>
 	)
