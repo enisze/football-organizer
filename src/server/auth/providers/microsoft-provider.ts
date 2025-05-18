@@ -118,8 +118,6 @@ const getToken = async (
 			refreshTokenObject[Object.keys(refreshTokenObject)[0]].secret
 		: 'No refresh token found'
 
-	console.log('TOKEN', refresh_token)
-
 	// Raw extract of needed data for debugging
 	console.log('Raw token data:', {
 		accessToken: 'REDACTED',
