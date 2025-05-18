@@ -3,22 +3,23 @@
 import { authedActionClient } from '@/src/lib/actionClient'
 import { getProvider } from '@/src/server/auth/providers'
 import type { ProviderType } from '@/src/server/auth/providers/types'
-import { PROVIDERS } from '@/src/server/auth/providers/types'
 import { prisma } from '@/src/server/db/client'
 import {
 	addDays,
 	addMonths,
 	addYears,
-	format,
 	isAfter,
 	isBefore,
 	parse,
 } from 'date-fns'
-import { de } from 'date-fns/locale'
 import { revalidateTag } from 'next/cache'
 import { z } from 'zod'
 import type { PreviewTimeSlot } from './types'
 import { getUTCDate } from './utils/getUTCDate'
+import {
+	type CalendarEvent,
+	transformCalendarEvents,
+} from './utils/transformCalendarEvents'
 
 export type CalendarPreviewResult = {
 	slots: PreviewTimeSlot[]
@@ -29,7 +30,6 @@ export const previewCalendarDataAction = authedActionClient
 		z.object({
 			timeRange: z.enum(['week', 'month', 'halfYear', 'year']),
 			eventType: z.enum(['all', 'fullday', 'timed']).optional(),
-			provider: z.enum(PROVIDERS),
 		}),
 	)
 	.action(
@@ -37,11 +37,7 @@ export const previewCalendarDataAction = authedActionClient
 			parsedInput,
 			ctx: { userId },
 		}): Promise<CalendarPreviewResult> => {
-			const {
-				timeRange,
-				eventType = 'all',
-				provider: providerName,
-			} = parsedInput
+			const { timeRange, eventType = 'all' } = parsedInput
 
 			// Get all day-specific slots for the user first
 			const daySpecificSlots = await prisma.timeSlot.findMany({
@@ -51,31 +47,21 @@ export const previewCalendarDataAction = authedActionClient
 				},
 			})
 
-			const token = await prisma.tokens.findFirst({
+			const tokens = await prisma.tokens.findMany({
 				where: {
 					ownerId: userId,
 					type: 'calendar',
-					provider: providerName,
+					//TODO: REMove
+					provider: 'microsoft',
 				},
 			})
 
-			const provider = getProvider(providerName as ProviderType)
-			if (!token || !token.refresh_token) {
-				const authUrl = await provider.getAuthUrl('calendar')
-				throw new Error(`AUTH_REQUIRED:${authUrl}`)
+			if (!tokens.length) {
+				throw new Error('No calendar providers connected')
 			}
 
 			try {
-				// Try to refresh the token first
-				const newToken = await provider.refreshToken(token.refresh_token)
-				await prisma.tokens.update({
-					where: { id: token.id },
-					data: {
-						access_token: newToken.access_token,
-						refresh_token: newToken.refresh_token,
-						expiry_date: newToken.expiry_date,
-					},
-				})
+				const allEvents: CalendarEvent[] = []
 
 				// Calculate time range
 				const now = new Date()
@@ -93,87 +79,45 @@ export const previewCalendarDataAction = authedActionClient
 					}
 				})().toISOString()
 
-				const events = await provider.getCalendarEvents(
-					newToken,
-					timeMin,
-					timeMax,
-				)
-				const previewSlots: PreviewTimeSlot[] = []
+				// Fetch events from all connected providers
+				for (const token of tokens) {
+					if (!token.refresh_token) continue
 
-				// Process each event based on the provider's format
-				for (const event of events ?? []) {
-					const start = event?.start.dateTime || event.start.date
-					const end = event.end.dateTime || event.end.date
-					const isAllDay = !event.start.dateTime
+					const provider = getProvider(token.provider as ProviderType)
+					const newToken = await provider.refreshToken(token.refresh_token)
 
-					if (!start || !end) continue
+					// Update token
+					await prisma.tokens.update({
+						where: { id: token.id },
+						data: {
+							access_token: newToken.access_token,
+							refresh_token: newToken.refresh_token,
+							expiry_date: newToken.expiry_date,
+						},
+					})
 
-					// Skip events based on eventType filter
-					if (eventType === 'fullday' && !isAllDay) continue
-					if (eventType === 'timed' && isAllDay) continue
+					const events = (await provider.getCalendarEvents(
+						newToken,
+						timeMin,
+						timeMax,
+					)) as CalendarEvent[]
 
-					const startDate = new Date(start)
-					const endDate = new Date(end)
-
-					// Find matching day-specific slot for this event's day
-					const dayOfWeek = startDate.getDay()
-					const matchingDaySlot = daySpecificSlots.find(
-						(slot) => slot.day === dayOfWeek,
-					)
-
-					if (!isAllDay) {
-						// For time-specific events
-						if (!matchingDaySlot) continue
-
-						const eventStartTime = format(startDate, 'HH:mm', { locale: de })
-						const eventEndTime = format(endDate, 'HH:mm', { locale: de })
-						const eventStartDate = parse(eventStartTime, 'HH:mm', new Date())
-						const eventEndDate = parse(eventEndTime, 'HH:mm', new Date())
-						const slotStartDate = parse(
-							matchingDaySlot.startTime,
-							'HH:mm',
-							new Date(),
-						)
-						const slotEndDate = parse(
-							matchingDaySlot.endTime,
-							'HH:mm',
-							new Date(),
-						)
-
-						if (
-							isBefore(eventEndDate, slotStartDate) ||
-							isAfter(eventStartDate, slotEndDate)
-						) {
-							continue
-						}
-
-						previewSlots.push({
-							id: event.id || Math.random().toString(),
-							startTime: eventStartTime,
-							endTime: eventEndTime,
-							date: startDate,
-							isAllDay: false,
-							summary: event.summary || undefined,
-							selected: true,
-						})
-					} else {
-						previewSlots.push({
-							id: event.id || Math.random().toString(),
-							startTime: '00:00',
-							endTime: '23:59',
-							date: startDate,
-							isAllDay: true,
-							summary: event.summary || undefined,
-							selected: true,
-						})
+					if (events?.length) {
+						allEvents.push(...events)
 					}
 				}
+
+				// Transform all events into preview slots
+				const previewSlots = transformCalendarEvents(
+					allEvents,
+					daySpecificSlots,
+					eventType,
+				)
 
 				return { slots: previewSlots }
 			} catch (error) {
 				console.error('Calendar preview error:', error)
-				const authUrl = await provider.getAuthUrl('calendar')
-				throw new Error(`AUTH_REQUIRED:${authUrl}`)
+				throw error
 			}
 		},
 	)

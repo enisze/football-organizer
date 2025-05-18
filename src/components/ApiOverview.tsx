@@ -157,11 +157,6 @@ export async function ApiOverview({
 						</div>
 						<Separator className='bg-slate-800' />
 						<div className='p-4 space-y-3'>
-							<CalendarIntegration
-								groupId={groupId}
-								token={token}
-								tokenExpiry={tokenExpiry}
-							/>
 							{PROVIDERS.map((provider) => {
 								const connected = checkStatus('calendar', provider)
 								return (
@@ -178,6 +173,8 @@ export async function ApiOverview({
 									</div>
 								)
 							})}
+
+							<CalendarIntegration groupId={groupId} />
 						</div>
 					</div>
 				</div>

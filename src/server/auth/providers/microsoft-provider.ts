@@ -6,6 +6,7 @@ import {
 } from '@azure/msal-node'
 import { Client } from '@microsoft/microsoft-graph-client'
 import type { TokenType } from '@prisma/client'
+import { addDays, formatISO } from 'date-fns'
 import type { AuthProviderFunctions, AuthToken } from './types'
 
 // Initialize MSAL application
@@ -30,16 +31,17 @@ const msalClient = new ConfidentialClientApplication(msalConfig)
 
 const SCOPES = {
 	calendar: [
-		'https://graph.microsoft.com/Calendars.Read',
+		'Calendars.Read',
+		'Calendars.ReadWrite',
+		'Calendars.Read.Shared',
 		'offline_access',
 	] as string[],
-	email: [
-		'https://graph.microsoft.com/Mail.Read',
-		'offline_access',
-	] as string[],
+	email: ['Mail.Read', 'offline_access'] as string[],
 	all: [
-		'https://graph.microsoft.com/Calendars.Read',
-		'https://graph.microsoft.com/Mail.Read',
+		'Calendars.Read',
+		'Calendars.ReadWrite',
+		'Calendars.Read.Shared',
+		'Mail.Read',
 		'offline_access',
 	] as string[],
 }
@@ -136,6 +138,8 @@ const getToken = async (
 const getGraphClient = (token: AuthToken) => {
 	return Client.init({
 		authProvider: (done) => done(null, token.access_token),
+		defaultVersion: 'v1.0',
+		debugLogging: true,
 	})
 }
 
@@ -144,19 +148,42 @@ const getCalendarEvents = async (
 	timeMin: string,
 	timeMax: string,
 ) => {
+	const startDateTime = timeMin || formatISO(new Date())
+	const endDateTime = timeMax || formatISO(addDays(new Date(), 7))
+
 	const client = getGraphClient(token)
 
 	try {
+		// First verify the token is working by getting user info
+		try {
+			const me = await client.api('/me').get()
+		} catch (error) {
+			console.error('Failed to get user info:', error)
+			throw new Error('Token validation failed')
+		}
+
 		const response = await client
-			.api('/me/calendar/events')
-			.select('subject,start,end,isAllDay')
-			.filter(`start/dateTime ge '${timeMin}' and end/dateTime le '${timeMax}'`)
+			.api('/me/calendarView')
+			.header('Prefer', 'outlook.timezone="UTC"')
+			.header('ConsistencyLevel', 'eventual') // Add this for better reliability
+			.query({
+				startDateTime,
+				endDateTime,
+				$top: 100, // Limit results
+			})
+			.select('subject,start,end,bodyPreview,location,isAllDay')
 			.orderby('start/dateTime')
 			.get()
 
+		console.log('Calendar events retrieved successfully')
 		return response.value || []
 	} catch (error) {
-		console.error('Error fetching calendar events:', error)
+		console.error('Error fetching calendar events:', {
+			error,
+			status: (error as { statusCode?: number })?.statusCode,
+			message: (error as Error)?.message,
+			response: (error as { body?: unknown })?.body,
+		})
 		throw error
 	}
 }
