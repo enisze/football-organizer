@@ -1,26 +1,29 @@
 'use server'
 
 import { authedActionClient } from '@/src/lib/actionClient'
+import { getProvider } from '@/src/server/auth/providers'
 import { prisma } from '@/src/server/db/client'
-import { SCOPES, oAuth2Client } from '@/src/server/google'
 import {
 	addDays,
 	addMonths,
 	addYears,
-	format,
 	isAfter,
 	isBefore,
 	parse,
 } from 'date-fns'
-import { de } from 'date-fns/locale'
-import { google } from 'googleapis'
 import { revalidateTag } from 'next/cache'
 import { z } from 'zod'
 import type { PreviewTimeSlot } from './types'
 import { getUTCDate } from './utils/getUTCDate'
+import {
+	type CalendarEvent,
+	transformCalendarEvents,
+} from './utils/transformCalendarEvents'
 
 export type CalendarPreviewResult = {
 	slots: PreviewTimeSlot[]
+	partialSuccess?: boolean
+	failedProviders?: Array<{ provider: string; error: string }>
 }
 
 export const previewCalendarDataAction = authedActionClient
@@ -45,51 +48,15 @@ export const previewCalendarDataAction = authedActionClient
 				},
 			})
 
-			const token = await prisma.tokens.findFirst({
+			const tokens = await prisma.tokens.findMany({
 				where: {
 					ownerId: userId,
 					type: 'calendar',
 				},
 			})
 
-			if (!token || !token.refresh_token) {
-				const authUrl = oAuth2Client.generateAuthUrl({
-					access_type: 'offline',
-					scope: SCOPES.calendar,
-					prompt: 'consent',
-					redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/oauth2callback?scope=calendar`,
-				})
-				throw new Error(`AUTH_REQUIRED:${authUrl}`)
-			}
-
-			// Try to refresh the token first
-			try {
-				oAuth2Client.setCredentials({
-					refresh_token: token.refresh_token,
-				})
-				
-				const { credentials } = await oAuth2Client.refreshAccessToken()
-				
-				// Update the tokens in the database
-				await prisma.tokens.update({
-					where: {
-						id: token.id,
-					},
-					data: {
-						access_token: credentials.access_token ?? '',
-						refresh_token: credentials.refresh_token ?? token.refresh_token,
-						expiry_date: credentials.expiry_date ? new Date(credentials.expiry_date) : undefined,
-					},
-				})
-
-				// Set up OAuth2 client with new credentials
-				oAuth2Client.setCredentials({
-					access_token: credentials.access_token,
-					expiry_date: credentials.expiry_date,
-					refresh_token: credentials.refresh_token ?? token.refresh_token,
-				})
-			} catch (error) {
-				throw new Error('Du musst deinen Kalender neu verbinden.')
+			if (!tokens.length) {
+				throw new Error('No calendar providers connected')
 			}
 
 			try {
@@ -107,104 +74,92 @@ export const previewCalendarDataAction = authedActionClient
 						case 'year':
 							return addYears(now, 1)
 					}
-				})()
+				})().toISOString()
 
-				// Get calendar events
-				const calendar = google.calendar({ version: 'v3', auth: oAuth2Client })
-				const response = await calendar.events.list({
-					calendarId: 'primary',
-					timeMin,
-					timeMax: timeMax.toISOString(),
-					singleEvents: true,
-					orderBy: 'startTime',
-				})
+				// Process all providers in parallel
+				const results = await Promise.all(
+					tokens
+						.filter((token) => token.refresh_token)
+						.map(async (token) => {
+							try {
+								const provider = getProvider(token.provider)
+								const newToken = await provider.refreshToken(
+									token.refresh_token,
+								)
 
-				const events = response.data.items || []
-				const previewSlots: PreviewTimeSlot[] = []
+								// Update token
+								await prisma.tokens.update({
+									where: { id: token.id },
+									data: {
+										access_token: newToken.access_token,
+										refresh_token: newToken.refresh_token,
+										expiry_date: newToken.expiry_date,
+									},
+								})
 
-				// Process each event
-				for (const event of events) {
-					if (!event.start || !event.end) continue
+								const events = (await provider.getCalendarEvents(
+									newToken,
+									timeMin,
+									timeMax,
+								)) as CalendarEvent[]
 
-					const isAllDay = !event.start.dateTime && !event.end.dateTime
+								return {
+									success: true as const,
+									events: events || [],
+									provider: token.provider,
+								}
+							} catch (error) {
+								console.error(
+									`Failed to fetch events from ${token.provider}:`,
+									error,
+								)
+								return {
+									success: false as const,
+									provider: token.provider,
+									error: (error as Error).message || 'Unknown error',
+								}
+							}
+						}),
+				)
 
-					// Skip events based on eventType filter
-					if (eventType === 'fullday' && !isAllDay) continue
-					if (eventType === 'timed' && isAllDay) continue
+				const allEvents: CalendarEvent[] = []
+				const failedProviders: Array<{ provider: string; error: string }> = []
 
-					const startDate = new Date(
-						event.start.dateTime || event.start.date || '',
-					)
-					const endDate = new Date(event.end.dateTime || event.end.date || '')
-
-					// Find matching day-specific slot for this event's day
-					const dayOfWeek = startDate.getDay()
-					const matchingDaySlot = daySpecificSlots.find(
-						(slot) => slot.day === dayOfWeek,
-					)
-
-					// For time-specific events, check if they fall within the day slot's time range
-					if (!isAllDay) {
-						// If there's no day slot for this day, skip the event
-						if (!matchingDaySlot) continue
-						const eventStartTime = format(startDate, 'HH:mm', { locale: de })
-						const eventEndTime = format(endDate, 'HH:mm', { locale: de })
-						const eventStartDate = parse(eventStartTime, 'HH:mm', new Date())
-						const eventEndDate = parse(eventEndTime, 'HH:mm', new Date())
-						const slotStartDate = parse(
-							matchingDaySlot.startTime,
-							'HH:mm',
-							new Date(),
-						)
-						const slotEndDate = parse(
-							matchingDaySlot.endTime,
-							'HH:mm',
-							new Date(),
-						)
-
-						// Skip if event is outside of the day slot's time range
-						if (
-							isBefore(eventEndDate, slotStartDate) ||
-							isAfter(eventStartDate, slotEndDate)
-						) {
-							continue
-						}
-
-						previewSlots.push({
-							id: event.id || Math.random().toString(),
-							startTime: eventStartTime,
-							endTime: eventEndTime,
-							date: startDate,
-							isAllDay: false,
-							summary: event.summary || undefined,
-							selected: true,
-						})
+				// Process results
+				for (const result of results) {
+					if (result.success) {
+						allEvents.push(...result.events)
 					} else {
-						// For all-day events, we still include them if there's a day slot
-						previewSlots.push({
-							id: event.id || Math.random().toString(),
-							startTime: '00:00',
-							endTime: '23:59',
-							date: startDate,
-							isAllDay: true,
-							summary: event.summary || undefined,
-							selected: true,
+						failedProviders.push({
+							provider: result.provider,
+							error: result.error,
 						})
 					}
 				}
 
-				return { slots: previewSlots }
-			} catch (error) {
-				if (error instanceof Error && error.message === 'invalid_grant') {
-					// Token expired, need to re-authenticate
-					const authUrl = oAuth2Client.generateAuthUrl({
-						access_type: 'offline',
-						scope: SCOPES.calendar,
-						prompt: 'consent',
-						redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/oauth2callback`,
-					})
-					throw new Error(`AUTH_REQUIRED:${authUrl}`)
+				if (failedProviders.length > 0) {
+					console.warn('Some calendar providers failed:', failedProviders)
 				}
+
+				// Transform all events into preview slots
+				const previewSlots = transformCalendarEvents(
+					allEvents,
+					daySpecificSlots,
+					eventType,
+				)
+
+				// Return the result with information about any failures
+				return {
+					slots: previewSlots,
+					...(failedProviders.length > 0
+						? {
+								partialSuccess: true,
+								failedProviders,
+							}
+						: {}),
+				}
+			} catch (error) {
+				console.error('Calendar preview error:', error)
 				throw error
 			}
 		},

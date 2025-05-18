@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/ui/button'
+import type { ProviderType } from '@prisma/client'
 import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import { Chrome, MessageSquare } from 'lucide-react'
@@ -14,14 +15,14 @@ const MicrosoftIcon = () => (
 )
 
 export const lastUsedProviderAtom = atomWithStorage<
-	'google' | 'discord' | 'microsoft' | null
+	ProviderType | 'discord' | null
 >('lastUsedProvider', null)
 
 export function ProviderButton({
 	provider,
 	action,
 }: {
-	provider: 'google' | 'discord' | 'microsoft'
+	provider: ProviderType | 'discord'
 	action: () => Promise<void>
 }) {
 	const [, setLastUsedProvider] = useAtom(lastUsedProviderAtom)

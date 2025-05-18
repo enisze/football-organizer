@@ -14,14 +14,21 @@ enum TokenType {
   email
 }
 
+enum ProviderType {
+  google
+  microsoft
+  facebook
+}
+
 model Tokens {
-  id            String    @id @default(cuid())
-  access_token  String    @db.Text
+  id            String       @id @default(cuid())
+  access_token  String       @db.Text
   refresh_token String
   expiry_date   DateTime
   ownerId       String
   type          TokenType
-  user          User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  provider      ProviderType
+  user          User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
   @@index([ownerId])
 }

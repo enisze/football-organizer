@@ -1,6 +1,7 @@
 'use client'
 
 import { Badge } from '@/ui/badge'
+import type { ProviderType } from '@prisma/client'
 import { useAtom } from 'jotai'
 import { useEffect } from 'react'
 import { lastUsedProviderAtom } from './ProviderButton'
@@ -8,7 +9,7 @@ import { lastUsedProviderAtom } from './ProviderButton'
 export function LastUsedProvider({
 	provider,
 	onClick,
-}: { provider: 'google' | 'discord' | 'microsoft'; onClick?: () => void }) {
+}: { provider: ProviderType | 'discord'; onClick?: () => void }) {
 	const [lastUsedProvider, setLastUsedProvider] = useAtom(lastUsedProviderAtom)
 
 	useEffect(() => {

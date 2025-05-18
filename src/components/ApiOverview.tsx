@@ -1,4 +1,4 @@
-import { Badge } from '@/ui/badge'
+import { PROVIDERS } from '@/src/server/auth/providers/types'
 import {
 	Card,
 	CardContent,
@@ -7,29 +7,77 @@ import {
 	CardTitle,
 } from '@/ui/card'
 import { Separator } from '@/ui/separator'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs'
-import { Calendar, Mail } from 'lucide-react'
+import type { ProviderType, TokenType } from '@prisma/client'
+import { Calendar, CheckCircle, Mail } from 'lucide-react'
 import { cacheTag } from 'next/dist/server/use-cache/cache-tag'
+import { getProvider } from '../server/auth/providers'
+import { prisma } from '../server/db/client'
 import { CalendarIntegration } from './CalendarIntegration'
 import { ConnectButton } from './ConnectButton'
 
 interface ApiOverviewProps {
 	groupId: string
-	token?: string | null
-	tokenExpiry?: string | null
+	isOwner: boolean
+	userId: string
 }
 
 export async function ApiOverview({
 	groupId,
-	token,
-	tokenExpiry,
+	isOwner,
+	userId,
 }: ApiOverviewProps) {
 	'use cache'
 
 	cacheTag('api-overview')
 
-	const isCalendarValid =
-		token && tokenExpiry && new Date(tokenExpiry) > new Date()
+	const tokens = await prisma.tokens.findMany({
+		where: { ownerId: userId },
+		select: {
+			type: true,
+			provider: true,
+			refresh_token: true,
+		},
+	})
+
+	const isConnected = async (
+		type: TokenType,
+		provider: ProviderType,
+	): Promise<boolean> => {
+		const token = tokens.find((t) => t.type === type && t.provider === provider)
+		if (!token?.refresh_token) return false
+
+		try {
+			const authProvider = getProvider(provider)
+			await authProvider.refreshToken(token.refresh_token, type)
+			return true
+		} catch (error) {
+			console.error(`Failed to refresh ${provider} ${type} token:`, error)
+			return false
+		}
+	}
+
+	// Pre-compute all connection statuses to avoid waterfall of requests
+	const connectionStatuses = await Promise.all(
+		tokens.map(async (token) => ({
+			type: token.type,
+			provider: token.provider,
+			isConnected: await isConnected(token.type, token.provider),
+		})),
+	)
+
+	const checkStatus = (type: TokenType, provider: ProviderType): boolean => {
+		return connectionStatuses.some(
+			(status) =>
+				status.type === type &&
+				status.provider === provider &&
+				status.isConnected,
+		)
+	}
+
+	const providers =
+		process.env.NODE_ENV === 'development'
+			? PROVIDERS
+			: PROVIDERS.filter((provider) => provider !== 'microsoft')
 
 	return (
 		<Card className='border-white/10 bg-white/5 backdrop-blur-sm'>
@@ -37,82 +85,18 @@ export async function ApiOverview({
 				<div className='flex items-center justify-between'>
 					<div className='space-y-1'>
 						<CardTitle className='text-lg text-white'>
-							API Integrations
+							API Integrationen
 						</CardTitle>
 						<CardDescription className='text-white/70'>
-							Connect your accounts to enable powerful integrations
+							Verbinde deine Konten für erweiterte Funktionen
 						</CardDescription>
 					</div>
 				</div>
 			</CardHeader>
 			<CardContent>
-				<Tabs defaultValue='all' className='w-full'>
-					<TabsList className='grid grid-cols-3 mb-6'>
-						<TabsTrigger value='all'>All Integrations</TabsTrigger>
-						<TabsTrigger value='mail'>Mail</TabsTrigger>
-						<TabsTrigger value='calendar'>Calendar</TabsTrigger>
-					</TabsList>
-
-					<TabsContent value='all'>
-						<div className='space-y-4'>
-							{/* Google Mail Integration */}
-							<div className='rounded-lg border border-slate-800 bg-slate-900/50 overflow-hidden'>
-								<div className='flex items-center justify-between p-4'>
-									<div className='flex items-center gap-3'>
-										<div className='flex h-10 w-10 items-center justify-center rounded-full bg-slate-800'>
-											<Mail className='h-5 w-5 text-blue-400' />
-										</div>
-										<div>
-											<h3 className='font-medium text-white'>Google Mail</h3>
-											<p className='text-sm text-slate-400'>
-												Connect to your Gmail account
-											</p>
-										</div>
-									</div>
-								</div>
-								<Separator className='bg-slate-800' />
-								<div className='p-4'>
-									<ConnectButton
-										type='email'
-										className='bg-slate-800 hover:bg-slate-700 text-white'
-									/>
-								</div>
-							</div>
-
-							{/* Google Calendar Integration */}
-							<div className='rounded-lg border border-slate-800 bg-slate-900/50 overflow-hidden'>
-								<div className='flex items-center justify-between p-4'>
-									<div className='flex items-center gap-3'>
-										<div className='flex h-10 w-10 items-center justify-center rounded-full bg-slate-800'>
-											<Calendar className='h-5 w-5 text-green-400' />
-										</div>
-										<div>
-											<h3 className='font-medium text-white'>
-												Google Calendar
-											</h3>
-											<p className='text-sm text-slate-400'>
-												Sync your calendar events
-											</p>
-										</div>
-									</div>
-								</div>
-								<Separator className='bg-slate-800' />
-								<div className='p-4 space-y-3'>
-									<CalendarIntegration
-										groupId={groupId}
-										token={token}
-										tokenExpiry={tokenExpiry}
-									/>
-									<ConnectButton
-										type='calendar'
-										className='bg-slate-800 hover:bg-slate-700 text-white'
-									/>
-								</div>
-							</div>
-						</div>
-					</TabsContent>
-
-					<TabsContent value='mail'>
+				<div className='space-y-4'>
+					{/* Email Integration Section */}
+					{isOwner && (
 						<div className='rounded-lg border border-slate-800 bg-slate-900/50 overflow-hidden'>
 							<div className='flex items-center justify-between p-4'>
 								<div className='flex items-center gap-3'>
@@ -120,72 +104,77 @@ export async function ApiOverview({
 										<Mail className='h-5 w-5 text-blue-400' />
 									</div>
 									<div>
-										<h3 className='font-medium text-white'>Google Mail</h3>
+										<h3 className='font-medium text-white'>
+											E-Mail Integration
+										</h3>
 										<p className='text-sm text-slate-400'>
-											Connect to your Gmail account
+											Verbinde deine E-Mail-Konten
 										</p>
 									</div>
 								</div>
-								<Badge
-									variant='outline'
-									className='bg-red-900/20 text-red-400 border-red-800'
-								>
-									Disconnected
-								</Badge>
-							</div>
-							<Separator className='bg-slate-800' />
-							<div className='p-4'>
-								<ConnectButton
-									type='email'
-									className='bg-slate-800 hover:bg-slate-700 text-white'
-								/>
-							</div>
-						</div>
-					</TabsContent>
-
-					<TabsContent value='calendar'>
-						<div className='rounded-lg border border-slate-800 bg-slate-900/50 overflow-hidden'>
-							<div className='flex items-center justify-between p-4'>
-								<div className='flex items-center gap-3'>
-									<div className='flex h-10 w-10 items-center justify-center rounded-full bg-slate-800'>
-										<Calendar className='h-5 w-5 text-green-400' />
-									</div>
-									<div>
-										<h3 className='font-medium text-white'>Google Calendar</h3>
-										<p className='text-sm text-slate-400'>
-											Sync your calendar events
-										</p>
-									</div>
-								</div>
-								<Badge
-									variant='outline'
-									className={
-										isCalendarValid
-											? 'bg-green-900/20 text-green-400 border-green-800'
-											: 'bg-red-900/20 text-red-400 border-red-800'
-									}
-								>
-									{isCalendarValid ? 'Connected' : 'Disconnected'}
-								</Badge>
 							</div>
 							<Separator className='bg-slate-800' />
 							<div className='p-4 space-y-3'>
-								{isCalendarValid ? (
-									<CalendarIntegration
-										groupId={groupId}
-										token={token}
-										tokenExpiry={tokenExpiry}
-									/>
-								) : (
-									<ConnectButton
-										type='calendar'
-										className='bg-slate-800 hover:bg-slate-700 text-white'
-									/>
-								)}
+								{providers.map((provider) => {
+									const connected = checkStatus('email', provider)
+									return (
+										<div
+											key={`email-${provider}`}
+											className='flex relative items-center gap-2'
+										>
+											<ConnectButton type='email' provider={provider} />
+											{connected && (
+												<div className='absolute -top-1 -right-1'>
+													<CheckCircle className='h-4 w-4 text-green-400' />
+												</div>
+											)}
+										</div>
+									)
+								})}
 							</div>
 						</div>
-					</TabsContent>
-				</Tabs>
+					)}
+
+					{/* Calendar Integration Section */}
+					<div className='rounded-lg border border-slate-800 bg-slate-900/50 overflow-hidden'>
+						<div className='flex items-center justify-between p-4'>
+							<div className='flex items-center gap-3'>
+								<div className='flex h-10 w-10 items-center justify-center rounded-full bg-slate-800'>
+									<Calendar className='h-5 w-5 text-green-400' />
+								</div>
+								<div>
+									<h3 className='font-medium text-white'>
+										Kalender Integration
+									</h3>
+									<p className='text-sm text-slate-400'>
+										Verbinde deine Kalender-Konten
+									</p>
+								</div>
+							</div>
+						</div>
+						<Separator className='bg-slate-800' />
+						<div className='p-4 space-y-3'>
+							{providers.map((provider) => {
+								const connected = checkStatus('calendar', provider)
+								return (
+									<div
+										key={`calendar-${provider}`}
+										className='flex relative items-center gap-2'
+									>
+										<ConnectButton type='calendar' provider={provider} />
+										{connected && (
+											<div className='absolute -top-1 -right-1'>
+												<CheckCircle className='h-4 w-4 text-green-400' />
+											</div>
+										)}
+									</div>
+								)
+							})}
+
+							<CalendarIntegration groupId={groupId} />
+						</div>
+					</div>
+				</div>
 			</CardContent>
 		</Card>
 	)
