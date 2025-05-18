@@ -1,6 +1,7 @@
 import type { TimeSlot } from '@prisma/client'
 import { format, isAfter, isBefore, parse } from 'date-fns'
 import { de } from 'date-fns/locale'
+import { nanoid } from 'nanoid'
 import type { PreviewTimeSlot } from '../types'
 
 export interface BaseEvent {
@@ -52,7 +53,7 @@ function transformGoogleEvent(
 	// For all-day events
 	if (isAllDay) {
 		return {
-			id: event.id || Math.random().toString(),
+			id: event.id || nanoid(6),
 			startTime: '00:00',
 			endTime: '23:59',
 			date: startDate,
@@ -85,7 +86,7 @@ function transformGoogleEvent(
 	}
 
 	return {
-		id: event.id || Math.random().toString(),
+		id: event.id || nanoid(6),
 		startTime: eventStartTime,
 		endTime: eventEndTime,
 		date: startDate,
@@ -111,7 +112,7 @@ function transformMicrosoftEvent(
 	// For all-day events
 	if (isAllDay) {
 		return {
-			id: event.id || Math.random().toString(),
+			id: event.id || nanoid(6),
 			startTime: '00:00',
 			endTime: '23:59',
 			date: startDate,
@@ -144,7 +145,7 @@ function transformMicrosoftEvent(
 	}
 
 	return {
-		id: event.id || Math.random().toString(),
+		id: event.id || nanoid(6),
 		startTime: eventStartTime,
 		endTime: eventEndTime,
 		date: startDate,
