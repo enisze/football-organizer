@@ -13,8 +13,10 @@ import { Card } from '@/ui/card'
 import { Input } from '@/ui/input'
 import { useChat } from '@ai-sdk/react'
 import { Calendar, Clock, Send, X } from 'lucide-react'
+import { useQueryState } from 'nuqs'
 import { useState } from 'react'
 import { z } from 'zod'
+import { TimelineView } from '../../availability/components/TimeLineView'
 import type { ProcessedTimeSlot } from '../../availability/processAvailability'
 
 interface AiSlotFinderProps {
@@ -29,6 +31,12 @@ export const AiSlotFinder = ({ groupId }: AiSlotFinderProps) => {
 	> | null>(null)
 	const [currentDate, setCurrentDate] = useState<Date | null>(null)
 	const [showEventDialog, setShowEventDialog] = useState(false)
+
+	const [maxUsers] = useQueryState('maxUsers', {
+		defaultValue: 0,
+		parse: (value) => Number(value),
+		shallow: true,
+	})
 
 	const { messages, input, handleInputChange, handleSubmit } = useChat({
 		maxSteps: 5,
@@ -53,6 +61,19 @@ export const AiSlotFinder = ({ groupId }: AiSlotFinderProps) => {
 				setCurrentDate(new Date(date))
 				setShowEventDialog(true)
 				return 'Dialog geöffnet'
+			}
+			if (toolCall.toolName === 'fetchDateSlotsForGroup') {
+				const { month, day, year } = z
+					.object({
+						month: z.number().optional(),
+						day: z.number().optional(),
+						year: z.number().optional(),
+					})
+					.parse(toolCall.args)
+
+				setCurrentDate(new Date(`${year}-${month}-${day}`))
+
+				return ''
 			}
 		},
 	})
@@ -124,7 +145,12 @@ export const AiSlotFinder = ({ groupId }: AiSlotFinderProps) => {
 												if (
 													part.toolInvocation.toolName ===
 													'fetchDateSlotsForGroup'
-												)
+												) {
+													const result: ProcessedTimeSlot[] =
+														part.toolInvocation.state === 'result'
+															? part.toolInvocation.result
+															: []
+
 													return (
 														<div className='bg-gray-800 rounded-lg overflow-hidden mt-2'>
 															<Accordion
@@ -143,26 +169,22 @@ export const AiSlotFinder = ({ groupId }: AiSlotFinderProps) => {
 																	</AccordionTrigger>
 																	<AccordionContent>
 																		<div className='flex flex-col gap-1 text-sm text-gray-300 whitespace-pre-line'>
-																			{part.toolInvocation.state === 'result' &&
-																				part.toolInvocation.result
-																					.split('\n')
-																					.filter(
-																						(l: string) => l.trim() !== '',
-																					)
-																					.map((line: string, i: number) => (
-																						<div
-																							key={i}
-																							className='p-3 rounded-md border-l-4 border-gray-700 bg-gray-800 hover:bg-gray-700'
-																						>
-																							{line}
-																						</div>
-																					))}
+																			<TimelineView
+																				slots={result}
+																				maxUsers={maxUsers}
+																				singleLine={false}
+																				onSlotClick={(slot) => {
+																					setSelectedSlot(slot)
+																					setShowEventDialog(true)
+																				}}
+																			/>
 																		</div>
 																	</AccordionContent>
 																</AccordionItem>
 															</Accordion>
 														</div>
 													)
+												}
 											}
 										})}
 									</div>

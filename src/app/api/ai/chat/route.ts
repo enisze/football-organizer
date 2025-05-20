@@ -32,7 +32,7 @@ export async function POST(req: Request) {
 	const result = streamText({
 		model: openrouter.chat(OPEN_ROUTER_MODEL),
 		messages,
-		system: `The groupId is ${groupId}. The current date is ${new Date()}. You are a helpful assistant that helps the user find available time slots for their group. You can ask the user for more information if needed. If the user asks for a specific date, you can use the tool to fetch available time slots. If the user asks for a specific time, you can use the tool to fetch available time slots. If the user asks for a specific duration, you can use the tool to fetch available time slots. If the user asks for a specific day of the week, you can use the tool to fetch available time slots.`,
+		system: `The groupId is ${groupId}. The current date is ${new Date()} Fill in the information using this date. You are a helpful assistant that helps the user find available time slots for their group. You can ask the user for more information if needed. If the user asks for a specific date, you can use the tool to fetch available time slots. If the user asks for a specific time, you can use the tool to fetch available time slots. If the user asks for a specific duration, you can use the tool to fetch available time slots. If the user asks for a specific day of the week, you can use the tool to fetch available time slots.`,
 		tools: {
 			fetchDateSlotsForGroup,
 			openEventDialog: {

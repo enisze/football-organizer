@@ -1,20 +1,17 @@
 import { prisma } from '@/src/server/db/client'
-import { openrouter } from '@openrouter/ai-sdk-provider'
-import { generateText, tool } from 'ai'
+import { tool } from 'ai'
+import { uniqueBy } from 'remeda'
 import { z } from 'zod'
 import {
 	type TimeSlotDuration,
 	processGroupAvailability,
 } from './[groupId]/availability/processAvailability'
 import { getUTCDate } from './[groupId]/availability/utils/getUTCDate'
-import { OPEN_ROUTER_MODEL } from './constants'
 
 export const fetchDateSlotsForGroup = tool({
 	description:
 		'Fetches available time slots for a group based on natural language request',
 	parameters: z.object({
-		request: z.string().optional(),
-		dayOfWeek: z.number().min(0).max(6).optional(),
 		month: z.number().optional(),
 		day: z.number().optional(),
 		year: z.number().optional(),
@@ -26,23 +23,19 @@ export const fetchDateSlotsForGroup = tool({
 
 	execute: async ({
 		month,
-		request,
 		day,
 		year,
-		dayOfWeek,
 		desiredDuration,
 		preferredEndTime,
 		preferredStartTime,
 		groupId,
 	}: {
-		dayOfWeek?: number
 		month?: number
 		day?: number
 		year?: number
 		desiredDuration?: string
 		preferredStartTime?: string
 		preferredEndTime?: string
-		request?: string
 		groupId: string
 	}) => {
 		const targetDate = new Date(`${year}-${month}-${day}`)
@@ -66,7 +59,10 @@ export const fetchDateSlotsForGroup = tool({
 			},
 		})
 
-		const uniqueUsers = [...new Set(timeslots.map((slot) => slot.user))]
+		const uniqueUsers = uniqueBy(
+			timeslots.map((slot) => slot.user),
+			(user) => user.id,
+		)
 
 		const slots = processGroupAvailability({
 			date: targetDate,
@@ -81,21 +77,6 @@ export const fetchDateSlotsForGroup = tool({
 				: 23,
 		})
 
-		const res = await generateText({
-			model: openrouter.chat(OPEN_ROUTER_MODEL),
-			prompt: `Hier sind die besten Zeitfenster für die Gruppe ${groupId}:\n${slots
-				.map(
-					(slot) =>
-						`- ${slot.startTime} bis ${slot.endTime} (${slot.availableUsers.length} Spieler verfügbar
-					Spieler: ${slot.availableUsers.map((user) => `(${user.name})`).join(', ')}
-					)`,
-				)
-				.join('\n')}
-				Folgende Anfrage: ${request}.
-				 Gib mir die besten Zeitfenster und das Datum zurück, die für alle Spieler passen. Gib mir die Zeitfenster zurück und die Anzahl der Teilnehmer, keine weiteren Erklärungen. Beschränke das Ergebnis, wenn in der Anfrage verlangt.
-				`,
-		})
-
-		return res.text
+		return slots
 	},
 })
