@@ -3,7 +3,8 @@ import { fetchDateSlotsForGroup } from '@/src/app/group/fetchDataSlotsForGroup.t
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
-import { streamText } from 'ai'
+import { type CoreMessage, streamText } from 'ai'
+import { z } from 'zod'
 
 const openrouter = createOpenRouter({
 	apiKey: process.env.OPENROUTER_API_KEY,
@@ -11,6 +12,8 @@ const openrouter = createOpenRouter({
 
 export async function POST(req: Request) {
 	const { messages, groupId } = await req.json()
+
+	const typedMessages = messages as CoreMessage[]
 
 	const session = await serverAuth()
 	if (!session?.user?.id) {
@@ -28,12 +31,33 @@ export async function POST(req: Request) {
 		return new Response('Not in group', { status: 403 })
 	}
 
+	const query = typedMessages.at(0)?.content
+
+	const adjustedMessages: CoreMessage[] = [
+		{
+			role: 'system',
+			content: `GruppenId: ${groupId}`,
+			providerOptions: {},
+		},
+		...typedMessages,
+	]
+
 	const result = streamText({
 		model: openrouter.chat(OPEN_ROUTER_MODEL),
-		messages,
+		messages: adjustedMessages,
 		tools: {
 			fetchDateSlotsForGroup,
+			openEventDialog: {
+				description:
+					'Get the user location. Always ask for confirmation before using this tool.',
+				parameters: z.object({
+					startTime: z.string(),
+					endTime: z.string(),
+					date: z.string(),
+				}),
+			},
 		},
+
 		maxSteps: 5,
 		toolCallStreaming: true,
 	})

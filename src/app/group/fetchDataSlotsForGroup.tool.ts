@@ -1,6 +1,6 @@
 import { prisma } from '@/src/server/db/client'
 import { openrouter } from '@openrouter/ai-sdk-provider'
-import { generateText, tool } from 'ai'
+import { generateObject, generateText, tool } from 'ai'
 import { z } from 'zod'
 import {
 	type TimeSlotDuration,
@@ -13,8 +13,7 @@ export const fetchDateSlotsForGroup = tool({
 	description:
 		'Fetches available time slots for a group based on natural language request',
 	parameters: z.object({
-		request: z.string(),
-		groupId: z.string(),
+		request: z.string().optional(),
 		dayOfWeek: z.number().min(0).max(6).optional(),
 		month: z.number().optional(),
 		day: z.number().optional(),
@@ -23,27 +22,38 @@ export const fetchDateSlotsForGroup = tool({
 		preferredStartTime: z.string().optional(),
 		preferredEndTime: z.string().optional(),
 	}),
-	execute: async ({
-		request,
-		groupId,
-		month,
-		day,
-		year,
-		dayOfWeek,
-		desiredDuration,
-		preferredEndTime,
-		preferredStartTime,
-	}: {
-		request: string
-		groupId: string
-		dayOfWeek?: number
-		month?: number
-		day?: number
-		year?: number
-		desiredDuration?: string
-		preferredStartTime?: string
-		preferredEndTime?: string
-	}) => {
+
+	execute: async (
+		{
+			month,
+			request,
+			day,
+			year,
+			dayOfWeek,
+			desiredDuration,
+			preferredEndTime,
+			preferredStartTime,
+		}: {
+			dayOfWeek?: number
+			month?: number
+			day?: number
+			year?: number
+			desiredDuration?: string
+			preferredStartTime?: string
+			preferredEndTime?: string
+			request?: string
+		},
+		{ messages },
+	) => {
+		const {
+			object: { groupId },
+		} = await generateObject({
+			model: openrouter.chat(OPEN_ROUTER_MODEL),
+			prompt: `Give me the groupId from the ${messages.at(0)?.content}`,
+			schema: z.object({
+				groupId: z.string(),
+			}),
+		})
 		const targetDate = new Date(`${year}-${month}-${day}`)
 		const localDayOfWeek = new Date(targetDate).getDay()
 		const utcDate = getUTCDate(targetDate)
@@ -90,7 +100,8 @@ export const fetchDateSlotsForGroup = tool({
 					)`,
 				)
 				.join('\n')}
-				 Das ist die Anfrage: ${request}. Gib mir die besten Zeitfenster und das Datum zurück, die für alle Spieler passen. Gib mir die Zeitfenster zurück und die Anzahl der Teilnehmer, keine weiteren Erklärungen. Beschränke das Ergebnis, wenn in der Anfrage verlangt.
+				Folgende Anfrage: ${request}.
+				 Gib mir die besten Zeitfenster und das Datum zurück, die für alle Spieler passen. Gib mir die Zeitfenster zurück und die Anzahl der Teilnehmer, keine weiteren Erklärungen. Beschränke das Ergebnis, wenn in der Anfrage verlangt.
 				`,
 		})
 

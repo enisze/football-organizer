@@ -3,7 +3,6 @@ import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
-import GroupChat from '../../components/GroupChat'
 import { GroupAvailabilityMonthly } from '../availability/components/GroupAvailabilityMonthly'
 import { GroupAvailabilityPage } from '../availability/components/GroupAvailabilityPage'
 import { GroupLoading } from './GroupLoading'
@@ -73,7 +72,6 @@ export default async function GroupAvailabilityRoute({
 			</div>
 			<Suspense>
 				<AiSlotFinder groupId={groupId} />
-				<GroupChat groupId={groupId} />
 			</Suspense>
 		</div>
 	)
