@@ -60,7 +60,7 @@ export const AiSlotFinder = ({ groupId }: AiSlotFinderProps) => {
 	return (
 		<div className='fixed bottom-4 right-4 z-50'>
 			{isOpen ? (
-				<Card className='w-full max-w-md h-[600px] flex flex-col bg-gray-900 border-gray-800 shadow-xl rounded-lg overflow-hidden'>
+				<Card className='w-full max-w-md h-[450px] flex flex-col bg-gray-900 border-gray-800 shadow-xl rounded-lg overflow-hidden'>
 					{/* Header */}
 					<div className='flex items-center justify-between p-4 border-b border-gray-800 bg-gray-900'>
 						<div className='flex items-center space-x-2'>
@@ -136,27 +136,27 @@ export const AiSlotFinder = ({ groupId }: AiSlotFinderProps) => {
 																	value='available-slots'
 																	className='border-none'
 																>
-																	<AccordionTrigger className='p-4 text-white hover:no-underline hover:bg-gray-700'>
+																	<AccordionTrigger className='p-2 text-white hover:no-underline bg-gray-700 mb-2 rounded-md'>
 																		<h3 className='text-lg font-medium'>
 																			Available Slots
 																		</h3>
 																	</AccordionTrigger>
 																	<AccordionContent>
-																		<div className='px-4 pb-4'>
-																			<div className='text-sm text-gray-300 whitespace-pre-line'>
-																				{part.toolInvocation.state ===
-																					'result' &&
-																					part.toolInvocation.result
-																						.split('\n')
-																						.map((line: string, i: number) => (
-																							<div
-																								key={i}
-																								className='p-3 rounded-md border-l-4 border-gray-700 bg-gray-800 hover:bg-gray-700'
-																							>
-																								{line}
-																							</div>
-																						))}
-																			</div>
+																		<div className='flex flex-col gap-1 text-sm text-gray-300 whitespace-pre-line'>
+																			{part.toolInvocation.state === 'result' &&
+																				part.toolInvocation.result
+																					.split('\n')
+																					.filter(
+																						(l: string) => l.trim() !== '',
+																					)
+																					.map((line: string, i: number) => (
+																						<div
+																							key={i}
+																							className='p-3 rounded-md border-l-4 border-gray-700 bg-gray-800 hover:bg-gray-700'
+																						>
+																							{line}
+																						</div>
+																					))}
 																		</div>
 																	</AccordionContent>
 																</AccordionItem>
@@ -183,11 +183,7 @@ export const AiSlotFinder = ({ groupId }: AiSlotFinderProps) => {
 								placeholder='Ask about availability...'
 								className='flex-1 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus-visible:ring-purple-500'
 							/>
-							<Button
-								type='submit'
-								size='icon'
-								className='bg-purple-600 hover:bg-purple-700 text-white rounded-full'
-							>
+							<Button type='submit' size='icon' variant='purple'>
 								<Send className='h-5 w-5' />
 								<span className='sr-only'>Send</span>
 							</Button>
@@ -198,7 +194,7 @@ export const AiSlotFinder = ({ groupId }: AiSlotFinderProps) => {
 				<Button
 					onClick={() => setIsOpen(true)}
 					variant='purple'
-					className='absolute bottom-20 right-2'
+					className='absolute bottom-[70px] right-0 w-fit'
 				>
 					<Calendar className='h-6 w-6' />
 				</Button>
