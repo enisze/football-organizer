@@ -98,7 +98,7 @@ export const AiSlotFinder = ({ groupId }: AiSlotFinderProps) => {
 											'max-w-[85%] rounded-lg p-3',
 											message.role === 'assistant'
 												? 'bg-gray-800 text-gray-100'
-												: 'bg-purple-600 text-white',
+												: 'bg-indigo-600 text-white',
 										)}
 									>
 										{message.parts.map((part, index) => {
