@@ -3,9 +3,11 @@ import { prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
+import GroupChat from '../../components/GroupChat'
 import { GroupAvailabilityMonthly } from '../availability/components/GroupAvailabilityMonthly'
 import { GroupAvailabilityPage } from '../availability/components/GroupAvailabilityPage'
 import { GroupLoading } from './GroupLoading'
+import { AiSlotFinder } from './_components/AiSlotFinder'
 
 interface PageProps {
 	params: Promise<unknown>
@@ -69,6 +71,10 @@ export default async function GroupAvailabilityRoute({
 					</Suspense>
 				</div>
 			</div>
+			<Suspense>
+				<AiSlotFinder groupId={groupId} />
+				<GroupChat groupId={groupId} />
+			</Suspense>
 		</div>
 	)
 }
