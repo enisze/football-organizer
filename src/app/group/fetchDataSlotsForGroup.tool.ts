@@ -1,6 +1,6 @@
 import { prisma } from '@/src/server/db/client'
 import { openrouter } from '@openrouter/ai-sdk-provider'
-import { generateObject, generateText, tool } from 'ai'
+import { generateText, tool } from 'ai'
 import { z } from 'zod'
 import {
 	type TimeSlotDuration,
@@ -21,39 +21,30 @@ export const fetchDateSlotsForGroup = tool({
 		desiredDuration: z.enum(['60min', '90min', '120min']).optional(),
 		preferredStartTime: z.string().optional(),
 		preferredEndTime: z.string().optional(),
+		groupId: z.string(),
 	}),
 
-	execute: async (
-		{
-			month,
-			request,
-			day,
-			year,
-			dayOfWeek,
-			desiredDuration,
-			preferredEndTime,
-			preferredStartTime,
-		}: {
-			dayOfWeek?: number
-			month?: number
-			day?: number
-			year?: number
-			desiredDuration?: string
-			preferredStartTime?: string
-			preferredEndTime?: string
-			request?: string
-		},
-		{ messages },
-	) => {
-		const {
-			object: { groupId },
-		} = await generateObject({
-			model: openrouter.chat(OPEN_ROUTER_MODEL),
-			prompt: `Give me the groupId from the ${messages.at(0)?.content}`,
-			schema: z.object({
-				groupId: z.string(),
-			}),
-		})
+	execute: async ({
+		month,
+		request,
+		day,
+		year,
+		dayOfWeek,
+		desiredDuration,
+		preferredEndTime,
+		preferredStartTime,
+		groupId,
+	}: {
+		dayOfWeek?: number
+		month?: number
+		day?: number
+		year?: number
+		desiredDuration?: string
+		preferredStartTime?: string
+		preferredEndTime?: string
+		request?: string
+		groupId: string
+	}) => {
 		const targetDate = new Date(`${year}-${month}-${day}`)
 		const localDayOfWeek = new Date(targetDate).getDay()
 		const utcDate = getUTCDate(targetDate)

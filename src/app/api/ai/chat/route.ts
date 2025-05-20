@@ -3,7 +3,7 @@ import { fetchDateSlotsForGroup } from '@/src/app/group/fetchDataSlotsForGroup.t
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
-import { type CoreMessage, streamText } from 'ai'
+import { streamText } from 'ai'
 import { z } from 'zod'
 
 const openrouter = createOpenRouter({
@@ -12,8 +12,6 @@ const openrouter = createOpenRouter({
 
 export async function POST(req: Request) {
 	const { messages, groupId } = await req.json()
-
-	const typedMessages = messages as CoreMessage[]
 
 	const session = await serverAuth()
 	if (!session?.user?.id) {
@@ -31,25 +29,15 @@ export async function POST(req: Request) {
 		return new Response('Not in group', { status: 403 })
 	}
 
-	const query = typedMessages.at(0)?.content
-
-	const adjustedMessages: CoreMessage[] = [
-		{
-			role: 'system',
-			content: `GruppenId: ${groupId}`,
-			providerOptions: {},
-		},
-		...typedMessages,
-	]
-
 	const result = streamText({
 		model: openrouter.chat(OPEN_ROUTER_MODEL),
-		messages: adjustedMessages,
+		messages,
+		system: `The groupId is ${groupId}. The current date is ${new Date()}. You are a helpful assistant that helps the user find available time slots for their group. You can ask the user for more information if needed. If the user asks for a specific date, you can use the tool to fetch available time slots. If the user asks for a specific time, you can use the tool to fetch available time slots. If the user asks for a specific duration, you can use the tool to fetch available time slots. If the user asks for a specific day of the week, you can use the tool to fetch available time slots.`,
 		tools: {
 			fetchDateSlotsForGroup,
 			openEventDialog: {
 				description:
-					'Get the user location. Always ask for confirmation before using this tool.',
+					'Open the event dialog with the given start time, end time, and date based on the previous messages',
 				parameters: z.object({
 					startTime: z.string(),
 					endTime: z.string(),
@@ -57,7 +45,6 @@ export async function POST(req: Request) {
 				}),
 			},
 		},
-
 		maxSteps: 5,
 		toolCallStreaming: true,
 	})

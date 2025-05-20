@@ -9,11 +9,10 @@ import {
 	AccordionTrigger,
 } from '@/ui/accordion'
 import { Button } from '@/ui/button'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/ui/card'
+import { Card } from '@/ui/card'
 import { Input } from '@/ui/input'
-import { ScrollArea } from '@/ui/scroll-area'
 import { useChat } from '@ai-sdk/react'
-import { Calendar, Clock, MessageCircle, Send, X } from 'lucide-react'
+import { Calendar, Clock, Send, X } from 'lucide-react'
 import { useState } from 'react'
 import { z } from 'zod'
 import type { ProcessedTimeSlot } from '../../availability/processAvailability'
@@ -24,13 +23,12 @@ interface AiSlotFinderProps {
 
 export const AiSlotFinder = ({ groupId }: AiSlotFinderProps) => {
 	const [isOpen, setIsOpen] = useState(false)
-
 	const [selectedSlot, setSelectedSlot] = useState<Omit<
 		ProcessedTimeSlot,
 		'availableUsers'
 	> | null>(null)
-
 	const [currentDate, setCurrentDate] = useState<Date | null>(null)
+	const [showEventDialog, setShowEventDialog] = useState(false)
 
 	const { messages, input, handleInputChange, handleSubmit } = useChat({
 		maxSteps: 5,
@@ -59,90 +57,93 @@ export const AiSlotFinder = ({ groupId }: AiSlotFinderProps) => {
 		},
 	})
 
-	const [showEventDialog, setShowEventDialog] = useState(false)
-
 	return (
-		<div className='fixed bottom-14 right-4 z-50'>
+		<div className='fixed bottom-4 right-4 z-50'>
 			{isOpen ? (
-				<Card className='w-80 bg-background border-zinc-800 shadow-lg'>
-					<CardHeader className='p-4 border-b border-zinc-800'>
-						<CardTitle className='text-sm font-medium flex items-center justify-between'>
-							<div className='flex items-center gap-2'>
-								<Calendar className='h-4 w-4 text-primary' />
-								<span>Availability Chat</span>
-							</div>
-							<Button
-								variant='ghost'
-								size='icon'
-								onClick={() => setIsOpen(false)}
-								className='h-6 w-6'
-							>
-								<X className='h-4 w-4' />
-								<span className='sr-only'>Close</span>
-							</Button>
-						</CardTitle>
-					</CardHeader>
-					<CardContent className='p-0'>
-						<ScrollArea className='h-[320px] p-4'>
-							<div className='flex flex-col gap-4'>
-								{messages.map((message) => (
+				<Card className='w-full max-w-md h-[600px] flex flex-col bg-gray-900 border-gray-800 shadow-xl rounded-lg overflow-hidden'>
+					{/* Header */}
+					<div className='flex items-center justify-between p-4 border-b border-gray-800 bg-gray-900'>
+						<div className='flex items-center space-x-2'>
+							<Calendar className='h-5 w-5 text-purple-400' />
+							<h2 className='text-xl font-semibold text-white'>
+								Availability Chat
+							</h2>
+						</div>
+						<Button
+							variant='ghost'
+							size='icon'
+							onClick={() => setIsOpen(false)}
+							className='text-gray-400 hover:text-white hover:bg-gray-800 rounded-full'
+						>
+							<X className='h-5 w-5' />
+							<span className='sr-only'>Close</span>
+						</Button>
+					</div>
+
+					{/* Chat content */}
+					<div className='flex-1 overflow-y-auto p-4 space-y-4'>
+						<div className='flex flex-col gap-4'>
+							{messages.map((message) => (
+								<div
+									key={message.id}
+									className={cn(
+										'flex',
+										message.role === 'assistant'
+											? 'justify-start'
+											: 'justify-end',
+									)}
+								>
 									<div
-										key={message.id}
 										className={cn(
-											'flex',
+											'max-w-[85%] rounded-lg p-3',
 											message.role === 'assistant'
-												? 'justify-start'
-												: 'justify-end',
+												? 'bg-gray-800 text-gray-100'
+												: 'bg-purple-600 text-white',
 										)}
 									>
-										<div
-											className={cn(
-												'max-w-[85%] rounded-lg p-3',
-												message.role === 'assistant'
-													? 'bg-zinc-800 text-zinc-100'
-													: 'bg-primary text-primary-foreground',
-											)}
-										>
-											{message.parts.map((part, index) => {
-												if (part.type === 'text') {
+										{message.parts.map((part, index) => {
+											if (part.type === 'text') {
+												return (
+													<p key={index} className='text-sm'>
+														{part.text}
+													</p>
+												)
+											}
+											if (part.type === 'tool-invocation') {
+												if (part.toolInvocation.state === 'call') {
 													return (
-														<p key={index} className='text-sm'>
-															{part.text}
-														</p>
+														<div
+															key={index}
+															className='text-sm text-gray-400 flex items-center gap-2'
+														>
+															<Clock className='h-3 w-3 animate-spin' />
+															<span>Checking availability...</span>
+														</div>
 													)
 												}
-												if (part.type === 'tool-invocation') {
-													if (part.toolInvocation.state === 'call') {
-														return (
-															<div
-																key={index}
-																className='text-sm text-zinc-400 flex items-center gap-2'
-															>
-																<Clock className='h-3 w-3 animate-spin' />
-																<span>Checking availability...</span>
-															</div>
-														)
-													}
+												if (
+													part.toolInvocation.toolName ===
+													'fetchDateSlotsForGroup'
+												)
 													return (
-														<Card
-															key={index}
-															className='mt-2 bg-zinc-900 border-zinc-700'
-														>
-															<CardContent className='p-3'>
-																<Accordion
-																	type='single'
-																	collapsible
-																	className='w-full'
+														<div className='bg-gray-800 rounded-lg overflow-hidden mt-2'>
+															<Accordion
+																type='single'
+																collapsible
+																className='w-full'
+															>
+																<AccordionItem
+																	value='available-slots'
+																	className='border-none'
 																>
-																	<AccordionItem
-																		value='availability'
-																		className='border-zinc-700'
-																	>
-																		<AccordionTrigger className='text-sm py-2 text-primary no-underline'>
+																	<AccordionTrigger className='p-4 text-white hover:no-underline hover:bg-gray-700'>
+																		<h3 className='text-lg font-medium'>
 																			Available Slots
-																		</AccordionTrigger>
-																		<AccordionContent>
-																			<div className='text-sm text-zinc-200 whitespace-pre-line'>
+																		</h3>
+																	</AccordionTrigger>
+																	<AccordionContent>
+																		<div className='px-4 pb-4'>
+																			<div className='text-sm text-gray-300 whitespace-pre-line'>
 																				{part.toolInvocation.state ===
 																					'result' &&
 																					part.toolInvocation.result
@@ -150,47 +151,56 @@ export const AiSlotFinder = ({ groupId }: AiSlotFinderProps) => {
 																						.map((line: string, i: number) => (
 																							<div
 																								key={i}
-																								className='py-1 border-b border-zinc-700 last:border-0'
+																								className='p-3 rounded-md border-l-4 border-gray-700 bg-gray-800 hover:bg-gray-700'
 																							>
 																								{line}
 																							</div>
 																						))}
 																			</div>
-																		</AccordionContent>
-																	</AccordionItem>
-																</Accordion>
-															</CardContent>
-														</Card>
+																		</div>
+																	</AccordionContent>
+																</AccordionItem>
+															</Accordion>
+														</div>
 													)
-												}
-											})}
-										</div>
+											}
+										})}
 									</div>
-								))}
-							</div>
-						</ScrollArea>
-					</CardContent>
-					<CardFooter className='p-3 border-t border-zinc-800'>
-						<form onSubmit={handleSubmit} className='flex w-full gap-2'>
+								</div>
+							))}
+						</div>
+					</div>
+
+					{/* Input area */}
+					<div className='p-4 border-t border-gray-800 bg-gray-900'>
+						<form
+							onSubmit={handleSubmit}
+							className='flex items-center space-x-2'
+						>
 							<Input
 								value={input}
 								onChange={handleInputChange}
 								placeholder='Ask about availability...'
-								className='flex-1 h-9 bg-zinc-800 border-zinc-700 text-sm focus-visible:ring-primary'
+								className='flex-1 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus-visible:ring-purple-500'
 							/>
-							<Button type='submit' size='sm' className='h-9 px-3'>
-								<Send className='h-4 w-4' />
+							<Button
+								type='submit'
+								size='icon'
+								className='bg-purple-600 hover:bg-purple-700 text-white rounded-full'
+							>
+								<Send className='h-5 w-5' />
 								<span className='sr-only'>Send</span>
 							</Button>
 						</form>
-					</CardFooter>
+					</div>
 				</Card>
 			) : (
 				<Button
 					onClick={() => setIsOpen(true)}
-					className='rounded-full h-12 w-12 p-0'
+					variant='purple'
+					className='absolute bottom-20 right-2'
 				>
-					<MessageCircle className='h-6 w-6' />
+					<Calendar className='h-6 w-6' />
 				</Button>
 			)}
 
