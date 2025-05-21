@@ -3,7 +3,7 @@
 import { authedActionClient } from '@/src/lib/actionClient'
 import { z } from 'zod'
 
-const HUGGING_FACE_TOKEN = process.env.EXPO_PUBLIC_HUGGING_FACE_TOKEN
+const HUGGING_FACE_TOKEN = process.env.HUGGING_FACE_API_KEY
 
 const schema = z.object({
 	audioBase64: z.string(),
