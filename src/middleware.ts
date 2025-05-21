@@ -14,9 +14,8 @@ export default async function middleware(request: NextRequest) {
 		''
 
 	if (ip === '') {
-		console.log('IP not found')
+		return NextResponse.next()
 	}
-	console.log('IP:', ip)
 	const { success } = await rateLimit.limit(ip)
 	return success
 		? NextResponse.next()

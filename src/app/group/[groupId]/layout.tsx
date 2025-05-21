@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import { HelpSideEffect } from '../../settings/HelpSideEffect'
 import { LastUsedGroupSideEffect } from '../LastUsedGroupAtom'
-import { AIChat } from './groupAvailability/_components/AiSlotFinder'
+import { AIChat } from './groupAvailability/_components/AIChat'
 
 export default async function Page({
 	children,

@@ -29,7 +29,9 @@ export const AIChat = ({ groupId }: AiSlotFinderProps) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const [isRecording, setIsRecording] = useState(false)
 	const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null)
-	const { executeAsync: transcribe } = useAction(transcribeAudioAction)
+	const { executeAsync: transcribe, isPending } = useAction(
+		transcribeAudioAction,
+	)
 	const [selectedSlot, setSelectedSlot] = useState<Omit<
 		ProcessedTimeSlot,
 		'availableUsers'
@@ -280,14 +282,20 @@ export const AIChat = ({ groupId }: AiSlotFinderProps) => {
 								onClick={isRecording ? stopRecording : startRecording}
 								className='text-gray-400 hover:text-white hover:bg-gray-800'
 							>
-								{isRecording ? (
-									<MicOff className='h-5 w-5 text-red-500' />
+								{isPending ? (
+									<Clock className='h-5 w-5 animate-spin' />
 								) : (
-									<Mic className='h-5 w-5' />
+									<>
+										{isRecording ? (
+											<MicOff className='h-5 w-5 text-red-500' />
+										) : (
+											<Mic className='h-5 w-5' />
+										)}
+										<span className='sr-only'>
+											{isRecording ? 'Stop Recording' : 'Start Recording'}
+										</span>
+									</>
 								)}
-								<span className='sr-only'>
-									{isRecording ? 'Stop Recording' : 'Start Recording'}
-								</span>
 							</Button>
 							<Button type='submit' size='icon' variant='purple'>
 								<Send className='h-5 w-5' />
