@@ -4,12 +4,19 @@ import { fetchDateSlotsForGroup } from '@/src/app/group/fetchDataSlotsForGroup.t
 import { getSlotTool } from '@/src/app/group/getSlot.tool'
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
+import { upstashRedis } from '@/src/server/db/upstashRedis'
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
+import { Ratelimit } from '@upstash/ratelimit'
 import { streamText } from 'ai'
 import { z } from 'zod'
 
 const openrouter = createOpenRouter({
 	apiKey: process.env.OPENROUTER_API_KEY,
+})
+
+const rateLimit = new Ratelimit({
+	redis: upstashRedis,
+	limiter: Ratelimit.slidingWindow(20, '10 s'),
 })
 
 export async function POST(req: Request) {
@@ -29,6 +36,15 @@ export async function POST(req: Request) {
 
 	if (!userInGroup) {
 		return new Response('Not in group', { status: 403 })
+	}
+
+	const ip =
+		req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || ''
+
+	const { success } = await rateLimit.limit(ip)
+
+	if (!success) {
+		return new Response('Rate limit exceeded', { status: 429 })
 	}
 
 	const result = streamText({

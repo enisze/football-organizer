@@ -45,7 +45,7 @@ export const AIChat = ({ groupId }: AiSlotFinderProps) => {
 		shallow: true,
 	})
 
-	const { messages, input, handleInputChange, handleSubmit } = useChat({
+	const { messages, input, handleInputChange, handleSubmit, error } = useChat({
 		maxSteps: 5,
 		api: '/api/ai/chat',
 		body: {
@@ -186,7 +186,7 @@ export const AIChat = ({ groupId }: AiSlotFinderProps) => {
 								>
 									<div
 										className={cn(
-											'max-w-[85%] rounded-lg p-3',
+											'w-sm rounded-lg p-3',
 											message.role === 'assistant'
 												? 'bg-gray-800 text-gray-100'
 												: 'bg-indigo-600 text-white',
@@ -208,7 +208,7 @@ export const AIChat = ({ groupId }: AiSlotFinderProps) => {
 															className='text-sm text-gray-400 flex items-center gap-2'
 														>
 															<Clock className='h-3 w-3 animate-spin' />
-															<span>Checking availability...</span>
+															<span>Berechne...</span>
 														</div>
 													)
 												}
@@ -234,7 +234,7 @@ export const AIChat = ({ groupId }: AiSlotFinderProps) => {
 																>
 																	<AccordionTrigger className='p-2 text-white hover:no-underline bg-gray-700 mb-2 rounded-md'>
 																		<h3 className='text-lg font-medium'>
-																			Available Slots
+																			AI Chat
 																		</h3>
 																	</AccordionTrigger>
 																	<AccordionContent>
@@ -272,8 +272,10 @@ export const AIChat = ({ groupId }: AiSlotFinderProps) => {
 							<Input
 								value={input}
 								onChange={handleInputChange}
-								placeholder='Ask about availability...'
+								placeholder={error ? error.message : 'Frag etwas...'}
 								className='flex-1 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus-visible:ring-purple-500'
+								disabled={!!error}
+								aria-invalid={!!error}
 							/>
 							<Button
 								type='button'
