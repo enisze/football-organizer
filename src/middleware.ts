@@ -4,7 +4,7 @@ import { upstashRedis } from './server/db/upstashRedis'
 
 const rateLimit = new Ratelimit({
 	redis: upstashRedis,
-	limiter: Ratelimit.slidingWindow(5, '10 s'),
+	limiter: Ratelimit.slidingWindow(20, '10 s'),
 })
 
 export default async function middleware(request: NextRequest) {
