@@ -62,10 +62,10 @@ export const fetchDateSlotsForGroup = tool({
 			timeslots,
 			duration: (desiredDuration as TimeSlotDuration) ?? '60min',
 			startHour: preferredStartTime
-				? Number.parseInt(preferredStartTime.split(':')[0], 10)
+				? Number.parseInt(preferredStartTime.split(':')[0] ?? '', 10)
 				: 8,
 			endHour: preferredEndTime
-				? Number.parseInt(preferredEndTime.split(':')[0], 10)
+				? Number.parseInt(preferredEndTime.split(':')[0] ?? '', 10)
 				: 23,
 		})
 
