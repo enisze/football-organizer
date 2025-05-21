@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils/cn'
+import { transcribeAudioAction } from '@/src/app/actions/transcribe'
 import { EventDialog } from '@/src/app/settings/groups/[groupId]/EventDialog'
 import {
 	Accordion,
@@ -12,7 +13,8 @@ import { Button } from '@/ui/button'
 import { Card } from '@/ui/card'
 import { Input } from '@/ui/input'
 import { useChat } from '@ai-sdk/react'
-import { Calendar, Clock, Send, X } from 'lucide-react'
+import { Calendar, Clock, Mic, MicOff, Send, X } from 'lucide-react'
+import { useAction } from 'next-safe-action/hooks'
 import { useQueryState } from 'nuqs'
 import { useState } from 'react'
 import { z } from 'zod'
@@ -25,6 +27,9 @@ interface AiSlotFinderProps {
 
 export const AiSlotFinder = ({ groupId }: AiSlotFinderProps) => {
 	const [isOpen, setIsOpen] = useState(false)
+	const [isRecording, setIsRecording] = useState(false)
+	const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null)
+	const { executeAsync: transcribe } = useAction(transcribeAudioAction)
 	const [selectedSlot, setSelectedSlot] = useState<Omit<
 		ProcessedTimeSlot,
 		'availableUsers'
@@ -77,6 +82,69 @@ export const AiSlotFinder = ({ groupId }: AiSlotFinderProps) => {
 			}
 		},
 	})
+
+	const startRecording = async () => {
+		try {
+			const stream = await navigator.mediaDevices.getUserMedia({
+				audio: {
+					channelCount: 1,
+					sampleRate: 16000, // Whisper prefers 16kHz
+				},
+			})
+
+			const mimeType = 'audio/webm'
+
+			const recorder = new MediaRecorder(stream, {
+				mimeType,
+				audioBitsPerSecond: 128000,
+			})
+
+			const chunks: Blob[] = []
+
+			recorder.ondataavailable = (e) => {
+				if (e.data.size > 0) chunks.push(e.data)
+			}
+
+			recorder.onstop = async () => {
+				const blob = new Blob(chunks, { type: mimeType })
+				// Convert blob to base64
+				const reader = new FileReader()
+				reader.onloadend = async () => {
+					const base64Audio = (reader.result as string).split(',')[1]
+					if (!base64Audio) {
+						console.error('Failed to get base64 audio data')
+						return
+					}
+
+					const transcription = await transcribe({ audioBase64: base64Audio })
+
+					if (transcription) {
+						handleInputChange({
+							target: { value: transcription.data },
+						} as React.ChangeEvent<HTMLInputElement>)
+					}
+				}
+				reader.readAsDataURL(blob)
+			}
+
+			recorder.start(1000)
+			setMediaRecorder(recorder)
+			setIsRecording(true)
+		} catch (error) {
+			console.error('Error starting recording:', error)
+		}
+	}
+
+	const stopRecording = () => {
+		if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+			mediaRecorder.stop()
+			for (const track of mediaRecorder.stream.getTracks()) {
+				track.stop()
+			}
+			setIsRecording(false)
+			setMediaRecorder(null)
+		}
+	}
 
 	return (
 		<div className='fixed bottom-4 right-4 z-50'>
@@ -205,6 +273,22 @@ export const AiSlotFinder = ({ groupId }: AiSlotFinderProps) => {
 								placeholder='Ask about availability...'
 								className='flex-1 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus-visible:ring-purple-500'
 							/>
+							<Button
+								type='button'
+								size='icon'
+								variant='ghost'
+								onClick={isRecording ? stopRecording : startRecording}
+								className='text-gray-400 hover:text-white hover:bg-gray-800'
+							>
+								{isRecording ? (
+									<MicOff className='h-5 w-5 text-red-500' />
+								) : (
+									<Mic className='h-5 w-5' />
+								)}
+								<span className='sr-only'>
+									{isRecording ? 'Stop Recording' : 'Start Recording'}
+								</span>
+							</Button>
 							<Button type='submit' size='icon' variant='purple'>
 								<Send className='h-5 w-5' />
 								<span className='sr-only'>Send</span>
