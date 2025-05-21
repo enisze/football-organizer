@@ -32,6 +32,7 @@ export const AIChat = ({ groupId }: AiSlotFinderProps) => {
 	const { executeAsync: transcribe, isPending } = useAction(
 		transcribeAudioAction,
 	)
+
 	const [selectedSlot, setSelectedSlot] = useState<Omit<
 		ProcessedTimeSlot,
 		'availableUsers'
@@ -153,7 +154,7 @@ export const AIChat = ({ groupId }: AiSlotFinderProps) => {
 	return (
 		<div className='fixed bottom-4 right-4 z-50'>
 			{isOpen ? (
-				<Card className='w-full w-sm h-[450px] flex flex-col bg-gray-900 border-gray-800 shadow-xl rounded-lg overflow-hidden'>
+				<Card className='w-full h-[450px] flex flex-col bg-gray-900 border-gray-800 shadow-xl rounded-lg overflow-hidden'>
 					{/* Header */}
 					<div className='flex items-center justify-between p-4 border-b border-gray-800 bg-gray-900'>
 						<div className='flex items-center space-x-2'>
@@ -172,7 +173,7 @@ export const AIChat = ({ groupId }: AiSlotFinderProps) => {
 					</div>
 
 					{/* Chat content */}
-					<div className='flex-1 overflow-y-auto p-4 space-y-4'>
+					<div className='flex-1 overflow-y-auto p-4 space-y-4 w-[320px]'>
 						<div className='flex flex-col gap-4'>
 							{messages.map((message) => (
 								<div
