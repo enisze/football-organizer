@@ -25,6 +25,7 @@
 		"@azure/msal-node": "^3.5.3",
 		"@google-cloud/local-auth": "3.0.1",
 		"@hookform/resolvers": "^5.0.1",
+		"@huggingface/inference": "^3.13.2",
 		"@microsoft/microsoft-graph-client": "^3.0.7",
 		"@openrouter/ai-sdk-provider": "^0.4.6",
 		"@prisma/client": "6.6.0",

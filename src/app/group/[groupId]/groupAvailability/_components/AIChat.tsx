@@ -156,9 +156,7 @@ export const AIChat = ({ groupId }: AiSlotFinderProps) => {
 					<div className='flex items-center justify-between p-4 border-b border-gray-800 bg-gray-900'>
 						<div className='flex items-center space-x-2'>
 							<Calendar className='h-5 w-5 text-purple-400' />
-							<h2 className='text-xl font-semibold text-white'>
-								Availability Chat
-							</h2>
+							<h2 className='text-xl font-semibold text-white'>AI Chat</h2>
 						</div>
 						<Button
 							variant='ghost'

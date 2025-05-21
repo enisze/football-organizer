@@ -1,9 +1,11 @@
 'use server'
 
 import { authedActionClient } from '@/src/lib/actionClient'
+import { InferenceClient } from '@huggingface/inference'
 import { z } from 'zod'
 
 const HUGGING_FACE_TOKEN = process.env.HUGGING_FACE_API_KEY
+const hf = new InferenceClient(HUGGING_FACE_TOKEN)
 
 const schema = z.object({
 	audioBase64: z.string(),
@@ -32,33 +34,15 @@ export const transcribeAudioAction = authedActionClient
 				throw new Error('Invalid audio data format')
 			}
 
-			// Send the raw buffer to the API
-			const response = await fetch(
-				'https://api-inference.huggingface.co/models/openai/whisper-large-v3',
-				{
-					headers: {
-						Authorization: `Bearer ${HUGGING_FACE_TOKEN}`,
-						'Content-Type': 'audio/webm',
-					},
-					method: 'POST',
-					body: buffer,
+			const response = await hf.automaticSpeechRecognition({
+				inputs: new Blob([buffer], { type: 'audio/wav' }), // Changed to WAV format
+				model: 'openai/whisper-large-v3-turbo',
+				parameters: {
+					content_type: 'audio/wav',
 				},
-			)
+			})
 
-			const responseText = await response.json()
-
-			if (!response.ok) {
-				throw new Error(
-					`HTTP error! status: ${response.status}, response: ${responseText}`,
-				)
-			}
-
-			try {
-				return responseText.text
-			} catch (error) {
-				console.error('Error parsing API response:', error)
-				throw new Error('Invalid API response format')
-			}
+			return response.text
 		} catch (error) {
 			console.error('Error in transcribeAudioAction:', error)
 			throw error
