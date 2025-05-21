@@ -45,45 +45,46 @@ export const AIChat = ({ groupId }: AiSlotFinderProps) => {
 		shallow: true,
 	})
 
-	const { messages, input, handleInputChange, handleSubmit, error } = useChat({
-		maxSteps: 5,
-		api: '/api/ai/chat',
-		body: {
-			groupId,
-		},
-		onToolCall: ({ toolCall }) => {
-			if (toolCall.toolName === 'openEventDialog') {
-				const { startTime, endTime, date } = z
-					.object({
-						startTime: z.string(),
-						endTime: z.string(),
-						date: z.string(),
+	const { messages, input, handleInputChange, handleSubmit, error, append } =
+		useChat({
+			maxSteps: 5,
+			api: '/api/ai/chat',
+			body: {
+				groupId,
+			},
+			onToolCall: ({ toolCall }) => {
+				if (toolCall.toolName === 'openEventDialog') {
+					const { startTime, endTime, date } = z
+						.object({
+							startTime: z.string(),
+							endTime: z.string(),
+							date: z.string(),
+						})
+						.parse(toolCall.args)
+
+					setSelectedSlot({
+						startTime,
+						endTime,
 					})
-					.parse(toolCall.args)
+					setCurrentDate(new Date(date))
+					setShowEventDialog(true)
+					return 'Dialog geöffnet'
+				}
+				if (toolCall.toolName === 'fetchDateSlotsForGroup') {
+					const { month, day, year } = z
+						.object({
+							month: z.number().optional(),
+							day: z.number().optional(),
+							year: z.number().optional(),
+						})
+						.parse(toolCall.args)
 
-				setSelectedSlot({
-					startTime,
-					endTime,
-				})
-				setCurrentDate(new Date(date))
-				setShowEventDialog(true)
-				return 'Dialog geöffnet'
-			}
-			if (toolCall.toolName === 'fetchDateSlotsForGroup') {
-				const { month, day, year } = z
-					.object({
-						month: z.number().optional(),
-						day: z.number().optional(),
-						year: z.number().optional(),
-					})
-					.parse(toolCall.args)
+					setCurrentDate(new Date(`${year}-${month}-${day}`))
 
-				setCurrentDate(new Date(`${year}-${month}-${day}`))
-
-				return ''
-			}
-		},
-	})
+					return ''
+				}
+			},
+		})
 
 	const startRecording = async () => {
 		try {
@@ -121,9 +122,10 @@ export const AIChat = ({ groupId }: AiSlotFinderProps) => {
 					const transcription = await transcribe({ audioBase64: base64Audio })
 
 					if (transcription) {
-						handleInputChange({
-							target: { value: transcription.data },
-						} as React.ChangeEvent<HTMLInputElement>)
+						append({
+							role: 'user',
+							content: transcription.data ?? '',
+						})
 					}
 				}
 				reader.readAsDataURL(blob)
