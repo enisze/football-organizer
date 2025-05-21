@@ -25,7 +25,7 @@ interface AiSlotFinderProps {
 	groupId: string
 }
 
-export const AiSlotFinder = ({ groupId }: AiSlotFinderProps) => {
+export const AIChat = ({ groupId }: AiSlotFinderProps) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const [isRecording, setIsRecording] = useState(false)
 	const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null)
@@ -149,7 +149,7 @@ export const AiSlotFinder = ({ groupId }: AiSlotFinderProps) => {
 	return (
 		<div className='fixed bottom-4 right-4 z-50'>
 			{isOpen ? (
-				<Card className='w-full max-w-md h-[450px] flex flex-col bg-gray-900 border-gray-800 shadow-xl rounded-lg overflow-hidden'>
+				<Card className='w-full w-sm h-[450px] flex flex-col bg-gray-900 border-gray-800 shadow-xl rounded-lg overflow-hidden'>
 					{/* Header */}
 					<div className='flex items-center justify-between p-4 border-b border-gray-800 bg-gray-900'>
 						<div className='flex items-center space-x-2'>

@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import { HelpSideEffect } from '../../settings/HelpSideEffect'
 import { LastUsedGroupSideEffect } from '../LastUsedGroupAtom'
+import { AIChat } from './groupAvailability/_components/AiSlotFinder'
 
 export default async function Page({
 	children,
@@ -57,6 +58,10 @@ export default async function Page({
 
 				<Suspense>
 					<FloatingDock items={navigationItems} />
+				</Suspense>
+
+				<Suspense>
+					<AIChat groupId={parsedParams.groupId} />
 				</Suspense>
 			</div>
 		</div>

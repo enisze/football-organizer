@@ -6,7 +6,6 @@ import { Suspense } from 'react'
 import { GroupAvailabilityMonthly } from '../availability/components/GroupAvailabilityMonthly'
 import { GroupAvailabilityPage } from '../availability/components/GroupAvailabilityPage'
 import { GroupLoading } from './GroupLoading'
-import { AiSlotFinder } from './_components/AiSlotFinder'
 
 interface PageProps {
 	params: Promise<unknown>
@@ -70,9 +69,6 @@ export default async function GroupAvailabilityRoute({
 					</Suspense>
 				</div>
 			</div>
-			<Suspense>
-				<AiSlotFinder groupId={groupId} />
-			</Suspense>
 		</div>
 	)
 }
