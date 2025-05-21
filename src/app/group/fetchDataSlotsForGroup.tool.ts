@@ -29,14 +29,6 @@ export const fetchDateSlotsForGroup = tool({
 		preferredEndTime,
 		preferredStartTime,
 		groupId,
-	}: {
-		month?: number
-		day?: number
-		year?: number
-		desiredDuration?: string
-		preferredStartTime?: string
-		preferredEndTime?: string
-		groupId: string
 	}) => {
 		const targetDate = new Date(`${year}-${month}-${day}`)
 		const localDayOfWeek = new Date(targetDate).getDay()

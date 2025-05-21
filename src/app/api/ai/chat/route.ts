@@ -1,5 +1,7 @@
 import { OPEN_ROUTER_MODEL } from '@/src/app/group/constants'
+import { createSlotTool } from '@/src/app/group/createSlot.tool'
 import { fetchDateSlotsForGroup } from '@/src/app/group/fetchDataSlotsForGroup.tool'
+import { getSlotTool } from '@/src/app/group/getSlot.tool'
 import { serverAuth } from '@/src/server/auth/session'
 import { prisma } from '@/src/server/db/client'
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
@@ -35,6 +37,8 @@ export async function POST(req: Request) {
 		system: `The groupId is ${groupId}. The current date is ${new Date()} Fill in the information using this date. You are a helpful assistant that helps the user find available time slots for their group. You can ask the user for more information if needed. If the user asks for a specific date, you can use the tool to fetch available time slots. If the user asks for a specific time, you can use the tool to fetch available time slots. If the user asks for a specific duration, you can use the tool to fetch available time slots. If the user asks for a specific day of the week, you can use the tool to fetch available time slots.`,
 		tools: {
 			fetchDateSlotsForGroup,
+			createSlotTool,
+			getSlotTool,
 			openEventDialog: {
 				description:
 					'Open the event dialog with the given start time, end time, and date based on the previous messages',
