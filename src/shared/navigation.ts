@@ -77,6 +77,7 @@ export const { routes, useSafeParams, useSafeSearchParams } =
 				groupId: z.string(),
 			}),
 		}),
+		blocked: defineRoute('/blocked'),
 		enterGroup: defineRoute('/group/enter', {
 			search: z
 				.object({
