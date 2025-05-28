@@ -14,7 +14,7 @@ const config = {
 	transpilePackages: ['@trpc/next-layout'],
 	experimental: {
 		useCache: true,
-		dynamicIO: true,
+		// dynamicIO: true,
 	},
 }
 

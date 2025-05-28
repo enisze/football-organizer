@@ -81,7 +81,7 @@
 		"lucide-react": "^0.488.0",
 		"motion": "^12.7.4",
 		"nanoid": "^5.1.5",
-		"next": "15.4.0-canary.55",
+		"next": "15.3.2",
 		"next-safe-action": "^7.10.5",
 		"next-safe-navigation": "^0.3.3",
 		"next-seo": "^6.6.0",
