@@ -9,6 +9,8 @@ const requestSchema = z.object({
 	guessedWords: z.array(z.string()),
 	wordsNeeded: z.number().positive(),
 	redisKey: z.string().min(1),
+	apiKey: z.string().min(1),
+	category: z.string().optional(),
 })
 
 const openrouter = createOpenRouter({
@@ -23,7 +25,13 @@ const rateLimit = new Ratelimit({
 export async function POST(req: Request) {
 	try {
 		const body = await req.json()
-		const { guessedWords, wordsNeeded, redisKey } = requestSchema.parse(body)
+		const { guessedWords, wordsNeeded, redisKey, apiKey, category } =
+			requestSchema.parse(body)
+
+		// Check API key
+		if (apiKey !== process.env.STIRN_QUIZ_API_KEY) {
+			return new Response('Invalid API key', { status: 401 })
+		}
 
 		const ip =
 			req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || ''
@@ -43,15 +51,19 @@ export async function POST(req: Request) {
 
 		// If we don't have enough words, generate more with AI
 		if (availableWords.length < wordsNeeded) {
+			const categoryInstruction = category
+				? `Die Wörter sollten hauptsächlich aus der Kategorie "${category}" stammen oder sich darauf beziehen.`
+				: 'Die Wörter sollten aus verschiedenen Kategorien stammen (wie Tiere, Essen, Sport, etc.).'
+
 			const result = await generateObject({
 				model: openrouter.chat(OPEN_ROUTER_MODEL),
 				system:
-					'Du bist ein Assistent, der Wörter für ein Ratespiel generiert. Die Wörter sollten auf Deutsch sein und sich gut zum Erraten eignen.',
+					'Du bist ein Assistent, der Wörter für ein Ratespiel generiert. Die Wörter sollten auf Deutsch sein und sich gut zum Erraten eignen. Berücksichtige die angegebene Kategorie, falls eine spezifiziert wurde.',
 				prompt: `Erstelle eine Liste von ${Math.max(100, wordsNeeded)} neuen deutschen Wörtern für ein Ratespiel. 
                     Die Wörter sollten:
                     - nicht in dieser Liste vorkommen: ${[...guessedWords, ...cachedWords].join(', ')}
                     - gut zu erraten sein
-                    - aus verschiedenen Kategorien stammen (wie Tiere, Essen, Sport, etc.)
+                    - ${categoryInstruction}
                     - keine Duplikate enthalten
                     - einzelne Wörter sein (keine Phrasen)
                     - keine Eigennamen enthalten`,
