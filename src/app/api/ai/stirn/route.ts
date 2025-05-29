@@ -10,7 +10,8 @@ const requestSchema = z.object({
 	wordsNeeded: z.number().positive(),
 	redisKey: z.string().min(1),
 	apiKey: z.string().min(1),
-	category: z.string().optional(),
+	categories: z.array(z.string()).optional(),
+	prompt: z.string().optional(),
 })
 
 const openrouter = createOpenRouter({
@@ -25,7 +26,7 @@ const rateLimit = new Ratelimit({
 export async function POST(req: Request) {
 	try {
 		const body = await req.json()
-		const { guessedWords, wordsNeeded, redisKey, apiKey, category } =
+		const { guessedWords, wordsNeeded, redisKey, apiKey, categories, prompt } =
 			requestSchema.parse(body)
 
 		// Check API key
@@ -51,14 +52,19 @@ export async function POST(req: Request) {
 
 		// If we don't have enough words, generate more with AI
 		if (availableWords.length < wordsNeeded) {
-			const categoryInstruction = category
-				? `Die Wörter sollten hauptsächlich aus der Kategorie "${category}" stammen oder sich darauf beziehen.`
-				: 'Die Wörter sollten aus verschiedenen Kategorien stammen (wie Tiere, Essen, Sport, etc.).'
+			const categoryInstruction =
+				categories && categories.length > 0
+					? `Die Wörter sollten hauptsächlich aus den folgenden Kategorien stammen oder sich darauf beziehen: ${categories.join(', ')}.`
+					: 'Die Wörter sollten aus verschiedenen Kategorien stammen (wie Tiere, Essen, Sport, etc.).'
+
+			const customPromptInstruction = prompt
+				? `Zusätzliche Anweisungen: ${prompt}`
+				: ''
 
 			const result = await generateObject({
 				model: openrouter.chat(OPEN_ROUTER_MODEL),
 				system:
-					'Du bist ein Assistent, der Wörter für ein Ratespiel generiert. Die Wörter sollten auf Deutsch sein und sich gut zum Erraten eignen. Berücksichtige die angegebene Kategorie, falls eine spezifiziert wurde.',
+					'Du bist ein Assistent, der Wörter für ein Ratespiel generiert. Die Wörter sollten auf Deutsch sein und sich gut zum Erraten eignen. Berücksichtige die angegebenen Kategorien und zusätzlichen Anweisungen, falls welche spezifiziert wurden.',
 				prompt: `Erstelle eine Liste von ${Math.max(100, wordsNeeded)} neuen deutschen Wörtern für ein Ratespiel. 
                     Die Wörter sollten:
                     - nicht in dieser Liste vorkommen: ${[...guessedWords, ...cachedWords].join(', ')}
@@ -66,7 +72,8 @@ export async function POST(req: Request) {
                     - ${categoryInstruction}
                     - keine Duplikate enthalten
                     - einzelne Wörter sein (keine Phrasen)
-                    - keine Eigennamen enthalten`,
+                    - keine Eigennamen enthalten
+                    ${customPromptInstruction ? `\n                    - ${customPromptInstruction}` : ''}`,
 				schema: z.object({
 					words: z.array(z.string()),
 				}),
