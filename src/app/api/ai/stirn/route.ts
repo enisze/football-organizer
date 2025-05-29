@@ -42,8 +42,27 @@ export async function POST(req: Request) {
 			return new Response('Rate limit exceeded', { status: 429 })
 		}
 
-		// First try to get words from Redis
-		let cachedWords: string[] = (await upstashRedis.get(redisKey)) || []
+		// Create a cache key that includes categories for proper segmentation
+		const sortedCategories = categories ? [...categories].sort() : []
+		const categoriesKey =
+			sortedCategories.length > 0 ? sortedCategories.join('-') : 'general'
+		const fullCacheKey = `${redisKey}:categories:${categoriesKey}`
+
+		// First try to get cached data from Redis
+		const cachedData: { words: string[]; categories: string[] } | null =
+			await upstashRedis.get(fullCacheKey)
+
+		// Check if cached data exists and categories match
+		let cachedWords: string[] = []
+		if (
+			cachedData &&
+			JSON.stringify(cachedData.categories?.sort()) ===
+				JSON.stringify(sortedCategories)
+		) {
+			cachedWords = cachedData.words || []
+		}
+
+		console.log(cachedWords, ' cachedWords for categories:', sortedCategories)
 
 		// Filter out already guessed words
 		let availableWords = cachedWords.filter(
@@ -79,10 +98,16 @@ export async function POST(req: Request) {
 				}),
 			})
 
-			// Add new words to cache
+			// Add new words to cache with categories
 			const newWords = result.object.words
 			cachedWords = [...new Set([...cachedWords, ...newWords])]
-			await upstashRedis.set(redisKey, cachedWords)
+
+			// Store words with their associated categories
+			const cacheData = {
+				words: cachedWords,
+				categories: sortedCategories,
+			}
+			await upstashRedis.set(fullCacheKey, cacheData)
 
 			// Update available words
 			availableWords = cachedWords.filter(
