@@ -18,7 +18,7 @@ export const updateTimeSlotAction = authedActionClient
 			isException: z.boolean().optional(),
 			isGlobalSlot: z.boolean(),
 			weekNumber: z.number().min(1).max(2).optional(),
-			biWeeklyStartWeek: z.number().min(1).max(53).optional(), // ISO week number
+			biWeeklyStartWeek: z.number().min(0).max(1).optional(), // 0 for even weeks, 1 for odd weeks
 		}),
 	)
 	.action(async ({ parsedInput, ctx: { userId } }) => {
@@ -281,25 +281,27 @@ export const deleteWeek2TimeSlotsAction = authedActionClient
 		},
 	)
 
-export const updateWeek1SlotsToBiWeeklyAction = authedActionClient
+export const updateBiWeeklySlotsAction = authedActionClient
 	.schema(
 		z.object({
 			groupId: z.string(),
-			biWeeklyStartWeek: z.number().min(1).max(53),
+			biWeeklyStartWeek: z.number().min(0).max(1).nullable(),
+			weekNumber: z.number().min(1).max(2).optional(),
 			updateGlobally: z.boolean().optional().default(false),
 		}),
 	)
 	.action(
 		async ({
-			parsedInput: { groupId, biWeeklyStartWeek, updateGlobally },
+			parsedInput: { groupId, biWeeklyStartWeek, weekNumber, updateGlobally },
 			ctx: { userId },
 		}) => {
-			// Update all Week 1 slots to have the proper biWeeklyStartWeek
+			// Update slots with the specified parameters
 			await prisma.timeSlot.updateMany({
 				where: {
 					userId,
-					weekNumber: 1,
-					biWeeklyStartWeek: null,
+					weekNumber: weekNumber ?? 1,
+					// Simply target all day-specific slots for the given week
+					// This will work for both first-time setup and updates
 					type: 'DAY_SPECIFIC',
 					...(updateGlobally
 						? {}
@@ -313,6 +315,7 @@ export const updateWeek1SlotsToBiWeeklyAction = authedActionClient
 				},
 				data: {
 					biWeeklyStartWeek,
+					...(weekNumber && { weekNumber }),
 				},
 			})
 

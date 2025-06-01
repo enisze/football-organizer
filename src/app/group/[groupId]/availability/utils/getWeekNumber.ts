@@ -2,10 +2,10 @@ import { getISOWeek } from 'date-fns'
 
 /**
  * Calculate which week (1 or 2) a given date belongs to in a bi-weekly rotation.
- * The calculation is based on the ISO week number to ensure consistency.
+ * The calculation is based on the ISO week number parity (even/odd).
  *
  * @param date - The date to calculate the week number for
- * @param biWeeklyStartWeek - Optional ISO week number when the bi-weekly rotation started
+ * @param biWeeklyStartWeek - Optional pattern: 0 for even weeks = week 1, 1 for odd weeks = week 1
  * @returns 1 or 2 representing the week in the bi-weekly cycle
  */
 export function getWeekNumber(
@@ -14,20 +14,18 @@ export function getWeekNumber(
 ): 1 | 2 {
 	// Get the ISO week number using date-fns
 	const isoWeek = getISOWeek(date)
+	const currentWeekParity = isoWeek % 2 // 0 for even, 1 for odd
 
-	// If a custom start week is provided, calculate relative to that
-	if (biWeeklyStartWeek) {
-		const weeksSinceStart = isoWeek - biWeeklyStartWeek
-		// For bi-weekly rotation:
-		// - Week 1 slots are active on biWeeklyStartWeek and every 2nd week after (0, 2, 4, ...)
-		// - Week 2 slots are active on biWeeklyStartWeek + 1 and every 2nd week after (1, 3, 5, ...)
-		// We need to handle negative differences correctly (past dates)
-		const normalizedDifference = ((weeksSinceStart % 2) + 2) % 2
-		return normalizedDifference === 0 ? 1 : 2
+	// If a custom pattern is provided, calculate based on that
+	if (biWeeklyStartWeek !== null && biWeeklyStartWeek !== undefined) {
+		// biWeeklyStartWeek is 0 or 1
+		// If biWeeklyStartWeek === 0: even weeks are week 1, odd weeks are week 2
+		// If biWeeklyStartWeek === 1: odd weeks are week 1, even weeks are week 2
+		return currentWeekParity === biWeeklyStartWeek ? 1 : 2
 	}
 
 	// Default behavior: Return 1 for odd weeks, 2 for even weeks
-	return isoWeek % 2 === 1 ? 1 : 2
+	return currentWeekParity === 1 ? 1 : 2
 }
 
 /**

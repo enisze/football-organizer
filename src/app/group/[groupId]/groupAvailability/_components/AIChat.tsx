@@ -11,7 +11,7 @@ import {
 } from '@/ui/accordion'
 import { Button } from '@/ui/button'
 import { Card } from '@/ui/card'
-import { Input } from '@/ui/input'
+import { Textarea } from '@/ui/textarea'
 import { useChat } from '@ai-sdk/react'
 import { Calendar, Clock, Mic, MicOff, Send, X } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
@@ -270,13 +270,14 @@ export const AIChat = ({ groupId }: AiSlotFinderProps) => {
 							onSubmit={handleSubmit}
 							className='flex items-center space-x-2'
 						>
-							<Input
+							<Textarea
 								value={input}
 								onChange={handleInputChange}
 								placeholder={error ? error.message : 'Frag etwas...'}
-								className='flex-1 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus-visible:ring-purple-500'
+								className='flex-1 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus-visible:ring-purple-500 min-h-[40px] resize-none'
 								disabled={!!error}
 								aria-invalid={!!error}
+								rows={1}
 							/>
 							<Button
 								type='button'

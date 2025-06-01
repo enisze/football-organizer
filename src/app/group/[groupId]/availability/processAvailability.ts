@@ -123,29 +123,25 @@ const isUserAvailable = (
 			// Case 2b: Legacy week1 bi-weekly slot (no biWeeklyStartWeek but weekNumber=1)
 			if (!hasBiWeeklyStartWeek && slot.weekNumber === 1) {
 				// This is likely a week1 bi-weekly slot that was created before biWeeklyStartWeek was properly set
-				// Calculate using the default bi-weekly pattern (odd weeks = week 1, even weeks = week 2)
+				// Use default pattern: odd weeks = week 1, even weeks = week 2
 				const currentWeekInRotation = getWeekNumber(date, null)
-				const isActiveThisWeek = currentWeekInRotation === 1
-
-				return isActiveThisWeek
+				return currentWeekInRotation === 1
 			}
 
 			// Case 2c: Proper bi-weekly slot with biWeeklyStartWeek set
 			if (hasBiWeeklyStartWeek) {
-				// Calculate which week we're currently in relative to the bi-weekly start
+				// Calculate which week we're currently in based on the pattern
 				const currentWeekInRotation = getWeekNumber(
 					date,
 					slot.biWeeklyStartWeek,
 				)
 
 				// Only include slots that match the current week in the bi-weekly rotation
-				const isActiveThisWeek = slot.weekNumber === currentWeekInRotation
-
-				return isActiveThisWeek
+				return slot.weekNumber === currentWeekInRotation
 			}
 
 			// Case 2d: Other bi-weekly slots (weekNumber=2 without biWeeklyStartWeek, etc.)
-			// For now, treat weekNumber=2 without biWeeklyStartWeek as week2 in default pattern
+			// Use default pattern for week 2 slots
 			if (slot.weekNumber === 2) {
 				const currentWeekInRotation = getWeekNumber(date, null)
 				return currentWeekInRotation === 2

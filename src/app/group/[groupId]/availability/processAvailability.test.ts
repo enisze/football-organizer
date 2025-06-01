@@ -50,13 +50,13 @@ describe('processGroupAvailability - Bi-weekly slots', () => {
 	test('should handle legacy week1 bi-weekly slots (weekNumber=1, biWeeklyStartWeek=null)', () => {
 		// Create a scenario with mixed slots:
 		// - User1: week1 slot (legacy: weekNumber=1, biWeeklyStartWeek=null)
-		// - User2: week2 slot (proper: weekNumber=2, biWeeklyStartWeek=3)
+		// - User2: week2 slot (proper: weekNumber=2, biWeeklyStartWeek=1 for odd weeks = week 1)
 		const timeSlots: (TimeSlot & { user: User })[] = [
 			// User1: Legacy week1 slot - this should be treated as a bi-weekly slot for week1
 			createTimeSlot('slot1', 'user1', 1, '10:00', '12:00', 1, null),
 
-			// User2: Proper week2 slot
-			createTimeSlot('slot2', 'user2', 1, '10:00', '12:00', 2, 3),
+			// User2: Proper week2 slot with pattern 1 (odd weeks = week 1, so even weeks = week 2)
+			createTimeSlot('slot2', 'user2', 1, '10:00', '12:00', 2, 1),
 		]
 
 		// Test for week 1 (odd ISO week number, e.g., week 23 = 2025-06-02 Monday)
@@ -127,8 +127,8 @@ describe('processGroupAvailability - Bi-weekly slots', () => {
 	test('should handle proper bi-weekly slots with biWeeklyStartWeek set', () => {
 		// Both users have proper bi-weekly slots with biWeeklyStartWeek set
 		const timeSlots: (TimeSlot & { user: User })[] = [
-			createTimeSlot('slot1', 'user1', 1, '10:00', '12:00', 1, 23), // Week 1, starting from ISO week 23
-			createTimeSlot('slot2', 'user2', 1, '10:00', '12:00', 2, 23), // Week 2, starting from ISO week 23
+			createTimeSlot('slot1', 'user1', 1, '10:00', '12:00', 1, 1), // Week 1, pattern 1 (odd weeks = week 1)
+			createTimeSlot('slot2', 'user2', 1, '10:00', '12:00', 2, 1), // Week 2, pattern 1 (even weeks = week 2)
 		]
 
 		// Test for week 23 (should be week 1 of the bi-weekly cycle)

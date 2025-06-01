@@ -79,7 +79,7 @@ model TimeSlot {
   day               Int?
   date              DateTime?
   weekNumber        Int?         @default(1)
-  biWeeklyStartWeek Int? // ISO week number when this slot's bi-weekly rotation starts
+  biWeeklyStartWeek Int? // Pattern: 0 for even weeks = week 1, 1 for odd weeks = week 1
   isException       Boolean      @default(false)
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt

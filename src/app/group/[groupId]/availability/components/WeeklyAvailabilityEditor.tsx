@@ -4,20 +4,26 @@ import { cn } from '@/lib/utils/cn'
 import {
 	deleteTimeSlotAction,
 	deleteWeek2TimeSlotsAction,
+	updateBiWeeklySlotsAction,
 	updateTimeSlotAction,
-	updateWeek1SlotsToBiWeeklyAction,
 } from '@/src/app/group/[groupId]/availability/actions'
 import { DeleteWeek2SlotsDialog } from '@/src/app/group/[groupId]/availability/components/DeleteWeek2SlotsDialog'
 import { TimeSlotCreator } from '@/src/app/group/[groupId]/availability/components/TimeSlotCreator'
 import { Button } from '@/ui/button'
-import { CardDescription, CardTitle } from '@/ui/card'
 import { Checkbox } from '@/ui/checkbox'
 import { Label } from '@/ui/label'
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs'
 import type { TimeSlot } from '@prisma/client'
 import { useTour } from '@reactour/tour'
 import { getISOWeek } from 'date-fns'
-import { Clock, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
 import { useState } from 'react'
 
@@ -73,9 +79,7 @@ export function WeeklyAvailabilityEditor({
 	const { execute: deleteWeek2TimeSlots } = useAction(
 		deleteWeek2TimeSlotsAction,
 	)
-	const { execute: updateWeek1SlotsToBiWeekly } = useAction(
-		updateWeek1SlotsToBiWeeklyAction,
-	)
+	const { execute: updateBiWeeklySlots } = useAction(updateBiWeeklySlotsAction)
 	const [isCreatingSlot, setIsCreatingSlot] = useState(false)
 	const [editingSlot, setEditingSlot] = useState<TimeSlot | null>(null)
 	const [selectedDay, setSelectedDay] = useState<number | undefined>(undefined)
@@ -106,11 +110,59 @@ export function WeeklyAvailabilityEditor({
 
 	// Current week info
 	const currentISOWeek = getISOWeek(new Date())
-	const isEvenWeek = currentISOWeek % 2 === 0
+
+	// Helper function to determine initial currentWeekIs value based on existing time slots
+	const getInitialCurrentWeekIs = (): 1 | 2 => {
+		if (!hasBiWeeklySlots) return 1
+
+		// Find any slot with biWeeklyStartWeek set
+		for (const daySlots of Object.values(timeSlots)) {
+			for (const slot of daySlots) {
+				if (slot.biWeeklyStartWeek !== null) {
+					// biWeeklyStartWeek is now 0 (even) or 1 (odd)
+					// Check if current week matches the pattern
+					const currentWeekParity = currentISOWeek % 2 // 0 for even, 1 for odd
+
+					if (currentWeekParity === slot.biWeeklyStartWeek) {
+						return 1 // Current week is week 1 in the pattern
+					}
+					return 2 // Current week is week 2 in the pattern
+				}
+			}
+		}
+
+		return 1 // Default fallback
+	}
+
+	// State for week start selection - determines if current week is week 1 or week 2
+	const [currentWeekIs, setCurrentWeekIs] = useState<1 | 2>(
+		getInitialCurrentWeekIs(),
+	)
+
+	// Helper function to calculate week parities based on current week selection
+	const calculateWeekParities = (currentWeekIs: 1 | 2) => {
+		const currentWeekParity = currentISOWeek % 2 // 0 for even, 1 for odd
+		const nextWeekParity = (currentWeekParity + 1) % 2
+
+		return {
+			currentWeekParity,
+			nextWeekParity,
+		}
+	}
 
 	const getCurrentWeekNumber = (): 1 | 2 => {
 		if (!isBiWeeklyMode) return 1
-		return isEvenWeek ? 1 : 2
+		// Use the user's selection for current week mapping
+		return currentWeekIs
+	}
+
+	// Calculate the bi-weekly start week based on user's selection
+	const getBiWeeklyStartWeek = (weekNumber?: 1 | 2): number => {
+		if (!isBiWeeklyMode) return 0
+
+		const { currentWeekParity, nextWeekParity } =
+			calculateWeekParities(currentWeekIs)
+		return weekNumber === currentWeekIs ? currentWeekParity : nextWeekParity
 	}
 
 	const timeToPosition = (time: string): number => {
@@ -145,24 +197,12 @@ export function WeeklyAvailabilityEditor({
 		const effectiveWeekNumber =
 			slot.weekNumber ?? (isBiWeeklyMode ? selectedWeek : 1)
 
-		// Calculate bi-weekly start week based on current ISO week
+		// Calculate bi-weekly start week based on user's selection
 		let biWeeklyStartWeek: number | undefined = undefined
 
 		if (isBiWeeklyMode) {
-			// Use current ISO week as the base for bi-weekly calculations
-			biWeeklyStartWeek = currentISOWeek
-		}
-
-		// If we're transitioning to bi-weekly mode, update existing week 1 slots first
-		const isTransitionToBiWeekly =
-			!hasBiWeeklySlots && isBiWeeklyMode && effectiveWeekNumber === 2
-
-		if (isTransitionToBiWeekly) {
-			await updateWeek1SlotsToBiWeekly({
-				groupId,
-				biWeeklyStartWeek: currentISOWeek,
-				updateGlobally: updateGlobally,
-			})
+			// Use the calculated bi-weekly start week based on user's selection
+			biWeeklyStartWeek = getBiWeeklyStartWeek(slot.weekNumber)
 		}
 
 		for (const dayId of slot.days) {
@@ -184,9 +224,15 @@ export function WeeklyAvailabilityEditor({
 	}
 
 	const handleDeleteWeek2Slots = async (deleteGlobally: boolean) => {
-		await deleteWeek2TimeSlots({
+		deleteWeek2TimeSlots({
 			groupId,
 			deleteGlobally,
+		})
+		// Also reset week 1 slots back to weekly mode
+		updateBiWeeklySlots({
+			groupId,
+			biWeeklyStartWeek: null,
+			updateGlobally: deleteGlobally,
 		})
 		setIsBiWeeklyMode(false)
 	}
@@ -286,39 +332,37 @@ export function WeeklyAvailabilityEditor({
 			data-tour='timelsots'
 			className='px-2 sm:px-4 flex flex-col gap-3 sm:gap-4'
 		>
-			<CardTitle className='flex text-base sm:text-lg items-center gap-2'>
-				<Clock className='h-5 w-5 sm:h-6 sm:w-6' />
-				<span className=''>
-					{isBiWeeklyMode
-						? `Zweiwöchige Verfügbarkeit - Aktuelle Woche ${getCurrentWeekNumber()}`
-						: 'Wöchentliche Verfügbarkeit'}
-				</span>
-			</CardTitle>
-			<CardDescription className='text-slate-400 text-sm'>
-				{isBiWeeklyMode
-					? `Aktuelle Woche: ${currentISOWeek} (${isEvenWeek ? 'Gerade' : 'Ungerade'} Woche) - Zeige ${getCurrentWeekNumber() === 1 ? 'Woche 1' : 'Woche 2'} Slots`
-					: 'Verwalte deine regelmäßigen wöchentlichen Verfügbarkeitszeiten.'}
-			</CardDescription>
-
 			{/* Bi-weekly mode toggle */}
 			<div className='flex items-center space-x-2 touch-manipulation'>
 				<Checkbox
 					id='biweekly-mode'
 					checked={isBiWeeklyMode}
-					onCheckedChange={(checked) => {
+					onCheckedChange={async (checked) => {
 						const newBiWeeklyMode = checked === true
 
 						// If switching from bi-weekly to weekly mode and there are week 2 slots
 						if (!newBiWeeklyMode && isBiWeeklyMode && hasBiWeeklySlots) {
 							// Show confirmation dialog for deleting week 2 slots
 							setShowDeleteDialog(true)
-						} else {
-							// No week 2 slots to delete, just switch mode
+						} else if (!newBiWeeklyMode && isBiWeeklyMode) {
+							// Switching from bi-weekly to weekly mode - reset week 1 slots
+							updateBiWeeklySlots({
+								groupId,
+								biWeeklyStartWeek: null,
+								updateGlobally,
+							})
+							setIsBiWeeklyMode(newBiWeeklyMode)
+							setCurrentWeekIs(1) // Reset to default
+						} else if (newBiWeeklyMode && !isBiWeeklyMode) {
+							// Switching from weekly to bi-weekly mode - update week 1 slots
+							updateBiWeeklySlots({
+								groupId,
+								biWeeklyStartWeek: getBiWeeklyStartWeek(),
+								updateGlobally,
+							})
 							setIsBiWeeklyMode(newBiWeeklyMode)
 							// Reset to week 1 when enabling bi-weekly mode
-							if (newBiWeeklyMode) {
-								setSelectedWeek(1)
-							}
+							setSelectedWeek(1)
 						}
 					}}
 				/>
@@ -329,6 +373,63 @@ export function WeeklyAvailabilityEditor({
 					Zweiwöchige Rotation verwenden
 				</Label>
 			</div>
+
+			{/* Week start selection for bi-weekly mode */}
+			{isBiWeeklyMode && (
+				<div className='space-y-2'>
+					<div className='flex items-center space-x-2 touch-manipulation'>
+						<Label
+							htmlFor='current-week-selection'
+							className='text-xs sm:text-sm text-slate-300'
+						>
+							Diese Woche (KW {currentISOWeek}) ist:
+						</Label>
+						<Select
+							value={currentWeekIs.toString()}
+							onValueChange={async (value) => {
+								const newCurrentWeekIs = Number(value) as 1 | 2
+								setCurrentWeekIs(newCurrentWeekIs)
+
+								// Update existing bi-weekly slots with new biWeeklyStartWeek
+								if (hasBiWeeklySlots) {
+									const { currentWeekParity, nextWeekParity } =
+										calculateWeekParities(newCurrentWeekIs)
+
+									// Update both Week 1 and Week 2 slots with the new biWeeklyStartWeek
+									await Promise.all([
+										updateBiWeeklySlots({
+											groupId,
+											biWeeklyStartWeek:
+												newCurrentWeekIs === 1
+													? currentWeekParity
+													: nextWeekParity,
+											weekNumber: 1,
+											updateGlobally,
+										}),
+										updateBiWeeklySlots({
+											groupId,
+											biWeeklyStartWeek:
+												newCurrentWeekIs === 2
+													? currentWeekParity
+													: nextWeekParity,
+											weekNumber: 2,
+											updateGlobally,
+										}),
+									])
+								}
+							}}
+						>
+							<SelectTrigger className='w-32 bg-white/10 border-white/20'>
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value='1'>Woche 1</SelectItem>
+								<SelectItem value='2'>Woche 2</SelectItem>
+							</SelectContent>
+						</Select>
+					</div>
+				</div>
+			)}
 
 			{/* Global update toggle for bi-weekly mode */}
 			{isBiWeeklyMode && (
@@ -346,23 +447,6 @@ export function WeeklyAvailabilityEditor({
 					</Label>
 				</div>
 			)}
-
-			{/* Current week display info */}
-			<div className='bg-white/5 backdrop-blur-sm border-white/20 rounded-lg p-3'>
-				<div className='text-sm text-slate-300'>
-					<p>
-						<strong>Kalenderwoche:</strong> {currentISOWeek} (
-						{isEvenWeek ? 'Gerade' : 'Ungerade'} Woche)
-					</p>
-					{isBiWeeklyMode && (
-						<p className='mt-1'>
-							<strong>Aktuelle Woche entspricht:</strong>{' '}
-							{getCurrentWeekNumber() === 1 ? 'Woche 1' : 'Woche 2'} der
-							zweiwöchigen Rotation
-						</p>
-					)}
-				</div>
-			</div>
 
 			{/* Tabs for bi-weekly mode or single view for weekly mode */}
 			{isBiWeeklyMode ? (
