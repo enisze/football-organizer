@@ -15,6 +15,7 @@ import { revalidateTag } from 'next/cache'
 import { z } from 'zod'
 import type { PreviewTimeSlot } from './types'
 import { getUTCDate } from './utils/getUTCDate'
+import { getWeekNumber } from './utils/getWeekNumber'
 import {
 	type CalendarEvent,
 	transformCalendarEvents,
@@ -200,8 +201,8 @@ export const applyCalendarSlotsAction = authedActionClient
 				})
 			} else {
 				// For time-specific events
-				// First check for day-specific slot on this day
-				const daySlot = await prisma.timeSlot.findFirst({
+				// First get all day-specific slots for this user, day, and group
+				const daySlots = await prisma.timeSlot.findMany({
 					where: {
 						userId,
 						type: 'DAY_SPECIFIC',
@@ -212,14 +213,39 @@ export const applyCalendarSlotsAction = authedActionClient
 					},
 				})
 
-				if (daySlot) {
-					console.log('Day slot found:', daySlot)
+				// Find the relevant slot based on week number calculation
+				let relevantSlot = null
+				for (const daySlot of daySlots) {
+					if (daySlot.weekNumber === 1 || daySlot.weekNumber === null) {
+						// This is a weekly slot or default slot
+						if (!relevantSlot) {
+							relevantSlot = daySlot
+						}
+					} else if (daySlot.weekNumber === 2) {
+						// This is a bi-weekly slot, check if it matches current week
+						const weekNumber = getWeekNumber(
+							slot.date,
+							daySlot.biWeeklyStartWeek,
+						)
+						if (weekNumber === 2) {
+							relevantSlot = daySlot
+							break // Bi-weekly match takes priority
+						}
+					}
+				}
+
+				if (relevantSlot) {
+					console.log('Day slot found:', relevantSlot)
 
 					// Convert all times to Date objects for comparison
 					const eventStart = parse(slot.startTime, 'HH:mm', new Date())
 					const eventEnd = parse(slot.endTime, 'HH:mm', new Date())
-					const daySlotStart = parse(daySlot.startTime, 'HH:mm', new Date())
-					const daySlotEnd = parse(daySlot.endTime, 'HH:mm', new Date())
+					const daySlotStart = parse(
+						relevantSlot.startTime,
+						'HH:mm',
+						new Date(),
+					)
+					const daySlotEnd = parse(relevantSlot.endTime, 'HH:mm', new Date())
 
 					// Check if event overlaps with day slot
 					if (
@@ -229,7 +255,7 @@ export const applyCalendarSlotsAction = authedActionClient
 						if (isAfter(eventStart, daySlotStart)) {
 							await prisma.timeSlot.create({
 								data: {
-									startTime: daySlot.startTime,
+									startTime: relevantSlot.startTime,
 									endTime: slot.startTime,
 									type: 'DATE_SPECIFIC',
 									date: getUTCDate(slot.date),
@@ -245,7 +271,7 @@ export const applyCalendarSlotsAction = authedActionClient
 							await prisma.timeSlot.create({
 								data: {
 									startTime: slot.endTime,
-									endTime: daySlot.endTime,
+									endTime: relevantSlot.endTime,
 									type: 'DATE_SPECIFIC',
 									date: getUTCDate(slot.date),
 									userId,

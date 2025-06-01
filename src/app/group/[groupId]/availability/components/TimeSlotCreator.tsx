@@ -20,10 +20,13 @@ type TimeSlot = {
 	end: string
 	days: string[]
 	isGlobalSlot: boolean
+	weekNumber?: 1 | 2
 }
 
 interface TimeSlotCreatorProps {
 	selectedDay?: number
+	selectedWeek?: 1 | 2
+	isBiWeeklyMode?: boolean
 	days: Day[]
 	initialData?: TimeSlot
 	onSaveAction: (slot: TimeSlot) => void
@@ -33,6 +36,8 @@ interface TimeSlotCreatorProps {
 
 export function TimeSlotCreator({
 	selectedDay,
+	selectedWeek,
+	isBiWeeklyMode = false,
 	days,
 	initialData,
 	onSaveAction,
@@ -48,6 +53,9 @@ export function TimeSlotCreator({
 				? [(selectedDay ?? '').toString()]
 				: [],
 		isGlobalSlot: initialData?.isGlobalSlot || true,
+		weekNumber: isBiWeeklyMode
+			? initialData?.weekNumber || selectedWeek || 1
+			: 1, // Always default to week 1, even in non-bi-weekly mode
 	})
 
 	const { setCurrentStep } = useTour()
@@ -106,22 +114,22 @@ export function TimeSlotCreator({
 	}
 
 	return (
-		<div className='fixed inset-0 bg-black/70 z-50 flex items-end sm:items-center justify-center p-4'>
-			<div className='bg-slate-800 rounded-lg w-full max-w-md max-h-[90vh] overflow-auto'>
-				<div className='p-4 border-b border-slate-700 flex items-center justify-between'>
-					<h2 className='font-medium text-lg'>
+		<div className='fixed inset-0 bg-black/70 z-50 flex items-end sm:items-center justify-center p-2 sm:p-4'>
+			<div className='bg-slate-800 rounded-lg w-full max-w-md max-h-[95vh] sm:max-h-[90vh] overflow-auto'>
+				<div className='p-3 sm:p-4 border-b border-slate-700 flex items-center justify-between'>
+					<h2 className='font-medium text-base sm:text-lg'>
 						{initialData ? 'Zeitfenster bearbeiten' : 'Neues Zeitfenster'}
 					</h2>
 					<button
 						type='button'
 						onClick={onCancelAction}
-						className='text-slate-400 hover:text-white'
+						className='text-slate-400 hover:text-white touch-manipulation'
 					>
 						<X className='w-5 h-5' />
 					</button>
 				</div>
 
-				<div className='p-4 space-y-2'>
+				<div className='p-3 sm:p-4 space-y-3 sm:space-y-2'>
 					<div className='space-y-2'>
 						<div id='time-range'>
 							<TimeRangePicker
@@ -135,8 +143,52 @@ export function TimeSlotCreator({
 						</div>
 					</div>
 
+					{isBiWeeklyMode && (
+						<div className='space-y-2'>
+							<Label
+								htmlFor='week-selection'
+								className='text-xs sm:text-sm font-medium'
+							>
+								Woche auswählen
+							</Label>
+							<div id='week-selection' className='grid grid-cols-2 gap-2'>
+								<Button
+									size='sm'
+									variant={slot.weekNumber === 1 ? 'default' : 'outline'}
+									onClick={() =>
+										setSlot((prev) => ({ ...prev, weekNumber: 1 }))
+									}
+									className={`text-xs sm:text-sm touch-manipulation ${
+										slot.weekNumber === 1
+											? 'bg-purple-600 hover:bg-purple-700'
+											: 'bg-slate-700 border-slate-600 hover:bg-slate-600'
+									}`}
+								>
+									Woche 1
+								</Button>
+								<Button
+									size='sm'
+									variant={slot.weekNumber === 2 ? 'default' : 'outline'}
+									onClick={() =>
+										setSlot((prev) => ({ ...prev, weekNumber: 2 }))
+									}
+									className={`text-xs sm:text-sm touch-manipulation ${
+										slot.weekNumber === 2
+											? 'bg-purple-600 hover:bg-purple-700'
+											: 'bg-slate-700 border-slate-600 hover:bg-slate-600'
+									}`}
+								>
+									Woche 2
+								</Button>
+							</div>
+						</div>
+					)}
+
 					<div className='space-y-2' data-tour='quick-select'>
-						<Label htmlFor='quick-select' className='text-sm font-medium'>
+						<Label
+							htmlFor='quick-select'
+							className='text-xs sm:text-sm font-medium'
+						>
 							Schnellauswahl
 						</Label>
 						<div id='quick-select' className='grid grid-cols-2 gap-2'>
@@ -144,7 +196,7 @@ export function TimeSlotCreator({
 								size='sm'
 								variant='outline'
 								onClick={selectWeekdays}
-								className='bg-slate-700 border-slate-600 hover:bg-slate-600'
+								className='bg-slate-700 border-slate-600 hover:bg-slate-600 text-xs sm:text-sm touch-manipulation'
 							>
 								Wochentage
 							</Button>
@@ -152,7 +204,7 @@ export function TimeSlotCreator({
 								size='sm'
 								variant='outline'
 								onClick={selectWeekend}
-								className='bg-slate-700 border-slate-600 hover:bg-slate-600'
+								className='bg-slate-700 border-slate-600 hover:bg-slate-600 text-xs sm:text-sm touch-manipulation'
 							>
 								Wochenende
 							</Button>
@@ -160,7 +212,7 @@ export function TimeSlotCreator({
 								size='sm'
 								variant='outline'
 								onClick={selectAll}
-								className='bg-slate-700 border-slate-600 hover:bg-slate-600'
+								className='bg-slate-700 border-slate-600 hover:bg-slate-600 text-xs sm:text-sm touch-manipulation'
 							>
 								Alle Tage
 							</Button>
@@ -168,7 +220,7 @@ export function TimeSlotCreator({
 								size='sm'
 								variant='outline'
 								onClick={clearAll}
-								className='bg-slate-700 border-slate-600 hover:bg-slate-600'
+								className='bg-slate-700 border-slate-600 hover:bg-slate-600 text-xs sm:text-sm touch-manipulation'
 							>
 								Zurücksetzen
 							</Button>
@@ -176,12 +228,21 @@ export function TimeSlotCreator({
 					</div>
 
 					<div className='space-y-2' data-tour='day-selection'>
-						<Label htmlFor='day-selection' className='text-sm font-medium'>
+						<Label
+							htmlFor='day-selection'
+							className='text-xs sm:text-sm font-medium'
+						>
 							Tage auswählen
 						</Label>
-						<div id='day-selection' className='grid grid-cols-2 gap-1'>
+						<div
+							id='day-selection'
+							className='grid grid-cols-1 sm:grid-cols-2 gap-2'
+						>
 							{days.map((day) => (
-								<div key={day.id} className='flex items-center space-x-2'>
+								<div
+									key={day.id}
+									className='flex items-center space-x-2 touch-manipulation'
+								>
 									<Checkbox
 										id={`day-${day.id}`}
 										checked={slot.days.includes(day.id)}
@@ -189,7 +250,7 @@ export function TimeSlotCreator({
 									/>
 									<Label
 										htmlFor={`day-${day.id}`}
-										className='text-sm font-normal'
+										className='text-xs sm:text-sm font-normal'
 									>
 										{day.fullName}
 									</Label>
@@ -198,7 +259,7 @@ export function TimeSlotCreator({
 						</div>
 					</div>
 
-					<div className='flex items-center space-x-2 mt-4'>
+					<div className='flex items-center space-x-2 mt-3 sm:mt-4 touch-manipulation'>
 						<Checkbox
 							id='isGlobalSlot'
 							checked={slot.isGlobalSlot}
@@ -206,18 +267,26 @@ export function TimeSlotCreator({
 								setSlot((prev) => ({ ...prev, isGlobalSlot: checked === true }))
 							}
 						/>
-						<Label htmlFor='isGlobalSlot'>
+						<Label htmlFor='isGlobalSlot' className='text-xs sm:text-sm'>
 							Für alle meine Gruppen anwenden
 						</Label>
 					</div>
 
-					<div className='flex gap-2 pt-2'>
+					<div className='flex flex-col sm:flex-row gap-2 pt-3 sm:pt-2'>
 						{initialData && onDeleteAction && (
-							<Button onClick={onDeleteAction} variant='destructive'>
+							<Button
+								onClick={onDeleteAction}
+								variant='destructive'
+								className='text-sm sm:text-base touch-manipulation'
+							>
 								Löschen
 							</Button>
 						)}
-						<Button onClick={onCancelAction} variant='outline'>
+						<Button
+							onClick={onCancelAction}
+							variant='outline'
+							className='text-sm sm:text-base touch-manipulation'
+						>
 							Abbrechen
 						</Button>
 						<Button
@@ -225,6 +294,7 @@ export function TimeSlotCreator({
 							variant='purple'
 							disabled={slot.days.length === 0}
 							data-tour='save-time-slot'
+							className='text-sm sm:text-base touch-manipulation'
 						>
 							Speichern
 						</Button>

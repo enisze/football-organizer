@@ -29,24 +29,22 @@ export async function GroupAvailabilityPage({
 	const utcDate = getUTCDate(date)
 	const localDayOfWeek = date.getDay()
 
-	const [timeslots] = await Promise.all([
-		prisma.timeSlot.findMany({
-			where: {
-				OR: [
-					{ type: 'DATE_SPECIFIC', date: utcDate },
-					{ type: 'DAY_SPECIFIC', day: localDayOfWeek },
-				],
-				groups: {
-					some: {
-						id: groupId,
-					},
+	const timeslots = await prisma.timeSlot.findMany({
+		where: {
+			OR: [
+				{ type: 'DATE_SPECIFIC', date: utcDate },
+				{ type: 'DAY_SPECIFIC', day: localDayOfWeek },
+			],
+			groups: {
+				some: {
+					id: groupId,
 				},
 			},
-			include: {
-				user: true,
-			},
-		}),
-	])
+		},
+		include: {
+			user: true,
+		},
+	})
 
 	const uniqueUsers = uniqueBy(
 		timeslots.map((slot) => slot.user),

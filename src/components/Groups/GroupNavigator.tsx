@@ -7,7 +7,7 @@ export const GroupNavigator = async () => {
 		<div className='flex flex-col gap-2'>
 			<OrganizerLink
 				href={routes.groupSettings()}
-				className='w-full max-w-md px-8 py-6 bg-white/5 hover:bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10 transition-all duration-300 group'
+				className='w-full px-8 py-6 bg-white/5 hover:bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10 transition-all duration-300 group'
 			>
 				<div className='flex items-center gap-4'>
 					<div className='p-3 bg-white/5 rounded-xl group-hover:bg-white/10 transition-colors'>
@@ -21,7 +21,7 @@ export const GroupNavigator = async () => {
 
 			<OrganizerLink
 				href={routes.enterGroup()}
-				className='w-full max-w-md px-8 py-6 bg-white/5 hover:bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10 transition-all duration-300 group'
+				className='w-full px-8 py-6 bg-white/5 hover:bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10 transition-all duration-300 group'
 			>
 				<div className='flex items-center gap-4'>
 					<div className='p-3 bg-white/5 rounded-xl group-hover:bg-white/10 transition-colors'>

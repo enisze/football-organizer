@@ -38,7 +38,10 @@ export const fetchDateSlotsForGroup = tool({
 			where: {
 				OR: [
 					{ type: 'DATE_SPECIFIC', date: utcDate },
-					{ type: 'DAY_SPECIFIC', day: localDayOfWeek },
+					{
+						type: 'DAY_SPECIFIC',
+						day: localDayOfWeek,
+					},
 				],
 				groups: {
 					some: {

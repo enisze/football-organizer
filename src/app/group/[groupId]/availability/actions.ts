@@ -17,6 +17,8 @@ export const updateTimeSlotAction = authedActionClient
 			groupId: z.string(),
 			isException: z.boolean().optional(),
 			isGlobalSlot: z.boolean(),
+			weekNumber: z.number().min(1).max(2).optional(),
+			biWeeklyStartWeek: z.number().min(1).max(53).optional(), // ISO week number
 		}),
 	)
 	.action(async ({ parsedInput, ctx: { userId } }) => {
@@ -29,6 +31,8 @@ export const updateTimeSlotAction = authedActionClient
 			groupId,
 			isException,
 			isGlobalSlot,
+			weekNumber,
+			biWeeklyStartWeek,
 		} = parsedInput
 
 		if (type === 'DATE_SPECIFIC' && !date) {
@@ -66,6 +70,8 @@ export const updateTimeSlotAction = authedActionClient
 				type,
 				date: type === 'DATE_SPECIFIC' ? date : null,
 				day: type === 'DAY_SPECIFIC' ? day : null,
+				weekNumber: type === 'DAY_SPECIFIC' ? (weekNumber ?? 1) : null,
+				biWeeklyStartWeek: type === 'DAY_SPECIFIC' ? biWeeklyStartWeek : null,
 				userId,
 				groups: {
 					connect: groupIds,
@@ -78,6 +84,8 @@ export const updateTimeSlotAction = authedActionClient
 				type,
 				date: type === 'DATE_SPECIFIC' ? date : null,
 				day: type === 'DAY_SPECIFIC' ? day : null,
+				weekNumber: type === 'DAY_SPECIFIC' ? (weekNumber ?? 1) : null,
+				biWeeklyStartWeek: type === 'DAY_SPECIFIC' ? biWeeklyStartWeek : null,
 				userId,
 				groups: {
 					connect: groupIds,
@@ -235,3 +243,80 @@ export const updateExceptionSlotsAction = authedActionClient
 		revalidateTag('myAvailability')
 		revalidateTag('groupAvailability')
 	})
+
+export const deleteWeek2TimeSlotsAction = authedActionClient
+	.schema(
+		z.object({
+			groupId: z.string(),
+			deleteGlobally: z.boolean().optional().default(false),
+		}),
+	)
+	.action(
+		async ({ parsedInput: { groupId, deleteGlobally }, ctx: { userId } }) => {
+			if (deleteGlobally) {
+				// Delete all week 2 time slots for the current user across all groups
+				await prisma.timeSlot.deleteMany({
+					where: {
+						userId,
+						weekNumber: 2,
+					},
+				})
+			} else {
+				// Delete week 2 time slots only for the specified group
+				await prisma.timeSlot.deleteMany({
+					where: {
+						userId,
+						weekNumber: 2,
+						groups: {
+							some: {
+								id: groupId,
+							},
+						},
+					},
+				})
+			}
+
+			revalidateTag('myAvailability')
+			revalidateTag('groupAvailability')
+		},
+	)
+
+export const updateWeek1SlotsToBiWeeklyAction = authedActionClient
+	.schema(
+		z.object({
+			groupId: z.string(),
+			biWeeklyStartWeek: z.number().min(1).max(53),
+			updateGlobally: z.boolean().optional().default(false),
+		}),
+	)
+	.action(
+		async ({
+			parsedInput: { groupId, biWeeklyStartWeek, updateGlobally },
+			ctx: { userId },
+		}) => {
+			// Update all Week 1 slots to have the proper biWeeklyStartWeek
+			await prisma.timeSlot.updateMany({
+				where: {
+					userId,
+					weekNumber: 1,
+					biWeeklyStartWeek: null,
+					type: 'DAY_SPECIFIC',
+					...(updateGlobally
+						? {}
+						: {
+								groups: {
+									some: {
+										id: groupId,
+									},
+								},
+							}),
+				},
+				data: {
+					biWeeklyStartWeek,
+				},
+			})
+
+			revalidateTag('myAvailability')
+			revalidateTag('groupAvailability')
+		},
+	)

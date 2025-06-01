@@ -1,5 +1,6 @@
 import type { TimeSlot, User } from '@prisma/client'
 import { formatInTimeZone } from 'date-fns-tz'
+import { getWeekNumber } from './utils/getWeekNumber'
 
 export type TimeSlotDuration = '60min' | '90min' | '120min'
 export type ProcessedTimeSlot = {
@@ -58,7 +59,6 @@ const isUserAvailable = (
 	relevantSlots: (TimeSlot & { user: User })[],
 ): boolean => {
 	const userSlots = relevantSlots.filter((slot) => slot.user.id === user.id)
-
 	const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
 	// First check for date-specific slots
@@ -94,9 +94,67 @@ const isUserAvailable = (
 		formatInTimeZone(date, timeZone, 'yyyy-MM-dd'),
 	).getDay()
 
-	const dayOfWeekSlots = userSlots.filter(
-		(slot) => slot.type === 'DAY_SPECIFIC' && slot.day === localDayOfWeek,
+	// Check if there are any bi-weekly slots in the ENTIRE system (not just for this user)
+	// This determines whether we're in a bi-weekly mode or pure weekly mode
+	const hasBiWeeklySlots = relevantSlots.some(
+		(slot) => slot.biWeeklyStartWeek !== null,
 	)
+
+	const dayOfWeekSlots = userSlots.filter((slot) => {
+		if (slot.type !== 'DAY_SPECIFIC' || slot.day !== localDayOfWeek)
+			return false
+
+		// Determine if this slot has a bi-weekly start week set
+		const hasBiWeeklyStartWeek = slot.biWeeklyStartWeek !== null
+
+		// Case 1: Pure weekly mode - no bi-weekly slots exist in the system
+		if (!hasBiWeeklySlots) {
+			// All slots are treated as weekly slots (active every week)
+			return slot.weekNumber === null || slot.weekNumber === 1
+		}
+
+		// Case 2: Bi-weekly mode - some slots in the system have biWeeklyStartWeek set
+		if (hasBiWeeklySlots) {
+			// Case 2a: Weekly slots (weekNumber=null) - active every week even in bi-weekly mode
+			if (slot.weekNumber === null) {
+				return true // Weekly slots are always active
+			}
+
+			// Case 2b: Legacy week1 bi-weekly slot (no biWeeklyStartWeek but weekNumber=1)
+			if (!hasBiWeeklyStartWeek && slot.weekNumber === 1) {
+				// This is likely a week1 bi-weekly slot that was created before biWeeklyStartWeek was properly set
+				// Calculate using the default bi-weekly pattern (odd weeks = week 1, even weeks = week 2)
+				const currentWeekInRotation = getWeekNumber(date, null)
+				const isActiveThisWeek = currentWeekInRotation === 1
+
+				return isActiveThisWeek
+			}
+
+			// Case 2c: Proper bi-weekly slot with biWeeklyStartWeek set
+			if (hasBiWeeklyStartWeek) {
+				// Calculate which week we're currently in relative to the bi-weekly start
+				const currentWeekInRotation = getWeekNumber(
+					date,
+					slot.biWeeklyStartWeek,
+				)
+
+				// Only include slots that match the current week in the bi-weekly rotation
+				const isActiveThisWeek = slot.weekNumber === currentWeekInRotation
+
+				return isActiveThisWeek
+			}
+
+			// Case 2d: Other bi-weekly slots (weekNumber=2 without biWeeklyStartWeek, etc.)
+			// For now, treat weekNumber=2 without biWeeklyStartWeek as week2 in default pattern
+			if (slot.weekNumber === 2) {
+				const currentWeekInRotation = getWeekNumber(date, null)
+				return currentWeekInRotation === 2
+			}
+		}
+
+		// Fallback - should not reach here
+		return false
+	})
 
 	if (dayOfWeekSlots.length > 0) {
 		return dayOfWeekSlots.some(
