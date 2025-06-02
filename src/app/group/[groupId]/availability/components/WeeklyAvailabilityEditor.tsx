@@ -140,7 +140,7 @@ export function WeeklyAvailabilityEditor({
 	)
 
 	// Helper function to calculate week parities based on current week selection
-	const calculateWeekParities = (currentWeekIs: 1 | 2) => {
+	const calculateWeekParities = () => {
 		const currentWeekParity = currentISOWeek % 2 // 0 for even, 1 for odd
 		const nextWeekParity = (currentWeekParity + 1) % 2
 
@@ -160,8 +160,7 @@ export function WeeklyAvailabilityEditor({
 	const getBiWeeklyStartWeek = (weekNumber?: 1 | 2): number => {
 		if (!isBiWeeklyMode) return 0
 
-		const { currentWeekParity, nextWeekParity } =
-			calculateWeekParities(currentWeekIs)
+		const { currentWeekParity, nextWeekParity } = calculateWeekParities()
 		return weekNumber === currentWeekIs ? currentWeekParity : nextWeekParity
 	}
 
@@ -393,7 +392,7 @@ export function WeeklyAvailabilityEditor({
 								// Update existing bi-weekly slots with new biWeeklyStartWeek
 								if (hasBiWeeklySlots) {
 									const { currentWeekParity, nextWeekParity } =
-										calculateWeekParities(newCurrentWeekIs)
+										calculateWeekParities()
 
 									// Update both Week 1 and Week 2 slots with the new biWeeklyStartWeek
 									await Promise.all([
