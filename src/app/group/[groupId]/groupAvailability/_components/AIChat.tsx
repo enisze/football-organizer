@@ -13,7 +13,7 @@ import { Button } from '@/ui/button'
 import { Card } from '@/ui/card'
 import { Textarea } from '@/ui/textarea'
 import { useChat } from '@ai-sdk/react'
-import { Calendar, Clock, Mic, MicOff, Send, X } from 'lucide-react'
+import { Clock, Mic, MicOff, Send, SparklesIcon, X } from 'lucide-react'
 import { useAction } from 'next-safe-action/hooks'
 import { useQueryState } from 'nuqs'
 import { useState } from 'react'
@@ -154,11 +154,11 @@ export const AIChat = ({ groupId }: AiSlotFinderProps) => {
 	return (
 		<div className='fixed bottom-4 right-4 z-50'>
 			{isOpen ? (
-				<Card className='w-full h-[450px] flex flex-col bg-gray-900 border-gray-800 shadow-xl rounded-lg overflow-hidden'>
+				<Card className='fixed bottom-[70px] right-0 w-[350px] h-[450px] flex flex-col bg-gray-900 border-gray-800 shadow-xl rounded-lg overflow-hidden'>
 					{/* Header */}
 					<div className='flex items-center justify-between p-4 border-b border-gray-800 bg-gray-900'>
 						<div className='flex items-center space-x-2'>
-							<Calendar className='h-5 w-5 text-purple-400' />
+							<SparklesIcon className='h-5 w-5 text-purple-400' />
 							<h2 className='text-xl font-semibold text-white'>AI Chat</h2>
 						</div>
 						<Button
@@ -277,7 +277,6 @@ export const AIChat = ({ groupId }: AiSlotFinderProps) => {
 								className='flex-1 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus-visible:ring-purple-500 min-h-[40px] resize-none'
 								disabled={!!error}
 								aria-invalid={!!error}
-								rows={1}
 							/>
 							<Button
 								type='button'
@@ -314,7 +313,7 @@ export const AIChat = ({ groupId }: AiSlotFinderProps) => {
 					variant='purple'
 					className='absolute bottom-[70px] right-0 w-fit'
 				>
-					<Calendar className='h-6 w-6' />
+					<SparklesIcon className='h-6 w-6' />
 				</Button>
 			)}
 
