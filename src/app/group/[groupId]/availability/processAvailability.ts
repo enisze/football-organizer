@@ -104,9 +104,6 @@ const isUserAvailable = (
 		if (slot.type !== 'DAY_SPECIFIC' || slot.day !== localDayOfWeek)
 			return false
 
-		// Determine if this slot has a bi-weekly start week set
-		const hasBiWeeklyStartWeek = slot.biWeeklyStartWeek !== null
-
 		// Case 1: Pure weekly mode - no bi-weekly slots exist in the system
 		if (!hasBiWeeklySlots) {
 			// All slots are treated as weekly slots (active every week)
@@ -120,16 +117,16 @@ const isUserAvailable = (
 				return true // Weekly slots are always active
 			}
 
-			if (hasBiWeeklyStartWeek) {
-				// For bi-weekly slots (weekNumber=2), check if current week is active
-				if (slot.weekNumber === 2) {
-					return isWeekActive(date, slot.biWeeklyStartWeek)
-				}
-				// For weekly slots (weekNumber=1), they're always active
-				if (slot.weekNumber === 1) {
-					return true
-				}
+			// Case 2b: Slots with biWeeklyStartWeek set - check if current week is active
+			if (slot.biWeeklyStartWeek !== null) {
+				// For both weekNumber=1 and weekNumber=2, we need to check if the current week is active
+				// The isWeekActive function returns true if current week matches the biWeeklyStartWeek pattern
+				return isWeekActive(date, slot.biWeeklyStartWeek)
 			}
+
+			// Case 2c: Slots without biWeeklyStartWeek in bi-weekly mode
+			// These are legacy weekly slots that should be active every week
+			return slot.weekNumber === 1 || slot.weekNumber === null
 		}
 
 		// Fallback - should not reach here
