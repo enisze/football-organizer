@@ -73,8 +73,8 @@ export async function POST(req: Request) {
 		if (availableWords.length < wordsNeeded) {
 			const categoryInstruction =
 				categories && categories.length > 0
-					? `Die Wörter sollten hauptsächlich aus den folgenden Kategorien stammen oder sich darauf beziehen: ${categories.join(', ')}.`
-					: 'Die Wörter sollten aus verschiedenen Kategorien stammen (wie Tiere, Essen, Sport, etc.).'
+					? `Die Wörter sollten gleichmäßig auf die folgenden Kategorien verteilt werden: ${categories.join(', ')}. Stelle sicher, dass jede Kategorie etwa gleich viele Wörter erhält (ca. ${Math.ceil(Math.max(100, wordsNeeded) / categories.length)} Wörter pro Kategorie).`
+					: 'Die Wörter sollten aus verschiedenen Kategorien stammen (wie Tiere, Essen, Sport, etc.) und gleichmäßig auf diese Kategorien verteilt werden.'
 
 			const customPromptInstruction = prompt
 				? `Zusätzliche Anweisungen: ${prompt}`
@@ -83,7 +83,7 @@ export async function POST(req: Request) {
 			const result = await generateObject({
 				model: openrouter.chat(OPEN_ROUTER_MODEL),
 				system:
-					'Du bist ein Assistent, der Wörter für ein Ratespiel generiert. Die Wörter sollten auf Deutsch sein und sich gut zum Erraten eignen. Berücksichtige die angegebenen Kategorien und zusätzlichen Anweisungen, falls welche spezifiziert wurden.',
+					'Du bist ein Assistent, der Wörter für ein Ratespiel generiert. Die Wörter sollten auf Deutsch sein und sich gut zum Erraten eignen. Berücksichtige die angegebenen Kategorien und zusätzlichen Anweisungen, falls welche spezifiziert wurden. Achte besonders darauf, eine gleichmäßige Verteilung der Wörter auf alle angegebenen Kategorien sicherzustellen.',
 				prompt: `Erstelle eine Liste von ${Math.max(100, wordsNeeded)} neuen deutschen Wörtern für ein Ratespiel. 
                     Die Wörter sollten:
                     - nicht in dieser Liste vorkommen: ${[...guessedWords, ...cachedWords].join(', ')}
