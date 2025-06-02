@@ -45,7 +45,7 @@ export default async function Page({
 		groupId: parsedParams.groupId,
 		duration: '90min',
 		date: new Date().toISOString(),
-		minUsers: latestEvent?.participants.length ?? 1,
+		minUsers: 1,
 		maxUsers: latestEvent?.maxParticipants ?? groupMembers.length ?? 10,
 	})
 

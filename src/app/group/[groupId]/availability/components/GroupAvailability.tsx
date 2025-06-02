@@ -37,7 +37,7 @@ export function GroupAvailabilityView({
 		shallow: true,
 	})
 	const [minUsers, setMinUsers] = useQueryState('minUsers', {
-		defaultValue: 0,
+		defaultValue: 1,
 		parse: (value) => Number(value),
 		shallow: true,
 	})
@@ -55,6 +55,7 @@ export function GroupAvailabilityView({
 		defaultValue: '22:00',
 		shallow: true,
 	})
+
 	const [selectedSlot, setSelectedSlot] = useState<ProcessedTimeSlot | null>(
 		null,
 	)
@@ -76,14 +77,13 @@ export function GroupAvailabilityView({
 		<>
 			<div className='grid gap-2'>
 				<h3 className='font-bold'>
-					{date
-						? new Date(date).toLocaleDateString('de', {
-								weekday: 'long',
-								year: 'numeric',
-								month: 'long',
-								day: 'numeric',
-							})
-						: ''}
+					{date &&
+						new Date(date).toLocaleDateString('de', {
+							weekday: 'long',
+							year: 'numeric',
+							month: 'long',
+							day: 'numeric',
+						})}
 				</h3>
 				<div className='space-y-2'>
 					<h3 className='font-bold'>Teilnehmer</h3>
@@ -96,7 +96,7 @@ export function GroupAvailabilityView({
 								refresh()
 							}}
 							min={1}
-							max={10}
+							max={maxUsers}
 						/>
 						<UserCountInput
 							label='Max'
@@ -106,7 +106,6 @@ export function GroupAvailabilityView({
 								refresh()
 							}}
 							min={1}
-							max={10}
 						/>
 					</div>
 				</div>
