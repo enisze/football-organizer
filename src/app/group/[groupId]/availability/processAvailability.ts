@@ -1,6 +1,6 @@
 import type { TimeSlot, User } from '@prisma/client'
 import { formatInTimeZone } from 'date-fns-tz'
-import { getWeekNumber } from './utils/getWeekNumber'
+import { isWeekActive } from './utils/isWeekActive'
 
 export type TimeSlotDuration = '60min' | '90min' | '120min'
 export type ProcessedTimeSlot = {
@@ -121,15 +121,14 @@ const isUserAvailable = (
 			}
 
 			if (hasBiWeeklyStartWeek) {
-				// Calculate which week we're currently in based on the biWeeklyStartWeek pattern
-				// biWeeklyStartWeek: 0 = even weeks are week 1, 1 = odd weeks are week 1
-				const currentWeekInRotation = getWeekNumber(
-					date,
-					slot.biWeeklyStartWeek,
-				)
-
-				// Only include slots that match the current week in the bi-weekly rotation
-				return currentWeekInRotation
+				// For bi-weekly slots (weekNumber=2), check if current week is active
+				if (slot.weekNumber === 2) {
+					return isWeekActive(date, slot.biWeeklyStartWeek)
+				}
+				// For weekly slots (weekNumber=1), they're always active
+				if (slot.weekNumber === 1) {
+					return true
+				}
 			}
 		}
 

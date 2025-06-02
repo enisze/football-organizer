@@ -15,7 +15,7 @@ import { revalidateTag } from 'next/cache'
 import { z } from 'zod'
 import type { PreviewTimeSlot } from './types'
 import { getUTCDate } from './utils/getUTCDate'
-import { getWeekNumber } from './utils/getWeekNumber'
+import { isWeekActive } from './utils/isWeekActive'
 import {
 	type CalendarEvent,
 	transformCalendarEvents,
@@ -223,11 +223,8 @@ export const applyCalendarSlotsAction = authedActionClient
 						}
 					} else if (daySlot.weekNumber === 2) {
 						// This is a bi-weekly slot, check if it matches current week
-						const weekNumber = getWeekNumber(
-							slot.date,
-							daySlot.biWeeklyStartWeek,
-						)
-						if (weekNumber === 2) {
+						const isActive = isWeekActive(slot.date, daySlot.biWeeklyStartWeek)
+						if (isActive) {
 							relevantSlot = daySlot
 							break // Bi-weekly match takes priority
 						}
