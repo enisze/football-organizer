@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
 	const session = await serverAuth()
 	if (!session?.user?.id) {
-		return new Response('Unauthorized', { status: 401 })
+		return new Response('Nicht autorisiert', { status: 401 })
 	}
 
 	const userInGroup = await prisma.userOnGroups.findFirst({
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
 	})
 
 	if (!userInGroup) {
-		return new Response('Not in group', { status: 403 })
+		return new Response('Nicht in der Gruppe', { status: 403 })
 	}
 
 	const ip =
@@ -44,20 +44,20 @@ export async function POST(req: Request) {
 	const { success } = await rateLimit.limit(ip)
 
 	if (!success) {
-		return new Response('Rate limit exceeded', { status: 429 })
+		return new Response('Rate-Limit überschritten', { status: 429 })
 	}
 
 	const result = streamText({
 		model: openrouter.chat(OPEN_ROUTER_MODEL),
 		messages,
-		system: `The groupId is ${groupId}. The current date is ${new Date()} Fill in the information using this date. You are a helpful assistant that helps the user find available time slots for their group. You can ask the user for more information if needed. If the user asks for a specific date, you can use the tool to fetch available time slots. If the user asks for a specific time, you can use the tool to fetch available time slots. If the user asks for a specific duration, you can use the tool to fetch available time slots. If the user asks for a specific day of the week, you can use the tool to fetch available time slots.`,
+		system: `Die Gruppen-ID ist ${groupId}. Das aktuelle Datum ist ${new Date()}. Füllen Sie die Informationen mit diesem Datum aus. Sie sind ein hilfreicher Assistent, der dem Benutzer dabei hilft, verfügbare Zeitslots für ihre Gruppe zu finden. Sie können den Benutzer nach weiteren Informationen fragen, falls nötig. Wenn der Benutzer nach einem bestimmten Datum fragt, können Sie das Tool verwenden, um verfügbare Zeitslots abzurufen. Wenn der Benutzer nach einer bestimmten Zeit fragt, können Sie das Tool verwenden, um verfügbare Zeitslots abzurufen. Wenn der Benutzer nach einer bestimmten Dauer fragt, können Sie das Tool verwenden, um verfügbare Zeitslots abzurufen. Wenn der Benutzer nach einem bestimmten Wochentag fragt, können Sie das Tool verwenden, um verfügbare Zeitslots abzurufen.`,
 		tools: {
 			fetchDateSlotsForGroup,
 			createSlotTool,
 			getSlotTool,
 			openEventDialog: {
 				description:
-					'Open the event dialog with the given start time, end time, and date based on the previous messages',
+					'Öffnet den Event-Dialog mit der angegebenen Startzeit, Endzeit und dem Datum basierend auf den vorherigen Nachrichten',
 				parameters: z.object({
 					startTime: z.string(),
 					endTime: z.string(),
@@ -71,8 +71,8 @@ export async function POST(req: Request) {
 
 	return result.toDataStreamResponse({
 		getErrorMessage: (error) => {
-			console.error('Error in chat:', error)
-			return 'An error occurred while processing your request'
+			console.error('Fehler im Chat:', error)
+			return 'Ein Fehler ist beim Verarbeiten Ihrer Anfrage aufgetreten'
 		},
 	})
 }

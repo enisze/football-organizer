@@ -308,11 +308,13 @@ export function WeeklyAvailabilityEditor({
 												e.stopPropagation()
 												setEditingSlot(slot)
 												setIsCreatingSlot(true)
+												setSelectedDay(slot.day ?? undefined)
 											}}
 											onKeyDown={(e) => {
 												if (e.key === 'Enter') {
 													setEditingSlot(slot)
 													setIsCreatingSlot(true)
+													setSelectedDay(slot.day ?? undefined)
 												}
 											}}
 										/>

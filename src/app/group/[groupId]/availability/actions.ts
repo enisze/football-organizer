@@ -63,6 +63,25 @@ export const updateTimeSlotAction = authedActionClient
 			return { id: g.id }
 		})
 
+		const otherWeekSlot = await prisma.timeSlot.findFirst({
+			where: {
+				userId,
+				type: 'DAY_SPECIFIC',
+				day,
+				weekNumber: weekNumber ?? 1,
+				biWeeklyStartWeek: {
+					not: {
+						equals: null,
+					},
+				},
+				groups: {
+					some: {
+						id: groupId,
+					},
+				},
+			},
+		})
+
 		const timeSlot = await prisma.timeSlot.upsert({
 			create: {
 				startTime,
@@ -71,7 +90,10 @@ export const updateTimeSlotAction = authedActionClient
 				date: type === 'DATE_SPECIFIC' ? date : null,
 				day: type === 'DAY_SPECIFIC' ? day : null,
 				weekNumber: type === 'DAY_SPECIFIC' ? (weekNumber ?? 1) : null,
-				biWeeklyStartWeek: type === 'DAY_SPECIFIC' ? biWeeklyStartWeek : null,
+				biWeeklyStartWeek:
+					type === 'DAY_SPECIFIC'
+						? (biWeeklyStartWeek ?? otherWeekSlot?.biWeeklyStartWeek)
+						: null,
 				userId,
 				groups: {
 					connect: groupIds,
@@ -85,7 +107,10 @@ export const updateTimeSlotAction = authedActionClient
 				date: type === 'DATE_SPECIFIC' ? date : null,
 				day: type === 'DAY_SPECIFIC' ? day : null,
 				weekNumber: type === 'DAY_SPECIFIC' ? (weekNumber ?? 1) : null,
-				biWeeklyStartWeek: type === 'DAY_SPECIFIC' ? biWeeklyStartWeek : null,
+				biWeeklyStartWeek:
+					type === 'DAY_SPECIFIC'
+						? (biWeeklyStartWeek ?? otherWeekSlot?.biWeeklyStartWeek)
+						: null,
 				userId,
 				groups: {
 					connect: groupIds,

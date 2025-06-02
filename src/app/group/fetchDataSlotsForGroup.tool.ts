@@ -10,7 +10,7 @@ import { getUTCDate } from './[groupId]/availability/utils/getUTCDate'
 
 export const fetchDateSlotsForGroup = tool({
 	description:
-		'Fetches available time slots for a group based on natural language request',
+		'Ruft verfügbare Zeitslots für eine Gruppe basierend auf natürlichsprachlicher Anfrage ab',
 	parameters: z.object({
 		month: z.number().optional(),
 		day: z.number().optional(),

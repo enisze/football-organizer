@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 export const getSlotTool = tool({
 	description:
-		'Fetches timeslots, the slot can be day-specific or date-specific. It is enough to specifiy a day or a certain date.',
+		'Ruft Zeitslots ab, der Slot kann tagesspezifisch oder datumsspezifisch sein. Es reicht aus, einen Tag oder ein bestimmtes Datum anzugeben.',
 	parameters: z.object({
 		startTime: z.string().optional(),
 		endTime: z.string().optional(),
@@ -15,6 +15,7 @@ export const getSlotTool = tool({
 		groupId: z.string(),
 		isException: z.boolean().optional(),
 		isGlobalSlot: z.boolean().optional(),
+		weeekNumber: z.number().optional(),
 	}),
 	execute: async ({
 		startTime,
@@ -25,13 +26,14 @@ export const getSlotTool = tool({
 		groupId,
 		isException,
 		isGlobalSlot,
+		weeekNumber,
 	}) => {
 		const session = await serverAuth()
 
 		const userId = session?.user?.id
 
 		if (!userId) {
-			throw new Error('Unauthorized')
+			throw new Error('Nicht autorisiert')
 		}
 
 		const slots = await prisma.timeSlot.findMany({
@@ -43,6 +45,7 @@ export const getSlotTool = tool({
 				date: date ? new Date(date) : undefined,
 				day: day ?? undefined,
 				isException: isException ?? undefined,
+				weekNumber: weeekNumber ?? undefined,
 				groups: {
 					some: {
 						id: isGlobalSlot ? undefined : groupId,
