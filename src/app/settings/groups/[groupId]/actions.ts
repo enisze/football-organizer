@@ -4,7 +4,7 @@ import { authedActionClient } from '@/src/lib/actionClient'
 import { inngest, prisma } from '@/src/server/db/client'
 import { routes } from '@/src/shared/navigation'
 import { nanoid } from 'nanoid'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { z } from 'zod'
 import { zfd } from 'zod-form-data'
 
@@ -21,19 +21,56 @@ export const createGroup = authedActionClient
 	.schema(
 		zfd.formData({
 			groupName: zfd.text(),
+			addAllTimeslots: zfd.checkbox(),
 		}),
 	)
-	.action(async ({ parsedInput: { groupName }, ctx: { userId } }) => {
-		await prisma.group.create({
-			data: {
-				name: groupName,
-				code: nanoid(6),
-				owner: { connect: { id: userId } },
-				users: { create: { id: userId, role: 'OWNER' } },
-			},
-		})
-		revalidatePath(routes.groupSettings())
-	})
+	.action(
+		async ({
+			parsedInput: { groupName, addAllTimeslots },
+			ctx: { userId },
+		}) => {
+			const newGroup = await prisma.group.create({
+				data: {
+					name: groupName,
+					code: nanoid(6),
+					owner: { connect: { id: userId } },
+					users: { create: { id: userId, role: 'OWNER' } },
+				},
+			})
+
+			// If the toggle is enabled, add all user's existing timeslots to the new group
+			if (addAllTimeslots) {
+				const userTimeSlots = await prisma.timeSlot.findMany({
+					where: {
+						userId: userId,
+					},
+					select: { id: true },
+				})
+
+				// Connect all user's timeslots to the new group
+
+				await Promise.all(
+					userTimeSlots.map((timeSlot) =>
+						prisma.timeSlot.update({
+							where: { id: timeSlot.id },
+							data: {
+								groups: {
+									connect: { id: newGroup.id },
+								},
+							},
+						}),
+					),
+				)
+
+				// Revalidate cache for availability data when timeslots are added
+				revalidateTag('myAvailability')
+				revalidateTag('groupAvailability')
+			}
+
+			revalidatePath(routes.groupSettings())
+			return { success: true, groupId: newGroup.id }
+		},
+	)
 
 export const updateGroupName = authedActionClient
 	.schema(

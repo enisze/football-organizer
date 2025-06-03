@@ -3,6 +3,8 @@ import { Button } from '@/ui/button'
 
 import { cn } from '@/lib/utils/cn'
 import { createGroup } from '@/src/app/settings/groups/[groupId]/actions'
+import { Checkbox } from '@/ui/checkbox'
+import { Label } from '@/ui/label'
 import { Plus, Users } from 'lucide-react'
 
 export const NewGroup = async ({
@@ -33,6 +35,20 @@ export const NewGroup = async ({
 						placeholder='Gruppe Name eingeben'
 						text=''
 					/>
+
+					<div className='flex items-center space-x-2'>
+						<Checkbox
+							id='addAllTimeslots'
+							name='addAllTimeslots'
+							className='border-white/20 data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600'
+						/>
+						<Label 
+							htmlFor='addAllTimeslots' 
+							className='text-sm text-white/80 cursor-pointer'
+						>
+							Alle meine bestehenden Zeitslots zu dieser Gruppe hinzufügen
+						</Label>
+					</div>
 
 					<Button
 						type='submit'

@@ -17,6 +17,7 @@ import {
 import { User } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { AddTimeslotsToGroupButton } from './AddTimeslotsToGroupButton'
 
 interface PageProps {
 	params: Promise<unknown>
@@ -101,6 +102,24 @@ export default async function MainPage({ params }: PageProps) {
 					</Card>
 
 					<ApiOverview groupId={groupId} isOwner={isOwner} userId={userId} />
+
+					<Card className='bg-white/5 backdrop-blur-sm border-white/10'>
+						<CardHeader>
+							<div className='flex items-center justify-between'>
+								<div className='space-y-1'>
+									<CardTitle className='text-lg text-white'>
+										Zeitslot-Verwaltung
+									</CardTitle>
+									<CardDescription className='text-white/70'>
+										Füge alle deine Zeitslots zu dieser Gruppe hinzu
+									</CardDescription>
+								</div>
+							</div>
+						</CardHeader>
+						<CardContent>
+							<AddTimeslotsToGroupButton groupId={groupId} />
+						</CardContent>
+					</Card>
 
 					<Card className='bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-colors'>
 						<CardHeader>
