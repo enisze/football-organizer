@@ -42,8 +42,8 @@ export const NewGroup = async ({
 							name='addAllTimeslots'
 							className='border-white/20 data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600'
 						/>
-						<Label 
-							htmlFor='addAllTimeslots' 
+						<Label
+							htmlFor='addAllTimeslots'
 							className='text-sm text-white/80 cursor-pointer'
 						>
 							Alle meine bestehenden Zeitslots zu dieser Gruppe hinzufügen
