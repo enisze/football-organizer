@@ -23,6 +23,87 @@ const rateLimit = new Ratelimit({
 	limiter: Ratelimit.slidingWindow(20, '10 s'),
 })
 
+const free_model = 'mistralai/devstral-small:free'
+
+async function generateWordsByCategory(
+	categories: string[],
+	wordsPerCategory: number,
+	excludeWords: string[],
+	customPrompt?: string,
+): Promise<{ words: string[]; categories: string[] }> {
+	const customPromptInstruction = customPrompt
+		? `Zusätzliche Anweisungen: ${customPrompt}`
+		: ''
+
+	// Generate words for all categories in parallel using Promise.all
+	const categoryPromises = categories.map(async (category) => {
+		const result = await generateObject({
+			model: openrouter.chat(OPEN_ROUTER_MODEL),
+			system:
+				'Du bist ein Assistent, der Wörter für ein Ratespiel generiert. Konzentriere dich nur auf die angegebene Kategorie und erstelle passende deutsche Wörter.',
+			prompt: `Erstelle genau ${wordsPerCategory} deutsche Wörter für die Kategorie "${category}".
+				Die Wörter sollten:
+				- zur Kategorie "${category}" gehören
+				- nicht in dieser Liste vorkommen: ${excludeWords.join(', ')}
+				- gut zu erraten sein
+				- einzelne Wörter sein (keine Phrasen)
+				- keine Eigennamen enthalten
+				- keine Duplikate enthalten
+				${customPromptInstruction ? `\n				- ${customPromptInstruction}` : ''}`,
+			schema: z.object({
+				words: z.array(z.string()),
+			}),
+		})
+
+		return result.object.words
+	})
+
+	// Wait for all category word generations to complete
+	const categoryResults = await Promise.all(categoryPromises)
+
+	// Flatten all words into a single array
+	const allWords = categoryResults.flat()
+
+	return { words: allWords, categories }
+}
+
+async function validateAndBalanceWords(
+	words: string[],
+	categories: string[],
+	targetWordsPerCategory: number,
+): Promise<{ words: string[]; isBalanced: boolean; suggestions?: string[] }> {
+	const result = await generateObject({
+		model: openrouter.chat(OPEN_ROUTER_MODEL),
+		system:
+			'Du bist ein Experte für Wortspiele und Kategorisierung. Analysiere die gegebenen Wörter und prüfe, ob sie gleichmäßig auf die Kategorien verteilt sind.',
+		prompt: `Analysiere diese Wörter und prüfe, ob sie gleichmäßig auf die Kategorien ${categories.join(', ')} verteilt sind:
+			
+			Wörter: ${words.join(', ')}
+			
+			Ziel: ${targetWordsPerCategory} Wörter pro Kategorie
+			Kategorien: ${categories.join(', ')}
+			
+			Überprüfe:
+			1. Gehören die Wörter zu den richtigen Kategorien?
+			2. Ist die Verteilung ausgewogen (ca. ${targetWordsPerCategory} Wörter pro Kategorie)?
+			3. Sind alle Wörter zum Erraten geeignet?
+			
+			Falls nötig, schlage bessere/fehlende Wörter vor, um die Balance zu verbessern.`,
+		schema: z.object({
+			isBalanced: z.boolean(),
+			categoryDistribution: z.record(z.array(z.string())),
+			suggestions: z.array(z.string()).optional(),
+			issues: z.array(z.string()).optional(),
+		}),
+	})
+
+	return {
+		words,
+		isBalanced: result.object.isBalanced,
+		suggestions: result.object.suggestions,
+	}
+}
+
 export async function POST(req: Request) {
 	try {
 		const body = await req.json()
@@ -71,35 +152,75 @@ export async function POST(req: Request) {
 
 		// If we don't have enough words, generate more with AI
 		if (availableWords.length < wordsNeeded) {
-			const categoryInstruction =
-				categories && categories.length > 0
-					? `Die Wörter sollten gleichmäßig auf die folgenden Kategorien verteilt werden: ${categories.join(', ')}. Stelle sicher, dass jede Kategorie etwa gleich viele Wörter erhält (ca. ${Math.ceil(Math.max(100, wordsNeeded) / categories.length)} Wörter pro Kategorie).`
-					: 'Die Wörter sollten aus verschiedenen Kategorien stammen (wie Tiere, Essen, Sport, etc.) und gleichmäßig auf diese Kategorien verteilt werden.'
+			let newWords: string[] = []
 
-			const customPromptInstruction = prompt
-				? `Zusätzliche Anweisungen: ${prompt}`
-				: ''
+			if (categories && categories.length > 0) {
+				// Use the new two-step approach for categorized word generation
+				const wordsPerCategory = Math.ceil(
+					Math.max(100, wordsNeeded) / categories.length,
+				)
 
-			const result = await generateObject({
-				model: openrouter.chat(OPEN_ROUTER_MODEL),
-				system:
-					'Du bist ein Assistent, der Wörter für ein Ratespiel generiert. Die Wörter sollten auf Deutsch sein und sich gut zum Erraten eignen. Berücksichtige die angegebenen Kategorien und zusätzlichen Anweisungen, falls welche spezifiziert wurden. Achte besonders darauf, eine gleichmäßige Verteilung der Wörter auf alle angegebenen Kategorien sicherzustellen.',
-				prompt: `Erstelle eine Liste von ${Math.max(100, wordsNeeded)} neuen deutschen Wörtern für ein Ratespiel. 
-                    Die Wörter sollten:
-                    - nicht in dieser Liste vorkommen: ${[...guessedWords, ...cachedWords].join(', ')}
-                    - gut zu erraten sein
-                    - ${categoryInstruction}
-                    - keine Duplikate enthalten
-                    - einzelne Wörter sein (keine Phrasen)
-                    - keine Eigennamen enthalten
-                    ${customPromptInstruction ? `\n                    - ${customPromptInstruction}` : ''}`,
-				schema: z.object({
-					words: z.array(z.string()),
-				}),
-			})
+				console.log(
+					`Generating ${wordsPerCategory} words per category for:`,
+					categories,
+				)
 
+				// Step 1: Generate words by category using free model
+				const categoryResult = await generateWordsByCategory(
+					categories,
+					wordsPerCategory,
+					[...guessedWords, ...cachedWords],
+					prompt,
+				)
+
+				// Step 2: Validate and balance using premium model
+				const validationResult = await validateAndBalanceWords(
+					categoryResult.words,
+					categories,
+					wordsPerCategory,
+				)
+
+				console.log('Word balance validation:', {
+					isBalanced: validationResult.isBalanced,
+					totalWords: validationResult.words.length,
+					suggestions: validationResult.suggestions?.length || 0,
+				})
+
+				// Use validated words, add suggestions if needed
+				newWords = validationResult.words
+				if (!validationResult.isBalanced && validationResult.suggestions) {
+					newWords = [...newWords, ...validationResult.suggestions]
+				}
+			} else {
+				// Fallback to original approach for non-categorized requests
+				const categoryInstruction =
+					'Die Wörter sollten aus verschiedenen Kategorien stammen (wie Tiere, Essen, Sport, etc.) und gleichmäßig auf diese Kategorien verteilt werden.'
+
+				const customPromptInstruction = prompt
+					? `Zusätzliche Anweisungen: ${prompt}`
+					: ''
+
+				const result = await generateObject({
+					model: openrouter.chat(OPEN_ROUTER_MODEL),
+					system:
+						'Du bist ein Assistent, der Wörter für ein Ratespiel generiert. Die Wörter sollten auf Deutsch sein und sich gut zum Erraten eignen. Berücksichtige die angegebenen Kategorien und zusätzlichen Anweisungen, falls welche spezifiziert wurden. Achte besonders darauf, eine gleichmäßige Verteilung der Wörter auf alle angegebenen Kategorien sicherzustellen.',
+					prompt: `Erstelle eine Liste von ${Math.max(100, wordsNeeded)} neuen deutschen Wörtern für ein Ratespiel. 
+						Die Wörter sollten:
+						- nicht in dieser Liste vorkommen: ${[...guessedWords, ...cachedWords].join(', ')}
+						- gut zu erraten sein
+						- ${categoryInstruction}
+						- keine Duplikate enthalten
+						- einzelne Wörter sein (keine Phrasen)
+						- keine Eigennamen enthalten
+						${customPromptInstruction ? `\n						- ${customPromptInstruction}` : ''}`,
+					schema: z.object({
+						words: z.array(z.string()),
+					}),
+				})
+
+				newWords = result.object.words
+			}
 			// Add new words to cache with categories
-			const newWords = result.object.words
 			cachedWords = [...new Set([...cachedWords, ...newWords])]
 
 			// Store words with their associated categories
