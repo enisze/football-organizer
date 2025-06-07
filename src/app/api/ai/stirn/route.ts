@@ -29,40 +29,110 @@ async function generateWordsByCategory(
 	categories: string[],
 	wordsPerCategory: number,
 	excludeWords: string[],
+	cachedWords: string[],
+	redisKey: string,
 	customPrompt?: string,
 ): Promise<{ words: string[]; categories: string[] }> {
-	const customPromptInstruction = customPrompt
-		? `Zusätzliche Anweisungen: ${customPrompt}`
-		: ''
+	const allWords: string[] = []
+	const categoriesToGenerate: string[] = []
 
-	// Generate words for all categories in parallel using Promise.all
-	const categoryPromises = categories.map(async (category) => {
-		const result = await generateObject({
-			model: openrouter.chat(OPEN_ROUTER_MODEL),
-			system:
-				'Du bist ein Assistent, der Wörter für ein Ratespiel generiert. Konzentriere dich nur auf die angegebene Kategorie und erstelle passende deutsche Wörter.',
-			prompt: `Erstelle genau ${wordsPerCategory} deutsche Wörter für die Kategorie "${category}".
-				Die Wörter sollten:
-				- zur Kategorie "${category}" gehören
-				- nicht in dieser Liste vorkommen: ${excludeWords.join(', ')}
-				- gut zu erraten sein
-				- einzelne Wörter sein (keine Phrasen)
-				- keine Eigennamen enthalten
-				- keine Duplikate enthalten
-				${customPromptInstruction ? `\n				- ${customPromptInstruction}` : ''}`,
-			schema: z.object({
-				words: z.array(z.string()),
-			}),
+	// First, check cached words for each category
+	for (const category of categories) {
+		const categoryCacheKey = `${redisKey}:category:${category}`
+		const cachedCategoryWords: string[] =
+			(await upstashRedis.get(categoryCacheKey)) || []
+
+		// Filter out already guessed words for this category
+		const availableCategoryWords = cachedCategoryWords.filter(
+			(word) => !excludeWords.includes(word),
+		)
+
+		console.log(
+			`Category "${category}": ${availableCategoryWords.length} available cached words`,
+		)
+
+		if (availableCategoryWords.length >= wordsPerCategory) {
+			// Use cached words if we have enough
+			allWords.push(...availableCategoryWords.slice(0, wordsPerCategory))
+		} else {
+			// Add available cached words and mark category for generation
+			allWords.push(...availableCategoryWords)
+			categoriesToGenerate.push(category)
+		}
+	}
+
+	// Generate words only for categories that need more words
+	if (categoriesToGenerate.length > 0) {
+		const customPromptInstruction = customPrompt
+			? `Zusätzliche Anweisungen: ${customPrompt}`
+			: ''
+
+		const categoryPromises = categoriesToGenerate.map(async (category) => {
+			const categoryCacheKey = `${redisKey}:category:${category}`
+			const existingCategoryWords: string[] =
+				(await upstashRedis.get(categoryCacheKey)) || []
+
+			// Calculate how many words we still need for this category
+			const availableForCategory = existingCategoryWords.filter(
+				(word) => !excludeWords.includes(word),
+			)
+			const wordsNeededForCategory =
+				wordsPerCategory - availableForCategory.length
+
+			// Skip API call if no words are needed for this category
+			if (wordsNeededForCategory <= 0) {
+				console.log(
+					`Category "${category}": No new words needed, skipping API call`,
+				)
+				return {
+					category,
+					words: [],
+				}
+			}
+
+			console.log(
+				`Category "${category}": Generating ${wordsNeededForCategory} new words`,
+			)
+
+			const result = await generateObject({
+				model: openrouter.chat(free_model),
+				system:
+					'Du bist ein Assistent, der Wörter für ein Ratespiel generiert. Konzentriere dich nur auf die angegebene Kategorie und erstelle passende deutsche Wörter.',
+				prompt: `Erstelle genau ${wordsNeededForCategory} deutsche Wörter für die Kategorie "${category}".
+					Die Wörter sollten:
+					- zur Kategorie "${category}" gehören
+					- nicht in dieser Liste vorkommen: ${[...excludeWords, ...existingCategoryWords].join(', ')}
+					- gut zu erraten sein
+					- einzelne Wörter sein (keine Phrasen)
+					- keine Eigennamen enthalten
+					- keine Duplikate enthalten
+					${customPromptInstruction ? `\n					- ${customPromptInstruction}` : ''}`,
+				schema: z.object({
+					words: z.array(z.string()),
+				}),
+			})
+
+			// Update category cache with new words
+			const updatedCategoryWords = [
+				...existingCategoryWords,
+				...result.object.words,
+			]
+			await upstashRedis.set(categoryCacheKey, updatedCategoryWords)
+
+			return {
+				category,
+				words: result.object.words,
+			}
 		})
 
-		return result.object.words
-	})
+		// Wait for all category word generations to complete
+		const categoryResults = await Promise.all(categoryPromises)
 
-	// Wait for all category word generations to complete
-	const categoryResults = await Promise.all(categoryPromises)
-
-	// Flatten all words into a single array
-	const allWords = categoryResults.flat()
+		// Add newly generated words to the result
+		for (const categoryResult of categoryResults) {
+			allWords.push(...categoryResult.words)
+		}
+	}
 
 	return { words: allWords, categories }
 }
@@ -170,6 +240,8 @@ export async function POST(req: Request) {
 					categories,
 					wordsPerCategory,
 					[...guessedWords, ...cachedWords],
+					cachedWords,
+					redisKey,
 					prompt,
 				)
 
