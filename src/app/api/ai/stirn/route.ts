@@ -104,12 +104,10 @@ async function generateWordsByCategoryParallel(
 					? 'http://localhost:3000'
 					: 'https://your-production-domain.com' // Replace with your actual domain
 
-			const qstashUrl = process.env.QSTASH_URL || 'https://qstash.upstash.io'
-
 			console.log('baseUrl', baseUrl)
 			try {
 				await qstash.publishJSON({
-					url: `${qstashUrl}/v2/publish/${baseUrl}/api/ai/stirn/generate-category`,
+					url: `${baseUrl}/api/ai/stirn/generate-category`,
 					body: {
 						category,
 						wordsPerCategory,
