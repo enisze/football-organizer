@@ -1,8 +1,8 @@
 import { OPEN_ROUTER_MODEL } from '@/src/app/group/constants'
 import { upstashRedis } from '@/src/server/db/upstashRedis'
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
-import { Ratelimit } from '@upstash/ratelimit'
 import { Client } from '@upstash/qstash'
+import { Ratelimit } from '@upstash/ratelimit'
 import { generateObject } from 'ai'
 import { nanoid } from 'nanoid'
 import { z } from 'zod'
@@ -48,7 +48,9 @@ async function generateWordsByCategoryParallel(
 	customPrompt?: string,
 ): Promise<{ words: string[]; categories: string[] }> {
 	const startTime = Date.now()
-	console.log(`[Parallel Generation] Started at ${new Date().toISOString()} for ${categories.length} categories`)
+	console.log(
+		`[Parallel Generation] Started at ${new Date().toISOString()} for ${categories.length} categories`,
+	)
 
 	const allWords: string[] = []
 	const categoriesToGenerate: string[] = []
@@ -80,8 +82,10 @@ async function generateWordsByCategoryParallel(
 
 	// Generate words in parallel using QStash for categories that need more words
 	if (categoriesToGenerate.length > 0) {
-		console.log(`[Parallel Generation] Dispatching ${categoriesToGenerate.length} category tasks via QStash`)
-		
+		console.log(
+			`[Parallel Generation] Dispatching ${categoriesToGenerate.length} category tasks via QStash`,
+		)
+
 		const taskIds: string[] = []
 		const qstashStartTime = Date.now()
 
@@ -94,15 +98,18 @@ async function generateWordsByCategoryParallel(
 			const taskId = nanoid()
 			taskIds.push(taskId)
 
-			const baseUrl = process.env.VERCEL_URL 
-				? `https://${process.env.VERCEL_URL}` 
+			const baseUrl = process.env.VERCEL_URL
+				? `https://${process.env.VERCEL_URL}`
 				: process.env.NODE_ENV === 'development'
-				? 'http://localhost:3000'
-				: 'https://your-production-domain.com' // Replace with your actual domain
+					? 'http://localhost:3000'
+					: 'https://your-production-domain.com' // Replace with your actual domain
 
+			const qstashUrl = process.env.QSTASH_URL || 'https://qstash.upstash.io'
+
+			console.log('baseUrl', baseUrl)
 			try {
 				await qstash.publishJSON({
-					url: `${baseUrl}/api/ai/stirn/generate-category`,
+					url: `${qstashUrl}/v2/publish/${baseUrl}/api/ai/stirn/generate-category`,
 					body: {
 						category,
 						wordsPerCategory,
@@ -114,47 +121,66 @@ async function generateWordsByCategoryParallel(
 					},
 					retries: 3,
 				})
-				console.log(`[Parallel Generation] Dispatched task ${taskId} for category: ${category}`)
+				console.log(
+					`[Parallel Generation] Dispatched task ${taskId} for category: ${category}`,
+				)
 			} catch (error) {
-				console.error(`[Parallel Generation] Failed to dispatch task for category ${category}:`, error)
+				console.error(
+					`[Parallel Generation] Failed to dispatch task for category ${category}:`,
+					error,
+				)
 			}
 		}
 
 		const qstashDispatchTime = Date.now() - qstashStartTime
-		console.log(`[Parallel Generation] QStash dispatch took ${qstashDispatchTime}ms`)
+		console.log(
+			`[Parallel Generation] QStash dispatch took ${qstashDispatchTime}ms`,
+		)
 
 		// Wait for all tasks to complete with polling
 		const pollStartTime = Date.now()
 		const maxWaitTime = 30000 // 30 seconds max wait
 		const pollInterval = 500 // Poll every 500ms
-		
+
 		let completedTasks = 0
 		const taskResults: Array<{ category: string; words: string[] }> = []
 
-		while (completedTasks < taskIds.length && (Date.now() - pollStartTime) < maxWaitTime) {
+		while (
+			completedTasks < taskIds.length &&
+			Date.now() - pollStartTime < maxWaitTime
+		) {
 			for (const taskId of taskIds) {
-				const taskResult = await upstashRedis.get(`${redisKey}:task:${taskId}`) as TaskResult | null
-				
-				if (taskResult?.completed && !taskResults.find(r => r.category === taskResult.category)) {
+				const taskResult = (await upstashRedis.get(
+					`${redisKey}:task:${taskId}`,
+				)) as TaskResult | null
+
+				if (
+					taskResult?.completed &&
+					!taskResults.find((r) => r.category === taskResult.category)
+				) {
 					taskResults.push({
 						category: taskResult.category,
 						words: taskResult.words,
 					})
 					completedTasks++
-					console.log(`[Parallel Generation] Task ${taskId} completed for category: ${taskResult.category} (${taskResult.runtime}ms)`)
-					
+					console.log(
+						`[Parallel Generation] Task ${taskId} completed for category: ${taskResult.category} (${taskResult.runtime}ms)`,
+					)
+
 					// Clean up task result
 					await upstashRedis.del(`${redisKey}:task:${taskId}`)
 				}
 			}
 
 			if (completedTasks < taskIds.length) {
-				await new Promise(resolve => setTimeout(resolve, pollInterval))
+				await new Promise((resolve) => setTimeout(resolve, pollInterval))
 			}
 		}
 
 		const pollTime = Date.now() - pollStartTime
-		console.log(`[Parallel Generation] Polling took ${pollTime}ms, completed ${completedTasks}/${taskIds.length} tasks`)
+		console.log(
+			`[Parallel Generation] Polling took ${pollTime}ms, completed ${completedTasks}/${taskIds.length} tasks`,
+		)
 
 		// Add newly generated words to the result
 		for (const taskResult of taskResults) {
@@ -163,7 +189,9 @@ async function generateWordsByCategoryParallel(
 
 		// Log any incomplete tasks
 		if (completedTasks < taskIds.length) {
-			console.warn(`[Parallel Generation] ${taskIds.length - completedTasks} tasks did not complete within timeout`)
+			console.warn(
+				`[Parallel Generation] ${taskIds.length - completedTasks} tasks did not complete within timeout`,
+			)
 		}
 	}
 
@@ -179,7 +207,9 @@ async function validateAndBalanceWords(
 	targetWordsPerCategory: number,
 ): Promise<{ words: string[]; isBalanced: boolean; suggestions?: string[] }> {
 	const startTime = Date.now()
-	console.log(`[Word Validation] Starting validation for ${words.length} words across ${categories.length} categories`)
+	console.log(
+		`[Word Validation] Starting validation for ${words.length} words across ${categories.length} categories`,
+	)
 
 	const result = await generateObject({
 		model: openrouter.chat(OPEN_ROUTER_MODEL),
@@ -207,7 +237,9 @@ async function validateAndBalanceWords(
 	})
 
 	const validationTime = Date.now() - startTime
-	console.log(`[Word Validation] Completed in ${validationTime}ms - Balanced: ${result.object?.isBalanced}`)
+	console.log(
+		`[Word Validation] Completed in ${validationTime}ms - Balanced: ${result.object?.isBalanced}`,
+	)
 
 	return {
 		words,
@@ -240,7 +272,9 @@ export async function POST(req: Request) {
 			return new Response('Rate limit exceeded', { status: 429 })
 		}
 
-		console.log(`[STIRN API] Processing request for ${wordsNeeded} words, ${categories?.length || 0} categories`)
+		console.log(
+			`[STIRN API] Processing request for ${wordsNeeded} words, ${categories?.length || 0} categories`,
+		)
 
 		// Create a cache key that includes categories for proper segmentation
 		const sortedCategories = categories ? [...categories].sort() : []
@@ -264,14 +298,19 @@ export async function POST(req: Request) {
 			cachedWords = cachedData.words || []
 		}
 
-		console.log(`[STIRN API] Cache lookup took ${cacheTime}ms, found ${cachedWords.length} cached words for categories:`, sortedCategories)
+		console.log(
+			`[STIRN API] Cache lookup took ${cacheTime}ms, found ${cachedWords.length} cached words for categories:`,
+			sortedCategories,
+		)
 
 		// Filter out already guessed words
 		let availableWords = cachedWords.filter(
 			(word) => !guessedWords.includes(word),
 		)
 
-		console.log(`[STIRN API] ${availableWords.length} available words after filtering guessed words`)
+		console.log(
+			`[STIRN API] ${availableWords.length} available words after filtering guessed words`,
+		)
 
 		// If we don't have enough words, generate more with AI
 		if (availableWords.length < wordsNeeded) {
@@ -300,7 +339,9 @@ export async function POST(req: Request) {
 				)
 				const parallelTime = Date.now() - parallelStartTime
 
-				console.log(`[STIRN API] Parallel generation completed in ${parallelTime}ms`)
+				console.log(
+					`[STIRN API] Parallel generation completed in ${parallelTime}ms`,
+				)
 
 				// Step 2: Validate and balance using premium model
 				const validationStartTime = Date.now()
@@ -321,12 +362,16 @@ export async function POST(req: Request) {
 				newWords = validationResult.words
 				if (!validationResult.isBalanced && validationResult.suggestions) {
 					newWords = [...newWords, ...validationResult.suggestions]
-					console.log(`[STIRN API] Added ${validationResult.suggestions.length} suggestion words due to imbalance`)
+					console.log(
+						`[STIRN API] Added ${validationResult.suggestions.length} suggestion words due to imbalance`,
+					)
 				}
 			} else {
 				// Fallback to original approach for non-categorized requests
-				console.log('[STIRN API] Using fallback approach for non-categorized request')
-				
+				console.log(
+					'[STIRN API] Using fallback approach for non-categorized request',
+				)
+
 				const categoryInstruction =
 					'Die Wörter sollten aus verschiedenen Kategorien stammen (wie Tiere, Essen, Sport, etc.) und gleichmäßig auf diese Kategorien verteilt werden.'
 
@@ -358,7 +403,7 @@ export async function POST(req: Request) {
 
 				newWords = result.object?.words || []
 			}
-			
+
 			// Add new words to cache with categories
 			cachedWords = [...new Set([...cachedWords, ...newWords])]
 
@@ -367,12 +412,14 @@ export async function POST(req: Request) {
 				words: cachedWords,
 				categories: sortedCategories,
 			}
-			
+
 			const cacheStoreStartTime = Date.now()
 			await upstashRedis.set(fullCacheKey, cacheData)
 			const cacheStoreTime = Date.now() - cacheStoreStartTime
 
-			console.log(`[STIRN API] Cache store took ${cacheStoreTime}ms, stored ${cachedWords.length} total words`)
+			console.log(
+				`[STIRN API] Cache store took ${cacheStoreTime}ms, stored ${cachedWords.length} total words`,
+			)
 
 			// Update available words
 			availableWords = cachedWords.filter(
@@ -385,7 +432,9 @@ export async function POST(req: Request) {
 		const selectedWords = shuffledWords.slice(0, wordsNeeded)
 
 		const totalTime = Date.now() - startTime
-		console.log(`[STIRN API] Request completed in ${totalTime}ms, returning ${selectedWords.length} words`)
+		console.log(
+			`[STIRN API] Request completed in ${totalTime}ms, returning ${selectedWords.length} words`,
+		)
 
 		return new Response(JSON.stringify({ words: selectedWords }), {
 			headers: { 'Content-Type': 'application/json' },

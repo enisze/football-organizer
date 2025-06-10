@@ -1,4 +1,3 @@
-import { OPEN_ROUTER_MODEL } from '@/src/app/group/constants'
 import { upstashRedis } from '@/src/server/db/upstashRedis'
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
 import { generateObject } from 'ai'
@@ -22,7 +21,9 @@ const free_model = 'mistralai/devstral-small:free'
 
 async function handler(req: Request) {
 	const startTime = Date.now()
-	console.log(`[Category Generation] Started processing at ${new Date().toISOString()}`)
+	console.log(
+		`[Category Generation] Started processing at ${new Date().toISOString()}`,
+	)
 
 	try {
 		const body = await req.json()
@@ -36,7 +37,9 @@ async function handler(req: Request) {
 			taskId,
 		} = requestSchema.parse(body)
 
-		console.log(`[Category Generation] Task ${taskId} - Processing category: ${category}`)
+		console.log(
+			`[Category Generation] Task ${taskId} - Processing category: ${category}`,
+		)
 
 		const categoryCacheKey = `${redisKey}:category:${category}`
 
@@ -44,30 +47,38 @@ async function handler(req: Request) {
 		const availableForCategory = existingCategoryWords.filter(
 			(word) => !excludeWords.includes(word),
 		)
-		const wordsNeededForCategory = wordsPerCategory - availableForCategory.length
+		const wordsNeededForCategory =
+			wordsPerCategory - availableForCategory.length
 
 		// Skip API call if no words are needed for this category
 		if (wordsNeededForCategory <= 0) {
 			console.log(
 				`[Category Generation] Task ${taskId} - Category "${category}": No new words needed, skipping API call`,
 			)
-			
-			// Store result in Redis for the main function to collect
-			await upstashRedis.set(`${redisKey}:task:${taskId}`, {
-				category,
-				words: [],
-				completed: true,
-				runtime: Date.now() - startTime,
-			}, { ex: 300 }) // 5 minutes expiry
 
-			return new Response(JSON.stringify({ 
-				success: true, 
-				category, 
-				wordsGenerated: 0,
-				runtime: Date.now() - startTime 
-			}), {
-				headers: { 'Content-Type': 'application/json' },
-			})
+			// Store result in Redis for the main function to collect
+			await upstashRedis.set(
+				`${redisKey}:task:${taskId}`,
+				{
+					category,
+					words: [],
+					completed: true,
+					runtime: Date.now() - startTime,
+				},
+				{ ex: 300 },
+			) // 5 minutes expiry
+
+			return new Response(
+				JSON.stringify({
+					success: true,
+					category,
+					wordsGenerated: 0,
+					runtime: Date.now() - startTime,
+				}),
+				{
+					headers: { 'Content-Type': 'application/json' },
+				},
+			)
 		}
 
 		console.log(
@@ -98,7 +109,9 @@ async function handler(req: Request) {
 		})
 
 		const aiTime = Date.now() - aiStartTime
-		console.log(`[Category Generation] Task ${taskId} - AI generation took ${aiTime}ms`)
+		console.log(
+			`[Category Generation] Task ${taskId} - AI generation took ${aiTime}ms`,
+		)
 
 		// Update category cache with new words
 		const updatedCategoryWords = [
@@ -108,26 +121,35 @@ async function handler(req: Request) {
 		await upstashRedis.set(categoryCacheKey, updatedCategoryWords)
 
 		// Store result in Redis for the main function to collect
-		await upstashRedis.set(`${redisKey}:task:${taskId}`, {
-			category,
-			words: result.object?.words || [],
-			completed: true,
-			runtime: Date.now() - startTime,
-			aiTime,
-		}, { ex: 300 }) // 5 minutes expiry
+		await upstashRedis.set(
+			`${redisKey}:task:${taskId}`,
+			{
+				category,
+				words: result.object?.words || [],
+				completed: true,
+				runtime: Date.now() - startTime,
+				aiTime,
+			},
+			{ ex: 300 },
+		) // 5 minutes expiry
 
 		const totalTime = Date.now() - startTime
-		console.log(`[Category Generation] Task ${taskId} - Completed in ${totalTime}ms for category: ${category}`)
+		console.log(
+			`[Category Generation] Task ${taskId} - Completed in ${totalTime}ms for category: ${category}`,
+		)
 
-		return new Response(JSON.stringify({ 
-			success: true, 
-			category, 
-			wordsGenerated: result.object?.words?.length || 0,
-			runtime: totalTime,
-			aiTime 
-		}), {
-			headers: { 'Content-Type': 'application/json' },
-		})
+		return new Response(
+			JSON.stringify({
+				success: true,
+				category,
+				wordsGenerated: result.object?.words?.length || 0,
+				runtime: totalTime,
+				aiTime,
+			}),
+			{
+				headers: { 'Content-Type': 'application/json' },
+			},
+		)
 	} catch (error) {
 		const totalTime = Date.now() - startTime
 		console.error(`[Category Generation] Error after ${totalTime}ms:`, error)
