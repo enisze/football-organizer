@@ -19,12 +19,34 @@ const openrouter = createOpenRouter({
 
 const free_model = 'mistralai/devstral-small:free'
 
-async function handler(req: Request) {
-	const startTime = Date.now()
-	console.log(
-		`[Category Generation] Started processing at ${new Date().toISOString()}`,
-	)
+function filterValidWords(words: string[]): string[] {
+	return words.filter((word) => {
+		// Quick length check first (most efficient)
+		if (word.length > 30 || !word.trim()) return false
 
+		// Check for punctuation (avoid regex for performance)
+		if (word.includes('.') || word.includes('!') || word.includes('?'))
+			return false
+
+		// Convert to lowercase once and check instruction keywords
+		const lowerWord = word.toLowerCase()
+		const instructionKeywords = [
+			'ersetze',
+			'füge',
+			'hinzu',
+			'verbessern',
+			'balance',
+			'kategorie',
+			'beispiel',
+			'z.b.',
+			'zum beispiel',
+		]
+
+		return !instructionKeywords.some((keyword) => lowerWord.includes(keyword))
+	})
+}
+
+async function handler(req: Request) {
 	try {
 		const body = await req.json()
 		const {
@@ -37,10 +59,6 @@ async function handler(req: Request) {
 			taskId,
 		} = requestSchema.parse(body)
 
-		console.log(
-			`[Category Generation] Task ${taskId} - Processing category: ${category}`,
-		)
-
 		const categoryCacheKey = `${redisKey}:category:${category}`
 
 		// Calculate how many words we still need for this category
@@ -52,28 +70,23 @@ async function handler(req: Request) {
 
 		// Skip API call if no words are needed for this category
 		if (wordsNeededForCategory <= 0) {
-			console.log(
-				`[Category Generation] Task ${taskId} - Category "${category}": No new words needed, skipping API call`,
-			)
-
-			// Store result in Redis for the main function to collect
 			await upstashRedis.set(
 				`${redisKey}:task:${taskId}`,
 				{
 					category,
 					words: [],
 					completed: true,
-					runtime: Date.now() - startTime,
+					runtime: 0,
 				},
 				{ ex: 300 },
-			) // 5 minutes expiry
+			)
 
 			return new Response(
 				JSON.stringify({
 					success: true,
 					category,
 					wordsGenerated: 0,
-					runtime: Date.now() - startTime,
+					runtime: 0,
 				}),
 				{
 					headers: { 'Content-Type': 'application/json' },
@@ -81,19 +94,14 @@ async function handler(req: Request) {
 			)
 		}
 
-		console.log(
-			`[Category Generation] Task ${taskId} - Category "${category}": Generating ${wordsNeededForCategory} new words`,
-		)
-
 		const customPromptInstruction = customPrompt
 			? `Zusätzliche Anweisungen: ${customPrompt}`
 			: ''
 
-		const aiStartTime = Date.now()
 		const result = await generateObject({
 			model: openrouter.chat(free_model),
 			system:
-				'Du bist ein Assistent, der Wörter für ein Ratespiel generiert. Konzentriere dich nur auf die angegebene Kategorie und erstelle passende deutsche Wörter.',
+				'Du bist ein Assistent, der Wörter für ein Ratespiel generiert. Konzentriere dich nur auf die angegebene Kategorie und erstelle passende deutsche Wörter. Gib NUR einzelne Wörter zurück, keine Sätze, Erklärungen oder Kommentare.',
 			prompt: `Erstelle genau ${wordsNeededForCategory} deutsche Wörter für die Kategorie "${category}".
 				Die Wörter sollten:
 				- zur Kategorie "${category}" gehören
@@ -102,58 +110,53 @@ async function handler(req: Request) {
 				- einzelne Wörter sein (keine Phrasen)
 				- keine Eigennamen enthalten
 				- keine Duplikate enthalten
-				${customPromptInstruction ? `\n				- ${customPromptInstruction}` : ''}`,
+				${customPromptInstruction ? `\n				- ${customPromptInstruction}` : ''}
+				
+				WICHTIG: Gib nur einzelne Wörter zurück, keine Sätze, Anweisungen oder Kommentare.`,
 			schema: z.object({
 				words: z.array(z.string()),
 			}),
 		})
 
-		const aiTime = Date.now() - aiStartTime
-		console.log(
-			`[Category Generation] Task ${taskId} - AI generation took ${aiTime}ms`,
-		)
+		// Filter generated words to ensure they're valid
+		const validGeneratedWords = filterValidWords(result.object.words || [])
 
-		// Update category cache with new words
+		// Update category cache with new valid words (fire-and-forget for performance)
 		const updatedCategoryWords = [
 			...existingCategoryWords,
-			...result.object.words,
+			...validGeneratedWords,
 		]
-		await upstashRedis.set(categoryCacheKey, updatedCategoryWords)
 
-		// Store result in Redis for the main function to collect
-		await upstashRedis.set(
-			`${redisKey}:task:${taskId}`,
-			{
-				category,
-				words: result.object?.words || [],
-				completed: true,
-				runtime: Date.now() - startTime,
-				aiTime,
-			},
-			{ ex: 300 },
-		) // 5 minutes expiry
+		// Use Promise.all for parallel Redis operations
+		const redisOperations = [
+			upstashRedis.set(categoryCacheKey, updatedCategoryWords),
+			upstashRedis.set(
+				`${redisKey}:task:${taskId}`,
+				{
+					category,
+					words: validGeneratedWords,
+					completed: true,
+					runtime: 0,
+				},
+				{ ex: 300 },
+			),
+		]
 
-		const totalTime = Date.now() - startTime
-		console.log(
-			`[Category Generation] Task ${taskId} - Completed in ${totalTime}ms for category: ${category}`,
-		)
+		// Execute Redis operations in parallel
+		await Promise.allSettled(redisOperations)
 
 		return new Response(
 			JSON.stringify({
 				success: true,
 				category,
-				wordsGenerated: result.object?.words?.length || 0,
-				runtime: totalTime,
-				aiTime,
+				wordsGenerated: validGeneratedWords.length,
+				runtime: 0,
 			}),
 			{
 				headers: { 'Content-Type': 'application/json' },
 			},
 		)
 	} catch (error) {
-		const totalTime = Date.now() - startTime
-		console.error(`[Category Generation] Error after ${totalTime}ms:`, error)
-
 		// Handle Zod validation errors
 		if (error instanceof z.ZodError) {
 			return new Response(`Invalid request format: ${error.message}`, {
@@ -172,8 +175,6 @@ export async function POST(req: Request) {
 		if (!signature) {
 			return new Response('Missing signature', { status: 401 })
 		}
-		// Note: In production, you should verify the signature properly
-		// For now, we'll trust the environment setup
 	}
 
 	return handler(req)

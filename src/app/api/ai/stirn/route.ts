@@ -39,6 +39,33 @@ const rateLimit = new Ratelimit({
 
 const free_model = 'mistralai/devstral-small:free'
 
+function filterValidWords(words: string[]): string[] {
+	return words.filter((word) => {
+		// Quick length check first (most efficient)
+		if (word.length > 30 || !word.trim()) return false
+
+		// Check for punctuation (avoid regex for performance)
+		if (word.includes('.') || word.includes('!') || word.includes('?'))
+			return false
+
+		// Convert to lowercase once and check instruction keywords
+		const lowerWord = word.toLowerCase()
+		const instructionKeywords = [
+			'ersetze',
+			'füge',
+			'hinzu',
+			'verbessern',
+			'balance',
+			'kategorie',
+			'beispiel',
+			'z.b.',
+			'zum beispiel',
+		]
+
+		return !instructionKeywords.some((keyword) => lowerWord.includes(keyword))
+	})
+}
+
 async function generateWordsByCategoryParallel(
 	categories: string[],
 	wordsPerCategory: number,
@@ -47,11 +74,6 @@ async function generateWordsByCategoryParallel(
 	redisKey: string,
 	customPrompt?: string,
 ): Promise<{ words: string[]; categories: string[] }> {
-	const startTime = Date.now()
-	console.log(
-		`[Parallel Generation] Started at ${new Date().toISOString()} for ${categories.length} categories`,
-	)
-
 	const allWords: string[] = []
 	const categoriesToGenerate: string[] = []
 
@@ -66,10 +88,6 @@ async function generateWordsByCategoryParallel(
 			(word) => !excludeWords.includes(word),
 		)
 
-		console.log(
-			`[Parallel Generation] Category "${category}": ${availableCategoryWords.length} available cached words`,
-		)
-
 		if (availableCategoryWords.length >= wordsPerCategory) {
 			// Use cached words if we have enough
 			allWords.push(...availableCategoryWords.slice(0, wordsPerCategory))
@@ -82,29 +100,20 @@ async function generateWordsByCategoryParallel(
 
 	// Generate words in parallel using QStash for categories that need more words
 	if (categoriesToGenerate.length > 0) {
-		console.log(
-			`[Parallel Generation] Dispatching ${categoriesToGenerate.length} category tasks via QStash`,
-		)
+		const baseUrl = process.env.VERCEL_URL
+			? `https://${process.env.VERCEL_URL}`
+			: process.env.NODE_ENV === 'development'
+				? 'http://localhost:3000'
+				: 'https://your-production-domain.com'
 
-		const taskIds: string[] = []
-		const qstashStartTime = Date.now()
-
-		// Dispatch parallel tasks via QStash
-		for (const category of categoriesToGenerate) {
+		// Parallel task dispatch with Promise.all for better performance
+		const taskPromises = categoriesToGenerate.map(async (category) => {
 			const categoryCacheKey = `${redisKey}:category:${category}`
 			const existingCategoryWords: string[] =
 				(await upstashRedis.get(categoryCacheKey)) || []
 
 			const taskId = nanoid()
-			taskIds.push(taskId)
 
-			const baseUrl = process.env.VERCEL_URL
-				? `https://${process.env.VERCEL_URL}`
-				: process.env.NODE_ENV === 'development'
-					? 'http://localhost:3000'
-					: 'https://your-production-domain.com' // Replace with your actual domain
-
-			console.log('baseUrl', baseUrl)
 			try {
 				await qstash.publishJSON({
 					url: `${baseUrl}/api/ai/stirn/generate-category`,
@@ -119,82 +128,80 @@ async function generateWordsByCategoryParallel(
 					},
 					retries: 3,
 				})
-				console.log(
-					`[Parallel Generation] Dispatched task ${taskId} for category: ${category}`,
-				)
+				return taskId
 			} catch (error) {
-				console.error(
-					`[Parallel Generation] Failed to dispatch task for category ${category}:`,
-					error,
-				)
+				return null
 			}
-		}
+		})
 
-		const qstashDispatchTime = Date.now() - qstashStartTime
-		console.log(
-			`[Parallel Generation] QStash dispatch took ${qstashDispatchTime}ms`,
-		)
+		const taskIds = (await Promise.allSettled(taskPromises))
+			.filter(
+				(result) => result.status === 'fulfilled' && result.value !== null,
+			)
+			.map((result) => (result as PromiseFulfilledResult<string>).value)
 
 		// Wait for all tasks to complete with polling
-		const pollStartTime = Date.now()
 		const maxWaitTime = 30000 // 30 seconds max wait
 		const pollInterval = 500 // Poll every 500ms
 
 		let completedTasks = 0
 		const taskResults: Array<{ category: string; words: string[] }> = []
+		const pollStartTime = Date.now()
+
+		// Use Set for faster lookup of completed categories
+		const completedCategories = new Set<string>()
 
 		while (
 			completedTasks < taskIds.length &&
 			Date.now() - pollStartTime < maxWaitTime
 		) {
-			for (const taskId of taskIds) {
+			const pendingTasks = taskIds.filter((taskId) => {
+				// Skip already processed tasks
+				return !completedCategories.has(taskId)
+			})
+
+			// Process pending tasks in parallel
+			const taskCheckPromises = pendingTasks.map(async (taskId) => {
 				const taskResult = (await upstashRedis.get(
 					`${redisKey}:task:${taskId}`,
 				)) as TaskResult | null
 
 				if (
 					taskResult?.completed &&
-					!taskResults.find((r) => r.category === taskResult.category)
+					!completedCategories.has(taskResult.category)
 				) {
+					completedCategories.add(taskResult.category)
 					taskResults.push({
 						category: taskResult.category,
 						words: taskResult.words,
 					})
-					completedTasks++
-					console.log(
-						`[Parallel Generation] Task ${taskId} completed for category: ${taskResult.category} (${taskResult.runtime}ms)`,
-					)
-
 					// Clean up task result
 					await upstashRedis.del(`${redisKey}:task:${taskId}`)
+					return true
 				}
-			}
+				return false
+			})
+
+			const completedCount = (
+				await Promise.allSettled(taskCheckPromises)
+			).filter(
+				(result) => result.status === 'fulfilled' && result.value === true,
+			).length
+
+			completedTasks += completedCount
 
 			if (completedTasks < taskIds.length) {
 				await new Promise((resolve) => setTimeout(resolve, pollInterval))
 			}
 		}
 
-		const pollTime = Date.now() - pollStartTime
-		console.log(
-			`[Parallel Generation] Polling took ${pollTime}ms, completed ${completedTasks}/${taskIds.length} tasks`,
-		)
-
 		// Add newly generated words to the result
 		for (const taskResult of taskResults) {
-			allWords.push(...taskResult.words)
-		}
-
-		// Log any incomplete tasks
-		if (completedTasks < taskIds.length) {
-			console.warn(
-				`[Parallel Generation] ${taskIds.length - completedTasks} tasks did not complete within timeout`,
-			)
+			// Filter out invalid words before adding them
+			const validWords = filterValidWords(taskResult.words)
+			allWords.push(...validWords)
 		}
 	}
-
-	const totalTime = Date.now() - startTime
-	console.log(`[Parallel Generation] Total execution time: ${totalTime}ms`)
 
 	return { words: allWords, categories }
 }
@@ -204,15 +211,10 @@ async function validateAndBalanceWords(
 	categories: string[],
 	targetWordsPerCategory: number,
 ): Promise<{ words: string[]; isBalanced: boolean; suggestions?: string[] }> {
-	const startTime = Date.now()
-	console.log(
-		`[Word Validation] Starting validation for ${words.length} words across ${categories.length} categories`,
-	)
-
 	const result = await generateObject({
 		model: openrouter.chat(OPEN_ROUTER_MODEL),
 		system:
-			'Du bist ein Experte für Wortspiele und Kategorisierung. Analysiere die gegebenen Wörter und prüfe, ob sie gleichmäßig auf die Kategorien verteilt sind.',
+			'Du bist ein Experte für Wortspiele und Kategorisierung. Analysiere die gegebenen Wörter und prüfe, ob sie gleichmäßig auf die Kategorien verteilt sind. Gib nur strukturierte Daten zurück, keine Kommentare oder Anweisungen in den Wörter-Arrays.',
 		prompt: `Analysiere diese Wörter und prüfe, ob sie gleichmäßig auf die Kategorien ${categories.join(', ')} verteilt sind:
 			
 			Wörter: ${words.join(', ')}
@@ -225,7 +227,9 @@ async function validateAndBalanceWords(
 			2. Ist die Verteilung ausgewogen (ca. ${targetWordsPerCategory} Wörter pro Kategorie)?
 			3. Sind alle Wörter zum Erraten geeignet?
 			
-			Falls nötig, schlage bessere/fehlende Wörter vor, um die Balance zu verbessern.`,
+			Falls nötig, schlage nur einzelne Wörter vor (keine Sätze oder Erklärungen), um die Balance zu verbessern.
+			
+			WICHTIG: In "suggestions" nur einzelne Wörter angeben, keine Anweisungen oder Kommentare.`,
 		schema: z.object({
 			isBalanced: z.boolean(),
 			categoryDistribution: z.record(z.array(z.string())),
@@ -233,11 +237,6 @@ async function validateAndBalanceWords(
 			issues: z.array(z.string()).optional(),
 		}),
 	})
-
-	const validationTime = Date.now() - startTime
-	console.log(
-		`[Word Validation] Completed in ${validationTime}ms - Balanced: ${result.object?.isBalanced}`,
-	)
 
 	return {
 		words,
@@ -247,9 +246,6 @@ async function validateAndBalanceWords(
 }
 
 export async function POST(req: Request) {
-	const startTime = Date.now()
-	console.log(`[STIRN API] Request started at ${new Date().toISOString()}`)
-
 	try {
 		const body = await req.json()
 		const { guessedWords, wordsNeeded, redisKey, apiKey, categories, prompt } =
@@ -257,7 +253,6 @@ export async function POST(req: Request) {
 
 		// Check API key
 		if (apiKey !== process.env.STIRN_QUIZ_API_KEY) {
-			console.log('[STIRN API] Invalid API key provided')
 			return new Response('Invalid API key', { status: 401 })
 		}
 
@@ -266,13 +261,8 @@ export async function POST(req: Request) {
 		const { success } = await rateLimit.limit(ip)
 
 		if (!success) {
-			console.log(`[STIRN API] Rate limit exceeded for IP: ${ip}`)
 			return new Response('Rate limit exceeded', { status: 429 })
 		}
-
-		console.log(
-			`[STIRN API] Processing request for ${wordsNeeded} words, ${categories?.length || 0} categories`,
-		)
 
 		// Create a cache key that includes categories for proper segmentation
 		const sortedCategories = categories ? [...categories].sort() : []
@@ -281,10 +271,8 @@ export async function POST(req: Request) {
 		const fullCacheKey = `${redisKey}:categories:${categoriesKey}`
 
 		// First try to get cached data from Redis
-		const cacheStartTime = Date.now()
 		const cachedData: { words: string[]; categories: string[] } | null =
 			await upstashRedis.get(fullCacheKey)
-		const cacheTime = Date.now() - cacheStartTime
 
 		// Check if cached data exists and categories match
 		let cachedWords: string[] = []
@@ -296,18 +284,9 @@ export async function POST(req: Request) {
 			cachedWords = cachedData.words || []
 		}
 
-		console.log(
-			`[STIRN API] Cache lookup took ${cacheTime}ms, found ${cachedWords.length} cached words for categories:`,
-			sortedCategories,
-		)
-
 		// Filter out already guessed words
 		let availableWords = cachedWords.filter(
 			(word) => !guessedWords.includes(word),
-		)
-
-		console.log(
-			`[STIRN API] ${availableWords.length} available words after filtering guessed words`,
 		)
 
 		// If we don't have enough words, generate more with AI
@@ -320,13 +299,7 @@ export async function POST(req: Request) {
 					Math.max(100, wordsNeeded) / categories.length,
 				)
 
-				console.log(
-					`[STIRN API] Using parallel generation: ${wordsPerCategory} words per category for:`,
-					categories,
-				)
-
 				// Step 1: Generate words by category using parallel processing
-				const parallelStartTime = Date.now()
 				const categoryResult = await generateWordsByCategoryParallel(
 					categories,
 					wordsPerCategory,
@@ -335,41 +308,25 @@ export async function POST(req: Request) {
 					redisKey,
 					prompt,
 				)
-				const parallelTime = Date.now() - parallelStartTime
-
-				console.log(
-					`[STIRN API] Parallel generation completed in ${parallelTime}ms`,
-				)
 
 				// Step 2: Validate and balance using premium model
-				const validationStartTime = Date.now()
 				const validationResult = await validateAndBalanceWords(
 					categoryResult.words,
 					categories,
 					wordsPerCategory,
 				)
-				const validationTime = Date.now() - validationStartTime
-
-				console.log(`[STIRN API] Word validation took ${validationTime}ms`, {
-					isBalanced: validationResult.isBalanced,
-					totalWords: validationResult.words.length,
-					suggestions: validationResult.suggestions?.length || 0,
-				})
 
 				// Use validated words, add suggestions if needed
 				newWords = validationResult.words
 				if (!validationResult.isBalanced && validationResult.suggestions) {
-					newWords = [...newWords, ...validationResult.suggestions]
-					console.log(
-						`[STIRN API] Added ${validationResult.suggestions.length} suggestion words due to imbalance`,
+					// Filter suggestions to ensure they're valid words
+					const validSuggestions = filterValidWords(
+						validationResult.suggestions,
 					)
+					newWords = [...newWords, ...validSuggestions]
 				}
 			} else {
 				// Fallback to original approach for non-categorized requests
-				console.log(
-					'[STIRN API] Using fallback approach for non-categorized request',
-				)
-
 				const categoryInstruction =
 					'Die Wörter sollten aus verschiedenen Kategorien stammen (wie Tiere, Essen, Sport, etc.) und gleichmäßig auf diese Kategorien verteilt werden.'
 
@@ -377,11 +334,10 @@ export async function POST(req: Request) {
 					? `Zusätzliche Anweisungen: ${prompt}`
 					: ''
 
-				const fallbackStartTime = Date.now()
 				const result = await generateObject({
 					model: openrouter.chat(OPEN_ROUTER_MODEL),
 					system:
-						'Du bist ein Assistent, der Wörter für ein Ratespiel generiert. Die Wörter sollten auf Deutsch sein und sich gut zum Erraten eignen. Berücksichtige die angegebenen Kategorien und zusätzlichen Anweisungen, falls welche spezifiziert wurden. Achte besonders darauf, eine gleichmäßige Verteilung der Wörter auf alle angegebenen Kategorien sicherzustellen.',
+						'Du bist ein Assistent, der Wörter für ein Ratespiel generiert. Die Wörter sollten auf Deutsch sein und sich gut zum Erraten eignen. Gib NUR einzelne Wörter zurück, keine Sätze, Erklärungen oder Kommentare.',
 					prompt: `Erstelle eine Liste von ${Math.max(100, wordsNeeded)} neuen deutschen Wörtern für ein Ratespiel. 
 						Die Wörter sollten:
 						- nicht in dieser Liste vorkommen: ${[...guessedWords, ...cachedWords].join(', ')}
@@ -390,57 +346,55 @@ export async function POST(req: Request) {
 						- keine Duplikate enthalten
 						- einzelne Wörter sein (keine Phrasen)
 						- keine Eigennamen enthalten
-						${customPromptInstruction ? `\n						- ${customPromptInstruction}` : ''}`,
+						${customPromptInstruction ? `\n						- ${customPromptInstruction}` : ''}
+						
+						WICHTIG: Gib nur einzelne Wörter zurück, keine Sätze, Anweisungen oder Kommentare.`,
 					schema: z.object({
 						words: z.array(z.string()),
 					}),
 				})
-				const fallbackTime = Date.now() - fallbackStartTime
 
-				console.log(`[STIRN API] Fallback generation took ${fallbackTime}ms`)
-
-				newWords = result.object?.words || []
+				newWords = filterValidWords(result.object?.words || [])
 			}
 
-			// Add new words to cache with categories
-			cachedWords = [...new Set([...cachedWords, ...newWords])]
+			// Add new words to cache with categories (use Set for deduplication performance)
+			const uniqueWords = [...new Set([...cachedWords, ...newWords])]
 
 			// Store words with their associated categories
 			const cacheData = {
-				words: cachedWords,
+				words: uniqueWords,
 				categories: sortedCategories,
 			}
 
-			const cacheStoreStartTime = Date.now()
-			await upstashRedis.set(fullCacheKey, cacheData)
-			const cacheStoreTime = Date.now() - cacheStoreStartTime
+			// Use fire-and-forget for cache update to improve response time
+			upstashRedis.set(fullCacheKey, cacheData).catch(() => {
+				// Silently handle cache errors to not block the response
+			})
 
-			console.log(
-				`[STIRN API] Cache store took ${cacheStoreTime}ms, stored ${cachedWords.length} total words`,
-			)
-
-			// Update available words
-			availableWords = cachedWords.filter(
+			// Update available words using the unique set
+			availableWords = uniqueWords.filter(
 				(word) => !guessedWords.includes(word),
 			)
 		}
 
 		// Return only the requested number of words
-		const shuffledWords = availableWords.sort(() => Math.random() - 0.5)
-		const selectedWords = shuffledWords.slice(0, wordsNeeded)
+		// Simple and efficient shuffle using sort with random comparator
+		const shuffledWords = availableWords.sort(() => 0.5 - Math.random())
 
-		const totalTime = Date.now() - startTime
-		console.log(
-			`[STIRN API] Request completed in ${totalTime}ms, returning ${selectedWords.length} words`,
+		// Take more than needed in case filtering removes some, but limit to available words
+		const selectionCount = Math.min(wordsNeeded * 2, shuffledWords.length)
+		const preFilteredWords = shuffledWords.slice(0, selectionCount)
+
+		// Final safety filter to ensure only valid words are returned
+		const selectedWords = filterValidWords(preFilteredWords).slice(
+			0,
+			wordsNeeded,
 		)
 
 		return new Response(JSON.stringify({ words: selectedWords }), {
 			headers: { 'Content-Type': 'application/json' },
 		})
 	} catch (error) {
-		const totalTime = Date.now() - startTime
-		console.error(`[STIRN API] Error after ${totalTime}ms:`, error)
-
 		// Handle Zod validation errors
 		if (error instanceof z.ZodError) {
 			return new Response(`Invalid request format: ${error.message}`, {
