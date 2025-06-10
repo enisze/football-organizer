@@ -1,9 +1,19 @@
 import { OPEN_ROUTER_MODEL } from '@/src/app/group/constants'
 import { upstashRedis } from '@/src/server/db/upstashRedis'
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
+import { Client } from '@upstash/qstash'
 import { Ratelimit } from '@upstash/ratelimit'
 import { generateObject } from 'ai'
+import { nanoid } from 'nanoid'
 import { z } from 'zod'
+
+interface TaskResult {
+	category: string
+	words: string[]
+	completed: boolean
+	runtime: number
+	aiTime?: number
+}
 
 const requestSchema = z.object({
 	guessedWords: z.array(z.string()),
@@ -18,6 +28,10 @@ const openrouter = createOpenRouter({
 	apiKey: process.env.OPENROUTER_API_KEY,
 })
 
+const qstash = new Client({
+	token: process.env.QSTASH_TOKEN || '',
+})
+
 const rateLimit = new Ratelimit({
 	redis: upstashRedis,
 	limiter: Ratelimit.slidingWindow(20, '10 s'),
@@ -25,7 +39,34 @@ const rateLimit = new Ratelimit({
 
 const free_model = 'mistralai/devstral-small:free'
 
-async function generateWordsByCategory(
+function filterValidWords(words: string[]): string[] {
+	return words.filter((word) => {
+		// Quick length check first (most efficient)
+		if (word.length > 30 || !word.trim()) return false
+
+		// Check for punctuation (avoid regex for performance)
+		if (word.includes('.') || word.includes('!') || word.includes('?'))
+			return false
+
+		// Convert to lowercase once and check instruction keywords
+		const lowerWord = word.toLowerCase()
+		const instructionKeywords = [
+			'ersetze',
+			'füge',
+			'hinzu',
+			'verbessern',
+			'balance',
+			'kategorie',
+			'beispiel',
+			'z.b.',
+			'zum beispiel',
+		]
+
+		return !instructionKeywords.some((keyword) => lowerWord.includes(keyword))
+	})
+}
+
+async function generateWordsByCategoryParallel(
 	categories: string[],
 	wordsPerCategory: number,
 	excludeWords: string[],
@@ -47,10 +88,6 @@ async function generateWordsByCategory(
 			(word) => !excludeWords.includes(word),
 		)
 
-		console.log(
-			`Category "${category}": ${availableCategoryWords.length} available cached words`,
-		)
-
 		if (availableCategoryWords.length >= wordsPerCategory) {
 			// Use cached words if we have enough
 			allWords.push(...availableCategoryWords.slice(0, wordsPerCategory))
@@ -61,76 +98,108 @@ async function generateWordsByCategory(
 		}
 	}
 
-	// Generate words only for categories that need more words
+	// Generate words in parallel using QStash for categories that need more words
 	if (categoriesToGenerate.length > 0) {
-		const customPromptInstruction = customPrompt
-			? `Zusätzliche Anweisungen: ${customPrompt}`
-			: ''
+		const baseUrl = process.env.VERCEL_URL
+			? `https://${process.env.VERCEL_URL}`
+			: process.env.NODE_ENV === 'development'
+				? 'http://localhost:3000'
+				: 'https://your-production-domain.com'
 
-		const categoryPromises = categoriesToGenerate.map(async (category) => {
+		// Parallel task dispatch with Promise.all for better performance
+		const taskPromises = categoriesToGenerate.map(async (category) => {
 			const categoryCacheKey = `${redisKey}:category:${category}`
 			const existingCategoryWords: string[] =
 				(await upstashRedis.get(categoryCacheKey)) || []
 
-			// Calculate how many words we still need for this category
-			const availableForCategory = existingCategoryWords.filter(
-				(word) => !excludeWords.includes(word),
-			)
-			const wordsNeededForCategory =
-				wordsPerCategory - availableForCategory.length
+			const taskId = nanoid()
 
-			// Skip API call if no words are needed for this category
-			if (wordsNeededForCategory <= 0) {
-				console.log(
-					`Category "${category}": No new words needed, skipping API call`,
-				)
-				return {
-					category,
-					words: [],
-				}
-			}
-
-			console.log(
-				`Category "${category}": Generating ${wordsNeededForCategory} new words`,
-			)
-
-			const result = await generateObject({
-				model: openrouter.chat(free_model),
-				system:
-					'Du bist ein Assistent, der Wörter für ein Ratespiel generiert. Konzentriere dich nur auf die angegebene Kategorie und erstelle passende deutsche Wörter.',
-				prompt: `Erstelle genau ${wordsNeededForCategory} deutsche Wörter für die Kategorie "${category}".
-					Die Wörter sollten:
-					- zur Kategorie "${category}" gehören
-					- nicht in dieser Liste vorkommen: ${[...excludeWords, ...existingCategoryWords].join(', ')}
-					- gut zu erraten sein
-					- einzelne Wörter sein (keine Phrasen)
-					- keine Eigennamen enthalten
-					- keine Duplikate enthalten
-					${customPromptInstruction ? `\n					- ${customPromptInstruction}` : ''}`,
-				schema: z.object({
-					words: z.array(z.string()),
-				}),
-			})
-
-			// Update category cache with new words
-			const updatedCategoryWords = [
-				...existingCategoryWords,
-				...result.object.words,
-			]
-			await upstashRedis.set(categoryCacheKey, updatedCategoryWords)
-
-			return {
-				category,
-				words: result.object.words,
+			try {
+				await qstash.publishJSON({
+					url: `${baseUrl}/api/ai/stirn/generate-category`,
+					body: {
+						category,
+						wordsPerCategory,
+						excludeWords,
+						existingCategoryWords,
+						redisKey,
+						customPrompt,
+						taskId,
+					},
+					retries: 3,
+				})
+				return taskId
+			} catch (error) {
+				return null
 			}
 		})
 
-		// Wait for all category word generations to complete
-		const categoryResults = await Promise.all(categoryPromises)
+		const taskIds = (await Promise.allSettled(taskPromises))
+			.filter(
+				(result) => result.status === 'fulfilled' && result.value !== null,
+			)
+			.map((result) => (result as PromiseFulfilledResult<string>).value)
+
+		// Wait for all tasks to complete with polling
+		const maxWaitTime = 30000 // 30 seconds max wait
+		const pollInterval = 500 // Poll every 500ms
+
+		let completedTasks = 0
+		const taskResults: Array<{ category: string; words: string[] }> = []
+		const pollStartTime = Date.now()
+
+		// Use Set for faster lookup of completed categories
+		const completedCategories = new Set<string>()
+
+		while (
+			completedTasks < taskIds.length &&
+			Date.now() - pollStartTime < maxWaitTime
+		) {
+			const pendingTasks = taskIds.filter((taskId) => {
+				// Skip already processed tasks
+				return !completedCategories.has(taskId)
+			})
+
+			// Process pending tasks in parallel
+			const taskCheckPromises = pendingTasks.map(async (taskId) => {
+				const taskResult = (await upstashRedis.get(
+					`${redisKey}:task:${taskId}`,
+				)) as TaskResult | null
+
+				if (
+					taskResult?.completed &&
+					!completedCategories.has(taskResult.category)
+				) {
+					completedCategories.add(taskResult.category)
+					taskResults.push({
+						category: taskResult.category,
+						words: taskResult.words,
+					})
+					// Clean up task result
+					await upstashRedis.del(`${redisKey}:task:${taskId}`)
+					return true
+				}
+				return false
+			})
+
+			const completedCount = (
+				await Promise.allSettled(taskCheckPromises)
+			).filter(
+				(result) => result.status === 'fulfilled' && result.value === true,
+			).length
+
+			completedTasks += completedCount
+
+			if (completedTasks < taskIds.length) {
+				await new Promise((resolve) => setTimeout(resolve, pollInterval))
+			}
+		}
 
 		// Add newly generated words to the result
-		for (const categoryResult of categoryResults) {
-			allWords.push(...categoryResult.words)
+		for (const taskResult of taskResults) {
+			// Filter out invalid words before adding them
+			const validWords = filterValidWords(taskResult.words)
+			allWords.push(...validWords)
 		}
 	}
 
@@ -145,7 +214,7 @@ async function validateAndBalanceWords(
 	const result = await generateObject({
 		model: openrouter.chat(OPEN_ROUTER_MODEL),
 		system:
-			'Du bist ein Experte für Wortspiele und Kategorisierung. Analysiere die gegebenen Wörter und prüfe, ob sie gleichmäßig auf die Kategorien verteilt sind.',
+			'Du bist ein Experte für Wortspiele und Kategorisierung. Analysiere die gegebenen Wörter und prüfe, ob sie gleichmäßig auf die Kategorien verteilt sind. Gib nur strukturierte Daten zurück, keine Kommentare oder Anweisungen in den Wörter-Arrays.',
 		prompt: `Analysiere diese Wörter und prüfe, ob sie gleichmäßig auf die Kategorien ${categories.join(', ')} verteilt sind:
 			
 			Wörter: ${words.join(', ')}
@@ -158,7 +227,9 @@ async function validateAndBalanceWords(
 			2. Ist die Verteilung ausgewogen (ca. ${targetWordsPerCategory} Wörter pro Kategorie)?
 			3. Sind alle Wörter zum Erraten geeignet?
 			
-			Falls nötig, schlage bessere/fehlende Wörter vor, um die Balance zu verbessern.`,
+			Falls nötig, schlage nur einzelne Wörter vor (keine Sätze oder Erklärungen), um die Balance zu verbessern.
+			
+			WICHTIG: In "suggestions" nur einzelne Wörter angeben, keine Anweisungen oder Kommentare.`,
 		schema: z.object({
 			isBalanced: z.boolean(),
 			categoryDistribution: z.record(z.array(z.string())),
@@ -169,8 +240,8 @@ async function validateAndBalanceWords(
 
 	return {
 		words,
-		isBalanced: result.object.isBalanced,
-		suggestions: result.object.suggestions,
+		isBalanced: result.object?.isBalanced || false,
+		suggestions: result.object?.suggestions,
 	}
 }
 
@@ -213,8 +284,6 @@ export async function POST(req: Request) {
 			cachedWords = cachedData.words || []
 		}
 
-		console.log(cachedWords, ' cachedWords for categories:', sortedCategories)
-
 		// Filter out already guessed words
 		let availableWords = cachedWords.filter(
 			(word) => !guessedWords.includes(word),
@@ -225,18 +294,13 @@ export async function POST(req: Request) {
 			let newWords: string[] = []
 
 			if (categories && categories.length > 0) {
-				// Use the new two-step approach for categorized word generation
+				// Use the new parallel approach for categorized word generation
 				const wordsPerCategory = Math.ceil(
 					Math.max(100, wordsNeeded) / categories.length,
 				)
 
-				console.log(
-					`Generating ${wordsPerCategory} words per category for:`,
-					categories,
-				)
-
-				// Step 1: Generate words by category using free model
-				const categoryResult = await generateWordsByCategory(
+				// Step 1: Generate words by category using parallel processing
+				const categoryResult = await generateWordsByCategoryParallel(
 					categories,
 					wordsPerCategory,
 					[...guessedWords, ...cachedWords],
@@ -252,16 +316,14 @@ export async function POST(req: Request) {
 					wordsPerCategory,
 				)
 
-				console.log('Word balance validation:', {
-					isBalanced: validationResult.isBalanced,
-					totalWords: validationResult.words.length,
-					suggestions: validationResult.suggestions?.length || 0,
-				})
-
 				// Use validated words, add suggestions if needed
 				newWords = validationResult.words
 				if (!validationResult.isBalanced && validationResult.suggestions) {
-					newWords = [...newWords, ...validationResult.suggestions]
+					// Filter suggestions to ensure they're valid words
+					const validSuggestions = filterValidWords(
+						validationResult.suggestions,
+					)
+					newWords = [...newWords, ...validSuggestions]
 				}
 			} else {
 				// Fallback to original approach for non-categorized requests
@@ -275,7 +337,7 @@ export async function POST(req: Request) {
 				const result = await generateObject({
 					model: openrouter.chat(OPEN_ROUTER_MODEL),
 					system:
-						'Du bist ein Assistent, der Wörter für ein Ratespiel generiert. Die Wörter sollten auf Deutsch sein und sich gut zum Erraten eignen. Berücksichtige die angegebenen Kategorien und zusätzlichen Anweisungen, falls welche spezifiziert wurden. Achte besonders darauf, eine gleichmäßige Verteilung der Wörter auf alle angegebenen Kategorien sicherzustellen.',
+						'Du bist ein Assistent, der Wörter für ein Ratespiel generiert. Die Wörter sollten auf Deutsch sein und sich gut zum Erraten eignen. Gib NUR einzelne Wörter zurück, keine Sätze, Erklärungen oder Kommentare.',
 					prompt: `Erstelle eine Liste von ${Math.max(100, wordsNeeded)} neuen deutschen Wörtern für ein Ratespiel. 
 						Die Wörter sollten:
 						- nicht in dieser Liste vorkommen: ${[...guessedWords, ...cachedWords].join(', ')}
@@ -284,40 +346,55 @@ export async function POST(req: Request) {
 						- keine Duplikate enthalten
 						- einzelne Wörter sein (keine Phrasen)
 						- keine Eigennamen enthalten
-						${customPromptInstruction ? `\n						- ${customPromptInstruction}` : ''}`,
+						${customPromptInstruction ? `\n						- ${customPromptInstruction}` : ''}
+						
+						WICHTIG: Gib nur einzelne Wörter zurück, keine Sätze, Anweisungen oder Kommentare.`,
 					schema: z.object({
 						words: z.array(z.string()),
 					}),
 				})
 
-				newWords = result.object.words
+				newWords = filterValidWords(result.object?.words || [])
 			}
-			// Add new words to cache with categories
-			cachedWords = [...new Set([...cachedWords, ...newWords])]
+
+			// Add new words to cache with categories (use Set for deduplication performance)
+			const uniqueWords = [...new Set([...cachedWords, ...newWords])]
 
 			// Store words with their associated categories
 			const cacheData = {
-				words: cachedWords,
+				words: uniqueWords,
 				categories: sortedCategories,
 			}
-			await upstashRedis.set(fullCacheKey, cacheData)
 
-			// Update available words
-			availableWords = cachedWords.filter(
+			// Use fire-and-forget for cache update to improve response time
+			upstashRedis.set(fullCacheKey, cacheData).catch(() => {
+				// Silently handle cache errors to not block the response
+			})
+
+			// Update available words using the unique set
+			availableWords = uniqueWords.filter(
 				(word) => !guessedWords.includes(word),
 			)
 		}
 
 		// Return only the requested number of words
-		const shuffledWords = availableWords.sort(() => Math.random() - 0.5)
-		const selectedWords = shuffledWords.slice(0, wordsNeeded)
+		// Simple and efficient shuffle using sort with random comparator
+		const shuffledWords = availableWords.sort(() => 0.5 - Math.random())
+
+		// Take more than needed in case filtering removes some, but limit to available words
+		const selectionCount = Math.min(wordsNeeded * 2, shuffledWords.length)
+		const preFilteredWords = shuffledWords.slice(0, selectionCount)
+
+		// Final safety filter to ensure only valid words are returned
+		const selectedWords = filterValidWords(preFilteredWords).slice(
+			0,
+			wordsNeeded,
+		)
 
 		return new Response(JSON.stringify({ words: selectedWords }), {
 			headers: { 'Content-Type': 'application/json' },
 		})
 	} catch (error) {
-		console.error('Error processing request:', error)
-
 		// Handle Zod validation errors
 		if (error instanceof z.ZodError) {
 			return new Response(`Invalid request format: ${error.message}`, {
