@@ -2,6 +2,7 @@ import { upstashRedis } from '@/src/server/db/upstashRedis'
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
 import { generateObject } from 'ai'
 import { z } from 'zod'
+import { filterValidWords } from '../utils'
 
 const requestSchema = z.object({
 	category: z.string(),
@@ -18,33 +19,6 @@ const openrouter = createOpenRouter({
 })
 
 const free_model = 'mistralai/devstral-small:free'
-
-function filterValidWords(words: string[]): string[] {
-	return words.filter((word) => {
-		// Quick length check first (most efficient)
-		if (word.length > 30 || !word.trim()) return false
-
-		// Check for punctuation (avoid regex for performance)
-		if (word.includes('.') || word.includes('!') || word.includes('?'))
-			return false
-
-		// Convert to lowercase once and check instruction keywords
-		const lowerWord = word.toLowerCase()
-		const instructionKeywords = [
-			'ersetze',
-			'füge',
-			'hinzu',
-			'verbessern',
-			'balance',
-			'kategorie',
-			'beispiel',
-			'z.b.',
-			'zum beispiel',
-		]
-
-		return !instructionKeywords.some((keyword) => lowerWord.includes(keyword))
-	})
-}
 
 async function handler(req: Request) {
 	try {
