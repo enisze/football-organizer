@@ -62,22 +62,20 @@ export default async function SignInPage({
 							}}
 						/>
 
-						{process.env.NODE_ENV === 'development' && (
-							<ProviderButton
-								provider='microsoft'
-								action={async () => {
-									'use server'
-									const res = await authClient.signIn.social({
-										provider: 'microsoft',
-										callbackURL: callbackUrl,
-									})
+						<ProviderButton
+							provider='microsoft'
+							action={async () => {
+								'use server'
+								const res = await authClient.signIn.social({
+									provider: 'microsoft',
+									callbackURL: callbackUrl,
+								})
 
-									if (res.data?.url) {
-										redirect(res.data?.url)
-									}
-								}}
-							/>
-						)}
+								if (res.data?.url) {
+									redirect(res.data?.url)
+								}
+							}}
+						/>
 					</form>
 
 					{isDev && (
