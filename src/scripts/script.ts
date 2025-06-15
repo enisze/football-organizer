@@ -36,7 +36,7 @@ const runScript = async () => {
 
 	try {
 		for (let soccerbox = 1; soccerbox < 2; soccerbox++) {
-			const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox${soccerbox}/index_ger.html?y=2023&w=${
+			const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox${soccerbox}/index_ger.html?y=2025&w=${
 				week + 1
 			}`
 

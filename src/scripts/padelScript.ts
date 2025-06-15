@@ -35,7 +35,7 @@ const script = async () => {
 	})
 
 	for (const day of days) {
-		const url = `https://unisport.koeln/sportspiele/padel/padel_platzreservierung/index_ger.html?y=2024&w=${week}`
+		const url = `https://unisport.koeln/sportspiele/padel/padel_platzreservierung/index_ger.html?y=2025&w=${week}`
 
 		for (const hour of times) {
 			const soccerDate = getSoccerDate(day, hour)
