@@ -1,3 +1,4 @@
+import { OPEN_ROUTER_MODEL } from '@/src/app/group/constants'
 import { upstashRedis } from '@/src/server/db/upstashRedis'
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
 import { generateObject } from 'ai'
@@ -73,14 +74,15 @@ async function handler(req: Request) {
 			: ''
 
 		const result = await generateObject({
-			model: openrouter.chat(free_model),
+			model: openrouter.chat(OPEN_ROUTER_MODEL),
 			system:
 				'Du bist ein Assistent, der Wörter für ein Ratespiel generiert. Konzentriere dich nur auf die angegebene Kategorie und erstelle passende deutsche Wörter. Gib NUR einzelne Wörter zurück, keine Sätze, Erklärungen oder Kommentare.',
 			prompt: `Erstelle genau ${wordsNeededForCategory} deutsche Wörter für die Kategorie "${category}".
 				Die Wörter sollten:
 				- zur Kategorie "${category}" gehören
 				- nicht in dieser Liste vorkommen: ${[...excludeWords, ...existingCategoryWords].join(', ')}
-				- gut zu erraten sein
+				- eine Mischung aus verschiedenen Schwierigkeitsgraden haben (leichte, mittlere und schwere Wörter)
+				- sowohl einfache, bekannte Begriffe als auch komplexere, seltenere Wörter enthalten
 				- einzelne Wörter sein (keine Phrasen)
 				- keine Eigennamen enthalten
 				- keine Duplikate enthalten
