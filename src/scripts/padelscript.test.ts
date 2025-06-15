@@ -30,8 +30,10 @@ describe('Booking reminder', () => {
 			width: 1920,
 		})
 
+		const currentYear = date.getFullYear()
+
 		for (const day of days) {
-			const url = `https://unisport.koeln/sportspiele/padel/padel_platzreservierung/index_ger.html?y=2024&w=${week + 1}`
+			const url = `https://unisport.koeln/sportspiele/padel/padel_platzreservierung/index_ger.html?y=${currentYear}&w=${week + 1}`
 
 			console.log(padelError)
 

@@ -24,9 +24,10 @@ describe('Booking reminder', () => {
 		day: string
 	}[] = []
 	it('Should remind booking"', async () => {
+		const currentYear = date.getFullYear()
 		for (let soccerbox = 1; soccerbox < 4; soccerbox++) {
 			for (const day of days) {
-				const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox${soccerbox}/index_ger.html?y=2024&w=${
+				const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox${soccerbox}/index_ger.html?y=${currentYear}&w=${
 					week + 1
 				}`
 
