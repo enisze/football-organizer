@@ -137,12 +137,6 @@ describe('Booking reminder', () => {
 
 					'Es gibt buchbare Padelboxen',
 				)
-
-				await sendEmail(
-					'max.sander.97@gmx.de',
-					emailContent,
-					'Es gibt buchbare Padelboxen',
-				)
 			} catch (error) {
 				console.log('Sending email failed')
 				console.log(error)
