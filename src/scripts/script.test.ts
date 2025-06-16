@@ -179,6 +179,8 @@ const processSoccerboxDay = async (
 ): Promise<SoccerResult | null> => {
 	const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox${soccerbox}/index_ger.html?y=${currentYear}&w=${week}`
 
+	console.log('URL:', url)
+
 	const cssSelector = `td[class="${day}"][datetime="${soccerDate.toISOString()}"]`
 
 	try {
