@@ -1,5 +1,6 @@
 import { sendEmail } from '@/inngest/createSendEmail'
-import { addWeeks, getWeek, setDay } from 'date-fns'
+import { addWeeks, format, getWeek, setDay } from 'date-fns'
+import { de } from 'date-fns/locale'
 import type { Page } from 'puppeteer'
 
 const redColor = 'rgb(175, 18, 29)'
@@ -158,6 +159,165 @@ type PadelResult = {
 	minute: number
 	timeStr: string
 	soccerdate?: string
+}
+
+type PadelSlot = {
+	hrefValue: string | null
+	day: Weekday
+	timeStr: string
+	soccerdate: string
+	hour: number
+	minute: number
+}
+
+type PadelError = {
+	error?: string
+	day: Weekday
+	hour: number
+	minute: number
+	timeStr: string
+}
+
+/**
+ * Format date for display in German locale
+ */
+const formatPadelDate = (dateStr: string): string => {
+	try {
+		// Parse the German date format (DD.MM.YYYY)
+		const parts = dateStr.split('.')
+		if (parts.length !== 3) return dateStr
+
+		const [dayStr, monthStr, yearStr] = parts
+		if (!dayStr || !monthStr || !yearStr) return dateStr
+
+		const date = new Date(
+			Number.parseInt(yearStr, 10),
+			Number.parseInt(monthStr, 10) - 1,
+			Number.parseInt(dayStr, 10),
+		)
+		return format(date, 'EEEE, dd.MM.yyyy', { locale: de })
+	} catch {
+		return dateStr
+	}
+}
+
+/**
+ * Create a pretty booking link with date, day and time information for padel
+ */
+const createPadelBookingLink = (slot: PadelSlot): string => {
+	const formattedDate = formatPadelDate(slot.soccerdate)
+	const timeDisplay = slot.timeStr || 'Unbekannte Zeit'
+
+	return `
+		<div style="margin: 10px 0; padding: 15px; border: 2px solid #22c55e; border-radius: 8px; background-color: #f0fdf4;">
+			<h3 style="margin: 0 0 10px 0; color: #15803d;">🏓 Padelbox verfügbar</h3>
+			<p style="margin: 5px 0; color: #166534;"><strong>📅 Datum:</strong> ${formattedDate}</p>
+			<p style="margin: 5px 0; color: #166534;"><strong>🕐 Zeit:</strong> ${timeDisplay}</p>
+			<a href="${slot.hrefValue}" 
+			   style="display: inline-block; margin-top: 10px; padding: 10px 20px; background-color: #22c55e; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+				🎯 Jetzt buchen
+			</a>
+		</div>
+	`
+}
+
+/**
+ * Create error summary for padel bookings
+ */
+const createPadelErrorSummary = (errors: PadelError[]): string => {
+	if (errors.length === 0) return ''
+
+	const errorGroups = errors.reduce(
+		(acc, error) => {
+			const errorKey = error.error || 'Unbekannter Fehler'
+			if (!acc[errorKey]) {
+				acc[errorKey] = []
+			}
+			acc[errorKey].push(error)
+			return acc
+		},
+		{} as Record<string, PadelError[]>,
+	)
+
+	let html =
+		'<div style="margin-top: 20px; padding: 15px; border: 2px solid #fbbf24; border-radius: 8px; background-color: #fefce8;">'
+	html +=
+		'<h3 style="margin: 0 0 15px 0; color: #d97706;">⚠️ Fehler-Zusammenfassung</h3>'
+
+	for (const [errorMessage, errorInstances] of Object.entries(errorGroups)) {
+		html += `<div style="margin-bottom: 10px;">`
+		html += `<strong style="color: #92400e;">${errorMessage}</strong> (${errorInstances.length}x)`
+		html += `<ul style="margin: 5px 0 0 20px; color: #451a03;">`
+
+		for (const instance of errorInstances) {
+			html += `<li>Padelbox am ${instance.day} um ${instance.timeStr}</li>`
+		}
+
+		html += '</ul></div>'
+	}
+
+	html += '</div>'
+	return html
+}
+
+/**
+ * Send padel booking notification email with pretty formatting
+ */
+const sendPadelNotificationEmail = async (
+	recipientEmail: string,
+	bookableSlots: PadelSlot[],
+	errorSlots: PadelError[],
+): Promise<void> => {
+	const currentTime = format(new Date(), 'dd.MM.yyyy HH:mm', { locale: de })
+
+	let htmlContent = `
+		<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+			<h1 style="color: #15803d; text-align: center; border-bottom: 3px solid #22c55e; padding-bottom: 10px;">
+				🏓 Padel Buchungsbenachrichtigung
+			</h1>
+			<p style="color: #374151; margin: 20px 0;">
+				<strong>Zeitpunkt der Prüfung:</strong> ${currentTime}
+			</p>
+	`
+
+	if (bookableSlots.length > 0) {
+		htmlContent += `
+			<h2 style="color: #15803d; margin-top: 30px;">🎉 Verfügbare Padelboxen (${bookableSlots.length})</h2>
+		`
+
+		for (const slot of bookableSlots) {
+			htmlContent += createPadelBookingLink(slot)
+		}
+	} else {
+		htmlContent += `
+			<div style="margin: 20px 0; padding: 15px; border: 2px solid #6b7280; border-radius: 8px; background-color: #f9fafb;">
+				<h2 style="margin: 0; color: #374151;">😔 Keine verfügbaren Padelboxen</h2>
+				<p style="margin: 10px 0 0 0; color: #6b7280;">Zur Zeit sind leider keine Padelboxen verfügbar.</p>
+			</div>
+		`
+	}
+
+	// Add error summary if there are errors
+	if (errorSlots.length > 0) {
+		htmlContent += createPadelErrorSummary(errorSlots)
+	}
+
+	htmlContent += `
+			<div style="margin-top: 30px; padding: 15px; background-color: #f3f4f6; border-radius: 8px; text-align: center;">
+				<p style="margin: 0; color: #6b7280; font-size: 14px;">
+					Diese E-Mail wurde automatisch generiert. 
+					<br>Bei Fragen wende dich an den Administrator.
+				</p>
+			</div>
+		</div>
+	`
+
+	const subject =
+		bookableSlots.length > 0
+			? `🎯 ${bookableSlots.length} Padelbox${bookableSlots.length === 1 ? '' : 'en'} verfügbar!`
+			: '😔 Keine Padelboxen verfügbar'
+
+	await sendEmail(recipientEmail, htmlContent, subject)
 }
 
 // Function to wait for the calendar to finish loading
@@ -531,29 +691,24 @@ describe('Booking reminder', () => {
 			}
 
 			try {
-				const emailContent = `
-        <h1>Es gibt buchbare Padelboxen: </h1>
-        <ul>
-        ${padelBookable.map(
-					(padelbox) =>
-						`<li> <a href="${padelbox.hrefValue}">
-            Padel hier buchen für Tag: ${padelbox.day}. Genaues Datum: ${padelbox.soccerdate}, ${padelbox.day} ${padelbox.timeStr}.
-            </a></li>`,
-				)}
-        ${padelError.map(
-					(padelbox) =>
-						`<li> Padel Fehler: ${padelbox.error} für ${padelbox.day} ${padelbox.timeStr}</li>`,
-				)}
-        </ul>
-        `
-
-				await sendEmail(
+				await sendPadelNotificationEmail(
 					'eniszej@gmail.com',
-					emailContent,
-
-					'Es gibt buchbare Padelboxen',
+					padelBookable,
+					padelError,
 				)
 				console.log('📧 Email sent')
+			} catch (error) {
+				console.log('❌ Email failed:', error)
+			}
+		} else {
+			// Send email even when no slots are available to show status
+			try {
+				await sendPadelNotificationEmail(
+					'eniszej@gmail.com',
+					padelBookable,
+					padelError,
+				)
+				console.log('📧 Status email sent')
 			} catch (error) {
 				console.log('❌ Email failed:', error)
 			}
