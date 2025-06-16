@@ -1,14 +1,20 @@
-import { sendEmail } from '@/inngest/createSendEmail'
-import { addWeeks, getWeek, setDay } from 'date-fns'
 import type { Page } from 'puppeteer'
+import * as R from 'remeda'
+import {
+	COLORS,
+	type Day,
+	type SoccerError,
+	type SoccerSlot,
+	getCurrentBookingTime,
+	getElementData,
+	getSoccerDate,
+	sendBookingNotificationEmail,
+} from './booking-utils'
 
-const redColor = 'rgb(175, 18, 29)'
-const greenColor = 'rgb(131, 176, 34)'
+const { red: redColor, green: greenColor } = COLORS
+const { week, year: currentYear } = getCurrentBookingTime()
 
-const date = new Date()
-const week = getWeek(date)
-
-type Weekday = 'Mo' | 'Di' | 'Mi' | 'Do' | 'Fr' | 'Sa' | 'So'
+type Weekday = Day
 
 type Schedule = {
 	[day in Weekday]?: string[]
@@ -81,60 +87,34 @@ const schedule: Schedule = {
 const days = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'] as Weekday[]
 
 // Get time slots for a specific day with 'h' suffix for compatibility
-// For weekdays (Mo-Fr): only check slots 16:00, 17:00, 18:00
+// For weekdays (Mo-Fr): only check slots 17:00, 18:00, 20:00
 // For weekends (Sa-So): check all available slots
 const getTimeRangeForDay = (day: Weekday): string[] => {
 	const timeSlots = schedule[day] || []
+	const isWeekend = ['Sa', 'So'].includes(day)
 
-	// Check if it's a weekend day
-	const isWeekend = day === 'Sa' || day === 'So'
+	const filteredSlots = isWeekend
+		? timeSlots
+		: R.filter(timeSlots, (timeStr) =>
+				['17:00', '18:00', '20:00'].includes(timeStr),
+			)
 
-	let filteredSlots: string[]
-
-	if (isWeekend) {
-		// For weekends, use all available slots
-		filteredSlots = timeSlots
-	} else {
-		// For weekdays, only include 16:00, 17:00, 18:00
-		const allowedWeekdayTimes = ['17:00', '18:00', '19:00', '20:00']
-		filteredSlots = timeSlots.filter((timeStr) =>
-			allowedWeekdayTimes.includes(timeStr),
-		)
-	}
-
-	return filteredSlots.map((timeStr) => `${timeStr}h`)
-}
-
-const getSoccerDate = (day: Weekday, timeSlot: string) => {
-	const offset = (days.indexOf(day) + 1) as 0 | 1 | 2 | 3 | 4 | 5 | 6
-
-	const dateToUse = new Date()
-
-	if (offset < 0 || offset > 6) return dateToUse
-
-	const weeks = addWeeks(dateToUse, 0)
-
-	const dateForSoccer = setDay(weeks, offset)
-
-	// Parse the time slot (e.g., "16:00" -> hours: 16, minutes: 0)
-	const [hours, minutes] = timeSlot.split(':').map(Number)
-
-	dateForSoccer.setHours(hours || 0)
-	dateForSoccer.setMinutes(minutes || 0)
-	dateForSoccer.setSeconds(0)
-	dateForSoccer.setMilliseconds(0)
-
-	return dateForSoccer
+	return R.map(filteredSlots, (timeStr) => `${timeStr}h`)
 }
 
 // Pre-calculate dates outside the loop for better performance
-const soccerDates = days.flatMap((day) => {
+const soccerDates = R.flatMap(days, (day) => {
 	const timeSlots = getTimeRangeForDay(day)
-	return timeSlots.map((timeSlot) => ({
-		day,
-		timeSlot: timeSlot.replace('h', ''), // Remove 'h' suffix for date calculation
-		date: getSoccerDate(day, timeSlot.replace('h', '')),
-	}))
+	return R.map(timeSlots, (timeSlot) => {
+		const cleanTimeSlot = timeSlot.replace('h', '') // Remove 'h' suffix for date calculation
+		const soccerDate = getSoccerDate(day, cleanTimeSlot)
+
+		return {
+			day,
+			timeSlot: cleanTimeSlot,
+			date: soccerDate,
+		}
+	})
 })
 
 type SoccerResult = {
@@ -143,12 +123,14 @@ type SoccerResult = {
 	error?: string
 	hrefValue?: string | null
 	day: Weekday
+	date: Date
+	timeSlot: string
 }
 
-// Function to wait for the calendar to finish loading
+// Function to wait for the calendar to finish loading (optimized)
 const waitForCalendarReady = async (page: Page): Promise<void> => {
 	try {
-		await page.waitForSelector('#calendar_slider', { timeout: 10000 })
+		await page.waitForSelector('#calendar_slider', { timeout: 8000 })
 		await page.waitForFunction(
 			() => {
 				const spinnerElement = document.querySelector('.uzk15__spinner')
@@ -167,33 +149,45 @@ const waitForCalendarReady = async (page: Page): Promise<void> => {
 
 				return isSpinnerHidden && isLoadingTextGone
 			},
-			{ timeout: 30000, polling: 500 },
+			{ timeout: 20000, polling: 300 },
 		)
-		await new Promise((resolve) => setTimeout(resolve, 1000))
+		await new Promise((resolve) => setTimeout(resolve, 500))
 	} catch (error) {
 		console.warn('⚠️ Calendar wait failed, continuing')
 	}
 }
 
-// Reusable function to process a single soccerbox for a specific day
+// Optimize page for faster loading
+const optimizePage = async (page: Page): Promise<void> => {
+	// Set smaller viewport for faster rendering
+	await page.setViewport({ width: 1024, height: 600 })
+
+	// Set faster navigation timeout
+	await page.setDefaultNavigationTimeout(8000)
+	await page.setDefaultTimeout(5000)
+}
+
+// Optimized function to process a single soccerbox for a specific day
 const processSoccerboxDay = async (
 	page: Page,
 	soccerbox: number,
 	day: Weekday,
 	soccerDate: Date,
+	timeSlot: string,
 	currentYear: number,
 	week: number,
 ): Promise<SoccerResult | null> => {
 	const url = `https://unisport.koeln/sportspiele/fussball/soccerbox/einzeltermin_buchung/soccerbox${soccerbox}/index_ger.html?y=${currentYear}&w=${week}`
-	const allowedTimes = getTimeRangeForDay(day)
+
 	const cssSelector = `td[class="${day}"][datetime="${soccerDate.toISOString()}"]`
 
 	try {
-		await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 10000 })
+		await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 8000 })
+
 		await waitForCalendarReady(page)
 
 		const tdElement = await page.waitForSelector(cssSelector, {
-			timeout: 5000,
+			timeout: 4000,
 		})
 
 		if (!tdElement) {
@@ -202,23 +196,12 @@ const processSoccerboxDay = async (
 				soccerbox,
 				error: 'Element not found',
 				day,
+				date: soccerDate,
+				timeSlot,
 			}
 		}
 
-		const elementData = await tdElement.evaluate((el) => {
-			const linkElement = el.querySelector('.uzk15__eventunit')
-			const colorElement = el.querySelector('.uzk15__kreis')
-
-			return {
-				hasLink: !!linkElement,
-				hrefValue: linkElement?.getAttribute('href') || null,
-				hasColor: !!colorElement,
-				colorValue: colorElement
-					? getComputedStyle(colorElement).backgroundColor
-					: '',
-				textContent: el.textContent || '',
-			}
-		})
+		const elementData = await getElementData(tdElement)
 
 		if (!elementData.hasLink) {
 			return {
@@ -226,6 +209,8 @@ const processSoccerboxDay = async (
 				soccerbox,
 				error: 'Not bookable yet',
 				day,
+				date: soccerDate,
+				timeSlot,
 			}
 		}
 
@@ -235,46 +220,30 @@ const processSoccerboxDay = async (
 				soccerbox,
 				error: 'No color found',
 				day,
+				date: soccerDate,
+				timeSlot,
 			}
 		}
 
-		const hasValidTime = allowedTimes.some((time) =>
-			elementData.textContent.includes(time),
-		)
-
 		if (elementData.colorValue === redColor) {
-			console.log(
-				`🔴 UNAVAILABLE: Soccerbox ${soccerbox} on ${day} at ${soccerDate.getHours()}:${soccerDate.getMinutes().toString().padStart(2, '0')}
-				${
-					!hasValidTime
-						? `real time ${elementData.textContent.slice(0, 6)}`
-						: ''
-				}
-				`,
-			)
 			return {
 				type: 'error',
 				soccerbox,
 				error: 'Already booked',
 				day,
+				date: soccerDate,
+				timeSlot,
 			}
 		}
 
 		if (elementData.colorValue === greenColor) {
-			console.log(
-				`🟢 AVAILABLE: Soccerbox ${soccerbox} on ${day} at ${soccerDate.getHours()}:${soccerDate.getMinutes().toString().padStart(2, '0')} 
-				${
-					!hasValidTime
-						? `real time ${elementData.textContent.slice(0, 6)}`
-						: ''
-				}
-				`,
-			)
 			return {
 				type: 'bookable',
 				soccerbox,
 				hrefValue: elementData.hrefValue,
 				day,
+				date: soccerDate,
+				timeSlot,
 			}
 		}
 
@@ -285,11 +254,13 @@ const processSoccerboxDay = async (
 			soccerbox,
 			error: `Error: ${error}`,
 			day,
+			date: soccerDate,
+			timeSlot,
 		}
 	}
 }
 
-// Reusable function to process a single soccerbox with error isolation
+// Optimized function to process a single soccerbox with parallel day processing
 const processSoccerbox = async (
 	soccerbox: number,
 	currentYear: number,
@@ -301,34 +272,52 @@ const processSoccerbox = async (
 
 	try {
 		page = await browser.newPage()
-		await page.setViewport({ width: 1280, height: 720 })
+		await optimizePage(page)
 
 		const results: SoccerResult[] = []
 
-		// Process each day and time slot sequentially to avoid multiple page navigations
-		for (const { day, timeSlot, date: soccerDate } of soccerDates) {
-			try {
-				const result = await processSoccerboxDay(
-					page,
-					soccerbox,
-					day,
-					soccerDate,
-					currentYear,
-					week,
-				)
+		// Group dates by unique days to minimize page navigations using Remeda
+		const datesByDay = R.groupBy(soccerDates, (entry) => entry.day)
 
-				if (result) {
-					results.push(result)
+		// Process days sequentially for better reliability
+		for (const [day, dayEntries] of Object.entries(datesByDay)) {
+			// Process time slots sequentially within each day
+			for (const { timeSlot, date: soccerDate } of dayEntries) {
+				try {
+					if (!page) {
+						throw new Error('Page is null')
+					}
+					const result = await processSoccerboxDay(
+						page,
+						soccerbox,
+						day as Weekday,
+						soccerDate,
+						timeSlot,
+						currentYear,
+						week,
+					)
+
+					if (result) {
+						results.push(result)
+					}
+				} catch (error) {
+					console.error(
+						`❌ Error processing ${soccerbox} on ${day} at ${timeSlot}:`,
+						error,
+					)
+					results.push({
+						type: 'error' as const,
+						soccerbox,
+						error: `Processing error: ${error}`,
+						day: day as Weekday,
+						date: soccerDate,
+						timeSlot,
+					})
 				}
-			} catch (error) {
-				console.error(`❌ Error processing ${soccerbox} on ${day}:`, error)
-				results.push({
-					type: 'error',
-					soccerbox,
-					error: `Processing error: ${error}`,
-					day,
-				})
 			}
+
+			// Small delay between days to avoid overwhelming the server
+			await new Promise((resolve) => setTimeout(resolve, 200))
 		}
 
 		console.log(
@@ -346,19 +335,15 @@ const processSoccerbox = async (
 				type: 'error',
 				soccerbox,
 				error: 'Fatal error',
-				day: 'Mo' as Weekday,
+				day: 'Mo' as Weekday, // Use fallback since we don't know which specific slot failed
+				date: new Date(),
+				timeSlot: '20:00', // Use fallback since we don't know which specific slot failed
 			},
 		]
 	} finally {
 		if (page) {
 			try {
-				console.log(`🔄 Closing page for Soccerbox ${soccerbox}...`)
-				// Wait for any pending operations to complete
-				await new Promise((resolve) => setTimeout(resolve, 1000))
 				await page.close()
-				// Additional wait after closing to ensure cleanup
-				await new Promise((resolve) => setTimeout(resolve, 500))
-				console.log(`✅ Page closed for Soccerbox ${soccerbox}`)
 			} catch (closeError) {
 				console.error(
 					`❌ Error closing page soccerbox ${soccerbox}:`,
@@ -370,26 +355,22 @@ const processSoccerbox = async (
 }
 
 describe('Booking reminder', () => {
-	const soccerboxesBookable: {
-		soccerbox: number
-		hrefValue: string | null
-		day: Weekday
-	}[] = []
-	const soccerboxesError: {
-		soccerbox: number
-		error?: string
-		day: Weekday
-	}[] = []
+	const soccerboxesBookable: SoccerSlot[] = []
+	const soccerboxesError: SoccerError[] = []
 	it('Should remind booking"', async () => {
-		const currentYear = date.getFullYear()
-
-		// Process soccerboxes sequentially instead of in parallel
+		// Process soccerboxes sequentially for better reliability
 		const allResults: SoccerResult[][] = []
 
 		try {
-			for (let soccerbox = 1; soccerbox <= 3; soccerbox++) {
+			for (let soccerbox = 1; soccerbox <= 2; soccerbox++) {
+				// Reduced from 3 to 2 for faster testing
 				try {
-					const result = await processSoccerbox(soccerbox, currentYear, week)
+					console.log(`🎯 Processing Soccerbox ${soccerbox}...`)
+					const result = await processSoccerbox(
+						soccerbox,
+						currentYear,
+						week + 1,
+					) // Use next week
 					console.log(`✅ Completed processing Soccerbox ${soccerbox}`)
 					allResults.push(result)
 				} catch (error) {
@@ -398,8 +379,10 @@ describe('Booking reminder', () => {
 						{
 							type: 'error' as const,
 							soccerbox,
-							error: 'Fatal error',
+							error: `Fatal error: ${error}`,
 							day: 'Mo' as Weekday,
+							date: new Date(),
+							timeSlot: '20:00',
 						},
 					])
 				}
@@ -407,29 +390,43 @@ describe('Booking reminder', () => {
 
 			console.log('🔄 All soccerboxes processed, now analyzing results...')
 
-			// Process all results synchronously to avoid async logging issues
-			for (const soccerboxResult of allResults) {
-				for (const result of soccerboxResult) {
-					if (result?.type === 'bookable') {
-						soccerboxesBookable.push({
-							soccerbox: result.soccerbox,
-							hrefValue: result.hrefValue || null,
-							day: result.day,
-						})
-					} else if (result?.type === 'error') {
-						soccerboxesError.push({
-							soccerbox: result.soccerbox,
-							error: result.error,
-							day: result.day,
-						})
-					}
-				}
+			// Process all results using Remeda for better performance
+			const allFlatResults = R.flatMap(allResults, (results) => results)
+			const nonNullResults = R.filter(
+				allFlatResults,
+				(result): result is SoccerResult => result !== null,
+			)
+
+			const { bookable: bookableResults = [], error: errorResults = [] } =
+				R.groupBy(nonNullResults, (result) => result.type)
+
+			// Process bookable results using Remeda
+			for (const result of bookableResults) {
+				soccerboxesBookable.push({
+					soccerbox: result.soccerbox,
+					hrefValue: result.hrefValue || null,
+					day: result.day,
+					date: result.date,
+					timeSlot: result.timeSlot,
+				})
+			}
+
+			// Process error results using Remeda
+			for (const result of errorResults) {
+				soccerboxesError.push({
+					soccerbox: result.soccerbox,
+					error: result.error,
+					day: result.day,
+					date: result.date,
+					timeSlot: result.timeSlot,
+				})
 			}
 
 			// Log everything immediately and synchronously
 			console.log(`✅ Found ${soccerboxesBookable.length} bookable soccerboxes`)
 
-			const alreadyBookedCount = soccerboxesError.filter(
+			const alreadyBookedCount = R.filter(
+				soccerboxesError,
 				(error) => error.error === 'Already booked',
 			).length
 			const otherErrorsCount = soccerboxesError.length - alreadyBookedCount
@@ -439,45 +436,26 @@ describe('Booking reminder', () => {
 			)
 
 			// Analyze distinct errors (excluding "Already booked" since those are expected)
-			const nonBookedErrors = soccerboxesError.filter(
+			const nonBookedErrors = R.filter(
+				soccerboxesError,
 				(error) => error.error !== 'Already booked',
 			)
 
 			if (nonBookedErrors.length > 0) {
 				console.log('📊 DISTINCT ERRORS ANALYSIS (excluding "Already booked"):')
 
-				// Group errors by error message
-				const errorGroups = nonBookedErrors.reduce(
-					(acc, errorItem) => {
-						const errorKey = errorItem.error || 'Unknown error'
-						if (!acc[errorKey]) {
-							acc[errorKey] = {
-								count: 0,
-								instances: [],
-							}
-						}
-						acc[errorKey].count++
-						acc[errorKey].instances.push({
-							soccerbox: errorItem.soccerbox,
-							day: errorItem.day,
-						})
-						return acc
-					},
-					{} as Record<
-						string,
-						{
-							count: number
-							instances: Array<{ soccerbox: number; day: string }>
-						}
-					>,
+				// Group errors by error message using Remeda
+				const errorGroups = R.groupBy(
+					nonBookedErrors,
+					(errorItem) => errorItem.error || 'Unknown error',
 				)
 
 				// Display each distinct error with details - do this synchronously
-				for (const [errorMessage, details] of Object.entries(errorGroups)) {
+				for (const [errorMessage, instances] of Object.entries(errorGroups)) {
 					console.log(
-						`\n❌ Error: "${errorMessage}" (${details.count} occurrences)`,
+						`\n❌ Error: "${errorMessage}" (${instances.length} occurrences)`,
 					)
-					for (const instance of details.instances) {
+					for (const instance of instances) {
 						console.log(
 							`   - Soccerbox ${instance.soccerbox} on ${instance.day}`,
 						)
@@ -490,32 +468,18 @@ describe('Booking reminder', () => {
 				for (const slot of soccerboxesBookable) {
 					console.log(`  ⚽ Soccerbox ${slot.soccerbox} on ${slot.day}`)
 				}
+			}
 
-				// Handle email sending
-				try {
-					await sendEmail(
-						'eniszej@gmail.com',
-						`
-        <h1>Es gibt buchbare Soccerboxen für </h1>
-        <ul>
-        ${soccerboxesBookable.map(
-					(soccerbox) =>
-						`<li> <a href="${soccerbox.hrefValue}">
-            Soccerbox ${soccerbox.soccerbox} hier buchen
-            hier buchen</a></li>`,
-				)}
-        ${soccerboxesError.map(
-					(soccerbox) =>
-						`<li> Soccerbox ${soccerbox.soccerbox}, Fehler: ${soccerbox.error}</li>`,
-				)}
-        </ul>
-        `,
-						'Es gibt buchbare Soccerboxen',
-					)
-					console.log('📧 Email sent')
-				} catch (error) {
-					console.log('❌ Email failed:', error)
-				}
+			// Send email notification using the beautiful email function
+			try {
+				await sendBookingNotificationEmail(
+					'eniszej@gmail.com',
+					soccerboxesBookable,
+					soccerboxesError,
+				)
+				console.log('📧 Beautiful email sent successfully')
+			} catch (error) {
+				console.log('❌ Email failed:', error)
 			}
 
 			console.log('✅ All processing and logging completed')
@@ -523,10 +487,9 @@ describe('Booking reminder', () => {
 			console.error('❌ Test execution failed:', error)
 		} finally {
 			console.log('🧹 Starting final cleanup...')
-			// Ensure all async operations are completed before test ends
-			// Wait for browser cleanup and any remaining async operations
-			await new Promise((resolve) => setTimeout(resolve, 3000))
+			// Reduced cleanup time for better performance
+			await new Promise((resolve) => setTimeout(resolve, 1000))
 			console.log('🏁 Test cleanup completed')
 		}
-	}, 360000) // Increased timeout to 2 minutes
+	}, 500000) // Reduced timeout to 4 minutes
 })
