@@ -103,7 +103,12 @@ const getTimeSlotsForDay = (
 }
 
 const getSoccerDate = (day: Weekday, hour: number, minute: number) => {
-	const offset = (days.indexOf(day) + 1) as 0 | 1 | 2 | 3 | 4 | 5 | 6
+	const dayIndex = days.indexOf(day)
+
+	// Map German day abbreviations to setDay() format (0=Sunday, 1=Monday, etc.)
+	// days: ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'] (indexes 0-6)
+	// setDay expects: 0=Sunday, 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday
+	const offset = (dayIndex + 1) as 0 | 1 | 2 | 3 | 4 | 5 | 6
 
 	const dateToUse = new Date()
 

@@ -187,18 +187,24 @@ export const getCurrentBookingTime = () => {
  */
 export const getSoccerDate = (day: Day, timeSlot: string) => {
 	const dayIndex = DAYS.indexOf(day)
+
+	// Map German day abbreviations to setDay() format (0=Sunday, 1=Monday, etc.)
+	// DAYS: ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'] (indexes 0-6)
+	// setDay expects: 0=Sunday, 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday
 	const offset = (dayIndex + 1) as 0 | 1 | 2 | 3 | 4 | 5 | 6
 
 	const dateToUse = new Date()
 
-	if (offset < 0 || offset > 6) return dateToUse
+	if (dayIndex < 0 || dayIndex > 6) return dateToUse
 
 	// Use next week for booking
 	const weeks = addWeeks(dateToUse, 1)
 	const dateForSoccer = setDay(weeks, offset)
 
-	// Parse the time slot (e.g., "16:00" -> hours: 16, minutes: 0)
-	const [hours, minutes] = timeSlot.split(':').map(Number)
+	// Parse the time slot (e.g., "16:00h" -> hours: 16, minutes: 0)
+	// Remove the 'h' suffix if present
+	const cleanTimeSlot = timeSlot.replace('h', '')
+	const [hours, minutes] = cleanTimeSlot.split(':').map(Number)
 
 	dateForSoccer.setHours(hours || 20)
 	dateForSoccer.setMinutes(minutes || 0)
