@@ -54,6 +54,8 @@ export async function validateAndBalanceWords(
 			1. Gehören die Wörter zu den richtigen Kategorien?
 			2. Ist die Verteilung ausgewogen (ca. ${targetWordsPerCategory} Wörter pro Kategorie)?
 			3. Sind alle Wörter zum Erraten geeignet?
+			4. Keine Duplikate oder zu ähnliche Wörter. 
+
 			
 			Falls nötig, schlage nur einzelne Wörter vor (keine Sätze oder Erklärungen), um die Balance zu verbessern.
 			
