@@ -4,13 +4,28 @@ import { z } from 'zod'
 import { filterValidWords, validateAndBalanceWords } from '../utils'
 
 const requestSchema = z.object({
-	words: z.array(z.string()),
-	guessedWords: z.array(z.string()),
+	words: z.array(z.string()), // These are generated words from the generate-category route
+	guessedWords: z.array(z.string()).optional().default([]),
 	wordsNeeded: z.number().positive(),
 	redisKey: z.string().min(1),
 	apiKey: z.string().min(1),
 	categories: z.array(z.string()).optional(),
 	prompt: z.string().optional(),
+	gameMode: z
+		.enum(['stirn', 'tabu', 'justOne', 'activity', 'impostor'])
+		.optional()
+		.default('stirn'),
+	count: z.number().positive().optional().default(10),
+	// For Tabu mode, words should be structured with main and forbidden
+	tabuWords: z
+		.array(
+			z.object({
+				main: z.string(),
+				forbidden: z.array(z.string()),
+			}),
+		)
+		.optional()
+		.default([]),
 })
 
 const rateLimit = new Ratelimit({
@@ -29,6 +44,9 @@ export async function POST(req: Request) {
 			apiKey,
 			categories,
 			prompt,
+			gameMode,
+			count,
+			tabuWords,
 		} = requestSchema.parse(body)
 
 		// Check API key
@@ -48,9 +66,144 @@ export async function POST(req: Request) {
 		const sortedCategories = categories ? [...categories].sort() : []
 		const categoriesKey =
 			sortedCategories.length > 0 ? sortedCategories.join('-') : 'general'
-		const fullCacheKey = `${redisKey}:categories:${categoriesKey}`
+		const fullCacheKey = `${redisKey}:${gameMode}:categories:${categoriesKey}`
 
-		// Filter and process the provided words
+		// Handle different game modes
+		if (gameMode === 'tabu') {
+			// Combine provided words with generated Tabu words
+			const validWords = filterValidWords(words)
+			const cachedData: {
+				words: Array<{ main: string; forbidden: string[] }>
+				categories: string[]
+			} | null = await upstashRedis.get(fullCacheKey)
+
+			let cachedWords: Array<{ main: string; forbidden: string[] }> = []
+			if (
+				cachedData &&
+				JSON.stringify(cachedData.categories?.sort()) ===
+					JSON.stringify(sortedCategories)
+			) {
+				cachedWords = cachedData.words || []
+			}
+
+			// Combine cached words with newly generated Tabu words
+			const allTabuWords = [...cachedWords, ...tabuWords]
+
+			// Update cache with combined words (fire-and-forget)
+			if (tabuWords.length > 0) {
+				const cacheData = {
+					words: allTabuWords,
+					categories: sortedCategories,
+				}
+				upstashRedis.set(fullCacheKey, cacheData).catch(() => {})
+			}
+
+			// For Tabu, return structured words with forbidden words
+			const availableTabuWords = allTabuWords.filter(
+				(word) => word.main && !guessedWords.includes(word.main),
+			)
+
+			const selectedTabuWords = availableTabuWords.slice(0, count)
+
+			return new Response(
+				JSON.stringify({
+					mode: 'Tabu',
+					words: selectedTabuWords,
+				}),
+				{
+					headers: { 'Content-Type': 'application/json' },
+				},
+			)
+		}
+
+		if (gameMode === 'justOne') {
+			// Use generated words for Just One game
+			const validWords = filterValidWords(words)
+			const availableWords = validWords.filter(
+				(word) => !guessedWords.includes(word),
+			)
+
+			const wordGroups = []
+			const groupsNeeded = Math.ceil(count / 5)
+
+			for (let i = 0; i < groupsNeeded && i * 5 < availableWords.length; i++) {
+				const group = availableWords.slice(i * 5, (i + 1) * 5)
+				if (group.length === 5) {
+					wordGroups.push(group)
+				}
+			}
+
+			return new Response(
+				JSON.stringify({
+					mode: 'Just One Quiz',
+					wordGroups,
+				}),
+				{
+					headers: { 'Content-Type': 'application/json' },
+				},
+			)
+		}
+
+		if (gameMode === 'activity') {
+			// Use generated words for Activity game
+			const validWords = filterValidWords(words)
+			const availableWords = validWords.filter(
+				(word) => !guessedWords.includes(word),
+			)
+
+			const activityTypes = ['Zeichnen', 'Erklären', 'Pantomime']
+			const tasks = availableWords.slice(0, count).map((word, index) => ({
+				word,
+				type: activityTypes[index % activityTypes.length],
+			}))
+
+			return new Response(
+				JSON.stringify({
+					mode: 'Activity',
+					tasks,
+				}),
+				{
+					headers: { 'Content-Type': 'application/json' },
+				},
+			)
+		}
+
+		if (gameMode === 'impostor') {
+			// Use generated words for Impostor game
+			const validWords = filterValidWords(words)
+			const availableWords = validWords.filter(
+				(word) => !guessedWords.includes(word),
+			)
+
+			if (availableWords.length === 0) {
+				return new Response(
+					JSON.stringify({
+						mode: 'Impostor',
+						word: null,
+						error: 'No words available',
+					}),
+					{
+						headers: { 'Content-Type': 'application/json' },
+					},
+				)
+			}
+
+			const selectedWord =
+				availableWords[Math.floor(Math.random() * availableWords.length)]
+
+			return new Response(
+				JSON.stringify({
+					mode: 'Impostor',
+					word: selectedWord,
+				}),
+				{
+					headers: { 'Content-Type': 'application/json' },
+				},
+			)
+		}
+
+		// Default Stirn Quiz mode (existing logic)
+		// Filter and process the generated words
 		const validWords = filterValidWords(words)
 
 		// First try to get cached data from Redis

@@ -9,10 +9,20 @@ const requestSchema = z.object({
 	category: z.string(),
 	wordsPerCategory: z.number().positive(),
 	excludeWords: z.array(z.string()),
-	existingCategoryWords: z.array(z.string()),
+	existingCategoryWords: z.array(z.string()).optional().default([]),
 	redisKey: z.string().min(1),
 	customPrompt: z.string().optional(),
 	taskId: z.string(),
+	gameMode: z.enum(['stirn', 'tabu']).optional().default('stirn'),
+	existingTabuWords: z
+		.array(
+			z.object({
+				main: z.string(),
+				forbidden: z.array(z.string()),
+			}),
+		)
+		.optional()
+		.default([]),
 })
 
 const openrouter = createOpenRouter({
@@ -32,10 +42,128 @@ async function handler(req: Request) {
 			redisKey,
 			customPrompt,
 			taskId,
+			gameMode,
+			existingTabuWords,
 		} = requestSchema.parse(body)
 
 		const categoryCacheKey = `${redisKey}:category:${category}`
 
+		// Handle Tabu game mode differently
+		if (gameMode === 'tabu') {
+			// Calculate how many Tabu words we still need for this category
+			const existingMainWords = existingTabuWords.map((word) => word.main)
+			const availableTabuWords = existingMainWords.filter(
+				(word) => !excludeWords.includes(word),
+			)
+			const tabuWordsNeeded = wordsPerCategory - availableTabuWords.length
+
+			// Skip API call if no words are needed for this category
+			if (tabuWordsNeeded <= 0) {
+				await upstashRedis.set(
+					`${redisKey}:task:${taskId}`,
+					{
+						category,
+						words: [],
+						completed: true,
+						runtime: 0,
+					},
+					{ ex: 300 },
+				)
+
+				return new Response(
+					JSON.stringify({
+						success: true,
+						category,
+						wordsGenerated: 0,
+						runtime: 0,
+					}),
+					{
+						headers: { 'Content-Type': 'application/json' },
+					},
+				)
+			}
+
+			const customPromptInstruction = customPrompt
+				? `Zusätzliche Anweisungen: ${customPrompt}`
+				: ''
+
+			const result = await generateObject({
+				model: openrouter.chat(OPEN_ROUTER_MODEL),
+				system:
+					'Du bist ein Assistent, der Tabu-Wörter für ein Ratespiel generiert. Erstelle deutsche Hauptwörter mit dazugehörigen verbotenen Wörtern. Gib strukturierte Daten zurück.',
+				prompt: `Erstelle genau ${tabuWordsNeeded} deutsche Tabu-Wörter für die Kategorie "${category}".
+					Für jedes Hauptwort erstelle 3-5 verbotene Wörter, die beim Erklären nicht verwendet werden dürfen.
+					
+					Die Hauptwörter sollten:
+					- zur Kategorie "${category}" gehören
+					- nicht in dieser Liste vorkommen: ${[...excludeWords, ...existingMainWords].join(', ')}
+					- eine Mischung aus verschiedenen Schwierigkeitsgraden haben
+					- einzelne Wörter sein (keine Phrasen)
+					- keine Eigennamen enthalten
+					
+					Die verbotenen Wörter sollten:
+					- die naheliegendsten Begriffe zum Erklären des Hauptworts sein
+					- keine Wortteile des Hauptworts enthalten
+					- sinnvolle Beschreibungen erschweren
+					${customPromptInstruction ? `\n					- ${customPromptInstruction}` : ''}
+					
+					WICHTIG: Gib strukturierte Daten zurück mit Hauptwort und verbotenen Wörtern.`,
+				schema: z.object({
+					tabuWords: z.array(
+						z.object({
+							main: z.string(),
+							forbidden: z.array(z.string()),
+						}),
+					),
+				}),
+			})
+
+			// Validate the generated Tabu words
+			const validTabuWords = (result.object.tabuWords || []).filter(
+				(word) =>
+					word.main &&
+					word.forbidden &&
+					word.forbidden.length >= 3 &&
+					word.forbidden.length <= 5,
+			)
+
+			// Update category cache with new valid Tabu words
+			const updatedTabuWords = [...existingTabuWords, ...validTabuWords]
+
+			// Use Promise.all for parallel Redis operations
+			const redisOperations = [
+				upstashRedis.set(categoryCacheKey, updatedTabuWords),
+				upstashRedis.set(
+					`${redisKey}:task:${taskId}`,
+					{
+						category,
+						words: validTabuWords,
+						completed: true,
+						runtime: 0,
+					},
+					{ ex: 300 },
+				),
+			]
+
+			// Execute Redis operations in parallel
+			await Promise.allSettled(redisOperations)
+
+			return new Response(
+				JSON.stringify({
+					success: true,
+					category,
+					wordsGenerated: validTabuWords.length,
+					runtime: 0,
+					words: validTabuWords, // Return the generated Tabu words
+					gameMode: 'tabu',
+				}),
+				{
+					headers: { 'Content-Type': 'application/json' },
+				},
+			)
+		}
+
+		// Default Stirn game mode (existing logic)
 		// Calculate how many words we still need for this category
 		const availableForCategory = existingCategoryWords.filter(
 			(word) => !excludeWords.includes(word),
@@ -127,6 +255,8 @@ async function handler(req: Request) {
 				category,
 				wordsGenerated: validGeneratedWords.length,
 				runtime: 0,
+				words: validGeneratedWords, // Return the generated words
+				gameMode: 'stirn',
 			}),
 			{
 				headers: { 'Content-Type': 'application/json' },
