@@ -7,30 +7,45 @@ const openrouter = createOpenRouter({
 	apiKey: process.env.OPENROUTER_API_KEY,
 })
 
+// Optimized instruction keywords as a Set for O(1) lookup
+const INSTRUCTION_KEYWORDS = new Set([
+	'ersetze',
+	'füge',
+	'hinzu',
+	'verbessern',
+	'balance',
+	'kategorie',
+	'beispiel',
+	'z.b.',
+	'zum beispiel',
+])
+
 export function filterValidWords(words: string[]): string[] {
 	return words.filter((word) => {
 		// Quick length check first (most efficient)
-		if (word.length > 30 || !word.trim()) return false
+		const trimmed = word.trim()
+		if (trimmed.length > 30 || !trimmed) return false
 
-		// Check for punctuation (avoid regex for performance)
-		if (word.includes('.') || word.includes('!') || word.includes('?'))
+		// Check for punctuation (faster than regex)
+		if (
+			trimmed.includes('.') ||
+			trimmed.includes('!') ||
+			trimmed.includes('?')
+		) {
 			return false
+		}
 
-		// Convert to lowercase once and check instruction keywords
-		const lowerWord = word.toLowerCase()
-		const instructionKeywords = [
-			'ersetze',
-			'füge',
-			'hinzu',
-			'verbessern',
-			'balance',
-			'kategorie',
-			'beispiel',
-			'z.b.',
-			'zum beispiel',
-		]
+		// Convert to lowercase once and check instruction keywords using Set
+		const lowerWord = trimmed.toLowerCase()
 
-		return !instructionKeywords.some((keyword) => lowerWord.includes(keyword))
+		// Use some() with Set.has() for better performance
+		for (const keyword of INSTRUCTION_KEYWORDS) {
+			if (lowerWord.includes(keyword)) {
+				return false
+			}
+		}
+
+		return true
 	})
 }
 
