@@ -28,3 +28,8 @@
 
 - Write unit tests for new features and bug fixes.
 - Use Jest for testing. Run `npm test` to execute tests.
+
+## Workflow Documentation:
+
+- For guidelines on creating well-structured GitHub issues, refer to `issues.md`.
+- For the workflow on implementing code changes based on a GitHub issue, refer to `work.md`.
