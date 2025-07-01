@@ -22,7 +22,7 @@
 
 ## Linting and Formatting:
 
-- Use Biome for linting and formatting. Run `npm run lint` to check for issues and `npm run format` to automatically fix them.
+- Use Biome for linting and formatting. Run `bunx @biomejs/biome lint --write .` to check for issues and `bunx @biomejs/biome format --write .` to automatically fix them.
 
 ## Testing:
 
