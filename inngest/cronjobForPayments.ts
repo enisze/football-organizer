@@ -61,12 +61,12 @@ const runCron = async () => {
 			filteredEvents.map((event) => event.id),
 		)
 
-		filteredEvents.forEach(async (event) => {
+		for (const event of filteredEvents) {
 			const participants = await prisma.participantsOnEvents.findMany({
 				where: { eventId: event.id, userEventStatus: 'JOINED' },
 			})
 
-			participants.forEach(async (participant) => {
+			for (const participant of participants) {
 				const user = await prisma.user.findUnique({
 					where: { id: participant.id },
 				})
@@ -81,12 +81,12 @@ const runCron = async () => {
 				}) as gmail_v1.Schema$Message[]
 
 				console.log(
-					user.name + ' got ' + filteredByUser.length + ' paypalMails',
+					`${user.name} got ${filteredByUser.length} paypalMails`,
 				)
 
 				emailAmount += filteredByUser.length
 
-				filteredByUser.forEach(async (email) => {
+				for (const email of filteredByUser) {
 					const mailId = email.id
 
 					if (!mailId) return
@@ -97,7 +97,7 @@ const runCron = async () => {
 
 					if (res) {
 						emailsAlreadyInDB.push(res)
-						console.log('payment already exists for ' + user.name)
+						console.log(`payment already exists for ${user.name}`)
 						return
 					}
 
@@ -127,9 +127,9 @@ const runCron = async () => {
 					})
 
 					console.log('added for ', user.name)
-				})
-			})
-		})
+				}
+			}
+		}
 	})
 
 	return `

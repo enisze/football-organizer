@@ -18,7 +18,7 @@ export const EventReminder = ({
 	participantsAmount: number
 }) => {
 	const { id, date } = event
-	const eventLink = process.env.NEXT_PUBLIC_BASE_URL + '/events/' + id
+	const eventLink = `${process.env.NEXT_PUBLIC_BASE_URL}/events/${id}`
 
 	return (
 		<Tailwind>

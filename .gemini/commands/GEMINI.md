@@ -2,6 +2,7 @@
 
 ## General Instructions:
 
+- The git repository is within the account enisze
 - When generating new TypeScript code, please follow the existing coding style.
 - Ensure all new functions and classes have JSDoc comments.
 - Prefer functional programming paradigms where appropriate.

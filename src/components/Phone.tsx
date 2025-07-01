@@ -8,6 +8,7 @@ export const Phone = () => {
 			<div className='rounded-[2rem] overflow-hidden w-[272px] h-[572px] bg-white dark:bg-gray-800'>
 				<video className='w-full' controls>
 					<source src='/videoEdited.mp4' type='video/mp4' />
+					<track kind="captions" srclang="en" label="English captions" />
 					Your browser does not support the video tag.
 				</video>
 			</div>

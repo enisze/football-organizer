@@ -41,7 +41,7 @@ export const GroupAdminEmail = ({
 }: VercelInviteUserEmailProps) => {
 	const previewText = `Get your own group ${invitedByUsername} on Event Wizard`
 
-	const createGroupLink = process.env.NEXT_PUBLIC_BASE_URL + '/settings/groups'
+	const createGroupLink = `${process.env.NEXT_PUBLIC_BASE_URL}/settings/groups`
 
 	return (
 		<Html>

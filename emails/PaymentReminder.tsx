@@ -17,7 +17,7 @@ export const PaymentReminder = ({
 	userName = 'Test',
 }: PaymentReminderProps) => {
 	const { id } = event
-	const eventLink = process.env.NEXT_PUBLIC_BASE_URL + '/events/' + id
+	const eventLink = `${process.env.NEXT_PUBLIC_BASE_URL}/events/${id}`
 
 	return (
 		<Tailwind>
@@ -37,7 +37,7 @@ export const PaymentReminder = ({
 						Es kann bis zu 24 Stunden dauern, bis die Zahlung registriert wird.
 					</Text>
 					<Text>
-						{`Falls du schon bezahlt hast, kannst du diese Mail ignorieren :)`}
+						{'Falls du schon bezahlt hast, kannst du diese Mail ignorieren :)'}
 					</Text>
 					<Footer />
 				</ContainerBox>

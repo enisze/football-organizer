@@ -12,7 +12,7 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
 
 	return (
 		<div className='border-b border-gray-700 py-4'>
-			<button
+			<button type='button'
 				className='flex w-full items-center justify-between text-left'
 				onClick={() => setIsOpen(!isOpen)}
 			>
